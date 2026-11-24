@@ -16896,10 +16896,15 @@
         const remainingNumerator = totalNumerator - removed * appleNumerator;
         return result(`무게가 각각 같은 사과 ${appleCount}개와 복숭아 ${peachCount}개가 든 바구니의 무게는 ${mixedFraction(totalNumerator, denominator)}kg입니다. 사과 ${removed}개를 꺼낸 뒤에는 ${mixedFraction(remainingNumerator, denominator)}kg이었습니다. 빈 바구니가 ${mixedFraction(basketNumerator, denominator)}kg일 때 복숭아 한 개의 무게를 구하세요.${fractionDivisionEvidence("fruit-basket", [denominator, appleCount, peachCount, removed, appleNumerator, peachNumerator, basketNumerator, totalNumerator, remainingNumerator])}`, mixedFraction(peachNumerator, denominator), `꺼낸 사과의 무게 차를 사과 ${removed}개로 나누면 사과 한 개는 ${mixedFraction(appleNumerator, denominator)}kg입니다. 남은 전체에서 바구니와 사과 무게를 빼고 복숭아 ${peachCount}개로 나누면 복숭아 한 개는 ${mixedFraction(peachNumerator, denominator)}kg입니다.`);
       }
+      // 가 혼자 a일, 나 혼자 b일, 함께 T일에 대해 남은 일을 가가 끝내는 날수가 자연수인 세트(첫 세트가 예전 문항)
+      const [baseFirst, baseSecond, baseTogether] = pick(rng, [[14, 21, 6], [10, 15, 3], [12, 20, 5]]);
       const scale = int(rng, 1, 2 + level);
-      const firstDays = 14 * scale, secondDays = 21 * scale, togetherDays = 6 * scale;
-      const doneNumerator = 5, doneDenominator = 7;
-      return result(`어떤 일을 가와 나가 함께 ${togetherDays}일 동안 하여 전체의 ${doneNumerator}/${doneDenominator}를 마쳤습니다. 남은 일을 가가 혼자 ${4 * scale}일 동안 하여 끝냈습니다. 두 사람의 일하는 양이 날마다 일정할 때, 나가 처음부터 혼자 이 일을 하면 며칠 걸리는지 구하세요.${fractionDivisionEvidence("work-rate", [togetherDays, doneNumerator, doneDenominator, 4 * scale, firstDays, secondDays])}`, secondDays, `가는 하루에 (2/${doneDenominator})÷${4 * scale}=1/${firstDays}을 합니다. 두 사람이 함께 하루에 (${doneNumerator}/${doneDenominator})÷${togetherDays}=5/${42 * scale}를 하므로 나는 하루에 1/${secondDays}을 합니다. 따라서 ${secondDays}일 걸립니다.`);
+      const firstDays = baseFirst * scale, secondDays = baseSecond * scale, togetherDays = baseTogether * scale;
+      const doneWhole = togetherDays * (firstDays + secondDays), doneBase = firstDays * secondDays, doneDivisor = gcd(doneWhole, doneBase);
+      const doneNumerator = doneWhole / doneDivisor, doneDenominator = doneBase / doneDivisor;
+      const aloneDays = firstDays * (doneDenominator - doneNumerator) / doneDenominator;
+      const togetherRate = fraction(doneNumerator, doneDenominator * togetherDays);
+      return result(`어떤 일을 가와 나가 함께 ${togetherDays}일 동안 하여 전체의 ${doneNumerator}/${doneDenominator}를 마쳤습니다. 남은 일을 가가 혼자 ${aloneDays}일 동안 하여 끝냈습니다. 두 사람의 일하는 양이 날마다 일정할 때, 나가 처음부터 혼자 이 일을 하면 며칠 걸리는지 구하세요.${fractionDivisionEvidence("work-rate", [togetherDays, doneNumerator, doneDenominator, aloneDays, firstDays, secondDays])}`, secondDays, `가가 하루에 하는 일은 (${doneDenominator - doneNumerator}/${doneDenominator})÷${aloneDays}=1/${firstDays}입니다. 두 사람이 함께 하루에 하는 일은 (${doneNumerator}/${doneDenominator})÷${togetherDays}=${togetherRate}이므로 나가 하루에 하는 일은 ${togetherRate}-1/${firstDays}=1/${secondDays}입니다. 따라서 ${secondDays}일 걸립니다.`);
     },
     fractionDivisionEquationAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -16929,8 +16934,11 @@
       }
       if (kind === 3) {
         const denominator = pick(rng, [17, 19, 23, 29].slice(0, 2 + level));
-        const values = [3, 1, 6];
-        return result(`세 기약분수 가, 나, 다가 있습니다. 가는 나의 3배이고 다는 가의 2배입니다. 세 분수의 합이 ${fraction(10, denominator)}일 때 가, 나, 다를 차례로 구하세요.${fractionDivisionEvidence("three-fraction-ratio", [denominator, ...values])}`, `${fraction(3, denominator)}, ${fraction(1, denominator)}, ${fraction(6, denominator)}`, `나를 1몫으로 보면 가는 3몫, 다는 6몫으로 모두 10몫입니다. 한 몫은 1/${denominator}이므로 가=${fraction(3, denominator)}, 나=${fraction(1, denominator)}, 다=${fraction(6, denominator)}입니다.`);
+        // 가=나의 times배, 다=가의 again배(첫 쌍이 예전 문항). 분모가 몫의 합보다 큰 소수라 세 분수 모두 기약분수다.
+        const [times, again] = pick(rng, [[3, 2], [2, 3], [2, 2]]);
+        const values = [times, 1, times * again];
+        const parts = values[0] + values[1] + values[2];
+        return result(`세 기약분수 가, 나, 다가 있습니다. 가는 나의 ${times}배이고 다는 가의 ${again}배입니다. 세 분수의 합이 ${fraction(parts, denominator)}일 때 가, 나, 다를 차례로 구하세요.${fractionDivisionEvidence("three-fraction-ratio", [denominator, ...values])}`, `${fraction(values[0], denominator)}, ${fraction(values[1], denominator)}, ${fraction(values[2], denominator)}`, `나를 1몫으로 보면 가는 ${values[0]}몫, 다는 ${values[2]}몫으로 모두 ${parts}몫입니다. 한 몫은 1/${denominator}이므로 가=${fraction(values[0], denominator)}, 나=${fraction(values[1], denominator)}, 다=${fraction(values[2], denominator)}입니다.`);
       }
       if (kind === 4) {
         const denominator = 8;
@@ -17448,10 +17456,17 @@
       }
       if (kind === 2) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = [[maxHeight, 1], [1, maxHeight]];
+        // 그림(위·앞·오른쪽)이 서로 다른 표본만 둔다. 첫 표본이 예전 문항이고, 0은 위에서 보아 빈 칸이다.
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[0, 2, 1], [2, 1, 2]], [[2, 1, 1], [1, 1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 0], [1, 3]]],
+          [[[3, 1], [1, 3]], [[0, 3, 1], [3, 1, 3]], [[0, 2, 3], [3, 1, 1]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
-        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고, 각 칸에는 ${maxHeight}개 이하를 쌓았습니다. 이 세 그림을 모두 만족하는 쌓기 방법은 몇 가지입니까? 각 칸에 쌓은 개수가 하나라도 다르면 다른 방법으로 셉니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-candidate-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 본 네 칸에는 각각 1개 이상 ${maxHeight}개 이하를 놓고, 각 행과 열의 최고 높이가 앞·오른쪽 그림과 같도록 전부 확인하면 ${candidates.length}가지입니다.`);
+        const topCount = projections.top.reduce((sum, value) => sum + value, 0);
+        const topCountWord = { 3: "세", 4: "네", 5: "다섯", 6: "여섯" }[topCount] || topCount;
+        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고, 각 칸에는 ${maxHeight}개 이하를 쌓았습니다. 이 세 그림을 모두 만족하는 쌓기 방법은 몇 가지입니까? 각 칸에 쌓은 개수가 하나라도 다르면 다른 방법으로 셉니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-candidate-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 본 ${topCountWord} 칸에는 각각 1개 이상 ${maxHeight}개 이하를 놓고, 각 행과 열의 최고 높이가 앞·오른쪽 그림과 같도록 전부 확인하면 ${candidates.length}가지입니다.`);
       }
       if (kind === 3) {
         const cells = cellsFromHeights(heights);
@@ -17483,7 +17498,12 @@
       }
       if (kind === 1) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = [[maxHeight, 1], [1, maxHeight]];
+        // 그림이 서로 다른 표본(첫 표본이 예전 문항, 0은 위에서 보아 빈 칸)
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[2, 1, 1], [1, 1, 2]], [[2, 0], [1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 3], [1, 2]]],
+          [[[3, 1], [1, 3]], [[0, 3, 1], [3, 1, 3]], [[3, 2, 1], [1, 1, 3]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
         const totals = candidates.map(map => map.flat().reduce((sum, value) => sum + value, 0));
@@ -17491,7 +17511,7 @@
         return result(`위·앞·오른쪽에서 본 그림이 다음과 같고 한 칸에는 ${maxHeight}개 이하를 쌓았습니다. 가능한 쌓기나무 수의 최솟값과 최댓값을 차례로 쓰세요.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-min-max", [maxHeight, minimum, maximum, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, `${minimum}, ${maximum}`, `세 그림을 만족하는 높이표 ${candidates.length}가지를 전부 확인하면 전체 개수의 최솟값은 ${minimum}개, 최댓값은 ${maximum}개입니다. 정답은 ${minimum}, ${maximum}입니다.`);
       }
       if (kind === 2) {
-        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const size = pick(rng, level === 2 ? [5, 7, 9] : [3, 5, 7]);
         const directions = level === 2 ? ["x", "y", "z"] : level === 1 ? ["x", "y"] : ["y"];
         const cells = centeredTunnelCells({ size, hole: 1, directions });
         const surface = voxelSurface(cells);
@@ -17499,14 +17519,24 @@
       }
       if (kind === 3) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = level === 2 ? [[maxHeight, 1, maxHeight], [1, maxHeight, 1]] : [[maxHeight, 1], [1, maxHeight]];
+        // 그림이 서로 다른 표본(첫 표본이 예전 문항, 0은 위에서 보아 빈 칸)
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[0, 2, 1], [2, 1, 2]], [[2, 0], [1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 0], [1, 3]]],
+          [[[3, 1, 3], [1, 3, 1]], [[0, 3, 1], [3, 1, 3]], [[3, 1, 2], [2, 1, 3]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
         return result(`다음 위·앞·오른쪽 그림과 같은 쌓기를 만들려고 합니다. 한 칸에는 ${maxHeight}개 이하를 쌓을 때 가능한 방법은 몇 가지입니까? 회전한 모양도 바닥 칸의 위치가 다르면 다른 방법입니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("stack-method-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 보이는 칸을 1부터 ${maxHeight}까지 채우고 앞·오른쪽의 최고 높이를 모두 대조하면 ${candidates.length}가지입니다.`);
       }
       if (kind === 4) {
-        const size = 3 + level;
-        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, size - Math.max(x, y))));
+        // [행 수, 열 수, 가장 높은 칸] 계단 모양(첫 모양이 예전 문항)
+        const [rows, columns, peak] = pick(rng, [
+          [[3, 3, 3], [3, 3, 4], [3, 4, 4]],
+          [[4, 4, 4], [3, 4, 5], [4, 4, 5]],
+          [[5, 5, 5], [4, 5, 6], [4, 4, 6]]
+        ][level]);
+        const heights = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => Math.max(1, peak - Math.max(x, y))));
         const cells = cellsFromHeights(heights);
         const answer = internalCubeCount(cells);
         return result(`계단 모양의 높이표대로 쌓았습니다. 위·아래·앞·뒤·왼쪽·오른쪽 여섯 면이 모두 다른 쌓기나무와 맞닿아 있는 쌓기나무는 몇 개입니까? 바닥에 닿은 면은 맞닿은 면으로 보지 않습니다.${heightMapTable({ title: "계단 모양 높이표", heights })}${isometricStackSvg(heights)}${spaceEvidence("hidden-interior-count", [answer], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, answer, `각 쌓기나무의 위·아래·앞·뒤·왼쪽·오른쪽 여섯 이웃을 확인합니다. 여섯 면이 모두 다른 쌓기나무와 맞닿은 조각은 ${answer}개입니다.`);
@@ -17534,8 +17564,9 @@
         return result(`높이표대로 쌓은 뒤 바닥에 닿은 면을 포함하여 바깥에 드러난 모든 면을 색칠했습니다. 색칠된 면이 정확히 ${selected.faces}개인 쌓기나무는 몇 개입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-histogram", [selected.faces, selected.count], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, selected.count, `각 조각의 여섯 이웃 칸을 조사해 비어 있는 방향을 색칠된 면으로 셉니다. 정확히 ${selected.faces}면이 색칠된 조각은 ${selected.count}개입니다.`);
       }
       if (kind === 2) {
-        const size = 3 + level;
-        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, Math.ceil(size / 2 - Math.max(Math.abs(x - (size - 1) / 2), Math.abs(y - (size - 1) / 2))))));
+        // 보통 난이도는 4×4 하나로는 고를 면 수가 둘뿐이라 4×5 모양을 더한다. 바깥에서 한 칸 들어갈 때마다 한 층씩 높아진다.
+        const [rows, columns] = level === 1 ? pick(rng, [[4, 4], [4, 5]]) : [3 + level, 3 + level];
+        const heights = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => 1 + Math.min(x, y, columns - 1 - x, rows - 1 - y)));
         const cells = cellsFromHeights(heights);
         const histogram = paintedFaceHistogram(cells);
         const choices = histogram.map((count, faces) => ({ count, faces })).filter(item => item.faces >= 2 && item.faces <= 5 && item.count > 0);
@@ -17544,7 +17575,12 @@
       }
       if (kind === 3) {
         const side = 2 + level;
-        const heights = [[2 + level, 1, 2], [1, 3, 1], [2, 1, 2 + level]];
+        // 첫 높이표가 예전 문항
+        const heights = pick(rng, [
+          [[2 + level, 1, 2], [1, 3, 1], [2, 1, 2 + level]],
+          [[1, 2 + level, 1], [2, 3, 2], [1, 2 + level, 1]],
+          [[2 + level, 2, 1], [2, 3, 1], [1, 1, 2 + level]]
+        ]);
         const surface = voxelSurface(cellsFromHeights(heights));
         const answer = surface * side * side;
         return result(`한 모서리 ${side}cm인 정육면체를 높이표대로 쌓고 바닥에 닿은 면을 포함한 바깥 면을 모두 색칠했습니다. 색칠한 넓이는 모두 몇 cm²입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-area", [side, surface], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, `${answer}cm²`, `드러난 면은 ${surface}개이고 한 면의 넓이는 ${side}×${side}=${side * side}cm²입니다. 따라서 ${surface}×${side * side}=${answer}cm²입니다.`);
@@ -17570,7 +17606,7 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기(작은 정육면체 한 모서리 1cm)의 바닥에서 ${layer}번째 층 정육면체의 중심을 모두 지나는 수평 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a, b, c, labels: ["수평 절단면", "", ""] })}${spaceEvidence("single-layer-cut", [a, b, c, layer])}`, answer, `한 층에는 가로 ${a}개, 세로 ${b}개가 있으므로 절단면이 지나는 조각은 ${a}×${b}=${answer}개입니다.`);
       }
       if (kind === 1) {
-        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const size = pick(rng, level === 0 ? [3, 5, 7] : [5, 7, 9]);
         const answer = 3 * size * size - 3 * size + 1;
         return result(`한 모서리에 작은 정육면체가 ${size}개인 큰 정육면체(작은 정육면체 한 모서리 1cm)에서 서로 수직인 세 중앙 절단면이 작은 정육면체의 중심을 지나게 했습니다. 세 절단면 중 하나 이상이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a: size, b: size, c: size, labels: ["중앙 절단", "중앙 절단", "중앙 절단"] })}${spaceEvidence("triple-center-cut", [size])}`, answer, `각 절단면은 ${size * size}개를 지납니다. 두 절단면이 함께 지나는 줄은 3개이고 한 줄에 ${size}개씩이므로 3×${size}개를 빼고, 세 절단면이 모두 지나는 중앙 한 조각은 다시 더합니다. 3×${size * size}-3×${size}+1=${answer}개입니다.`);
       }
@@ -17581,18 +17617,37 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기(작은 정육면체 한 모서리 1cm)에서 세로 ${b}칸, 높이 ${c}칸으로 이루어진 층 중 서로 다른 ${cuts}개 층의 정육면체 중심을 지나는 평행한 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 모두 몇 개입니까?${cuboidSvg({ a, b, c, labels: [`평행 절단 ${cuts}개`, "", ""] })}${spaceEvidence("parallel-layer-cuts", [a, b, c, cuts])}`, answer, `절단면 하나는 세로 ${b}×높이 ${c}=${b * c}개를 지나고 서로 다른 층이라 겹치지 않습니다. ${cuts}×${b * c}=${answer}개입니다.`);
       }
       if (kind === 3) {
+        // 난이도마다 바닥 한 층 모양 셋(첫 모양이 예전 문항, 예전 풀이 글은 그대로 둔다). 모두 거울 대칭인 모양이라
+        // 아래에 붙인 모양은 뒤집으면 위에 올린 모양과 같아진다(답 = 바닥에 붙인 모양 + 위에 올린 새 모양).
+        const flat = cells => cells.map(([x, y]) => [x, y, 0]);
         const bases = [
-          [[0, 0, 0], [1, 0, 0], [2, 0, 0]],
-          [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
-          [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0]]
-        ];
-        const base = bases[level];
-        const answer = addedCubeShapeCount(base);
-        const explanation = [
-          `바닥에 붙이면 일자 모양, ㄴ자 모양, ㅗ자 모양이 되고, 위에 올린 모양도 돌려 보면 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.`,
-          `바닥에 붙여 만든 서로 다른 모양은 4가지입니다. 위에 올리는 자리는 꺾인 곳 위와 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 3가지이고, 모두 4+3=${answer}가지입니다.`,
-          `바닥에 붙여 만든 서로 다른 모양은 5가지입니다. 위에 올리는 자리는 가운데 위, 튀어나온 칸 위, 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 4가지이고, 모두 5+4=${answer}가지입니다.`
+          [
+            { cells: flat([[0, 0], [1, 0], [2, 0]]), explanation: answer => `바닥에 붙이면 일자 모양, ㄴ자 모양, ㅗ자 모양이 되고, 위에 올린 모양도 돌려 보면 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0]]) },
+            { cells: flat([[0, 0], [1, 0], [0, 1], [1, 1]]) }
+          ],
+          [
+            { cells: flat([[0, 0], [1, 0], [0, 1]]), explanation: answer => `바닥에 붙여 만든 서로 다른 모양은 4가지입니다. 위에 올리는 자리는 꺾인 곳 위와 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 3가지이고, 모두 4+3=${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0], [2, 0], [3, 0]]) },
+            { cells: flat([[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]]) }
+          ],
+          [
+            { cells: flat([[0, 0], [1, 0], [2, 0], [1, 1]]), explanation: answer => `바닥에 붙여 만든 서로 다른 모양은 5가지입니다. 위에 올리는 자리는 가운데 위, 튀어나온 칸 위, 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 4가지이고, 모두 5+4=${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0], [2, 0], [0, 1], [2, 1]]) },
+            { cells: flat([[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]]) }
+          ]
         ][level];
+        const chosen = pick(rng, bases);
+        const base = chosen.cells;
+        const answer = addedCubeShapeCount(base);
+        const occupied = new Set(base.map(cell => cell.join(",")));
+        const shapesOn = layer => new Set(base.flatMap(([x, y]) => (layer === 0 ? [[1, 0], [-1, 0], [0, 1], [0, -1]] : [[0, 0]]).map(([dx, dy]) => [x + dx, y + dy, layer]))
+          .filter(cell => !occupied.has(cell.join(","))).map(cell => canonicalPolycube([...base, cell])));
+        const floorShapes = shapesOn(0);
+        const raisedNew = [...shapesOn(1)].filter(key => !floorShapes.has(key)).length;
+        const explanation = chosen.explanation ? chosen.explanation(answer) : raisedNew
+          ? `바닥에 붙여 만든 서로 다른 모양은 ${floorShapes.size}가지입니다. 위에 올린 모양 중 바닥에 붙여 만든 모양과 다른 것은 ${raisedNew}가지입니다. 돌려도 겹쳐지지 않는 거울 모양은 다른 모양으로 셉니다. 모두 ${floorShapes.size}+${raisedNew}=${answer}가지입니다.`
+          : `바닥에 붙여 만든 서로 다른 모양은 ${floorShapes.size}가지이고, 위에 올린 모양은 돌려 보면 모두 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.`;
         return result(`그림은 쌓기나무를 바닥에 한 층으로 놓은 모양이고, 보이지 않는 쌓기나무는 없습니다. 이 모양에 쌓기나무 한 개를 면끼리 꼭 맞게 붙여 새로운 모양을 만듭니다. 돌리거나 뒤집었을 때 같은 모양은 한 가지로 셀 때 서로 다른 모양은 몇 가지입니까?${polycubeSvg(base)}${spaceEvidence("add-one-polycube", [level, answer], `data-base-cells="${base.map(cell => cell.join(".")).join(";")}"`)}`, answer, explanation);
       }
       if (kind === 4) {
@@ -17603,7 +17658,8 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체(작은 정육면체 한 모서리 1cm)에서 맨 아래층 왼쪽 앞 칸을 파란색으로 하고, 면끼리 맞닿은 두 칸은 항상 색이 다르도록 파란색과 흰색을 번갈아 정했습니다. 파란색 조각을 모두 빼면 몇 개가 남습니까?${cuboidSvg({ a, b, c, labels: ["교차 색 규칙", "", ""] })}${spaceEvidence("parity-removal", [a, b, c, removed])}`, answer, `파란색과 흰색이 번갈아 놓이므로 층마다 파란색 칸을 세어 더하면 파란색은 ${removed}개입니다. ${a * b * c}-${removed}=${answer}개가 남습니다.`);
       }
       const heights = [[2 + level, 3, 1], [1, 2 + level, 2], [2, 1, 3]];
-      const removals = [[0, 1], [2, 2]].slice(0, 1 + (level > 0 ? 1 : 0));
+      // 뺄 칸(행, 열 0부터): 쉬움은 한 칸, 보통·어려움은 두 칸. 첫 묶음이 예전 문항
+      const removals = pick(rng, level === 0 ? [[[0, 1]], [[2, 2]], [[1, 1]]] : [[[0, 1], [2, 2]], [[0, 0], [1, 2]], [[1, 1], [2, 0]]]);
       const changed = heights.map(row => [...row]);
       removals.forEach(([y, x]) => { changed[y][x] -= 1; });
       const front = stackProjections(changed).front.reduce((sum, value) => sum + value, 0);
