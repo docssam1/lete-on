@@ -2,11 +2,11 @@
 // 권마다 논증은 course2-proofs/<권>.js 의 PROOFS(배열). 권을 더하면 아래 BOOKS에 한 줄.
 import { mountProof } from "./proof-board.js?v=20261115c";
 const BOOKS = {
-  g1: { name: "G1", title: "돌리기와 뒤집기", v: "20261115a" },
-  g2: { name: "G2", title: "도형분할과 넓이", v: "20261115a" },
-  g3: { name: "G3", title: "정육면체와 각·넓이", v: "20261115a" },
-  g4: { name: "G4", title: "도형의 복원과 측정", v: "20261115g" },
-  g5: { name: "G5", title: "도형의 넓이와 비", v: "20261115a" },
+  g1: { name: "G1", title: "돌리기와 뒤집기", v: "20261124a" },
+  g2: { name: "G2", title: "도형분할과 넓이", v: "20261124a" },
+  g3: { name: "G3", title: "정육면체와 각·넓이", v: "20261124a" },
+  g4: { name: "G4", title: "도형의 복원과 측정", v: "20261124a" },
+  g5: { name: "G5", title: "도형의 넓이와 비", v: "20261124a" },
 };
 const q = new URLSearchParams(location.search);
 const book = BOOKS[q.get("book")] ? q.get("book") : "g1";

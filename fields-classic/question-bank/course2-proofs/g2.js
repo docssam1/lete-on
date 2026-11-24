@@ -4,8 +4,25 @@
 // 「원 = 같은 거리의 점」「맞꼭지각은 같다」 같은 이미 아는 사실을 근거로 쌓아, 왜 반드시 그런지 따진다.
 // 「다른 …으로」를 눌러 다른 모양·다른 수에도 같은 논증이 통하는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 import { C, P, add, sub, mul, lerp, mid, dirDeg, polar, rot, angleAt, clamp, phase } from "../proof-board.js";
+import { dimArc } from "../length-dim.js?v=20261124a";
 
 const pick = (list, seed) => list[seed % list.length];
+// 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,
+// 원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」). 곡선·끊는 자리 계산은 length-dim.js dimArc.
+//   away: 도형 안쪽 점 — 그 반대쪽(바깥)으로 휜다 · side: +1/−1로 직접(a→b 진행 방향의 오른쪽이 +) · off: 곡선 꼭대기와 선분 사이
+const HAND = "'FC Hand','Nanum Pen Script',cursive";
+function dimLen(f, a, b, text, { away, side, off = 18, size = 16, color = C.ink, opacity = 1 } = {}) {
+  const l = Math.hypot(b.x - a.x, b.y - a.y);
+  if (opacity <= 0 || text == null || text === "" || l < 2) return f;
+  const nx = -(b.y - a.y) / l, ny = (b.x - a.x) / l, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  const sg = side ?? ((mx - away.x) * nx + (my - away.y) * ny >= 0 ? 1 : -1);
+  // 글자 상자가 선분에 걸리지 않을 만큼은 띄운다(세로 변의 긴 글자). 글자가 구간보다 길면 dimArc가 곡선 바깥에 둔다
+  const fs = size * 1.3, w = [...String(text)].reduce((t, ch) => t + (/[0-9.]/.test(ch) ? 0.56 : /[a-z]/i.test(ch) ? 0.58 : /\s/.test(ch) ? 0.3 : 0.95) * fs, 0);
+  const bend = w + 6 > l * 0.6 ? off : Math.max(off, Math.abs(nx) * w / 2 + Math.abs(ny) * fs * 0.55 + 4);
+  const svg = dimArc(a.x, a.y, b.x, b.y, sg * bend, text, { size: size * 1.3, font: HAND, ink: color, color, width: 1.5, dash: "5 4", gap: 3 })
+    .replace("<text ", `<text stroke="${C.paper}" stroke-width="5" paint-order="stroke" `);   // 다른 글자처럼 종이색 테두리
+  return f.raw(`<g class="pf-dim"${opacity < 1 ? ` opacity="${Math.round(opacity * 100) / 100}"` : ""}>${svg}</g>`);
+}
 const bottomNote = (f, text, o = {}) => f.note(P(320, 414), text, o);
 const unit = (v) => { const l = Math.hypot(v.x, v.y) || 1; return P(v.x / l, v.y / l); };
 const arcPts = (c, r, a0, a1, n = 48) => Array.from({ length: n + 1 }, (_, i) => polar(c, r, a0 + ((a1 - a0) * i) / n));
@@ -64,10 +81,10 @@ const stair = {
     f.label(P(x0 - 22, (g(0, H).y + g(0, s).y) / 2), `+ ${b}칸`, { anchor: "end", color: C.green, opacity: ar, size: 16 });
     // 길이 표시
     const d0 = s0 * (1 - s2);
-    f.label(P(320, y0 + 24), `${W}칸`, { opacity: d0, size: 16 });
-    f.label(P(x0 - 12, y0 - (H * c) / 2), `${H}칸`, { anchor: "end", opacity: d0, size: 16 });
-    f.label(P(x0 + (s * c) / 2, y0 + 28), `${s}칸`, { opacity: s5, size: 16, color: C.purple });
-    f.label(P(x0 - 20, y0 - (s * c) / 2), `${s}칸`, { anchor: "end", opacity: s5, size: 16, color: C.purple });
+    dimLen(f, g(0, 0), g(W, 0), `${W}칸`, { side: 1, opacity: d0 });
+    dimLen(f, g(0, H), g(0, 0), `${H}칸`, { side: 1, opacity: d0 });
+    dimLen(f, g(0, 0), g(s, 0), `${s}칸`, { side: 1, off: 30, opacity: s5, color: C.purple });
+    dimLen(f, g(0, s), g(0, 0), `${s}칸`, { side: 1, off: 30, opacity: s5, color: C.purple });
     [[ghost[0], ghost[1]], [ghost[1], ghost[2]], [ghost[2], ghost[3]], [ghost[3], ghost[0]]].forEach(([u, v]) => f.ticks(u, v, { n: 2, opacity: s5, color: C.purple }));
     if (s1 > 0) bottomNote(f, `${W} × ${H} = ${W * H} = ${s} × ${s}`, { opacity: s1 * (1 - s2), size: 19 });
     if (s5 > 0) bottomNote(f, `가로 ${W} − ${a} = ${s}   ·   세로 ${H} + ${b} = ${s}`, { opacity: s5, size: 19 });
@@ -258,15 +275,16 @@ const fib = {
       const op = s2 * (1 - s3 * 0.7);
       const [o1, o2] = E(ps), [g1, g2] = E(rest);
       f.seg(o1, o2, { stroke: C.orange, w: 7, opacity: op }).seg(g1, g2, { stroke: C.green, w: 7, opacity: op });
-      f.label(add(mid(o1, o2), mul(into, 20)), `${p.b}`, { color: "#b35f00", size: 18, opacity: op });
-      f.label(add(mid(g1, g2), mul(into, 20)), `${p.c}`, { color: C.green, size: 18, opacity: op });
+      const inward = add(mid(...E(full)), mul(into, -40));   // 붙인 정사각형 쪽으로 휘게(그 반대쪽 점)
+      dimLen(f, o1, o2, `${p.b}`, { away: inward, color: "#b35f00", size: 18, opacity: op });
+      dimLen(f, g1, g2, `${p.c}`, { away: inward, color: C.green, size: 18, opacity: op });
     }
     // 큰 직사각형
     if (s3 > 0) {
-      const { r } = p, lt = T(r.x0, r.y1), rbm = T(r.x1, r.y0);
+      const { r } = p, lb = T(r.x0, r.y0), rbm = T(r.x1, r.y0), rt = T(r.x1, r.y1), ctr = T((r.x0 + r.x1) / 2, (r.y0 + r.y1) / 2);
       f.poly([T(r.x0, r.y0), T(r.x1, r.y0), T(r.x1, r.y1), T(r.x0, r.y1)], { fill: "none", stroke: C.purple, w: 4, opacity: s3 });
-      f.label(P((lt.x + rbm.x) / 2, rbm.y + 18), `${p.w}`, { color: C.purple, size: 18, opacity: s3 });
-      f.label(P(rbm.x + 12, (lt.y + rbm.y) / 2), `${p.h}`, { color: C.purple, size: 18, opacity: s3, anchor: "start" });
+      dimLen(f, lb, rbm, `${p.w}`, { away: ctr, off: 20, color: C.purple, size: 18, opacity: s3 });
+      dimLen(f, rbm, rt, `${p.h}`, { away: ctr, off: 20, color: C.purple, size: 18, opacity: s3 });
     }
     if (s4 > 0) bottomNote(f, `둘레 = (${p.a} + ${p.a + p.b}) × 2 = ${2 * (2 * p.a + p.b)}`, { opacity: s4, color: C.purple });
   },
@@ -317,8 +335,8 @@ const ratioRects = {
       f.label(P(X(S / 2), by2 + 23), `짧은 변 = ${m}칸`, { size: 15, color: C.blue, opacity: s2, anchor: "start" });
     }
     if (s4 > 0) {
-      f.label(P(X(L / 2), Y(0) - 16), `${L}cm`, { size: 16, color: "#b35f00", opacity: s4 });
-      f.label(P(x0 - 10, Y(S / 2)), `${S}cm`, { size: 16, color: C.blue, opacity: s4, anchor: "end" });
+      dimLen(f, P(X(0), Y(0)), P(X(L), Y(0)), `${L}cm`, { side: -1, off: 16, color: "#b35f00", opacity: s4 });
+      dimLen(f, P(X(0), Y(S)), P(X(0), Y(0)), `${S}cm`, { side: -1, off: 16, color: C.blue, opacity: s4 });
     }
     if (s3 > 0) f.note(P(320, 382), `둘레 ${p.Pm} ÷ 2 = 긴 변 + 짧은 변 = ${L + S}cm`, { opacity: s3, size: 18 });
     if (s4 > 0) f.note(P(320, 414), `한 칸 = ${L + S} ÷ ${m + n} = ${u}cm`, { opacity: s4, size: 19, color: C.green });
@@ -377,12 +395,15 @@ const sticks = {
     const lT = polar(lS, a * g, lA), rT = polar(rS, b * g, rA);
     f.seg(lS, lT, { stroke: C.green, w: 7 }).seg(rS, rT, { stroke: C.blue, w: 7 });
     f.dot(lT, { r: 5, fill: C.green }).dot(rT, { r: 5, fill: C.blue });
-    f.label(polar(mid(lS, lT), 18, lA + 90), `${a}cm`, { color: C.green, size: 16 });
-    f.label(polar(mid(rS, rT), 18, rA - 90), `${b}cm`, { color: C.blue, size: 16 });
+    dimLen(f, lS, lT, `${a}cm`, { side: -1, off: 18, color: C.green });   // 막대가 돌아도 같은 쪽(진행 방향 왼쪽)
+    // 눕힌 동안은 오른쪽 막대의 호를 밑변 아래로(위에는 왼쪽 막대 호·겹침 호가 있다) — 장면 진행에 따라 부드럽게 넘어간다
+    const flat = k < 2 ? 0 : k < 3 ? s2 : 1 - s3;
+    dimLen(f, rS, rT, `${b}cm`, { side: 1 - 2 * flat, off: 18, color: C.blue });
     // 눕혔을 때
     const io = s2 * (1 - s3);
     const lt = P(Lp.x + a * g, Lp.y), rt = P(Rp.x - b * g, Rp.y);
     if (io > 0) {
+      // 겹침·모자람은 변이 아니라 두 길이의 차이라 막대 위 글자 그대로(같은 쪽 두 호가 겹친 구간에서 서로 가로지르지 않게)
       if (kind === "short") { f.seg(lt, rt, { stroke: C.red, w: 5, opacity: io }); f.label(P((lt.x + rt.x) / 2, Lp.y - 52), `모자람 ${c - a - b}cm`, { color: C.red, opacity: io, size: 16 }); }
       else if (kind === "ok") { f.seg(rt, lt, { stroke: C.purple, w: 5, opacity: io }); f.label(P((lt.x + rt.x) / 2, Lp.y - 52), `겹침 ${a + b - c}cm`, { color: C.purple, opacity: io, size: 16 }); }
       else { f.dot(lt, { r: 7, fill: C.red, opacity: io }); f.label(P(lt.x, Lp.y - 52), "딱 맞닿음", { color: C.red, opacity: io, size: 16 }); }
@@ -393,7 +414,7 @@ const sticks = {
     }
     if (kind === "ok") f.label(add(Ap, P(0, -22)), "ㄷ", { opacity: s3 });
     f.label(add(Lp, P(-16, 18)), "ㄱ", { opacity: s0 }).label(add(Rp, P(16, 18)), "ㄴ", { opacity: s0 });
-    f.label(P(320, Lp.y + 28), `${c}cm`, { color: "#b35f00", size: 16, opacity: s0 });
+    dimLen(f, Lp, Rp, `${c}cm`, { side: 1, off: 42, color: "#b35f00", opacity: s0 });
     const cmp = kind === "ok" ? `${a} + ${b} = ${a + b} > ${c}` : kind === "flat" ? `${a} + ${b} = ${a + b}, 밑변 ${c}와 같다` : `${a} + ${b} = ${a + b} < ${c}`;
     bottomNote(f, cmp, { opacity: s2 * (1 - phase(k, 4, 0, 0.35)), color: kind === "ok" ? C.green : C.red });
     bottomNote(f, "가장 긴 변 < 나머지 두 변의 합", { opacity: phase(k, 4, 0.35, 1), color: C.purple });
@@ -424,7 +445,7 @@ const hexCut = {
     const A1 = lerp(A, B, x / L), A2 = lerp(A, Cc, x / L), B1 = lerp(B, A, y / L), B2 = lerp(B, Cc, y / L), C1 = lerp(Cc, A, z / L), C2 = lerp(Cc, B, z / L);
     if (k < 1) {
       f.poly([A, B, Cc], { draw: s0, fill: C.paper });
-      [[A, B], [B, Cc], [Cc, A]].forEach(([u, v]) => f.label(add(mid(u, v), mul(unit(sub(mid(u, v), G)), 22)), `${L}cm`, { size: 16, opacity: s0 }));
+      [[A, B], [B, Cc], [Cc, A]].forEach(([u, v]) => dimLen(f, u, v, `${L}cm`, { away: G, off: 20, opacity: s0 }));
     } else {
       f.poly([A1, B1, B2, C2, C1, A2], { fill: C.paper, stroke: "none" });
       f.seg(A1, B1).seg(B2, C2).seg(C1, A2);
@@ -441,7 +462,9 @@ const hexCut = {
         f.seg(P2, Vr, { stroke: ta >= 1 ? C.green : hl, w: ta > 0 ? 3.4 : 2.4 });
         const tri = [V, P1, P2].map((q) => add(q, off));
         f.ticks(tri[0], tri[1], { opacity: cutT * (1 - tb), color: C.orange, len: 7 }).ticks(tri[0], tri[2], { opacity: cutT * (1 - tb), color: C.orange, len: 7 }).ticks(tri[1], tri[2], { opacity: cutT * (1 - tb), color: C.orange, len: 7 });
-        f.label(add(add(V, off), mul(unit(sub(V, G)), 22)), tb > 0 ? `− ${len}` : `${len}`, { color: tb > 0 ? C.red : "#b35f00", size: 16, opacity: Math.max(cutT * (1 - tb), tb) * (1 - s4) });
+        // 잘라 낼 조각의 한 변(바깥 변에 호) → 떼어 내면 「− 길이」로 바뀐다
+        dimLen(f, tri[0], tri[1], `${len}`, { away: G, off: 24, color: "#b35f00", opacity: cutT * (1 - tb) * (1 - s4) });
+        f.label(add(add(V, off), mul(unit(sub(V, G)), 22)), `− ${len}`, { color: C.red, size: 16, opacity: tb * (1 - s4) });
       };
       corner(A, A1, A2, x, s1, phase(k, 2, 0, 0.55), phase(k, 2, 0.6, 1));
       const c3 = phase(k, 3, 0, 0.3), a3 = phase(k, 3, 0.3, 0.7), b3 = phase(k, 3, 0.72, 1);
@@ -449,8 +472,8 @@ const hexCut = {
       corner(Cc, C1, C2, z, c3, a3, b3);
       if (s4 > 0) {
         f.poly([A1, B1, B2, C2, C1, A2], { fill: C.greenSoft, stroke: "none", opacity: s4 * 0.6 });
-        [[A1, B1, L - x - y], [B2, C2, L - y - z], [C1, A2, L - z - x]].forEach(([u, v, t]) => f.label(add(mid(u, v), mul(unit(sub(mid(u, v), G)), 20)), String(t), { size: 16, opacity: s4 }));
-        [[A1, A2, x], [B1, B2, y], [C1, C2, z]].forEach(([u, v, t]) => f.label(add(mid(u, v), mul(unit(sub(G, mid(u, v))), 18)), String(t), { size: 16, color: C.green, opacity: s4 }));
+        [[A1, B1, L - x - y], [B2, C2, L - y - z], [C1, A2, L - z - x]].forEach(([u, v, t]) => dimLen(f, u, v, String(t), { away: G, off: 18, opacity: s4 }));
+        [[A1, A2, x], [B1, B2, y], [C1, C2, z]].forEach(([u, v, t]) => dimLen(f, u, v, String(t), { away: G, off: 16, color: C.green, opacity: s4 }));
       }
     }
     // 둘레 장부

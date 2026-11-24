@@ -3,8 +3,25 @@
 // 「다른 …으로」를 눌러 모양·수가 달라도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 // 정육면체·전개도는 이 파일 안의 작은 3D 도구(돌리기·투영·앞뒤 순서)로 그린다 — 진행값 k의 순수 함수 그대로.
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, ease, phase } from "../proof-board.js";
+import { dimArc } from "../length-dim.js?v=20261124a";
 
 const pick = (list, seed) => list[seed % list.length];
+// 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,
+// 원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」). 곡선·끊는 자리 계산은 length-dim.js dimArc.
+//   away: 도형 안쪽 점 — 그 반대쪽(바깥)으로 휜다 · side: +1/−1로 직접(a→b 진행 방향의 오른쪽이 +) · off: 곡선 꼭대기와 선분 사이
+const HAND = "'FC Hand','Nanum Pen Script',cursive";
+function dimLen(f, a, b, text, { away, side, off = 18, size = 16, color = C.ink, opacity = 1 } = {}) {
+  const l = Math.hypot(b.x - a.x, b.y - a.y);
+  if (opacity <= 0 || text == null || text === "" || l < 2) return f;
+  const nx = -(b.y - a.y) / l, ny = (b.x - a.x) / l, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  const sg = side ?? ((mx - away.x) * nx + (my - away.y) * ny >= 0 ? 1 : -1);
+  // 글자 상자가 선분에 걸리지 않을 만큼은 띄운다(세로 변의 긴 글자). 글자가 구간보다 길면 dimArc가 곡선 바깥에 둔다
+  const fs = size * 1.3, w = [...String(text)].reduce((t, ch) => t + (/[0-9.]/.test(ch) ? 0.56 : /[a-z]/i.test(ch) ? 0.58 : /\s/.test(ch) ? 0.3 : 0.95) * fs, 0);
+  const bend = w + 6 > l * 0.6 ? off : Math.max(off, Math.abs(nx) * w / 2 + Math.abs(ny) * fs * 0.55 + 4);
+  const svg = dimArc(a.x, a.y, b.x, b.y, sg * bend, text, { size: size * 1.3, font: HAND, ink: color, color, width: 1.5, dash: "5 4", gap: 3 })
+    .replace("<text ", `<text stroke="${C.paper}" stroke-width="5" paint-order="stroke" `);   // 다른 글자처럼 종이색 테두리
+  return f.raw(`<g class="pf-dim"${opacity < 1 ? ` opacity="${Math.round(opacity * 100) / 100}"` : ""}>${svg}</g>`);
+}
 const r0 = (v) => Math.round(v);
 const nf = (v) => (Number.isInteger(v) ? String(v) : String(Math.round(v * 10) / 10));
 const bottomNote = (f, text, o = {}) => f.note(P(320, 412), text, o);
@@ -517,13 +534,15 @@ const parallelogram = {
     // 높이
     f.seg(A, H, { stroke: C.purple, w: 2.6, dash: "7 6", grow: s1, opacity: s1 });
     f.right(H, A, Cc, { opacity: s1, color: C.purple });
-    f.label(add(mid(A, H), P(18, 0)), `${nf(p.h)}cm`, { size: 16, color: C.purple, opacity: s1 * (1 - s4), anchor: "start" });
+    dimLen(f, A, H, `${nf(p.h)}cm`, { side: -1, off: 18, color: C.purple, opacity: s1 * (1 - s4) });   // 높이(오른쪽으로 휜 호)
     // 밑변 길이
-    f.label(add(mid(H, Cc), P(0, 26)), `밑변 ${nf(p.b)}cm`, { size: 16, opacity: clamp(s0 * 2 - 1) * (1 - phase(k, 4, 0, 0.3)) });
+    // 조각을 밀면 밑변도 ㅁ에서 시작하는 직사각형 아랫변으로 함께 옮겨 간다(길이는 그대로). 아래의 ㅁ·ㄷ 이름보다 더 아래로
+    const slide = P(p.s * u * s3, 0);
+    dimLen(f, add(B, slide), add(Cc, slide), `밑변 ${nf(p.b)}cm`, { side: 1, off: 38, opacity: clamp(s0 * 2 - 1) * (1 - phase(k, 4, 0, 0.3)) });
     if (s4 > 0) {
       const R1 = H, R2 = add(H, P(p.b * u, 0));
-      f.label(add(mid(R1, R2), P(0, 36)), `가로 ${nf(p.b)}cm`, { size: 16, opacity: phase(k, 4, 0.3, 1) });
-      f.label(add(P(R2.x, (R2.y + A.y) / 2), P(14, 0)), `세로 ${nf(p.h)}cm`, { size: 16, opacity: s4, anchor: "start" });
+      dimLen(f, R1, R2, `가로 ${nf(p.b)}cm`, { side: 1, off: 38, opacity: phase(k, 4, 0.3, 1) });
+      dimLen(f, R2, P(R2.x, A.y), `세로 ${nf(p.h)}cm`, { side: 1, off: 22, opacity: s4 });
     }
     // 같은 변 표시(장면 4)
     f.ticks(piece[0], piece[1], { n: 2, opacity: s3 * (1 - s4), color: C.orange }).ticks(D, Cc, { n: 2, opacity: s3 * (1 - s4), color: C.orange });
@@ -575,8 +594,10 @@ const triArea = {
     const foot = at(ax, 0);
     f.seg(A, foot, { stroke: C.purple, w: 2.4, dash: "7 6", opacity: clamp(s0 * 2 - 1) });
     f.right(foot, A, ax <= b - 0.6 ? Cc : B, { color: C.purple, opacity: clamp(s0 * 2 - 1) });
-    f.label(add(mid(A, foot), P(12, 0)), `${nf(h)}cm`, { size: 16, color: C.purple, anchor: "start", opacity: clamp(s0 * 2 - 1) });
-    f.label(add(mid(B, Cc), P(0, 22)), `${nf(b)}cm`, { size: 16, opacity: clamp(s0 * 2 - 1) });
+    // 높이의 호는 가운데 높이에서 변까지 자리가 더 넓은 쪽으로(꼭짓점이 움직이면 부드럽게 넘어간다)
+    const roomL = ax > 0 ? ax / 2 : 99, roomR = ax < b ? (b - ax) / 2 : 99;
+    dimLen(f, A, foot, `${nf(h)}cm`, { side: -clamp((roomR - roomL) * 2, -1, 1), off: 14, color: C.purple, opacity: clamp(s0 * 2 - 1) });
+    dimLen(f, B, Cc, `${nf(b)}cm`, { side: 1, off: 20, opacity: clamp(s0 * 2 - 1) });
     f.label(add(A, P(0, -18)), "ㄱ").label(add(B, P(-14, 12)), "ㄴ").label(add(Cc, P(12, 14)), "ㄷ");
     if (s1 > 0 && s1 < 1) f.dot(M, { r: 4.5, fill: C.orange });
     bottomNote(f, `평행사변형 ${nf(b)} × ${nf(h)} = ${nf(b * h)} → 삼각형 ${nf(b * h)} ÷ 2 = ${nf(p.area)}㎠`, { opacity: swap(k, 2, 3), size: 19 });
@@ -630,11 +651,8 @@ const perpDiag = {
     f.seg(U, D, { stroke: C.ink, w: 2, dash: "6 5", opacity: clamp(s0 * 2 - 1) });
     f.right(O, R, U, { opacity: clamp(s0 * 2 - 1) * (1 - s2) });
     // 길이 표시
-    const by = K.dl.y + 46, rx = K.dr.x + 60;
-    f.seg(P(K.dl.x, by), P(K.dr.x, by), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(K.dl.x, by - 6), P(K.dl.x, by + 6), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(K.dr.x, by - 6), P(K.dr.x, by + 6), { stroke: C.orange, w: 1.6, opacity: s1 });
-    f.seg(P(rx, K.ur.y), P(rx, K.dr.y), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(rx - 6, K.ur.y), P(rx + 6, K.ur.y), { stroke: C.orange, w: 1.6, opacity: s1 }).seg(P(rx - 6, K.dr.y), P(rx + 6, K.dr.y), { stroke: C.orange, w: 1.6, opacity: s1 });
-    f.label(P((K.dl.x + K.dr.x) / 2, by), `${p.w}cm`, { size: 16, opacity: s1, color: "#b35f00" });
-    f.label(P(rx, (K.ur.y + K.dr.y) / 2), `${p.hh}cm`, { size: 16, opacity: s1, color: "#b35f00" });
+    dimLen(f, K.dl, K.dr, `${p.w}cm`, { away: O, off: 24, opacity: s1, color: "#b35f00" });
+    dimLen(f, K.ur, K.dr, `${p.hh}cm`, { away: O, off: 24, opacity: s1, color: "#b35f00" });
     f.label(add(U, P(0, -18)), "ㄱ").label(add(L, P(-16, 0)), "ㄴ").label(add(D, P(0, 18)), "ㄷ").label(add(R, P(16, 0)), "ㄹ");
     const x = 628;
     if (s4 > 0) {

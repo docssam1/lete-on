@@ -3,7 +3,7 @@
 // 쪽 꼴은 차시 교재의 다른 쪽(session-book-sheet.js)과 같다 — tb-session-page 안 gold-print-source-item 칸이라 쪽 채우기(compactGoldenBellPrint)가 그대로 흘린다.
 import { mathText } from "./math-markup.js?v=20261122w";
 import { digitalText } from "./digital-inline.js?v=20261123b";
-import { packsFor } from "./course2-concepts/packs.js?v=20261123c";
+import { packsFor } from "./course2-concepts/packs.js?v=20261124b";
 const M = (html) => digitalText(mathText(String(html ?? "")));   // [[d:25]] = 디지털 숫자 그림(digital-inline.js)
 const esc = (s) => String(s ?? "").replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const strip = (html) => String(html ?? "").replace(/<[^>]+>/g, "");

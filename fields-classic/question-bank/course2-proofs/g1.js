@@ -2,8 +2,25 @@
 // 본책은 「잘라서 맞춰 보니 일직선」으로 확인한다. 여기서는 한 걸음 더: 접는 까닭·같은 길이의 까닭을 근거로 쌓고,
 // 「다른 모양으로」를 눌러 어떤 모양이어도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, ease, phase } from "../proof-board.js";
+import { dimArc } from "../length-dim.js?v=20261124a";
 
 const pick = (list, seed) => list[seed % list.length];
+// 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,
+// 원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」). 곡선·끊는 자리 계산은 length-dim.js dimArc.
+//   away: 도형 안쪽 점 — 그 반대쪽(바깥)으로 휜다 · side: +1/−1로 직접(a→b 진행 방향의 오른쪽이 +) · off: 곡선 꼭대기와 선분 사이
+const HAND = "'FC Hand','Nanum Pen Script',cursive";
+function dimLen(f, a, b, text, { away, side, off = 18, size = 16, color = C.ink, opacity = 1 } = {}) {
+  const l = Math.hypot(b.x - a.x, b.y - a.y);
+  if (opacity <= 0 || text == null || text === "" || l < 2) return f;
+  const nx = -(b.y - a.y) / l, ny = (b.x - a.x) / l, mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+  const sg = side ?? ((mx - away.x) * nx + (my - away.y) * ny >= 0 ? 1 : -1);
+  // 글자 상자가 선분에 걸리지 않을 만큼은 띄운다(세로 변의 긴 글자). 글자가 구간보다 길면 dimArc가 곡선 바깥에 둔다
+  const fs = size * 1.3, w = [...String(text)].reduce((t, ch) => t + (/[0-9.]/.test(ch) ? 0.56 : /[a-z]/i.test(ch) ? 0.58 : /\s/.test(ch) ? 0.3 : 0.95) * fs, 0);
+  const bend = w + 6 > l * 0.6 ? off : Math.max(off, Math.abs(nx) * w / 2 + Math.abs(ny) * fs * 0.55 + 4);
+  const svg = dimArc(a.x, a.y, b.x, b.y, sg * bend, text, { size: size * 1.3, font: HAND, ink: color, color, width: 1.5, dash: "5 4", gap: 3 })
+    .replace("<text ", `<text stroke="${C.paper}" stroke-width="5" paint-order="stroke" `);   // 다른 글자처럼 종이색 테두리
+  return f.raw(`<g class="pf-dim"${opacity < 1 ? ` opacity="${Math.round(opacity * 100) / 100}"` : ""}>${svg}</g>`);
+}
 const r0 = (v) => Math.round(v);
 const bottomNote = (f, text, o = {}) => f.note(P(320, 412), text, o);
 
@@ -300,7 +317,7 @@ const midSquare = {
     f.poly([T, Lm, Bm, Rm], { fill: C.purpleSoft, stroke: C.purple, w: 2.4, opacity: clamp(s0 * 2 - 1) });
     f.dot(O, { opacity: s0 });
     f.seg(O, polar(O, Rr, 205), { stroke: C.soft, w: 2, dash: "5 5", opacity: s0 * (1 - s2) });
-    f.label(polar(O, Rr * 0.55, 212), `${p.r}cm`, { size: 16, color: C.ink, opacity: s0 * (1 - s2) });
+    dimLen(f, O, polar(O, Rr, 205), `${p.r}cm`, { side: -1, off: 18, color: C.ink, opacity: s0 * (1 - s2) });
     // 4등분과 한 조각
     f.seg(T, Bm, { stroke: C.soft, w: 1.6, dash: "5 5", grow: s1, opacity: s1 * 0.8 });
     f.seg(Lm, Rm, { stroke: C.soft, w: 1.6, dash: "5 5", grow: s1, opacity: s1 * 0.8 });
@@ -312,7 +329,8 @@ const midSquare = {
     let turn = ((want - ang) % 360 + 540) % 360 - 180;
     const a1 = rot(T, Q, turn * s3), a2 = rot(Rm, Q, turn * s3);
     if (s3 > 0) f.seg(a1, a2, { stroke: C.purple, w: 4, dash: s3 > 0.98 ? "10 7" : null, opacity: 0.95 });
-    f.label(add(polar(Q, 0, 0), P(18, 22)), s3 > 0.9 ? `${p.r}cm` : "", { size: 17, color: C.red });
+    // 길이는 색칠한 도형의 한 변(대각선이 서로 가로지르는 ㅇㄱ·ㄴㄹ 둘레를 피해, 아래 오른쪽 변 바깥에 호)
+    dimLen(f, Rm, Bm, `${p.r}cm`, { away: O, off: 18, color: C.red, opacity: clamp((s3 - 0.9) * 10) });
     // 네 변 같음
     [[T, Lm], [Lm, Bm], [Bm, Rm], [Rm, T]].forEach(([a, b]) => f.ticks(a, b, { opacity: s4, color: C.purple }));
     f.label(add(O, P(-14, 14)), "ㅇ").label(add(V[0], P(14, -12)), "ㄱ", { opacity: s1 });
