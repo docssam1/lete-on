@@ -941,3 +941,16 @@
 .bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question{position:relative}
 .bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-qhead{padding-right:22mm}
 .bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question>.ed-key{position:absolute;right:0;top:0;margin:0;padding-left:2mm}
+
+/* Related ecology checks share pages; photos and drawing spaces keep their existing pages. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question{flex:0 0 auto}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-questions{justify-content:space-between}
+/* A single symbol belongs beside each matching statement, with its own answer line. */
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"]){display:grid;grid-template-columns:minmax(0,1fr) 25mm;column-gap:2mm;align-content:start}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>:not(.ed-part):not(.ed-part-response){grid-column:1/-1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part{grid-column:1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part-response{grid-column:2;align-self:center}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"]){display:flex}
+ .bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part-response{align-self:stretch}
+}

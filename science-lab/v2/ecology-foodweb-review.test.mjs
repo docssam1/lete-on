@@ -1,3 +1,4 @@
+import{withEcologyPageDensity}from'./ecology-page-density.js';
 import{withEcologyMixedWorkbook}from'./ecology-mixed-response.js';
 import{beforeEcologyMixed}from'./tests/ecology-mixed-stage.mjs';
 import test from 'node:test';
@@ -71,7 +72,7 @@ test('eleven concrete ecology tasks preserve the other sixty-nine questions and 
 });
 
 test('the current web book, teacher solutions, quick key and bank share the new food-web tasks without redundant drawing lines',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyMixedWorkbook(next));
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyPageDensity(withEcologyMixedWorkbook(next)));
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),answers=paper.workbookPaper({mode:'answers'}),quick=paper.workbookPaper({mode:'quick'});
  for(const q of next.questions.filter(q=>nos.includes(q.no))){
   const start=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('<li class="ed-question"',start),card=student.slice(start,end<0?undefined:end);assert(start>0);assert(!card.includes('ed-key'));
@@ -81,5 +82,5 @@ test('the current web book, teacher solutions, quick key and bank share the new 
  const link=bank.find(q=>q.contentVersion===version),book=next.questions[35];assert.equal(book.prompt,link.prompt);assert.equal(book.choices[book.key],link.choices[link.answerContract.answer]);assert.equal(book.sourceExplanation,link.explanation);
  const cls=await revisedClassroom(unit,await import('../data/book/'+unit+'.book.js'));assert.equal(cls.classroomItems.filter(q=>q.contentVersion===version).length,0);assert.deepEqual(classroomQuestions(cls,bank).find(q=>q.id===link.id),link);
  assert(current.bankPaper({...current,mode:'student'}).includes(link.prompt));assert(current.bankPaper({...current,mode:'teacher'}).includes(link.explanation));
- for(const[mode,count]of Object.entries({student:45,teacher:73,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
+ for(const[mode,count]of Object.entries({student:43,teacher:71,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
 });

@@ -1,3 +1,4 @@
+import{withEcologyPageDensity}from'./ecology-page-density.js';
 import{withEcologyMixedWorkbook}from'./ecology-mixed-response.js';
 import {beforeEcologyFoodweb} from './tests/ecology-writing-stage.mjs';
 import {withEcologyFoodwebWorkbook} from './ecology-foodweb-review.js';
@@ -75,7 +76,7 @@ test('fourteen tasks replace repetitive record audits while preserving standards
  for(const row of revised.quickPages.flatMap(p=>p.blocks.flatMap(b=>b.rows||[]))){const q=revised.questions[Number(row[0])-1];if(!changedNos.includes(q.no))continue;assert(row[1].endsWith(q.topic));assert.equal(row[2],['written','draw'].includes(q.form)?'교사 확인(해설 쪽)':q.form==='choice'?'①②③④⑤'[q.key]:q.answer);}
  assert.equal(withEcologyConservationWorkbook(revised),revised);
  for(const patch of [{unit:'other'},{future:true},{pages:priorBook.pages.slice(1)},{figures:{...priorBook.figures,new:'future'}},{quickPages:[]},{teacherPages:[]}]){const input={...priorBook,...patch};assert.equal(withEcologyConservationWorkbook(input),input);}
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyMixedWorkbook(withEcologyFoodwebWorkbook(revised)));
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyPageDensity(withEcologyMixedWorkbook(withEcologyFoodwebWorkbook(revised))));
 });
 
 test('current web, classroom, print solutions and quick answers share the conservation revision without revealing student answers',async()=>{
@@ -96,5 +97,5 @@ test('current web, classroom, print solutions and quick answers share the conser
  }
  const studentBank=current.bankPaper({...current,mode:'student'}),teacher=current.bankPaper({...current,mode:'teacher'});
  for(const q of bank.filter(q=>q.contentVersion===version)){assert(studentBank.includes(q.prompt));assert(teacher.includes(q.explanation));}
- assert(!student.includes('ecoPracticeCards'));for(const[mode,count]of Object.entries({student:45,teacher:73,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
+ assert(!student.includes('ecoPracticeCards'));for(const[mode,count]of Object.entries({student:43,teacher:71,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
 });
