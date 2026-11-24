@@ -3,3 +3,12 @@
 .solution-drawing{height:58mm;border:1px solid #8a9bb5;margin:3mm 0}
 
 @media print{@page solution-bank{@bottom-left{content:"용해와 용액 · 지필드";font:8pt Pretendard,sans-serif;color:#4c596c}@bottom-right{content:counter(page);font:9pt Pretendard,sans-serif;color:#2456c4}}}
+
+.solution-paper-blank{display:inline-block;min-width:14mm;border-bottom:1px solid #526784;height:1em;vertical-align:baseline}
+
+/* Repeat physical paper padding even when another loaded workbook sets zero page margins. */
+@media print{
+ @page solution-bank{size:A4;margin:0}
+ .solution-bank-paper .solution-paper{box-sizing:border-box;width:100%;padding:17mm;box-decoration-break:clone;-webkit-box-decoration-break:clone;font-family:"Noto Serif KR",serif}
+}
+@media print{.solution-bank-paper{--gf-action:#191511;--gf-ink:#191511;--gf-muted:#191511;--gf-line:#191511}}

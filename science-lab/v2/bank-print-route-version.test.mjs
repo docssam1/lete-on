@@ -21,7 +21,7 @@ const reviewed=[
 test('eleven bank routes explicitly select the reviewed renderer and preparation handler together',async()=>{
  const loaders=routes();
  for(const [unit,file,name]of reviewed){
-  const data=await loaders[unit](),paper=await import(`./${file}-bank-paper.js?v=${unit==='c22-s61-u01'?'20261108-bank-print-ready&acidContext=20261116-acid-workbook-context':unit==='c22-s61-u02'?'20261115-motion-electricity-reference':unit==='c22-s51-u01'?'20261115-geology-source':unit==='c22-s42-u03'?'20261108-bank-print-ready&photo=20261115-gas-photo-context':'20261108-bank-print-ready'}`);
+  const data=await loaders[unit](),paper=await import(`./${file}-bank-paper.js?v=${unit==='c22-s61-u01'?'20261108-bank-print-ready&acidContext=20261116-acid-workbook-context':unit==='c22-s61-u02'?'20261115-motion-electricity-reference':unit==='c22-s51-u01'?'20261115-geology-source':unit==='c22-s42-u03'?'20261108-bank-print-ready&photo=20261115-gas-photo-context':'20261108-bank-print-ready'}${['c22-s51-u01','c22-s51-u02','c22-s51-u03'].includes(unit)?'&inlineBlanks=20261124-bank-inline-blanks&serifReady=20261124-bank-serif-font':''}`);
   const renderer=name[0].toLowerCase()+name.slice(1)+'BankPaperHtml';
   assert.equal(data.bankPaper.basePaper||data.bankPaper,paper[renderer],unit+' current renderer');
   const wire=unit==='c22-s51-u01'?(await import('./source-bank-paper.js?v=20261115-geology-source')).wireSourceBankPrint:paper['wire'+name+'BankPaper'];

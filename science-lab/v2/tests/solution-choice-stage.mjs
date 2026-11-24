@@ -1,0 +1,2 @@
+import{questionAtVersion}from'../question-revision.js';import{SOLUTION_CHOICE_VERSION}from'../solution-mixed-response.js';
+const cache=new WeakMap();export function beforeSolutionChoice(q){if(q?.contentVersion!==SOLUTION_CHOICE_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
