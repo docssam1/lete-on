@@ -8,6 +8,12 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 잠금이던 mission-6이 원문 생성기(orig51U4E1Mission6)로 공개되었다.
+// 브라우저와 같은 상태를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1");
@@ -40,12 +46,13 @@ function verifyCatalogContract() {
     "5-1-u4-e1-mission-6"
   ];
   if (!unit) fail("5-1 U4 약분과 통분 단원을 찾지 못했습니다.");
-  if (e1.length !== 11 || publicTypes.length !== 10 || lockedTypes.length !== 1) {
-    fail(`U4 E1 구성은 11항목(공개 10/잠금 1)이어야 합니다: ${e1.length}/${publicTypes.length}/${lockedTypes.length}`);
+  if (e1.length !== 11 || publicTypes.length !== 11 || lockedTypes.length !== 0) {
+    fail(`U4 E1 구성은 11항목(공개 11/잠금 0)이어야 합니다: ${e1.length}/${publicTypes.length}/${lockedTypes.length}`);
   }
   if (expectedIds.some((id, index) => e1[index]?.sourceItemId !== id)) fail("U4 E1 원문 항목 순서가 다릅니다.");
   for (const type of publicTypes) {
-    if (api.generatorKey(type) !== "equalFractionE1") fail(`${type.sourceItemId}: 공개 유형의 생성기 연결이 다릅니다.`);
+    const expectedKey = type.sourceItemId === "5-1-u4-e1-mission-6" ? "orig51U4E1Mission6" : "equalFractionE1";
+    if (api.generatorKey(type) !== expectedKey) fail(`${type.sourceItemId}: 공개 유형의 생성기 연결이 다릅니다.`);
   }
   for (const type of lockedTypes) {
     if (api.generatorKey(type)) fail(`${type.sourceItemId}: 잠금 유형에 생성기가 연결되어 있습니다.`);
@@ -253,9 +260,9 @@ async function inspectPublicType(browser, type, viewport, viewportLabel, difficu
     }
   }
   await browser.close();
-  if (screenshots !== 122 || pdfs !== 60) fail(`감사 산출물 수가 다릅니다: 화면 ${screenshots}/122, A4 ${pdfs}/60`);
+  if (screenshots !== 134 || pdfs !== 66) fail(`감사 산출물 수가 다릅니다: 화면 ${screenshots}/134, A4 ${pdfs}/66`);
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 크기가 같은 분수 U4 E1 브라우저·A4 감사 통과: 공개 10/잠금 1 · 난이도 3 · PC·모바일 60회 · 화면 ${screenshots}장 · A4 ${pdfs}파일 · ${outputDir}`);
+  console.log(`5-1 크기가 같은 분수 U4 E1 브라우저·A4 감사 통과: 공개 11/잠금 0 · 난이도 3 · PC·모바일 66회 · 화면 ${screenshots}장 · A4 ${pdfs}파일 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 크기가 같은 분수 U4 E1 브라우저·A4 감사 실패: ${error.stack || error}`);
   process.exit(1);

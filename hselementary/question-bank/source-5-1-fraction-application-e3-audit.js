@@ -16,6 +16,7 @@ const inventory = JSON.parse(fs.readFileSync(inventoryPath, "utf8"));
 const failures = [];
 const failureSummary = new Map();
 let activeContext = "";
+let originalEasySeen = false;
 
 const fail = message => {
   const formatted = activeContext ? `${activeContext}: ${message}` : message;
@@ -339,8 +340,9 @@ for (let index = 0; index < expected.length; index += 1) {
         check(!noElementaryOutOfScope.test(visible), "풀이에 초등 교육과정 밖 표현이 있습니다.");
         if (expectedKind === "cube-equal-face-sums") {
           check(generated.prompt.includes("정육면체") && generated.prompt.includes("각 면") && generated.prompt.includes("(가)") && generated.prompt.includes("(나)") && generated.prompt.includes("(다)"), "정육면체 조건 또는 세 빈칸 표시가 없습니다.");
-          if (difficulty === -1 && seed === 1) {
-            check(key(recomputed.common) === "83/12", `원문 기본 공통합이 83/12가 아닙니다: ${key(recomputed.common)}`);
+          // 2026-11-24: 쉬움도 3문항이 나오도록 원문 수치(공통합 83/12)와 같은 구조의 변형을 함께 낸다. 원문 수치가 쉬움에서 반드시 나오고, 그때 답이 원문과 같은지 본다.
+          if (difficulty === -1 && key(recomputed.common) === "83/12") {
+            originalEasySeen = true;
             check(recomputed.value.map(key).join(",") === "25/12,5/6,7/12", `원문 기본 답이 25/12,5/6,7/12가 아닙니다: ${recomputed.value.map(key).join(",")}`);
           }
         }
@@ -359,6 +361,7 @@ for (let index = 0; index < expected.length; index += 1) {
   }
 }
 
+if (!originalEasySeen) fail("쉬움 난이도에서 원문 수치(공통합 83/12) 문항이 한 번도 나오지 않았습니다.");
 if (failures.length) {
   console.error(`5-1 분수의 덧셈과 뺄셈 활용 E3 독립 감사 실패: ${failures.length}건`);
   console.error(failures.slice(0, 160).join("\n"));

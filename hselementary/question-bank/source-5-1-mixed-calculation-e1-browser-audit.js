@@ -8,6 +8,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 원문 분류표에서 review-locked이던 5-1-u1-e2-mission-3이 원문 생성기 orig51U1E2Mission3으로 공개되었다(잠금 0).
+// 분류표 파일은 그대로이므로, 공개 등록 목록에 있는 유형은 공개(ready)로 보고 브라우저와 같은 상태를 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1");
@@ -23,9 +30,10 @@ const fail = message => failures.push(message);
 const slug = value => String(value).replaceAll(/[^\p{L}\p{N}_-]+/gu, "_");
 const inventoryById = new Map(inventory.items.map(item => [item.sourceItemId, item]));
 const types = unit ? unit.subunits.flatMap(subunit => subunit.types.map(type => ({ ...type, subunitName: subunit.name }))) : [];
-const readyTypes = types.filter(type => inventoryById.get(type.sourceItemId)?.implementationStatus === "ready");
+const statusOf = type => releaseKey(type) ? "ready" : inventoryById.get(type.sourceItemId)?.implementationStatus;
+const readyTypes = types.filter(type => statusOf(type) === "ready");
 const e1ReadyTypes = readyTypes.filter(type => inventoryById.get(type.sourceItemId)?.exploration === 1);
-const lockedTypes = types.filter(type => inventoryById.get(type.sourceItemId)?.implementationStatus === "review-locked");
+const lockedTypes = types.filter(type => statusOf(type) === "review-locked");
 
 function auditInventory() {
   if (!semester || !unit) return fail("5-1 1단원 자연수의 혼합 계산을 찾지 못했습니다.");
@@ -36,7 +44,7 @@ function auditInventory() {
     if (!String(learnerCriteria[criterion] || "").trim()) fail(`learner-fit ${criterion} 기준이 없습니다.`);
   }
   if (inventory.items.length !== 45 || types.length !== 45) fail(`원문·교육과정 유형은 각각 45개여야 하나 ${inventory.items.length}, ${types.length}개입니다.`);
-  if (readyTypes.length !== 44 || lockedTypes.length !== 1) fail(`공개 44개·검수 대기 1개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
+  if (readyTypes.length !== 45 || lockedTypes.length !== 0) fail(`공개 45개·검수 대기 0개여야 하나 ${readyTypes.length}, ${lockedTypes.length}개입니다.`);
   if (e1ReadyTypes.length !== 11) fail(`개념탐구 1의 공개 유형은 11개여야 하나 ${e1ReadyTypes.length}개입니다.`);
   const sourceIds = new Set();
   for (const type of types) {
@@ -49,12 +57,14 @@ function auditInventory() {
     }
     if (type.label !== source.typeLabel || type.name !== source.typeLabel) fail(`${type.id}: 유형명이 원문 분류표와 다릅니다.`);
     if (type.sourceItemLabel !== source.sourceItemLabel || type.sourceSection !== source.sourceSection || type.sourcePdfPage !== source.sourcePdfPage || type.sourcePrintedPage !== source.sourcePrintedPage) fail(`${type.id}: 원문 이름 또는 위치가 분류표와 다릅니다.`);
-    const shouldLock = source.implementationStatus === "review-locked";
+    const shouldLock = statusOf(type) === "review-locked";
     if (type.reviewLocked !== shouldLock) fail(`${type.id}: 검수 대기 상태가 분류표와 다릅니다.`);
     if (shouldLock && (!type.reviewReason || api.generatorKey(type))) fail(`${type.id}: 잠금 사유가 없거나 생성기가 열려 있습니다.`);
-    const expectedGenerator = source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : source.exploration === 3 ? "mixedCalculationE3" : source.exploration === 4 ? "mixedCalculationE4" : "";
+    const expectedGenerator = releaseKey(type) ? releaseKey(type) : source.exploration === 1 ? "mixedCalculationE1" : source.exploration === 2 ? "mixedCalculationE2" : source.exploration === 3 ? "mixedCalculationE3" : source.exploration === 4 ? "mixedCalculationE4" : "";
     if (!shouldLock && (!expectedGenerator || type.reviewLocked || api.generatorKey(type) !== expectedGenerator)) fail(`${type.id}: 공개 유형의 생성기 연결이 다릅니다.`);
-    if (!shouldLock && !["single-value", "ordered", "named-value", "set", "rubric"].includes(inventory.resultContracts?.[type.sourceItemId])) fail(`${type.id}: 공개 유형의 답 형식 계약이 없습니다.`);
+    // 2026-11-24: 공개 등록 원문 생성기 유형은 분류표 대신 생성 결과의 답 형식 계약을 본다.
+    const contract = releaseKey(type) ? api.generate(type, 0, 0, 20260904, 0)?.resultContract : inventory.resultContracts?.[type.sourceItemId];
+    if (!shouldLock && !["single-value", "ordered", "named-value", "set", "rubric"].includes(contract)) fail(`${type.id}: 공개 유형의 답 형식 계약이 없습니다.`);
   }
   for (const subunit of unit.subunits) {
     const variants = subunit.types.map(type => type.variant).join(",");
@@ -122,8 +132,8 @@ async function inspectCatalog(browser, viewport, label) {
     } else if (state.overlapsRow || state.overlapsTree) fail(`${label} ${type.id}: 미리보기가 유형 목록을 가립니다.`);
     const source = inventoryById.get(type.sourceItemId);
     if (!state.text.includes(type.label) || !state.text.includes(`교재 ${source.sourcePrintedPage}쪽`)) fail(`${label} ${type.id}: 유형명 또는 원문 쪽수가 미리보기에 없습니다.`);
-    if (source.implementationStatus === "ready" && !state.questionVisible) fail(`${label} ${type.id}: 공개 유형의 대표 문제가 없습니다.`);
-    if (source.implementationStatus === "review-locked" && (!state.text.includes("검수 대기") || !state.text.includes(type.reviewReason))) fail(`${label} ${type.id}: 잠금 사유가 정확히 표시되지 않습니다.`);
+    if (statusOf(type) === "ready" && !state.questionVisible) fail(`${label} ${type.id}: 공개 유형의 대표 문제가 없습니다.`);
+    if (statusOf(type) === "review-locked" && (!state.text.includes("검수 대기") || !state.text.includes(type.reviewReason))) fail(`${label} ${type.id}: 잠금 사유가 정확히 표시되지 않습니다.`);
     await page.locator("[data-close-type-preview]").click();
   }
   await page.screenshot({ path: path.join(outputDir, `catalog-${label}.png`), fullPage: true });
@@ -200,7 +210,7 @@ async function inspectReview(browser, type, viewport, label) {
     console.error(failures.slice(0, 100).join("\n"));
     process.exit(1);
   }
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 44 · 잠금 1 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 1 브라우저·인쇄 감사 통과: 원문 45유형 · 단원 공개 45 · 잠금 0 · 개념탐구 1 공개 11 · PC/모바일 ${screenshotCount}장 · A4 ${pdfCount}개 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 자연수의 혼합 계산 브라우저·인쇄 감사 예외: ${error.stack || error}`);
   process.exit(1);

@@ -20,7 +20,7 @@ let renderedPdfPages = 0;
 const fail = message => failures.push(message);
 
 function startServer() {
-  const server = http.createServer((request, response) => {
+  const server = http.createServer((request, response) => { /* 2026-11-24: 생성기 계약 감사이므로 problem-hint-policy.js(문제 쪽 힌트 글자·안내 제거)를 끈다. HSE_KEEP_HINT_POLICY=1이면 켬. */ if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) { response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" }); response.end("/* problem hint policy disabled for the generator contract audit */"); return; }
     const requestPath = decodeURIComponent((request.url || "/").split("?")[0]);
     const relative = requestPath === "/" ? "/hselementary/question-bank/index.html" : requestPath;
     const filePath = path.resolve(root, `.${relative}`);

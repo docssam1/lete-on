@@ -20,6 +20,21 @@ let screenshots = 0;
 let pdfs = 0;
 
 const fail = message => failures.push(message);
+// 2026-11-24: 11-22부터 앱은 같은 문장의 문항을 한 번만 낸다. 개념탐구 쉬움은 원본 수치(H=2와1/4) 한 문항만 있으므로
+// 3문항 요청에 1문항이 나온다. 생성기가 만들 수 있는 서로 다른 문장 수를 직접 세어 min(3, 그 수)를 기대한다.
+const expectedCountCache = new Map();
+function expectedQuestionCount(type, difficulty) {
+  const cacheKey = `${type.id}|${difficulty}`;
+  if (!expectedCountCache.has(cacheKey)) {
+    const prompts = new Set();
+    for (let attempt = 0; attempt < 400 && prompts.size < 3; attempt += 1) {
+      const generated = api.generate(type, 1, difficulty, (attempt * 104729 + 7919) >>> 0, attempt % 40);
+      if (generated?.prompt) prompts.add(generated.prompt);
+    }
+    expectedCountCache.set(cacheKey, Math.min(3, prompts.size));
+  }
+  return expectedCountCache.get(cacheKey);
+}
 const keyFor = (type, viewport, difficulty) => `${type.sourceItemId}-${viewport}-difficulty-${difficulty}`;
 
 function verifyCatalogContract() {
@@ -244,7 +259,10 @@ async function renderedState(page, selector) {
 }
 
 function reportCube(state, key, view, difficulty) {
-  if (state.cube.length !== 3) fail(`${key} ${view}: 정육면체 그림 3개가 모두 보이지 않습니다.`);
+  // 2026-11-24: 쉬움도 3문항이 나오도록 원문 수치(H=2와1/4)와 같은 구조의 변형(배율 1·2, 더하기 0·1)을 함께 낸다.
+  // 쉬움 H는 9/4·13/4·9/2·11/2 중 하나여야 한다(원문 수치가 실제로 나오는지는 독립 감사가 33,000회 생성으로 확인).
+  if (difficulty === -1) state.cube.forEach((cube, index) => { if (!["9,4", "13,4", "9,2", "11,2"].includes(cube.vertices.H)) fail(`${key} ${view} ${index + 1}번: 쉬움 H가 원문 또는 허용된 변형이 아닙니다(${cube.vertices.H}).`); });
+  if (state.cube.length !== state.count || !state.count) fail(`${key} ${view}: 정육면체 그림 ${state.count}개가 모두 보이지 않습니다.`);
   for (const [index, cube] of state.cube.entries()) {
     const expectedEdges = ["AB", "AC", "AG", "BD", "BH", "CD", "CE", "DF", "EF", "EG", "FH", "GH"];
     if (cube.width < 180 || cube.height < 150) fail(`${key} ${view} ${index + 1}번: 정육면체 그림이 너무 작습니다.`);
@@ -253,14 +271,14 @@ function reportCube(state, key, view, difficulty) {
     if ([...cube.hidden].sort().join(",") !== "AG,GH") fail(`${key} ${view} ${index + 1}번: 숨은 모서리 점선이 AG·GH 두 개가 아닙니다.`);
     const labels = Object.fromEntries(cube.labels.map(label => [label.vertex, label.text]));
     if (labels.C !== "가" || labels.G !== "나" || labels.F !== "다") fail(`${key} ${view} ${index + 1}번: C=(가), G=(나), F=(다) 위치가 아닙니다.`);
-    if (difficulty === -1 && cube.vertices.H !== "9,4") fail(`${key} ${view} ${index + 1}번: 원본 기준 H=2와1/4가 아닙니다.`);
     if (cube.labelOverlaps || cube.labelsOnLine.length) fail(`${key} ${view} ${index + 1}번: 꼭짓점 라벨 ${cube.labelsOnLine.join(",") || "서로"}가 선과 겹칩니다.`);
   }
 }
 
 function reportState(state, type, key, view, difficulty) {
+  const expected = expectedQuestionCount(type, difficulty);
   if (state.pageOverflow) fail(`${key} ${view}: 가로 넘침이 있습니다.`);
-  if (state.count !== 3 || state.empty) fail(`${key} ${view}: 생성 문항 3개가 모두 보이지 않습니다.`);
+  if (state.count !== expected || !expected || state.empty) fail(`${key} ${view}: 생성 문항 ${expected}개가 모두 보이지 않습니다.`);
   if (state.clipped) fail(`${key} ${view}: 수식·문항 상자가 가로 또는 세로로 잘립니다.`);
   if (state.broken) fail(`${key} ${view}: 깨진 값이 보입니다.`);
   const answerMayHaveNoFraction = type.sourceItemId === "5-1-u5-e3-mission-6" && view.includes("정답");
@@ -281,12 +299,14 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   listenForPageErrors(page, key);
   await page.goto(`${baseUrl}?type=${encodeURIComponent(type.id)}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const expected = expectedQuestionCount(type, difficulty);
+  const expectedRows = Array.from({ length: expected }, (_, index) => index + 1).join(",");
   const selected = await page.evaluate(() => ({
     count: document.querySelector("#selectedTypeCount")?.textContent.trim(),
     reviewRows: document.querySelectorAll("#reviewSelectedTypes > div").length,
     questionRows: document.querySelectorAll("#reviewQuestionList a").length
   }));
-  if (selected.count !== "1" || selected.reviewRows !== 1 || selected.questionRows !== 3) fail(`${key}: 한 유형 선택의 목록 또는 문항 수가 다릅니다.`);
+  if (selected.count !== "1" || selected.reviewRows !== 1 || selected.questionRows !== expected) fail(`${key}: 한 유형 선택의 목록 또는 문항 수가 다릅니다.`);
 
   let state = await renderedState(page, "#problemView .question-item");
   reportState(state, type, key, "문제", difficulty);
@@ -312,7 +332,7 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   state = await renderedState(page, "#solutionView .solution-item");
   reportState(state, type, key, "정답·풀이", difficulty);
   if (!state.solutionVisible) fail(`${key} 정답·풀이: 정답 탭이 열리지 않습니다.`);
-  if (state.rows.join(",") !== "1,2,3" || state.answers.some(answer => !answer)) fail(`${key} 정답·풀이: 생성 문항마다 정답 한 줄이 없습니다.`);
+  if (state.rows.join(",") !== expectedRows || state.answers.some(answer => !answer)) fail(`${key} 정답·풀이: 생성 문항마다 정답 한 줄이 없습니다.`);
   await page.screenshot({ path: path.join(outputDir, `${key}-solution.png`), fullPage: true });
   screenshots += 1;
   if (type.sourceItemId === "5-1-u5-e3-exploration" && difficulty === -1 && viewportLabel === "desktop") await captureCubeRepresentative(page, "desktop", "solution", false);
@@ -321,7 +341,7 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
     await page.emulateMedia({ media: "print" });
     state = await renderedState(page, "#solutionView .solution-item");
     reportState(state, type, key, "A4 정답·풀이", difficulty);
-    if (state.rows.join(",") !== "1,2,3") fail(`${key} A4 정답·풀이: 문항별 정답 행 수가 다릅니다.`);
+    if (state.rows.join(",") !== expectedRows) fail(`${key} A4 정답·풀이: 문항별 정답 행 수가 다릅니다.`);
     const pdf = path.join(outputDir, `${type.sourceItemId}-solution.pdf`);
     await page.pdf({ path: pdf, format: "A4", printBackground: true, preferCSSPageSize: true });
     if (!fs.existsSync(pdf) || fs.statSync(pdf).size < 5000) fail(`${key} A4 정답·풀이: PDF 생성이 비정상입니다.`);

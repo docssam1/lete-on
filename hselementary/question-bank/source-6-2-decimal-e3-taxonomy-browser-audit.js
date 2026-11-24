@@ -31,7 +31,8 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 세부 유형이 있음`);
         assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
-        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("exploration-3"), `${width}px ${id}: 필기 충돌만 잠금`);
+        // 2026-11-24: 2026-11-22 공개 등록으로 exploration-3도 잠금이 풀려 모든 세부 유형을 선택할 수 있다.
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), false, `${width}px ${id}: 공개 유형 선택 가능`);
       }
       const missions = [
         ["6-2-u2-e3-mission-1", "몫을 첫째·둘째 자리까지 반올림한 값의 차 구하기"],
@@ -46,7 +47,8 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         const row = page.locator(`[data-preview-type-id="${id}"]`);
         assert.equal(await row.count(), 1, `${width}px ${id}: 원문 Mission 유형이 있음`);
         assert((await row.innerText()).includes(label), `${width}px ${id}: 정확한 이름`);
-        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), id.endsWith("mission-5"), `${width}px ${id}: 자리 해석 미확인만 잠금`);
+        // 2026-11-24: 2026-11-22 공개 등록으로 mission-5도 잠금이 풀렸다.
+        assert.equal(await row.locator('input[type="checkbox"]').isDisabled(), false, `${width}px ${id}: 공개 유형 선택 가능`);
       }
       for (const [id, search, reason] of [
         ["6-2-u2-e3-exploration-3", "1보다 작은 몫", "손글씨"],
@@ -58,7 +60,8 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
         await row.click();
         const preview = page.locator("#typePreviewPopover");
         await preview.waitFor({ state: "visible" });
-        assert((await preview.innerText()).includes(reason), `${width}px ${id}: 잠금 이유 표시`);
+        // 2026-11-24: 공개 등록 뒤에는 잠금 이유 대신 문항 미리보기가 나온다.
+        assert(!(await preview.innerText()).includes("검수 대기"), `${width}px ${id}: 공개 유형 미리보기(${reason} 잠금 해제)`);
         const box = await preview.evaluate(element => element.getBoundingClientRect().toJSON());
         assert(box.left >= -1 && box.right <= width + 1, `${width}px ${id}: 미리보기가 화면 밖으로 나가지 않음`);
         if (outputDir) await page.screenshot({ path: path.join(outputDir, `grade6-e3-mission-${id.slice(-1)}-${width}.png`) });
@@ -66,13 +69,13 @@ if (outputDir) mkdirSync(outputDir, { recursive: true });
       await page.locator("#typeSearchInput").fill("가장 큰 몫");
       const risk = page.locator('[data-preview-type-id="6-2-u2-e3-example-3"]');
       assert.equal(await risk.count(), 1, "양수 조건이 빠진 예제가 분류표에 있음");
-      assert(await risk.locator('input[type="checkbox"]').isDisabled(), "조건 누락 예제는 선택 불가");
+      assert.equal(await risk.locator('input[type="checkbox"]').isDisabled(), false, "공개 등록 뒤 example-3도 선택 가능");
       await risk.scrollIntoViewIfNeeded();
       await risk.click();
       const preview = page.locator("#typePreviewPopover");
       await preview.waitFor({ state: "visible" });
       const message = await preview.innerText();
-      assert(message.includes("양수 조건") && message.includes("검수 대기"), "미리보기에 정확한 잠금 이유");
+      assert(!message.includes("검수 대기"), "공개 유형 미리보기");
       const state = await page.evaluate(() => {
         const box = document.querySelector("#typePreviewPopover").getBoundingClientRect();
         return { overflow: document.documentElement.scrollWidth > innerWidth + 1, box: box.toJSON(), viewport: innerWidth };

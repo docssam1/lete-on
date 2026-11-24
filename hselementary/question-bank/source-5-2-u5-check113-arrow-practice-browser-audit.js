@@ -52,7 +52,9 @@ const ids = ["5-2-u5-check113-q43-arrow-synthetic"];
           await page.waitForFunction(mode => document.body.dataset.printMode === mode, mode);
           const pdf = await page.pdf({ path: path.join(process.env.MAC_CHECK_OUTPUT, `mixed-${mode}.pdf`), format: "A4", printBackground: true, preferCSSPageSize: true });
           const physicalPages = (pdf.toString("latin1").match(/\/Type\s*\/Page\b/g) || []).length;
-          assert.equal(physicalPages, mode === "problem" ? 1 : 4, `${mode} must fit its numbered A4 pages`);
+          // 2026-11-24: 11-05 #1336부터 풀이 묶음이 넘치면 다음 묶음과 한 장을 나눠 쓴다. 풀이는 번호 붙은 묶음 수(4) 이하의 실제 쪽에 들어가면 된다.
+          if (mode === "problem") assert.equal(physicalPages, 1, `${mode} must fit its numbered A4 pages`);
+          else assert(physicalPages >= 1 && physicalPages <= 4, `${mode} must fit its numbered A4 pages (${physicalPages})`);
           await page.evaluate(() => window.dispatchEvent(new Event("afterprint")));
         }
       }

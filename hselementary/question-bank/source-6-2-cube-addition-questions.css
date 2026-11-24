@@ -1,7 +1,7 @@
 .source62-cube-addition-given,.source62-cube-addition-answer{position:relative;z-index:2;background:#fff;color:#000;font:400 16px/1.6 var(--bank-font,"Malgun Gothic",Arial,sans-serif);letter-spacing:0;min-width:0}
 .source62-cube-addition-given p,.source62-cube-addition-answer p{margin:8px 0}
 .source62-cube-addition-solid{width:min(300px,100%);margin:12px auto;break-inside:avoid}
-.source62-cube-addition-solid img,.source62-cube-addition-classes img{display:block;width:100%;height:auto}
+.source62-cube-addition-solid img,.source62-cube-addition-classes img,.source62-cube-addition-solid svg.source62-iso-cubes,.source62-cube-addition-classes svg.source62-iso-cubes{display:block;width:100%;height:auto;max-width:100%}
 .source62-cube-addition-classes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin:12px 0}
 .source62-cube-addition-classes figure{margin:0;text-align:center;break-inside:avoid;min-width:0}
 .source62-cube-addition-classes figcaption{font-size:14px;line-height:1.5}

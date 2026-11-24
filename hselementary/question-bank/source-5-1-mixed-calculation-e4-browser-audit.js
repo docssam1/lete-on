@@ -8,6 +8,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 분류표에서 review-locked이던 5-1-u1-e2-mission-3이 원문 생성기(orig51U1E2Mission3)로 공개되었다(잠금 0).
+// 브라우저와 같은 상태(공개 여부·생성기·바뀐 유형 이름)를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const inventory = JSON.parse(fs.readFileSync(path.join(__dirname, "source-inventory", "5-1-unit-1-mixed-calculation.json"), "utf8"));
@@ -21,13 +28,31 @@ const failures = [];
 let screenshots = 0;
 let pdfs = 0;
 const fail = message => failures.push(message);
+// 2026-11-24: 11-22부터 앱은 같은 문장의 문항을 한 번만 낸다. 원문 하나로 정해진 유형(개념탐구 4의 4 네 번 쓰기,
+// Mission 3 기호 넣기, Mission 4 괄호 묶기, 예제 4-3 어려움)은 3문항 요청에 1문항이 나온다.
+// 생성기가 만들 수 있는 서로 다른 문장 수를 직접 세어 min(3, 그 수)를 기대한다.
+const expectedCountCache = new Map();
+function expectedQuestionCount(type, difficulty) {
+  const cacheKey = `${type.id}|${difficulty}`;
+  if (!expectedCountCache.has(cacheKey)) {
+    const prompts = new Set();
+    for (let attempt = 0; attempt < 400 && prompts.size < 3; attempt += 1) {
+      const generated = api.generate(type, 1, difficulty, (attempt * 104729 + 7919) >>> 0, attempt % 40);
+      if (generated?.prompt) prompts.add(generated.prompt);
+    }
+    expectedCountCache.set(cacheKey, Math.min(3, prompts.size));
+  }
+  return expectedCountCache.get(cacheKey);
+}
 const slug = value => String(value).replaceAll(/[^\p{L}\p{N}_-]+/gu, "_");
 const overlaps = (a, b) => Boolean(a && b && a.left < b.right - 1 && a.right > b.left + 1 && a.top < b.bottom - 1 && a.bottom > b.top + 1);
 
 function auditInventory() {
-  const ready = allTypes.filter(type => byId.get(type.sourceItemId)?.implementationStatus === "ready");
-  const locked = allTypes.filter(type => byId.get(type.sourceItemId)?.implementationStatus === "review-locked");
-  if (!unit || allTypes.length !== 45 || inventory.items.length !== 45 || ready.length !== 44 || locked.length !== 1) fail("5-1 1단원 45유형·공개 44·잠금 1 구조가 아닙니다.");
+  // 분류표 파일은 그대로이므로 공개 등록 목록에 있는 유형은 공개(ready)로 본다.
+  const statusOf = type => releaseKey(type) ? "ready" : byId.get(type.sourceItemId)?.implementationStatus;
+  const ready = allTypes.filter(type => statusOf(type) === "ready" && !type.reviewLocked);
+  const locked = allTypes.filter(type => statusOf(type) === "review-locked" || type.reviewLocked);
+  if (!unit || allTypes.length !== 45 || inventory.items.length !== 45 || ready.length !== 45 || locked.length !== 0) fail("5-1 1단원 45유형·공개 45·잠금 0 구조가 아닙니다.");
   if (e4.length !== 12) fail(`개념탐구 4가 12유형이 아닙니다: ${e4.length}`);
   for (const type of e4) {
     const source = byId.get(type.sourceItemId);
@@ -97,8 +122,9 @@ async function inspectReview(browser, type, viewport, label, difficulty) {
     });
     return { count: nodes.length, empty: nodes.some(node => !(node.textContent || "").trim()), bad: /\b(?:undefined|null|NaN|Infinity)\b/.test(document.body.innerText || ""), overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1 || nodes.some(node => node.scrollWidth > node.clientWidth + 1), measured, headers };
   }, selector);
+  const expected = expectedQuestionCount(type, difficulty);
   const validate = (state, stage) => {
-    if (state.count !== 3 || state.empty || state.bad || state.overflow) fail(`${auditLabel} ${type.id}: ${stage} 3문항·표기·가로 폭 검사가 실패했습니다.`);
+    if (!expected || state.count !== expected || state.empty || state.bad || state.overflow) fail(`${auditLabel} ${type.id}: ${stage} ${expected}문항·표기·가로 폭 검사가 실패했습니다.`);
     if (state.measured.some(item => item.width < 2 || item.height < 2 || item.left < -1 || item.right > viewport.width + 1 || item.font < 12)) fail(`${auditLabel} ${type.id}: ${stage} 식 또는 카드 글자가 잘리거나 작습니다.`);
     if (state.headers.some(item => item.text.includes("<br>") || item.width < 80 || item.height > item.width * 2.5)) fail(`${auditLabel} ${type.id}: ${stage} 머리글이 세로로 눌리거나 줄바꿈 문자가 그대로 보입니다.`);
   };
@@ -140,5 +166,5 @@ async function inspectReview(browser, type, viewport, label, difficulty) {
   }
   await browser.close();
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 자연수의 혼합 계산 개념탐구 4 브라우저·인쇄 감사 통과: 전체 45 · 공개 44/잠금 1 · E4 공개 12 · PC/모바일 ${screenshots}장 · A4 ${pdfs}개`);
+  console.log(`5-1 자연수의 혼합 계산 개념탐구 4 브라우저·인쇄 감사 통과: 전체 45 · 공개 45/잠금 0 · E4 공개 12 · PC/모바일 ${screenshots}장 · A4 ${pdfs}개`);
 })().catch(error => { console.error(`5-1 자연수의 혼합 계산 개념탐구 4 브라우저·인쇄 감사 실패: ${error.stack || error}`); process.exit(1); });

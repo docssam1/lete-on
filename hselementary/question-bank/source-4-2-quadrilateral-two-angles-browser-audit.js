@@ -9,6 +9,78 @@ const outputDir = process.env.HSE_SCREENSHOT_DIR || path.join(process.cwd(), "tm
 const typeId = "4-2-u4-t1-9";
 fs.mkdirSync(outputDir, { recursive: true });
 
+// 2026-11-24: 이 감사는 generators.js의 옛 quadPerpParallelDistance 경로(perpendicular-two-unknown 그림)를 검사했다. 2026-09-24(b3c1e06fc)부터
+// 이 유형은 원문 검증 풀 생성기 sourceGrade4AdvancedPerpendicularParallel(source-4-2-perpendicular-parallel.js)로 옮겨졌고,
+// 그 그림·정답은 source-4-2-perpendicular-parallel-audit.js·-browser-audit.js가 검사한다. 지금 옛 경로를 쓰는 유형은 없다.
+// 유형이 옮겨져 있으면 안내를 남기고, 지금 화면에도 해당하는 것(문항 수, 그림, 넘침, 답 칸, 풀이 수·정답)만 확인한다.
+// 유형이 다시 옛 생성기를 쓰면 아래 원래 검사를 그대로 한다.
+const legacyGeneratorKey = "quadPerpParallelDistance";
+const currentGeneratorKey = page => page.evaluate(id => window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types))).find(type => type.id === id)?.generatorKey || "", typeId);
+const expectedDistinctQuestions = (page, requested = 3) => page.evaluate(({ id, requested }) => {
+  const type = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types))).find(item => item.id === id);
+  if (!type) return 0;
+  const fixedPool = type.generationMode === "fixed-verified-pool";
+  const prompts = new Set();
+  for (let index = 0; index < requested; index += 1) for (let attempt = 0; attempt < 64; attempt += 1) {
+    try {
+      const candidate = window.HSE_GENERATORS.generate(type, 0, 0, (20261124 + index * 7919 + attempt * 104729) >>> 0, fixedPool ? attempt : index);
+      if (candidate?.prompt) prompts.add(candidate.prompt);
+    } catch {}
+  }
+  return Math.min(requested, prompts.size);
+}, { id: typeId, requested });
+const inspectMovedType = async (page, label, failures, generatorKey) => {
+  console.log(`안내: ${typeId}는 옛 ${legacyGeneratorKey} 경로에서 ${generatorKey} 생성기로 옮겨져, 옛 그림 검사 대신 공통 화면 검사만 합니다 (${label}).`);
+  const expectedCount = await expectedDistinctQuestions(page);
+  const state = await page.evaluate(() => ({
+    documentOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
+    items: [...document.querySelectorAll(".question-item")].map(item => {
+      const prompt = item.querySelector(".question-prompt");
+      const itemBox = item.getBoundingClientRect();
+      const figures = [...(prompt?.querySelectorAll("svg") || [])].map(svg => svg.getBoundingClientRect());
+      return {
+        text: prompt?.textContent?.replace(/\s+/g, " ").trim() || "",
+        figureVisible: figures.length > 0 && figures.every(box => box.width >= 120 && box.height >= 80 && box.left >= itemBox.left - 1 && box.right <= itemBox.right + 1),
+        overflow: Boolean(item.scrollWidth > item.clientWidth + 1 || prompt?.scrollWidth > prompt?.clientWidth + 1),
+        answerVisible: Boolean(item.querySelector(".answer-line")?.getBoundingClientRect().height)
+      };
+    })
+  }));
+  if (state.documentOverflow) failures.push(`${label}: 문서에 가로 넘침이 있습니다.`);
+  if (!expectedCount || state.items.length !== expectedCount) failures.push(`${label}: 문제는 ${expectedCount}개여야 하나 ${state.items.length}개입니다.`);
+  state.items.forEach((item, index) => {
+    if (!item.text || /undefined|NaN|null/.test(item.text)) failures.push(`${label} ${index + 1}번: 문제 문장이 비었거나 깨졌습니다.`);
+    if (!item.figureVisible || item.overflow || !item.answerVisible) failures.push(`${label} ${index + 1}번: 그림 또는 답안 칸이 작거나 잘립니다.`);
+  });
+  await page.screenshot({ path: path.join(outputDir, `${label}-problem.png`), fullPage: true });
+  await page.click("#solutionTab");
+  const solutions = await page.evaluate(() => [...document.querySelectorAll(".solution-item")].map(item => ({
+    text: item.textContent?.replace(/\s+/g, " ").trim() || "",
+    answer: item.querySelector("header strong")?.textContent?.trim() || ""
+  })));
+  if (solutions.length !== state.items.length) failures.push(`${label}: 풀이는 ${state.items.length}개여야 하나 ${solutions.length}개입니다.`);
+  solutions.forEach((solution, index) => {
+    if (!solution.answer || !solution.text || /undefined|NaN/.test(solution.text)) failures.push(`${label} ${index + 1}번: 정답 또는 풀이가 없습니다.`);
+  });
+  await page.screenshot({ path: path.join(outputDir, `${label}-solution.png`), fullPage: true });
+  if (label !== "desktop") return;
+  await page.emulateMedia({ media: "print" });
+  await page.pdf({ path: path.join(outputDir, "a4-solution.pdf"), format: "A4", printBackground: true, preferCSSPageSize: true });
+  await page.emulateMedia({ media: "screen" });
+  await page.click("#problemTab");
+  await page.emulateMedia({ media: "print" });
+  const printItems = await page.evaluate(() => [...document.querySelectorAll(".question-item")].map(item => {
+    const itemBox = item.getBoundingClientRect();
+    return [...item.querySelectorAll(".question-prompt svg")].every(svg => {
+      const box = svg.getBoundingClientRect();
+      return box.width > 0 && box.height > 0 && box.left >= itemBox.left - 1 && box.right <= itemBox.right + 1 && box.top >= itemBox.top - 1 && box.bottom <= itemBox.bottom + 1;
+    });
+  }));
+  if (printItems.length !== state.items.length || printItems.some(inside => !inside)) failures.push("A4 문제지: 그림이 문항 영역에서 잘립니다.");
+  await page.pdf({ path: path.join(outputDir, "a4-problem.pdf"), format: "A4", printBackground: true, preferCSSPageSize: true });
+  await page.emulateMedia({ media: "screen" });
+};
+
 const near = (actual, expected, tolerance = 0.25) => Math.abs(actual - expected) <= tolerance;
 
 const inspect = async (browser, viewport, label, failures) => {
@@ -17,6 +89,12 @@ const inspect = async (browser, viewport, label, failures) => {
   page.on("pageerror", error => failures.push(`${label}: 브라우저 오류 ${error.message}`));
   await page.goto(`${baseUrl}?type=${typeId}&review=1`, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const generatorKey = await currentGeneratorKey(page);
+  if (generatorKey !== legacyGeneratorKey) {
+    await inspectMovedType(page, label, failures, generatorKey);
+    await page.close();
+    return;
+  }
 
   const state = await page.evaluate(() => ({
     documentOverflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,

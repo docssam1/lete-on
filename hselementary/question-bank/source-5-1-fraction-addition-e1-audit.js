@@ -207,6 +207,17 @@ function independent(evidence) {
     if (new Set(winners.map(key)).size !== 1) throw new Error("최솟값 후보의 값이 하나로 정해지지 않습니다.");
     return { value: optimum, candidates, optimumCandidates: winners };
   }
+  if (kind === "four-prime-digit-max-sum" || kind === "four-prime-digit-max-difference") {
+    const candidates = permutations(values).filter(digits => digits[0] < digits[1] && digits[2] < digits[3]).map(digits => {
+      const left = rational(digits[0], digits[1]), right = rational(digits[2], digits[3]);
+      return kind === "four-prime-digit-max-sum" ? add(left, right) : compare(left, right) >= 0 ? subtract(left, right) : subtract(right, left);
+    });
+    if (!candidates.length) throw new Error("네 소수 카드의 진분수 후보가 없습니다.");
+    const optimum = candidates.reduce((best, candidate) => compare(candidate, best) > 0 ? candidate : best, candidates[0]);
+    const winners = candidates.filter(candidate => compare(candidate, optimum) === 0);
+    if (new Set(winners.map(key)).size !== 1) throw new Error("최댓값 후보의 값이 하나로 정해지지 않습니다.");
+    return { value: optimum, candidates, optimumCandidates: winners };
+  }
   if (kind === "missing-fraction-for-smallest-natural-sum") {
     const [numerator, firstDenominator, secondDenominator, thirdDenominator, missingNumerator, missingDenominator] = values;
     const fixed = sum([
@@ -270,9 +281,11 @@ for (let index = 0; index < expected.length; index += 1) {
         check(generated.generator === "fractionAdditionE1", `${context}: 실제 생성기 표시가 다릅니다: ${generated.generator}`);
         check(!/undefined|null|NaN|Infinity/.test(`${generated.prompt}${generated.answer}${generated.solution}`), `${context}: 깨진 값이 있습니다.`);
         const evidence = parseEvidence(generated.prompt, context);
-        check(evidence.kind === expectedKind, `${context}: 검산 분기가 다릅니다: ${evidence.kind}`);
+        // 2026-11-24: Mission 4는 원문(합 최소)과 같은 조건의 "합 최대"·"차 최대" 변형을 함께 낸다.
+        const alternatives = expectedKind === "four-prime-digit-min-sum" ? { "four-prime-digit-min-sum": "minimum", "four-prime-digit-max-sum": "maximum", "four-prime-digit-max-difference": "maximum" } : { [expectedKind]: expectedContract };
+        check(Object.hasOwn(alternatives, evidence.kind), `${context}: 검산 분기가 다릅니다: ${evidence.kind}`);
         check(evidence.sourceItemId === sourceItemId, `${context}: 숨은 출처 ID가 다릅니다: ${evidence.sourceItemId}`);
-        check(evidence.contract === expectedContract, `${context}: 답 계약이 다릅니다: ${evidence.contract}`);
+        check(evidence.contract === alternatives[evidence.kind], `${context}: 답 계약이 다릅니다: ${evidence.contract}`);
         const recomputed = independent(evidence);
         check(recomputed.candidates.length > 0, `${context}: 정답 후보가 0개입니다.`);
         const shown = parseAnswer(generated.answer);
@@ -286,6 +299,8 @@ for (let index = 0; index < expected.length; index += 1) {
         if (evidence.kind === "digit-card-max-mixed-sum") check(generated.prompt.includes("한 번씩 모두 사용") && generated.prompt.includes("가장 클 때"), `${context}: 카드 최댓값 조건이 분명하지 않습니다.`);
         if (evidence.kind === "irreducible-pair-sum-count") check(generated.prompt.includes("더하는 순서만 다른 식은 하나로"), `${context}: 순서가 다른 식의 처리 조건이 없습니다.`);
         if (evidence.kind === "mixed-sum-natural-count") check(generated.prompt.includes("자연수가") && generated.prompt.includes("자연수 부분"), `${context}: 자연수 개수와 빈칸 조건이 분명하지 않습니다.`);
+        if (evidence.kind === "four-prime-digit-max-sum") check(generated.prompt.includes("서로 다른 한 자리 수") && generated.prompt.includes("약수는 2개") && generated.prompt.includes("합이 가장 클 때"), `${context}: 합 최댓값 조건이 분명하지 않습니다.`);
+        if (evidence.kind === "four-prime-digit-max-difference") check(generated.prompt.includes("서로 다른 한 자리 수") && generated.prompt.includes("약수는 2개") && generated.prompt.includes("차가 가장 클 때"), `${context}: 차 최댓값 조건이 분명하지 않습니다.`);
         if (evidence.kind === "four-prime-digit-min-sum") check(generated.prompt.includes("서로 다른 한 자리 수") && generated.prompt.includes("약수는 2개") && generated.prompt.includes("가장 작을 때"), `${context}: 네 수의 조건과 최솟값 조건이 분명하지 않습니다.`);
         if (evidence.kind === "missing-fraction-for-smallest-natural-sum") check(generated.prompt.includes("기약분수") && generated.prompt.includes("가장 작을 때"), `${context}: 빈 분수의 유일성 조건이 부족합니다.`);
 

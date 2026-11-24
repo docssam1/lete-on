@@ -6,7 +6,7 @@ const http = require("node:http");
 const os = require("node:os");
 const path = require("node:path");
 const { pathToFileURL } = require("node:url");
-const runtime = path.join(process.env.USERPROFILE, ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules");
+const runtime = path.join(process.env.USERPROFILE || os.homedir(), ".cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules");
 const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || path.join(runtime, "playwright"));
 const output = process.env.HSE_SCREENSHOT_DIR || path.join(os.tmpdir(), "hse-mixed-worksheet-layout");
 const root = path.resolve(__dirname, "../..");
@@ -57,7 +57,8 @@ async function inspect(page, label, columns) {
       assert(!item.overflow, `${label} Q${item.number}: overflow`);
       assert.equal(item.weight, "400", `${label} Q${item.number}: inconsistent body weight`);
       assert.equal(item.color, "rgb(17, 17, 17)", `${label} Q${item.number}: inconsistent body color`);
-      assert(item.family.includes("Batang"), `${label} Q${item.number}: inconsistent body font`);
+      // 2026-11-24: c1a38cf0b(문제은행 글꼴 통일) 이후 화면 문항 글꼴은 Pretendard, 4문항 인쇄는 Noto Serif KR/Batang이다. 같은 장의 문항이 모두 같은 글꼴인지 본다.
+      assert(item.family && item.family === sheet.questions[0].family && /Pretendard|Batang/.test(item.family), `${label} Q${item.number}: inconsistent body font`);
       assert(item.answer.top >= item.prompt.bottom - 1, `${label} Q${item.number}: answer line collision`);
       if (item.diagram) {
         assert(item.diagram.left >= item.box.left - 1 && item.diagram.right <= item.box.right + 1, `${label}: diagram leaves column`);
@@ -65,9 +66,12 @@ async function inspect(page, label, columns) {
       }
     }
     if (sheet.paired && columns === 2) {
-      for (let i = 0; i + 1 < sheet.questions.length; i += 2) {
-        const [left, right] = sheet.questions.slice(i, i + 2);
-        assert(Math.abs(left.box.top - right.box.top) < 1, `${label}: row start mismatch`);
+      // 2026-11-24: 4문항 균형 배치(four-up-balanced)는 DOM 순서와 화면 순서가 다를 수 있어, 화면 위치로 열을 나눠 비교한다.
+      const middle = Math.min(...sheet.questions.map(q => q.box.left)) + (Math.max(...sheet.questions.map(q => q.box.right)) - Math.min(...sheet.questions.map(q => q.box.left))) / 2;
+      const leftColumn = sheet.questions.filter(q => q.box.left < middle), rightColumn = sheet.questions.filter(q => q.box.left >= middle);
+      for (const right of rightColumn) {
+        const left = leftColumn.find(candidate => Math.abs(candidate.box.top - right.box.top) < 1);
+        assert(left, `${label}: row start mismatch`);
         assert(left.box.right < right.box.left, `${label}: diagram spans both columns`);
         assert(Math.abs(left.answer.bottom - right.answer.bottom) < 1, `${label}: answer lines do not align`);
       }

@@ -1,3 +1,63 @@
+## 2026-11-24 — 6-2 3단원 개념탐구 4 Mission 4·5에 SVG 변형(pool 1·2) 추가 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("SVG로 변형 추가"): 원문 PNG·sha256 목록은 그대로 두고, 3문항 요청 시 1문항만 나오던 6-2-u3-e4-mission-4·5에 같은 물음의 고정 문항 pool 1·2를 더했다. 새 그림은 공용 SVG 모듈 source-6-2-iso-cube-svg.js(원문 PNG와 같은 방향·면 색, 칸마다 `<g data-cell>`·칠한 면 `data-marked`)로 그린다. pool 0(원문)의 문제·정답·풀이·그림 출력은 변경 전과 같고 finiteVariantCount 1→3만 달라짐(변경 전후 render 결과 비교).
+  - Mission 4(sourceGrade6SecondSpaceE4FourCubeAddition): pool 1 바닥에 놓인 S자 네 개 [(0,0,0),(0,0,1),(1,0,1),(1,0,2)] → 쉬움 4가지 / 보통(원문 문장) 6가지 / 어려움 8가지·16군데. pool 2 한 줄 네 개 → 3가지 / 7가지 / 3가지·18군데. 답은 같은 전수 모델(solve)로 계산. 정답 그림은 자리·바닥 위 회전(어려움은 24회전)을 골라 쌓기나무 다섯 개가 모두 읽히고 검은 쌓기나무가 두 면 이상 보이게 함(보통 난이도 pool 1의 4번만 위 쌓기나무를 받치는 쌓기나무가 가려지며 문구로 안내). 바닥 회전만 같은 모양으로 보는 보통 난이도에서 모양 수≠자리 수이면 풀이에 "돌려서 겹쳐지는 것끼리 묶으면" 문장을 쓴다.
+  - Mission 5(sourceGrade6SecondSpaceE4RectangularColoredRemoval): pool 1 6×4×5(윗면 ㄷ 9칸·앞면 6칸·오른쪽 4칸) → 70 / 58 / (58, 18). pool 2 5×5×5(윗면 T 5칸·앞면 + 5칸·오른쪽 X 5칸) → 84 / 72 / (72, 17). 색칠한 칸은 테두리 안쪽, 빼낸 뒤 남은 쌓기나무가 한 덩어리로 이어지게 고름. Mission 6 출력은 그대로.
+  - 확대: source-6-2-painted-mission3-presentation.js의 cube-addition·e4-final-missions 확대 검사가 SVG일 때 버튼 안 SVG의 data-figure-key와 zoomFigure의 figureKey를 대조하고 data:image/svg+xml로 연다(PNG 경로는 그대로).
+  - 분류표 source-inventory-grade6.js 두 유형 verifiedVariantTarget·Count 1→3, runtime-availability·source-inventory-grade6 감사의 1개 예외 제거. index.html ?v=20261124-e4-m45-svg.
+- 검증: 독립 Python(작업 폴더 밖, 화면 HTML의 그림 칸·칠한 면·답만 읽고 회전군을 90° 회전 닫힘으로 따로 만들어 전수 계산) 12경우 모두 일치, 정답 그림이 모든 모양을 한 번씩 그리고 가려진 쌓기나무가 없음(받침 예외)도 확인. 브라우저에서 a=0..31 generate 결과 난이도마다 서로 다른 문제 3개(두 유형 모두). 1280·390px 화면, 확대 창, A4 문제지·정답표·풀이 PDF 확인. Mission 4 어려움은 pool 0·1 답이 같아((1) 8가지; (2) 16군데) 3문항 순서가 0·2·1로 나올 수 있음.
+- 감사 통과: pentacube-mission4-questions(3 pool로 갱신), pentacube-mission4-bank(단독·혼합+PDF), e4-final-missions-bank(+PDF), e4-final-missions-preview(출력 폴더 HSE_FINAL_MISSIONS_EVIDENCE_DIR 지정), runtime-availability, math-notation, elementary-language, numeric-display, source-release-gate, source-inventory-grade6(+browser), browser-source-release, fixed-pool-selection-browser, cube-addition-bank, colored-cut-mission1-bank, painted-mission3-questions. E: 증거가 필요해 Mac에서 못 돌린 것: pentacube-mission4-models·contracts·renderer-compatibility, e4-final-missions-questions(모두 pool 0 검사 유지, pool 1·2 기대값만 추가·갱신), colored-cut-mission1-questions·three-point-cut-mission2-questions(이번 변경과 무관하게 E: 경로 필요).
+
+## 2026-11-24 — 6학년 창작 연습 12유형 변형 문항 추가 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("6학년부터 변형 추가"): 3문항 요청 시 1~2문항만 나오던 6학년 창작 연습 12유형(6-1-u1-t1-6·t2-4, 6-2-u3-t1-3·t2-2~5·t3-3·t3-4·t4-2·t4-4·t4-6)의 생성기 갈래(fractionDivision*Advanced, spaceViewsAdvanced, stackingCubeCountAdvanced, paintedStackingCubesAdvanced, spaceCuttingAdvanced)에 같은 구조의 모양·수치 선택지를 더했다. 예전 문항은 선택지로 그대로 남김. 정답·그림은 기존 계산 도우미(전수 높이표 열거, 겉넓이, 맞닿은 면 등)로 계산.
+- 검증: 12유형×3난이도에서 나온 서로 다른 문항 147개를 Python으로 문제 글·높이표·그림 SVG를 다시 읽어 전수 계산해 모두 일치(불일치 0). 앱과 같은 방식으로 세면 난이도마다 서로 다른 문항 3개 이상(6-1 두 유형 6/9/11, 6-2-u3-t3-3 3/5/4, 나머지 3/3/3). space-solids-6-2·fraction-division 등 감사 통과.
+- 같은 날 6학년 원문 3유형 변형(바로 아래 항목)과 합쳐 generators.js ?v=20261124-g6-variants. 6학년에서 서로 다른 문항이 3개 미만으로 남은 것은 6-2-u3-e4-mission-4·5 두 유형뿐(PNG 그림을 만든 캡처 스크립트가 저장소에 없어 검증된 새 그림을 만들 수 없음).
+- 4·5학년의 같은 처지 유형(5-2 약 775개 등)은 아직 그대로다(사용자: "6학년부터").
+
+## 2026-11-24 — 6학년 원문 3유형 변형 문항 추가, 6-2 3단원 2유형은 보류 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("6학년부터 변형 추가"): 같은 문장이 반복되어 1문항만 나오던 6학년 원문 유형에 같은 구조의 고정 문항(pool 1·2)을 더했다. pool 0(보통 난이도 원문)은 출력이 바뀌지 않았음을 변경 전후 생성 결과 비교로 확인했다(verifiedVariantCount 1→3만 달라짐).
+  - 6-1-u2-e4-example-4-1(sourceGrade6PrismsPyramidsE4 variant 0): 정육면체+사각뿔 6개(74, 원문) / 윗면·아랫면을 뺀 네 옆면+사각뿔 4개(58) / 아랫면을 뺀 다섯 면+사각뿔 5개(66). 분류표 verifiedVariantTarget·Count 1→3, runtime-availability·source-inventory-grade6 감사의 1개 예외 목록에서 뺌.
+  - 6-1-u6-e1-exploration(source-grade6-surface-e1.js): 3×3×3(16개, 원문) / 4×4×4(44개: 3층 기둥 4개+2층 기둥 4개를 바둑판 자리에 남김, 20개·맞닿은 면 12곳) / 5×5×5(95개: 2층 막대 15개, 30개·맞닿은 면 15곳). 4층·5층 층별 지도 추가.
+  - 6-1-u6-e1-mission-1: 한 모서리 1cm(최대 34, 최소 24, 원문) / 2cm(136, 96) / 3cm(306, 216).
+- 독립 검산(작업 폴더 밖 Python): 각뿔 붙이기는 3차원 좌표로 입체를 만들어 면·모서리·꼭짓점과 인접 면 평행 여부를 셈(높이 4가지). 개념탐구는 답 그림의 층별 지도에서 남은 칸을 읽어 겉넓이·이웃 조건·한 개 적게 남길 때의 상한(6m-2×올림(m÷2))을 확인. Mission 1은 고정 방향 8칸 폴리큐브 162,913개를 전수 조사(겉면 최대 34, 최소 24).
+- 보류: 6-2-u3-e4-mission-4(sourceGrade6SecondSpaceE4FourCubeAddition)·mission-5(…RectangularColoredRemoval)는 문제·답 그림이 sha256 목록이 있는 PNG이고, 이를 만든 캡처 스크립트(manifest의 source-6-2-e4-final-missions-review.mjs/html, pentacube renderReport)가 저장소에 없으며 렌더러·모델이 원문 치수·variant 0만 받는다. 모델에서 다시 그려 검증할 수 없어 변형을 만들지 않았다.
+- 감사 통과: source-6-1-prisms-pyramids-e4(독립·브라우저), source-6-1-surface-e1(독립·브라우저, 개념탐구·Mission 1도 이제 3문항 기대), source-6-1-volume-surface-readiness, runtime-availability, math-notation, source-inventory-grade6, source-inventory-grades-5-2-to-6, browser-source-release, type-preview-ux, fixed-pool-selection. Mac에서 PDF 감사는 PATH에 ~/.cache/codex-runtimes/codex-primary-runtime/dependencies/bin/override(pdfinfo·pdftoppm)를 넣어야 한다.
+- 캐시 꼬리표: generators.js·source-inventory-grade6.js·source-grade6-surface-e1.js ?v=20261124-g6-source-variants.
+
+## 2026-11-24 — 5-1 분수의 덧셈 5유형 변형 문항 추가 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("변형 문항 추가"): 3문항을 요청해도 1~2문항만 나오던 5-1 분수의 덧셈 유형에 같은 구조의 변형을 더해 난이도마다 서로 다른 문항이 3개 이상 나오게 했다(generators.js ?v=20261124-u5-variants).
+  - fractionAdditionE1 variant 2(5-1-u5-t1-3, 네 분수 더하기)·variant 3(t1-4, 같은 분모끼리 묶기)·variant 10(t1-11, 세 진분수): 난이도마다 수치 묶음 1개씩 추가. 정답은 생성기가 계산하고 Python Fraction으로 따로 대조(9개 모두 일치).
+  - variant 13(t1-14, Mission 4): 원문 "합이 가장 작을 때" 외에 같은 조건의 "합이 가장 클 때"(1 8/21), "차가 가장 클 때"(11/35)를 추가. 답은 2·3·5·7을 놓는 모든 경우를 계산해 고르고, Python으로 따로 확인. 독립 감사(source-5-1-fraction-addition-e1-audit.js)에 두 검산 종류를 추가.
+  - fractionApplicationE3 variant 0(5-1-u5-t3) 쉬움: 원문 수치(배율 1·더하기 0) 외에 배율 2·더하기 1 변형도 낸다. 독립 감사는 쉬움에서 원문 수치가 반드시 나오고 그때 답이 원문과 같은지, 브라우저 감사는 쉬움 H가 원문 또는 허용된 변형인지 본다.
+- 감사: fraction-addition-e1(독립·브라우저), fraction-application-e3(독립·브라우저), runtime-availability, math-notation, browser-source-release 통과. polycube 생성 출력 비교에서 달라진 유형은 이 5개뿐(새 기준선은 작업 폴더에 저장).
+- 남은 것(사용자 결정 필요): 같은 방법으로 세면 서로 다른 문항이 3개 미만인 유형은 전체 903개다(5-2 약 775개, 4-2 6단원 35개, 4-1 32개, 6-2 3단원 12개 등). 대부분 원문 한 문제를 그대로 내는 유형이라 11-22 설계상 1~2문항만 나온다.
+
+## 2026-11-24 — 전체 감사 실행(4~6학년)과 낡은 감사 정비, 4문항 인쇄 범례 겹침 수정 (Claude Code / Opus 5.5, Mac)
+
+- 전체 JS 감사 1,314개(Windows 증거 27개 제외)와 Python 감사 172개를 Mac에서 돌렸다. 처음 실패 83개(JS) → 아래처럼 고쳐 JS는 모두 통과(5-1 묶음은 아래 결과 참고). Python은 164개 통과 + pdfplumber 3개는 Codex 런타임 파이썬(~/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3)과 해당 PDF 인자로 통과, 도로 기하 1개는 저장소 최상위에서 node 경로를 넣어 통과. pymupdf가 필요한 4개(source-6-2-height-views-pdf, stack-assets-pdf, stack-pdf, stack-questions-pdf)는 사용자 승인("설치해서 돌려")으로 작업 임시 가상 환경에만 pymupdf 1.26.5를 설치하고, E:/G: 전용 경로 검사를 절대 경로 폴더 허용으로 바꾼 뒤 현재 코드로 다시 만든 Mac 브라우저 결과(height-views-live·stack-renderer-live·stack-assets-live·stack-questions-live)로 실행해 모두 통과. 이로써 Python 감사 172개 모두 통과.
+- 실행 방법: 저장소 루트를 서빙하는 정적 서버를 127.0.0.1:18793과 감사 기본 포트 93개에 띄우고 HSE_AUDIT_ORIGIN/HSE_URL/HSE_BASE_URL을 맞춘 뒤 실행. 브라우저 감사는 동시에 많이 돌리면 시간 초과가 나므로 실패만 혼자 다시 돌려 확인. HSE_PDFJS_PATH=~/.cache/codex-runtimes/.../pdfjs-dist/legacy/build/pdf.mjs.
+- 학생 화면 결함 수정: 4-2-u5-t1-10 등 꺾은선그래프를 4문항 A4로 인쇄하면 그림 글자를 11px로 키우는 규칙 때문에 두 계열 범례("아이스크림(굵은선)"·"초콜릿(얇은선)")가 약 4.5px 겹쳤다 → four-up-print.css에서 범례 글자만 9px(?v=20261124-legend9). 인쇄본으로 확인.
+- problem-hint-policy.js: 빈 요소 정리를 "정책이 글자를 지워 비게 된 요소"로 한정(처음부터 글자가 없던 data 요소 보존). 전 유형 글자 결과는 서비스 중 정책과 동일(26,910문항 중 차이 0). ?v=20261124-keep-empty-data.
+- 낡은 감사 정비(원인별):
+  - 11-22 공개 등록(잠금 0): 잠금을 기대하던 감사를 공개·선택 가능·미리보기 확인으로(5-1 약수와 배수·규칙과 대응 등, 5-2 range-lock, 6-2 소수 e3·e4·e5, 4-2 다각형 u6-t4 등).
+  - 11-22 같은 문항 중복 제외: 원문 고정 문제는 1~2문항만 나오므로 "서로 다른 문장 수"만큼 기대(4-2 다각형·삼각형·꺾은선그래프, 6-1 겉넓이 E1).
+  - 유형이 다른 생성기로 옮겨진 감사(4-2 사각형 robot·trapezoid·growing-turn·two-angles·line-names, parallel-v): 안내 후 지금 화면에 해당하는 검사만.
+  - 힌트 정책(문제 쪽 힌트·그림 규칙): 생성기 계약 감사는 정책 파일을 빈 파일로 받는다(HSE_KEEP_HINT_POLICY=1이면 켬) — 6-1 소수 나눗셈·비와 비율, 5-2 range-e1·range-missions·cube-box 등.
+  - 헤드리스 인쇄: window.print가 바로 끝나 afterprint가 인쇄 상태를 지우므로, 감사는 print를 비우고 PDF 뒤 afterprint를 보냄(5-2 3단원 합성 32개 등). page.pdf()가 beforeprint를 일으켜 앱이 인쇄 상태를 되돌리므로 worksheet-tools는 인쇄 메뉴로 모드 선택. 풀이 보기 창 그림도 다 읽힌 뒤 검사(6-2 colored-cut·cube-addition bank).
+  - 그 밖: 5-2 코스모스(11-21 원문 문장 복원), 5-2 마트 문장, segment-ratio 풀 9개, crosswalk 준비 현황 수, mixed-worksheet 글꼴(c1a38cf0b 글꼴 통일)·균형 배치 행, type-preview 미리보기 버튼 숨김, check113 풀이 쪽 흐름(#1336), polycube 기준선(평행선 2유형만 의도된 변경, 새 기준선 저장 후 통과).
+- 풀이·답 PDF 3,194개 글자 여백 측정: 앱 인쇄 경로의 쪽은 모두 20pt 이상(6-1 5단원 E4는 설계상 6mm 여백). 3~7pt로 나온 것은 감사가 인쇄 메뉴 없이 화면 배치를 그대로 PDF로 찍은 파일이라 실제 인쇄와 다름.
+
+## 2026-11-24 — 6-1 소수 나눗셈·비와 비율 browser 감사 11개 정비 (Claude Code / Opus 5.5, Mac)
+
+- main(5b28c5114)에서도 실패하던 source-6-1-decimal-division-e1·e1-mission4·e2·e3·e4, source-6-1-ratio-e1~e6 browser 감사를 고쳐 모두 통과(Mac).
+  - 원인: 실제 주소 화면에서 problem-hint-policy.js가 문제 그림의 힌트 글자·안내를 지워 문제·답 그림 자료가 달라지거나 "3문항·그림 연결이 다르다"로 실패. 정책을 끄면 그대로 통과함을 확인 → 생성기 계약 감사로 보고 감사 서버가 정책을 끈다(HSE_KEEP_HINT_POLICY=1이면 켬). 정책 적용 결과는 전 유형 정책 전후 대조(물음 빠짐 0, 쉼표·마침표 손실 0)로 확인.
+  - e1·e1-mission4: playwright 경로를 HSE_PLAYWRIGHT_PATH로 받음. e1: 감사가 풀이 원문을 그대로 넣어 "1/10"이 슬래시로 보였을 뿐, 앱은 세로 분수로 보여 준다(실제 화면 확인) → 풀이 쪽 슬래시 검사 제외.
+  - ratio-e1: 11-22 공개로 잠금이 풀린 세 유형(exploration-1-1·1-2, example-1-1)이 출제되는지 확인하도록 바꿈(앞 PR에서 반영).
+- 2026-11-24 배포: PR #1501 병합 후 Pages 배포가 "No artifacts named github-pages-…" (산출물 1.08GB 업로드 직후 목록 반영 지연)로 세 번 실패, 네 번째 재실행에서 성공. 실제 사이트에서 새 힌트 정책·평행선 글자·four-up 그림 크기 반영 확인.
+
 ## 2026-11-24 — 풀이 A4 위아래 여백 빠짐 53곳 고침, 6학년 목록 감사 정비 (Claude Code / Opus 5.5, Mac)
 
 - 6학년 전체 목록 감사를 main(4fa888e30)에서 다시 돌렸다: source-inventory-audit, source-inventory-grade6-audit(633유형), public-inventory-review-reason(962유형), browser-source-release(전체 3006유형 생성 가능·검수 대기 0, 세 난이도 9018회 생성), grades-5-2-to-6(905), review-reason-gate, 52-locked-practice-gate 통과.

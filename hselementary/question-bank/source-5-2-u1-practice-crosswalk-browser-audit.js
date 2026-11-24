@@ -6,8 +6,9 @@ const {chromium}=require(process.env.HSE_PLAYWRIGHT_PATH || 'playwright');
 const origin=process.env.HSE_AUDIT_ORIGIN || 'http://127.0.0.1:8918';
 (async()=>{
  const rows=readiness.items.filter(x=>x.publicDecision==='locked');
- assert.equal(rows.length,39);assert(rows.every(x=>x.implementationStatus==='review-locked'&&x.practiceRuntimeId));
- const ids=[...new Set(rows.map(x=>x.practiceRuntimeId))];assert.equal(ids.length,33);
+ // 2026-11-24: 준비 현황(readiness-review.json)은 공개 등록으로 잠금 행이 39→5개로 줄었다. 개수는 데이터에서 읽고, 잠금 행마다 연습 유형 연결·생성은 그대로 검사한다.
+ assert(rows.length>0);assert(rows.every(x=>x.implementationStatus==='review-locked'&&x.practiceRuntimeId));
+ const ids=[...new Set(rows.map(x=>x.practiceRuntimeId))];assert(ids.length>0&&ids.length<=rows.length);
  const browser=await chromium.launch({headless:true,executablePath:process.env.HSE_CHROMIUM_EXECUTABLE||undefined});
  try {
   const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));

@@ -22,6 +22,22 @@ const inspect = async (browser, viewport, label, failures) => {
   page.on("pageerror", error => failures.push(`${label}: 브라우저 오류 ${error.message}`));
   await page.addInitScript(now => { Date.now = () => now; }, exactConcernNow);
   await page.goto(`${baseUrl}?type=${typeId}&review=1`, { waitUntil: "domcontentloaded", timeout: 90000 });
+  // 2026-11-24: 이 감사는 generators.js의 옛 quadParallelAngleCondition 경로(평행선 브이 바깥각 parallel-v-exterior 그림,
+  // 옛 유형 "평행선 사이 두 각으로 바깥각 구하기")를 4-2-u4-t2-4 주소로 검사했다. 4-2 사각형 단원이 원문 장부 유형
+  // (source-inventory-4-2-quadrilateral.js)으로 바뀌면서 이 유형 ID는 없어졌고, 개념탐구 2 유형은 원문 생성기
+  // (sourceGrade4AdvancedParallelAngle, 11-22 공개 orig42U4E2Example21·22)를 쓴다. 옛 경로를 쓰는 유형이 없으면 안내를 남기고
+  // 끝낸다. 유형이 다시 생기면 아래 원래 검사를 그대로 한다.
+  await page.waitForFunction(() => window.HSE_CURRICULUM && window.HSE_GENERATORS, null, { timeout: 90000 });
+  const legacyState = await page.evaluate(id => {
+    const types = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types)));
+    return { exists: types.some(type => type.id === id), legacyUsers: types.filter(type => type.generatorKey === "quadParallelAngleCondition").map(type => type.id) };
+  }, typeId);
+  if (!legacyState.exists) {
+    if (legacyState.legacyUsers.length) failures.push(`${label}: ${typeId}는 없는데 옛 quadParallelAngleCondition 생성기를 쓰는 유형이 있습니다: ${legacyState.legacyUsers.join(", ")}`);
+    console.log(`안내: ${typeId}는 지금 교육과정에 없고 옛 quadParallelAngleCondition 경로를 쓰는 유형도 없어 평행선 브이 바깥각 검사를 건너뜁니다 (${label}).`);
+    await page.close();
+    return;
+  }
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
   const state = await page.evaluate(() => ({
     overflow: document.documentElement.scrollWidth > document.documentElement.clientWidth + 1,
