@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook,reviewStudentModule}from'./student-language-review.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{withSeasonContextBankWorkbook}from'../data/book/season-workbook-context.js';
 import {EARTH_MOTION_PAIR_LANGUAGE_VERSION} from './earth-motion-pair-language.js';
 import {SEASON_PAIR_LANGUAGE_VERSION} from './season-pair-language.js';
@@ -12,7 +13,7 @@ import {questionAtVersion,restoreDailyQuestions} from './question-revision.js';
 const specs=[['career','Career','c22-s62-u04',128],['electricity','Electricity','c22-s62-u03',186],['combustion','Combustion','c22-s62-u02',198],['season','Season','c22-s62-u01',198],['earth-motion','EarthMotion','c22-s61-u04',167]];
 const cases=await Promise.all(specs.map(async([name,cap,unit,count])=>{
  const mod=await import('./'+name+'-bank-paper.js'),{workbook}=await import('../data/book/'+unit+'.workbook.js'),book=await import('../data/book/'+unit+'.book.js'),lesson=await revisedClassroom(unit,book),camel=cap[0].toLowerCase()+cap.slice(1);
- return {unit,count,workbook,items:lesson.classroomItems,prior:mod[camel+'BankBook'],current:mod['current'+cap+'BankBook'],render:mod.bankPaper};
+ const displayed=unit==='c22-s61-u04'?await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))):workbook;return {unit,count,workbook:displayed,items:unit==='c22-s61-u04'?(await reviewStudentModule(unit,{items:lesson.classroomItems})).items.map(q=>q.sourceRef?.type==='authored-pair'?lesson.classroomItems.find(x=>x.id===q.id):q):lesson.classroomItems,prior:mod[camel+'BankBook'],current:mod['current'+cap+'BankBook'],render:mod.bankPaper};
 }));
 const esc=value=>String(value??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const clone=value=>structuredClone(value);

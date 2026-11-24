@@ -1,3 +1,8 @@
+import{reviewStudentWorkbook,reviewQuestionRows}from'./student-language-review.js?v=20261117-student-language-review&earthMotionGuided=20261124-earth-motion-mixed-responses&earthMotionLayout=2';
+import{earthMotionGuidedItems}from'./earth-motion-guided-review.js?v=20261124-earth-motion-mixed-responses&layout=2';
+import{review as schoolLanguage}from'../data/language/c22-s61-u04.js?v=20261117-student-language-review';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{earthMotionContextItems}from'../data/book/earth-motion-workbook-context.js?v=20261116-earth-motion-workbook-context';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
 import{earthMotionPairCurrentItems}from'./earth-motion-pair-language.js?v=20261108-earth-motion-pair-language';
@@ -24,7 +29,11 @@ const figures={...bankBook.figures,...workbook.figures};
 for(let start=0;start<questions.length;start+=24){const rows=questions.slice(start,start+24);figures['bank-quick-'+start]='<div class="earth-quick-grid">'+[rows.slice(0,12),rows.slice(12)].filter(a=>a.length).map(table).join('')+'</div>';}
 export const earthMotionBankBook={...bankBook,theme:'#2f6b4a',questions,figures};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentEarthMotionBankBook=currentBankWorkbook(earthMotionBankBook,currentWorkbook,earthMotionContextItems(grade6QuestionReview(earthMotionPairCurrentItems(earthMotionReadableCurrentItems(observationCurrentItems(Array.from(current.values()),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'));
+export const priorEarthMotionGuidedBankBook=currentBankWorkbook(earthMotionBankBook,currentWorkbook,earthMotionContextItems(grade6QuestionReview(earthMotionPairCurrentItems(earthMotionReadableCurrentItems(observationCurrentItems(Array.from(current.values()),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'));
+const printableItems=earthMotionContextItems(grade6QuestionReview(earthMotionPairCurrentItems(earthMotionReadableCurrentItems(observationCurrentItems(Array.from(current.values()),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04'),'c22-s61-u04');
+// Pair print mapping keeps its own exact-version guard; school wording follows the supplement layer.
+const guidedPrintItems=earthMotionGuidedItems(printableItems.map(q=>q.sourceRef?.type==='authored-pair'?q:reviewQuestionRows([q],schoolLanguage)[0]),'c22-s61-u04');
+export const currentEarthMotionBankBook=currentBankWorkbook(earthMotionBankBook,await reviewStudentWorkbook(currentWorkbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),guidedPrintItems);
 const paper=makeWorkbookPaper(currentEarthMotionBankBook,{}, {route:'print',toolLabel:'167문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;
 export const wireBankPaper=paper.wireWorkbookPaper;
