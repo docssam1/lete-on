@@ -500,5 +500,10 @@ export function withMaterialMixedWorkbook(w){
  const quickPages=w.quickPages.map(p=>({...p,blocks:p.blocks.map(b=>b.type!=='table'?b:{...b,rows:b.rows.map(row=>{const e=review[Number(row[0])];return e&&!e.contract.teacherRequired?[row[0],labels[e.form]+(String(row[1]).includes(' · ')?String(row[1]).slice(String(row[1]).indexOf(' · ')):''),e.answer]:row;})})}));
  const titles={33:'물체와 재료를 살펴요',35:'알맞은 말을 채워요',37:'쓰임에 맞는 성질을 찾아요',39:'고친 뒤 다시 살펴요'};
  const pages=rows=>rows.map(p=>{const ids=p.blocks.flatMap(b=>b.ids||[]),first=Number(ids[0]?.slice(-3));return titles[first]&&ids.length===2?{...p,section:'생각해 보기 '+first+'~'+(first+1),title:titles[first]}:p;});
- const result={...w,questions,quickPages,pages:pages(w.pages),teacherStudentPages:pages(w.teacherStudentPages)};books.set(w,result);return result;
+ const teacherStudentPages=pages(w.teacherStudentPages).flatMap(p=>{
+  const ids=p.blocks.flatMap(b=>b.ids||[]);if(ids.join()!==[6,7,8].map(n=>unit+'-w'+String(n).padStart(3,'0')).join())return[p];
+  // Repeat the common observation table so both teacher pages stand alone with their answers.
+  return [[6,7],[8]].map(group=>({...p,section:'기본·적용 '+group.join('~'),blocks:p.blocks.map(b=>b.type==='questions'?{...b,ids:group.map(n=>unit+'-w'+String(n).padStart(3,'0'))}:b)}));
+ });
+ const result={...w,questions,quickPages,pages:pages(w.pages),teacherStudentPages};books.set(w,result);return result;
 }
