@@ -1,3 +1,4 @@
+import{beforeHeatTask}from'./tests/heat-guided-stage.mjs';
 import{beforeMixtureTask}from'./tests/mixture-guided-stage.mjs';
 import{reviewStudentModule}from'./student-language-review.js';
 import{beforeSolutionTask}from'./tests/solution-guided-stage.mjs';
@@ -68,8 +69,8 @@ test('classroom, Daily and real bank print output use the current examples witho
   const mod=loaded.get(unit),raw=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,raw),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]);
   for(const q of mod.items.filter(q=>questionAtVersion(q,version))){
    const old=questionAtVersion(q,previousVersion(unit));
-   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(beforeMixtureTask(beforeSolutionTask(found)),q);selected++;}}
-   const active=unit==='c22-s52-u01'?(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id):q,student=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[q],similar:[],source:[],mode:'teacher'});
+   for(const rows of[classroom.classroomItems,pool]){const found=rows.find(x=>x.id===q.id);if(found){assert.deepEqual(beforeHeatTask(beforeMixtureTask(beforeSolutionTask(found))),q);selected++;}}
+   const active=['c22-s52-u01','c22-s52-u02'].includes(unit)?(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id):q,student=mod.bankPaper({...mod,items:[unit==='c22-s52-u02'?active:q],similar:[],source:[],mode:'student'}),teacher=mod.bankPaper({...mod,items:[unit==='c22-s52-u02'?active:q],similar:[],source:[],mode:'teacher'});
    assert(!student.includes(escape(active.answerContract.sample)));assert(!student.includes('class="ed-key"'));
    assert(teacher.includes(escape(active.answerContract.sample)),q.id);
    assert(!teacher.includes(escape(old.answerContract.sample)),q.id+' obsolete sample');

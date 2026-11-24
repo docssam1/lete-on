@@ -640,3 +640,6 @@
  .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8!important;min-height:38mm}
  .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel:last-child{border-bottom:0!important}
 }
+
+/* Grade-five heat: short explanations retain wide original drawing space. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-question::after{display:none}

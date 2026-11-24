@@ -1,3 +1,4 @@
+import{reviewStudentWorkbook}from'./student-language-review.js';import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';
 import{workbook,heatContextPriorWorkbook as prior}from'../data/book/c22-s52-u02.workbook.js';import{withHeatContextWorkbook,HEAT_CONTEXT_VERSION as version}from'../data/book/heat-workbook-context.js';import{revisedTextbook,revisedTextbookPaper}from'./revised-textbook.js';import{renderChapter}from'./book.js';
 const unit='c22-s52-u02',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -5,10 +6,10 @@ const unit='c22-s52-u02',q=(w,n)=>w.questions.find(q=>q.no===n),esc=s=>String(s)
 test('heat student and teacher routes distinguish direct observation, single checks and supported convection claims',async()=>{
  assert.equal(q(workbook,27).choices[2],'직접 보지 못한 이동은 관찰하지 못했다고 남긴다.');assert(q(workbook,84).prompt.includes('같은 시각에 데우기 시작'));assert(q(workbook,84).prompt.includes('한 번씩 확인'));assert(q(workbook,84).prompt.includes('30초가 되었을 때만'));assert(q(workbook,84).prompt.includes('2분이 되었을 때만'));
  assert(workbook.pages[54].rail[2].text.includes('물의 대류를 확인하려면'));assert(q(workbook,59).criteria.includes('물의 움직임을 관찰한 경우'));assert(workbook.pages[60].rail[2].text.includes('65번의 활동 순서와 66번'));assert(!workbook.pages[60].rail[2].text.includes('100mL'));
- const paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
+ const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
-  for(const no of[27,84]){const item=q(workbook,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  assert(html.includes(esc(workbook.pages[54].rail[2].text)));assert(html.includes(esc(workbook.pages[60].rail[2].text)));assert(!html.includes('사진에 없던 이동은 보지 못함으로 남긴다.'));
+  for(const no of[27,84]){const item=q(current,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
+  assert(html.includes(esc(workbook.pages[32].blocks.find(b=>b.type==='text').text)));assert(html.includes(esc(q(current,65).prompt)));assert(html.includes(esc(q(current,66).prompt)));assert(!html.includes('사진에 없던 이동은 보지 못함으로 남긴다.'));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&heatContext='+version));
 });

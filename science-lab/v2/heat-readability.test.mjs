@@ -1,3 +1,4 @@
+import{beforeHeatTask}from'./tests/heat-guided-stage.mjs';
 import{heatContextItems}from'../data/book/heat-workbook-context.js';
 import{reviewedQuestionCriteria}from'../data/book/reviewed-question-criteria.js';
 import{linkedWorkbookAnswers}from'../data/book/linked-workbook-answers.js';
@@ -35,7 +36,7 @@ test('heat readability guards original, similar, review, future and other unit q
  assert.equal(heatReadableCurrentItems(baseline,'other'),baseline);assert.equal(heatReadableCurrentItems(null,unit),null);
 });
 test('heat bank, recurring classroom and Daily use the same sixteen current presentations',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=heatContextItems(reviewedQuestionCriteria(linkedWorkbookAnswers(heatReadableCurrentItems(baseline,unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
+ const firstCurrent=await revisedClassroom(unit,book),secondCurrent=await revisedClassroom(unit,book),first={...firstCurrent,classroomItems:firstCurrent.classroomItems.map(beforeHeatTask)},second={...secondCurrent,classroomItems:secondCurrent.classroomItems.map(beforeHeatTask)},current=heatContextItems(reviewedQuestionCriteria(linkedWorkbookAnswers(heatReadableCurrentItems(baseline,unit),unit),unit),unit),daily=classroomQuestions(second,current);let changed=0;
  for(const q of first.classroomItems){const repeated=second.classroomItems.find(x=>x.id===q.id);assert.deepEqual(repeated,q);assert.equal(daily.find(x=>x.id===q.id),repeated);assert.deepEqual(current.find(x=>x.id===q.id),q);if(questionAtVersion(q,HEAT_READABILITY_VERSION)){assert.equal(repeated,q);changed++;}}
  assert.equal(changed,6);assert.equal(first.classroomItems.length,16);
 });

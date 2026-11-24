@@ -1,3 +1,4 @@
+import{beforeHeatTask}from'./tests/heat-guided-stage.mjs';
 import{reviewStudentModule}from'./student-language-review.js';
 import{beforeMixtureTask}from'./tests/mixture-guided-stage.mjs';
 import test from 'node:test';
@@ -77,10 +78,10 @@ test('exact-version guards preserve originals, edited criteria and reordered or 
 test('current classroom, Daily and printed keys share the same version and retain student answer hiding',async()=>{
  let found=0;
  for(const unit of units){
-  const mod=mods.get(unit),book=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,book),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]),student=mod.bankPaper({...mod,mode:'student'}),teacher=mod.bankPaper({...mod,mode:'teacher'});
-  for(const q of mod.items.filter(q=>beforeGrade5(q).contentVersion===version)){
-   for(const list of[classroom.classroomItems,pool]){const displayed=list.find(x=>x.id===q.id);if(displayed){assert.deepEqual(beforeMixtureTask(displayed),q);found++;}}
-   if(q.answerContract.rubric){const active=(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id),criterion=active.answerContract.rubric.required[0];assert(teacher.includes(escape(criterion)),q.id);assert(!student.includes(escape(criterion)),q.id);}
+  const historical=mods.get(unit),mod=historical,currentPrint=unit==='c22-s52-u02'?await reviewStudentModule(unit,historical):historical,book=await import('../data/book/'+unit+'.book.js'),classroom=await revisedClassroom(unit,book),pool=classroomQuestions(classroom,[...mod.similar,...mod.items]),student=currentPrint.bankPaper({...currentPrint,mode:'student'}),teacher=currentPrint.bankPaper({...currentPrint,mode:'teacher'});
+  for(const q of historical.items.filter(q=>beforeGrade5(q).contentVersion===version)){
+   for(const list of[classroom.classroomItems,pool]){const displayed=list.find(x=>x.id===q.id);if(displayed){assert.deepEqual(beforeHeatTask(beforeMixtureTask(displayed)),displayed.heatGuidedResponse?beforeHeatTask((await reviewStudentModule(unit,historical)).items.find(x=>x.id===q.id)):q);found++;}}
+   if(q.answerContract.rubric){const active=(await reviewStudentModule(unit,mod)).items.find(x=>x.id===q.id),criterion=active.answerContract.rubric.required[0];assert(teacher.includes(escape(criterion)),'teacher '+q.id);if(unit==='c22-s52-u02'){const at=student.indexOf('data-paper-item="'+q.id+'"'),end=student.indexOf('</article>',at);assert(at>=0&&end>at);assert(!student.slice(at,end).includes(escape(criterion)),'student '+q.id);}else assert(!student.includes(escape(criterion)),'student '+q.id);}
   }
   assert(!student.includes('class="ed-key"'));
  }
