@@ -1,3 +1,4 @@
+import{soundMixedUnchangedQuickRows}from'./tests/sound-mixed-stage.mjs';
 import{soundUnchangedSolutions}from'./tests/sound-guided-stage.mjs';
 import{reviewStudentWorkbook,reviewTextTree}from'./student-language-review.js';
 const unitForLanguage=w=>w.unit;
@@ -20,7 +21,7 @@ test('the real student and teacher workbooks receive the same eleven-page direct
 test('current sound print and web routes use the final guided tasks while preserving all earlier directions in their historical edition',async()=>{
  const paper=await revisedTextbookPaper(unit),{art}=await import('../data/book/'+unit+'.workbook-art.js'),final=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),oldPaper=makeWorkbookPaper(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(before))),art),raw=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,raw);
  for(const mode of['student','teacher']){const print=paper.workbookPaper({mode}),web=renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true});for(const s of final.pages.flatMap(p=>p.blocks).flatMap(b=>b.type==='text'?[b.text]:[])){assert(print.includes(esc(s)),mode+' print '+s);assert(web.includes(esc(s)),mode+' web '+s);}assert(!print.includes(esc(oldText[6].blocks[2].hint)));}
- assert.deepEqual(soundUnchangedSolutions(paper.workbookPaper({mode:'answers'})),soundUnchangedSolutions(oldPaper.workbookPaper({mode:'answers'})));assert.equal(paper.workbookPaper({mode:'quick'}),oldPaper.workbookPaper({mode:'quick'}));
+ assert.deepEqual(soundUnchangedSolutions(paper.workbookPaper({mode:'answers'})),soundUnchangedSolutions(oldPaper.workbookPaper({mode:'answers'})));assert.deepEqual(soundMixedUnchangedQuickRows(paper.workbookPaper({mode:'quick'})),soundMixedUnchangedQuickRows(oldPaper.workbookPaper({mode:'quick'})));
 });
 
 test('future page materials, extension edits and linked question changes are protected and the actual loader rejects an old manuscript cache',async()=>{
