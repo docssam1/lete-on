@@ -1777,3 +1777,5 @@ button{
 
 /* 2026-11-24: 6-1 5단원 그래프(그림그래프·띠그래프·원그래프) 그림은 생성기가 fill 속성으로 칸·범례 색을 정한다. 위의 .geometry-diagram 공통 fill:none 규칙이 이 색을 지워 원그래프 범례와 부채꼴을 구분할 수 없었으므로, fill 속성이 있는 도형만 그 색을 되살린다. */
 .geometry-diagram:is(.source61-graphs-e1-diagram,.source61-graphs-e2-diagram,.source61-graphs-e2-pictograph,.source61-graphs-e3-diagram,.source61-e3-pets,.source61-graphs-e4-diagram) :is(path,polygon,rect,circle,ellipse)[fill]{fill:revert-layer}
+/* 2026-11-24: 6학년의 다른 그림도 생성기가 fill 속성으로 면·겹친 부분·점을 구분하므로 같은 방식으로 되살린다(전개도 면, 두 삼각형, 테이프 겹친 부분, 나무 자리 등). */
+.geometry-diagram:is(.source61-e2-diagram,.source61-triangular-prism-net,.source61-decimal-e4-diagram,.source61-ratio-e2-diagram,.source61-ratio-e3-diagram,.source61-ratio-e4-diagram,.source61-ratio-e5-diagram,.source62-tape-count,.e6-geometry) :is(path,polygon,rect,circle,ellipse)[fill],.source62-tree-method-figure .geometry-diagram :is(path,polygon,rect,circle,ellipse)[fill]{fill:revert-layer}
