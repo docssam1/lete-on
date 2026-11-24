@@ -1,6 +1,6 @@
 // 물체와 물질 실험실 — 같은 모양 막대 네 개(금속·플라스틱·나무·고무). 시험을 고르고 「시험하기」 → 네 막대의 결과를 읽고 표에 적는다.
 // 결과는 「이 모형의 막대」 값이다(scenes/material-model.js). 같은 이름의 물질도 종류·두께에 따라 다를 수 있다.
-import { MATERIALS, TESTS, ASK, NOTE, materialRow } from '../scenes/material-model.js';
+import { MATERIALS, TESTS, ASK, NOTE, materialRow } from '../scenes/material-model.js?v=20261125-neoprene-sample';
 export { MATERIALS, TESTS, materialRow };
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const DUR = 3.2;

@@ -1,5 +1,5 @@
 // Attach the existing model data required to solve these authored questions on their own.
-import {MATERIALS,NOTE,TESTS,materialResult} from '../../scenes/material-model.js';
+import {MATERIALS,NOTE,TESTS,materialResult} from '../../scenes/material-model.js?v=20261125-neoprene-sample';
 import {WATERS as EVAP_WATERS,evapModel} from '../../scenes/seawater-model.js';
 import {LENGTHS,STRENGTHS,rulerModel} from '../../scenes/ruler-model.js';
 import {ROUNDS,glitterModel} from '../../scenes/glitter-model.js';

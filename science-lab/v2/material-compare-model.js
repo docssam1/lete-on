@@ -1,4 +1,4 @@
-import{MATERIALS,TESTS,NOTE,ASK,materialRow}from'../scenes/material-model.js';
+import{MATERIALS,TESTS,NOTE,ASK,materialRow}from'../scenes/material-model.js?v=20261125-neoprene-sample';
 export{MATERIALS,TESTS,NOTE,ASK};
 export const MATERIAL_COMPARE_NOTICE='같은 모양·크기의 네 막대를 같은 방법으로 비교한 모형 자료예요. 실제 학생의 측정 결과가 아니며 같은 이름의 모든 물질에 일반화하지 않아요.';
 export function materialChoices(test){if(!TESTS.includes(test))throw new RangeError('없는 시험');return[...new Set(MATERIALS.map(m=>materialRow(test)[m])),'자료 더 필요'];}
