@@ -49,12 +49,25 @@ function splitNumberLine(visual) {
 }
 
 function rods(visual) {
-  const max = Math.max(...visual.rods.map((rod) => rod.unit ? rod.count * rod.unit : rod.count));
-  return `<div class="b6-rods">${visual.rods.map((rod) => {
-    const length = rod.unit ? rod.count * rod.unit : rod.count;
-    const segments = rod.unit ? Math.min(rod.count, 12) : rod.repeat ? Math.min(rod.repeat, 12) : Math.min(rod.count, 12);
-    return `<div><b>${escapeHtml(rod.label)}</b><span class="${rod.tone || "blue"}" style="--rod-width:${Math.max(22, length / max * 100)}%;--segments:${segments}">${Array.from({ length: segments }, () => "<i></i>").join("")}</span><em>${rod.repeat ? `${rod.count}cm씩 ${rod.repeat}번` : rod.unit ? `${rod.unit}cm × ${rod.count}개` : `${rod.count}cm`}</em></div>`;
-  }).join("")}</div>`;
+  // 막대 길이도 막대 위 바깥 곡선 점선 + 끊은 자리 글자(원장 2026-11-24). 「N cm × M개」는 한 칸 위 호 + 옆 글자.
+  // 길이 차 줄(repeat)은 차이를 구하는 막대라 「?」만 — 예전 「2cm씩 7번」은 이 문제의 답(몇 번)을 그림에 보였다.
+  const TONE = { green: ["#dff2e8", "#53947a"], yellow: ["#fff0b5", "#c39333"], blue: ["#fdf4d7", "#8b7f69"] };
+  const max = Math.max(...visual.rods.map((rod) => (rod.unit ? rod.unit * rod.count : rod.count)), 1);
+  const X0 = 78, BW = 220, H = 22, ROW = 58, top = 32;
+  let body = "";
+  visual.rods.forEach((rod, k) => {
+    const length = rod.unit ? rod.unit * rod.count : rod.count;
+    const segments = rod.count;
+    const w = Math.max(60, (length / max) * BW), cw = w / segments, y = top + k * ROW, [fill, line] = TONE[rod.tone] || TONE.blue;
+    const name = isLength(rod.label) ? "" : rod.label;
+    body += `<text x="${X0 - 10}" y="${y + H / 2}" dominant-baseline="central" style="text-anchor:end;font-size:15px;font-weight:800;fill:#3a3228">${escapeHtml(name)}</text>`;
+    for (let i = 0; i < segments; i += 1) body += `<rect x="${(X0 + i * cw).toFixed(1)}" y="${y}" width="${cw.toFixed(1)}" height="${H}" style="fill:${fill};stroke:${line};stroke-width:1.2"/>`;
+    if (rod.repeat) body += dimArc(X0, y, X0 + w, y, -10, "?", { size: 15 });
+    else if (rod.unit) body += dimArc(X0, y, X0 + cw, y, -9, `${rod.unit}cm`, { size: 14 }) + `<text x="${X0 + w + 10}" y="${y + H / 2}" dominant-baseline="central" style="text-anchor:start;font-size:14px;font-weight:700;fill:#3a3228">× ${rod.count}개</text>`;
+    else body += dimArc(X0, y, X0 + w, y, -10, `${rod.count}cm`, { size: 14 });
+  });
+  const W = X0 + BW + 70, HH = top + visual.rods.length * ROW - 20;
+  return `<svg class="b6-svg b6-rods-svg" viewBox="0 0 ${W} ${HH}" style="width:100%;max-width:${W + 40}px;max-height:none" role="img" aria-label="막대 ${visual.rods.length}개">${body}</svg>`;
 }
 
 function fractionChain(visual) {
@@ -162,7 +175,10 @@ function diagonalRectangle(visual) {
 }
 
 function cellStrip(visual) {
-  return `<div class="b6-cell-strip" style="--count:${visual.count}">${Array.from({ length: visual.count }, () => "<span></span>").join("")}<strong>한 칸 ${visual.side}cm</strong></div>`;
+  // 한 칸의 한 변 = 첫 칸 위 바깥 곡선 점선(원장 2026-11-24)
+  const c = 56, x0 = 20, y0 = 40, n = visual.count;
+  const cells = Array.from({ length: n }, (_, i) => `<rect x="${x0 + i * c}" y="${y0}" width="${c}" height="${c}" style="fill:#fff6dc;stroke:#8b7f69;stroke-width:1.5"/>`).join("");
+  return `<svg class="b6-svg b6-cell-strip-svg" viewBox="0 0 ${x0 * 2 + n * c} ${y0 + c + 16}" style="width:min(100%,${x0 * 2 + n * c + 30}px)" role="img" aria-label="정사각형 ${n}개를 이은 줄, 한 칸 ${visual.side}cm">${cells}${dimArc(x0, y0, x0 + c, y0, -11, `${visual.side}cm`, { size: 15 })}</svg>`;
 }
 
 function cellBounds(cells) {
@@ -175,27 +191,40 @@ function cellBounds(cells) {
 function cellSvg(cells, options = {}) {
   const bounds = cellBounds(cells);
   const cell = Math.min(48, 250 / Math.max(bounds.maxX - bounds.minX + 1, bounds.maxY - bounds.minY + 1));
-  const width = (bounds.maxX - bounds.minX + 1) * cell + 40;
-  const height = (bounds.maxY - bounds.minY + 1) * cell + 40;
+  const pad = options.side ? 34 + Math.max(0, (options.sideSize || 15) - 15) : 20;
+  const width = (bounds.maxX - bounds.minX + 1) * cell + 20 + pad;
+  const height = (bounds.maxY - bounds.minY + 1) * cell + 20 + pad;
   const cut = new Set((options.cut || []).map(([x, y]) => `${x}:${y}`));
   const shapes = [];
-  cells.forEach(([x, y]) => shapes.push(`<rect class="filled" x="${20 + (x - bounds.minX) * cell}" y="${20 + (y - bounds.minY) * cell}" width="${cell}" height="${cell}"/>`));
-  (options.cut || []).forEach(([x, y]) => shapes.push(`<rect class="cut" x="${20 + (x - bounds.minX) * cell}" y="${20 + (y - bounds.minY) * cell}" width="${cell}" height="${cell}"/>`));
-  return `<svg class="b6-svg b6-cells" viewBox="0 0 ${width} ${height}" role="img" aria-label="모눈 정사각형으로 만든 도형">${shapes.join("")}</svg>`;
+  const X = (x) => pad + (x - bounds.minX) * cell, Y = (y) => pad + (y - bounds.minY) * cell;
+  cells.forEach(([x, y]) => shapes.push(`<rect class="filled" x="${X(x)}" y="${Y(y)}" width="${cell}" height="${cell}" fill="#fdf4d7" stroke="#847863" stroke-width="1.5"/>`));
+  (options.cut || []).forEach(([x, y]) => shapes.push(`<rect class="cut" x="${X(x)}" y="${Y(y)}" width="${cell}" height="${cell}" fill="#f1d2cb" stroke="#bb624f" stroke-width="1.5" stroke-dasharray="4 3"/>`));
+  // 한 변의 길이 = 맨 윗줄 왼쪽 칸 위 바깥 곡선 점선(원장 2026-11-24)
+  if (options.side) { const topRow = cells.filter(([, y]) => y === bounds.minY), [fx] = topRow.reduce((a, b) => (b[0] < a[0] ? b : a)); shapes.push(dimArc(X(fx), Y(bounds.minY), X(fx) + cell, Y(bounds.minY), -Math.min(12, cell * 0.3), options.side, { size: options.sideSize || Math.max(12, Math.min(15, cell * 0.42)) })); }
+  return `<svg class="b6-svg b6-cells" viewBox="0 0 ${width} ${height}" style="width:min(100%,${Math.round(width * 1.15)}px)" role="img" aria-label="모눈 정사각형으로 만든 도형">${shapes.join("")}</svg>`;
 }
 
 function cellShape(visual) {
-  return `<div class="b6-cell-panel">${cellSvg(visual.cells)}<strong>한 변 ${escapeHtml(visual.sideLabel || "")}${visual.perimeterLabel ? ` · 둘레 ${escapeHtml(visual.perimeterLabel)}` : ""}</strong></div>`;
+  return `<div class="b6-cell-panel">${cellSvg(visual.cells, { side: visual.sideLabel })}${visual.perimeterLabel ? `<strong>둘레 ${escapeHtml(visual.perimeterLabel)}</strong>` : ""}</div>`;
 }
 
 function cellCutout(visual) {
   const all = [...visual.cells, ...visual.cut];
-  return `<div class="b6-cell-panel">${cellSvg(all, { cut: visual.cut })}<strong>한 변 ${escapeHtml(visual.sideLabel)}</strong></div>`;
+  return `<div class="b6-cell-panel">${cellSvg(all, { cut: visual.cut, side: visual.sideLabel })}</div>`;
 }
 
 function foldedRectangle(visual) {
-  const arrow = visual.foldWidth ? "⇥" : "⇣";
-  return `<div class="b6-folded-rectangle"><span><i></i><b>${arrow}</b></span><span class="folded"><i></i><em>${visual.foldedWidth}cm × ${visual.foldedHeight}cm</em></span></div>`;
+  // 처음 종이 → 반으로 접은 종이. 접은 종이의 가로·세로 = 바깥 곡선 점선(원장 2026-11-24)
+  const fw = visual.foldedWidth, fh = visual.foldedHeight, k = Math.min(110 / fw, 110 / fh);
+  const w = fw * k, h = fh * k, W0 = visual.foldWidth ? w * 2 : w, H0 = visual.foldWidth ? h : h * 2;
+  const x0 = 20, y0 = 20, x1 = x0 + W0 + 70, y1 = y0 + (H0 - h) / 2;
+  const paper = "fill:#f5efe2;stroke:#7f735f;stroke-width:2";
+  const crease = visual.foldWidth ? `<line x1="${x0 + w}" y1="${y0}" x2="${x0 + w}" y2="${y0 + H0}" style="stroke:#c97a1f;stroke-width:1.6;stroke-dasharray:5 4"/>` : `<line x1="${x0}" y1="${y0 + h}" x2="${x0 + W0}" y2="${y0 + h}" style="stroke:#c97a1f;stroke-width:1.6;stroke-dasharray:5 4"/>`;
+  const arrow = `<path d="M${x0 + W0 + 16} ${y0 + H0 / 2}h34m-8 -7l8 7-8 7" style="fill:none;stroke:#6b6151;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round"/>`;
+  const body = `<rect x="${x0}" y="${y0}" width="${W0}" height="${H0}" style="${paper}"/>${crease}${arrow}<rect x="${x1}" y="${y1}" width="${w}" height="${h}" style="${paper}"/>`
+    + dimArc(x1, y1 + h, x1 + w, y1 + h, 12, `${fw}cm`, { size: 15 }) + len([x1 + w, y1], [x1 + w, y1 + h], [x1 + w / 2, y1 + h / 2], `${fh}cm`, { off: 10, size: 15 });
+  const W = x1 + w + 70, H = Math.max(y0 + H0, y1 + h + 26) + 12;
+  return `<svg class="b6-svg b6-folded-svg" viewBox="0 0 ${W} ${H}" style="width:min(100%,${Math.round(W * 1.15)}px)" role="img" aria-label="반으로 접은 직사각형, 접은 뒤 ${fw}cm × ${fh}cm">${body}</svg>`;
 }
 
 function route(visual) {
@@ -208,21 +237,45 @@ function orthogonalPolygon(visual) {
   const ys = visual.vertices.map(([, y]) => y);
   const maxX = Math.max(...xs);
   const maxY = Math.max(...ys);
-  const points = visual.vertices.map(([x, y]) => `${35 + x / maxX * 285},${30 + y / maxY * 150}`).join(" ");
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 390 235" role="img" aria-label="직각으로 꺾인 도형"><polygon points="${points}"/><text x="178" y="220">가로 ${escapeHtml(visual.labels.width)} · 세로 ${escapeHtml(visual.labels.height)}</text>${visual.labels.depth ? `<text class="note" x="195" y="22">들어간 깊이 ${escapeHtml(visual.labels.depth)}</text>` : ""}</svg>`;
+  const P = ([x, y]) => [55 + x / maxX * 270, 40 + y / maxY * 150];
+  const points = visual.vertices.map((v) => P(v).join(",")).join(" ");
+  // 가로 전체 = 위 변, 세로 전체 = 왼쪽 변(두 변 모두 꼭짓점 (0,0)에서 끝까지 곧게 이어진다), 들어간 깊이 = 홈의 세로 변 — 바깥 곡선 점선(원장 2026-11-24)
+  const c = P([maxX / 2, maxY / 2]);
+  let dims = len(P([0, 0]), P([maxX, 0]), c, visual.labels.width) + len(P([0, 0]), P([0, maxY]), c, visual.labels.height);
+  if (visual.labels.depth) {
+    const v = visual.vertices, k = v.findIndex(([x, y], i) => i > 0 && y < maxY && x > 0 && x < maxX && v[i - 1][1] === maxY && v[i - 1][0] === x);
+    // 홈이 넓으면 홈 안으로, 좁으면 오른쪽 도형 안으로 휜다(글자가 홈 윗변에 닿지 않게)
+    // 홈의 오른쪽 변·왼쪽 변 중, 휘어 들어갈 빈 곳(홈 안 또는 옆 도형)이 가장 넓은 쪽을 고른다
+    if (k > 0) {
+      const R = [P(v[k - 1]), P(v[k])], L = [P(v[k + 2]), P(v[k + 1])], notch = R[1][0] - L[1][0], right = P([maxX, 0])[0] - R[1][0], left = L[1][0] - P([0, 0])[0];
+      // 아주 얕은 홈(변 30px 아래)은 글자가 아래 변에 걸리므로, 홈이 넓으면 홈 안으로
+      const shallow = R[1][1] - R[0][1] > -30 && notch >= 50, inNotch = (room) => (shallow ? room + 1000 : room);
+      const pick = [[R, inNotch(notch), 30], [R, right, -30], [L, inNotch(notch), -30], [L, left, 30]].sort((p, q) => q[1] - p[1])[0];
+      dims += len(pick[0][0], pick[0][1], [pick[0][1][0] + pick[2], pick[0][1][1]], visual.labels.depth, { off: 10 });
+    }
+  }
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 390 225" role="img" aria-label="직각으로 꺾인 도형">${`<polygon points="${points}"/>`}${dims}</svg>`;
 }
 
 function beforeAfterCells(visual) {
-  return `<div class="b6-before-after"><span>${cellSvg(visual.before)}<b>자르기 전</b></span><i>→</i><span>${cellSvg(visual.after)}<b>자른 후</b></span><strong>한 변 ${escapeHtml(visual.sideLabel)}</strong></div>`;
+  return `<div class="b6-before-after"><span>${cellSvg(visual.before, { side: visual.sideLabel, sideSize: 26 })}<b>자르기 전</b></span><i>→</i><span>${cellSvg(visual.after)}<b>자른 후</b></span></div>`;
 }
 
 function squarePartition(visual) {
-  return `<div class="b6-square-partition" style="--parts:${visual.parts}">${Array.from({ length: visual.parts * visual.parts }, () => "<i></i>").join("")}<span>작은 한 변 ${escapeHtml(visual.smallLabel)}</span><strong>큰 한 변 ${escapeHtml(visual.totalLabel)}</strong></div>`;
+  // 작은 정사각형 한 변 = 첫 칸 위, 큰 정사각형 한 변 = 왼쪽 — 바깥 곡선 점선(원장 2026-11-24)
+  const n = visual.parts, S = 160, c = S / n, x0 = 70, y0 = 36;
+  let body = `<rect x="${x0}" y="${y0}" width="${S}" height="${S}" style="fill:#f7f2e6;stroke:#7f735f;stroke-width:3"/>`;
+  for (let i = 1; i < n; i += 1) body += `<line x1="${x0 + i * c}" y1="${y0}" x2="${x0 + i * c}" y2="${y0 + S}" style="stroke:#a89c84;stroke-width:1.5"/><line x1="${x0}" y1="${y0 + i * c}" x2="${x0 + S}" y2="${y0 + i * c}" style="stroke:#a89c84;stroke-width:1.5"/>`;
+  body += dimArc(x0, y0, x0 + c, y0, -11, visual.smallLabel, { size: 15 }) + len([x0, y0], [x0, y0 + S], [x0 + S / 2, y0 + S / 2], visual.totalLabel, { size: 15 });
+  return `<svg class="b6-svg b6-square-partition-svg" viewBox="0 0 ${x0 + S + 30} ${y0 + S + 16}" style="width:min(100%,300px)" role="img" aria-label="큰 정사각형을 ${n} × ${n}칸으로 나눈 그림">${body}</svg>`;
 }
 
 function nestedSquare(visual) {
-  const ratio = Math.max(24, visual.inner / visual.outer * 68);
-  return `<div class="b6-nested-square"><span style="--inner:${ratio}%"><i></i></span><p>바깥 ${visual.outer}cm · 안쪽 ${visual.inner}cm</p></div>`;
+  // 바깥 한 변 = 아래, 안쪽 한 변 = 안쪽 정사각형 위 — 바깥 곡선 점선(원장 2026-11-24)
+  const S = 170, x0 = 24, y0 = 18, r = Math.min(0.72, Math.max(0.3, visual.inner / visual.outer)), s = S * r, ix = x0 + (S - s) / 2, iy = y0 + (S - s) / 2 + 6;
+  const body = `<rect x="${x0}" y="${y0}" width="${S}" height="${S}" style="fill:#f7f2e6;stroke:#b7841e;stroke-width:4"/><rect x="${ix}" y="${iy}" width="${s}" height="${s}" style="fill:#fff;stroke:#c58325;stroke-width:4"/>`
+    + dimArc(x0, y0 + S, x0 + S, y0 + S, 14, `${visual.outer}cm`, { size: 15 }) + dimArc(ix, iy, ix + s, iy, -Math.min(10, (iy - y0) * 0.5), `${visual.inner}cm`, { size: 14 });
+  return `<svg class="b6-svg b6-nested-svg" viewBox="0 0 ${S + x0 * 2} ${S + y0 + 34}" style="width:min(100%,250px)" role="img" aria-label="정사각형 안의 정사각형, 바깥 ${visual.outer}cm · 안쪽 ${visual.inner}cm">${body}</svg>`;
 }
 
 function multiplicationGrid(visual) {

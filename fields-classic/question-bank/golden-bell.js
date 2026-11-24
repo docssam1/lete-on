@@ -4,13 +4,13 @@ import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } 
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261124h";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261124i";
 import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261124h";
 import { book04Markup } from "./book04-renderers.js?v=20261123a";
 import { book05Markup } from "./book05-renderers.js?v=20261122w";
-import { book06Markup } from "./book06-renderers.js?v=20261124h";
+import { book06Markup } from "./book06-renderers.js?v=20261124i";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
 import { book08Markup } from "./book08-renderers.js?v=20261122w";
 import { book09Markup } from "./book09-renderers.js?v=20261121c";
