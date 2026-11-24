@@ -1,3 +1,4 @@
+import{beforeCombustionTask}from'./tests/combustion-guided-stage.mjs';
 import{COMBUSTION_QUESTION_VERSION}from'./combustion-question-language.js';
 import{COMBUSTION_READABILITY_VERSION}from'../data/book/c22-s62-u02.editorial.js';
 import test from'node:test';
@@ -48,14 +49,14 @@ test('6과14의 네 목표가 관찰·비교·시범·조사·제안과 공유�
  for(const[a,b]of[['mixplan','mixdo'],['fuelwatch','fuelcase'],['waterwatch','watercase'],['carbonwatch','carboncase'],['investigate','propose'],['makecard','share'],['share','revise']])assert(flow.indexOf(a)<flow.indexOf(b));
 });
 
-test('16확인은 네 성취기준 각4·여덟 응답 형식 각2이며 현재 교재/문항집과 같은 답을 쓴다',()=>{
+test('16확인은 네 성취기준 각4를 유지하며 원래 형식 선정과 현재 짧은 응답을 교재/문항집에 맞춘다',()=>{
  const checks=mod.chapter.check.map(id=>pool.find(q=>q.id===id));
- assert.deepEqual(Object.values(checks.reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{})),Array(8).fill(2));
+ assert.deepEqual(Object.values(checks.reduce((a,q)=>(a[beforeCombustionTask(q).bookResponseForm]=(a[beforeCombustionTask(q).bookResponseForm]||0)+1,a),{})),Array(8).fill(2));assert.deepEqual(checks.reduce((a,q)=>(a[q.bookResponseForm]=(a[q.bookResponseForm]||0)+1,a),{}),{single:2,blank:3,match:2,sequence:2,multiple:2,data:2,short:1,'draw-design':2});
  assert.deepEqual(Object.values(checks.reduce((a,q)=>(a[workbook.questions.find(w=>w.id===q.bookQuestionId).standard]=(a[workbook.questions.find(w=>w.id===q.bookQuestionId).standard]||0)+1,a),{})),Array(4).fill(4));
  assert.equal(checks.filter(q=>q.contentVersion===COMBUSTION_QUESTION_VERSION||q.previousVersions?.some(p=>p.version===COMBUSTION_QUESTION_VERSION)).length,7);assert.equal(mod.classroomItems.filter(q=>q.contentVersion===COMBUSTION_READABILITY_VERSION||q.previousVersions?.some(p=>p.version===COMBUSTION_READABILITY_VERSION)).length,115);
- assert.equal(checks.filter(q=>q.responseContract.teacherRequired).length,4);
+ assert.equal(checks.filter(q=>q.responseContract.teacherRequired).length,2);
  // Independent expected responses, including matching order and required count units.
- const answers={1:2,81:2,19:['액체','베이킹 소다'],83:['석회수','뿌옇게'],53:['ㄴ','ㄷ','ㄱ'],118:['ㄴ','ㄷ','ㄱ'],56:['ㄴ','ㄱ','ㄷ'],120:['ㄴ','ㄱ','ㄷ'],41:[0,1,3],106:[0,3,4],59:['300mL','19초'],124:['2개','2개']};
+ const answers={30:'녹아',94:'촛농',1:2,81:2,19:['액체','베이킹 소다'],83:['석회수','뿌옇게'],53:['ㄴ','ㄷ','ㄱ'],118:['ㄴ','ㄷ','ㄱ'],56:['ㄴ','ㄱ','ㄷ'],120:['ㄴ','ㄱ','ㄷ'],41:[0,1,3],106:[0,3,4],59:['300mL','19초'],124:['2개','2개']};
  for(const[n,answer]of Object.entries(answers)){const q=checks.find(q=>q.id.endsWith('b'+n.padStart(3,'0')));assert.equal(gradeDaily(q,answer).status,'correct',n);}
  for(const q of checks.filter(q=>q.responseContract.teacherRequired))assert.equal(gradeDaily(q,q.responseContract.sample).status,'review');
  assert.equal(gradeDaily(checks.find(q=>q.id.endsWith('b124')),['2','2']).status,'wrong');

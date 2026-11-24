@@ -1,3 +1,8 @@
+import{reviewStudentWorkbook,reviewQuestionRows}from'./student-language-review.js?v=20261117-student-language-review&combustionGuided=20261124-combustion-mixed-responses&combustionLayout=3';
+import{combustionGuidedItems}from'./combustion-guided-review.js?v=20261124-combustion-mixed-responses&layout=3';
+import{review as schoolLanguage}from'../data/language/c22-s62-u02.js?v=20261117-student-language-review';
+import{withObservedPhotoAlt}from'../data/book/observation-language.js';
+import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{combustionContextItems}from'../data/book/combustion-workbook-context.js?v=20261116-combustion-workbook-context';
 import{grade6QuestionReview}from'../data/book/grade6-question-review.js?v=20261115-grade6-question-review';
 import{standaloneQuestionContexts}from'../data/book/standalone-question-context.js?v=20261115-battery-polarity-card';
@@ -19,6 +24,9 @@ const table=rows=>`<table class="ed-table combustion-book-table"><thead><tr>${['
 const figures=combustionLanguage({...bankBook.figures,...workbook.figures});for(let start=0;start<questions.length;start+=24){const rows=questions.slice(start,start+24);figures['combustion-bank-quick-'+start]='<div class="combustion-quick-grid">'+[rows.slice(0,12),rows.slice(12)].filter(r=>r.length).map(table).join('')+'</div>';}
 export const combustionBankBook={...combustionLanguage(bankBook),theme:'#2f6b4a',questions:questions.map(q=>({...q,misconception:combustionLanguage(q.misconception)})),figures};
 // 위 BankBook은 기존 원고 대조용으로 보존한다. 실제 인쇄는 현재 교재를 쓴다.
-export const currentCombustionBankBook=currentBankWorkbook(combustionBankBook,currentWorkbook,combustionContextItems(grade6QuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(combustionPairCurrentItems(combustionReadableCurrentItems(Array.from(current.values()),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'));
+export const priorCombustionGuidedBankBook=currentBankWorkbook(combustionBankBook,currentWorkbook,combustionContextItems(grade6QuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(combustionPairCurrentItems(combustionReadableCurrentItems(Array.from(current.values()),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'));
+const printableItems=combustionContextItems(grade6QuestionReview(standaloneQuestionContexts(elementaryPromptCurrentItems(combustionPairCurrentItems(combustionReadableCurrentItems(Array.from(current.values()),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02'),'c22-s62-u02');
+const guidedPrintItems=combustionGuidedItems(printableItems.map(q=>q.sourceRef?.type==='authored-pair'?q:reviewQuestionRows([q],schoolLanguage)[0]),'c22-s62-u02');
+export const currentCombustionBankBook=currentBankWorkbook(combustionBankBook,await reviewStudentWorkbook(currentWorkbook.unit,withObservedPhotoAlt(withElementaryReadingDirections(currentWorkbook))),guidedPrintItems);
 const paper=makeWorkbookPaper(currentCombustionBankBook,{}, {route:'print',toolLabel:'198문항집 고르기',modes:[['student','학생 문제지'],['teacher','교사 해설'],['answers','정답·해설만'],['quick','빠른 정답표']]});
 export const bankPaper=paper.workbookPaper;export const wireBankPaper=paper.wireWorkbookPaper;
