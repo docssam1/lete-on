@@ -1,3 +1,17 @@
+## 2026-11-24 — 6학년 원문 633문항 독립 풀이 대조, 출판사 확인 표시(사용자 일회 예외), 그래프 색·원본 그림 2건 수정 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("네가 풀어", "이번만 예외로", 질문 답 "출판사 표시 true", "손글씨로 답 쓴거는 학원에서 채점 받은 거야"): 출판사 답지가 없으므로 6학년 원문 633문항(보통 난이도 pool 0)을 AI가 앱 정답을 보지 않고 직접 풀어 앱 정답과 대조하고, 일치한 문항에 publisherAnswerVerified=true를 예외로 표시한다.
+  - 방법: 앱에서 생성한 pool 0 문장(분수 (a/b) 표기)과 같은 문항의 그림 캡처만 서브에이전트 9개(묶음 A~I)에 주고 풀게 한 뒤, 책 PDF의 손글씨 답·학원 채점 표시를 참고로 적게 했다. 정답 비교는 작업 폴더 밖 스크립트로 했다.
+  - 결과: 633문항 모두 앱 정답이 맞다. 자동 일치 580, 표기만 다른 것(19각기둥=십구각기둥, 7.2분=7분 12초, 297/52=5 37/52 등)과 서술·그리기 36문항은 정답 그림·문장과 직접 대조했다. 풀이와 갈린 8문항은 다시 풀어 모두 앱이 맞음: 6-2-u2-e2-example-2(8시의 작은 각은 처음 11분 동안 커지므로 28분 후), 6-2-u2-e3-mission-5(7.60은 소수 두 자리 수가 아니어서 11개), 6-1-u3-e4-example-1(정확한 그림 11칸÷4칸=2.75배), 6-1-u5-e1-exploration-1-1(3130→3200이므로 올림), 6-2-u3-e2-example-3(삼각 피라미드 1+3+6=10개), 6-2-u3-e1-mission-1(앞 2,3,1·옆 3,1,2,2, 손글씨와 같음), 6-1-u6-e1-exploration(책 단서 "적어도 한 면이 이웃과 붙어 있다"를 글자대로 읽어 여러 덩어리 허용, 16개).
+  - 표시: 새 파일 source-grade6-answer-exception.js가 모든 원문 모듈 뒤(problem-hint-policy.js 앞)에서 분류표 633항목에 publisherAnswerVerified=true, publisherAnswerVerificationBasis="user-exception-20261124-ai-independent-solve"를 넣고 분류표에 publisherAnswerVerificationException 설명을 둔다. 여러 원문 모듈이 분류표에 false를 다시 써 넣으므로 마지막에 불러온다. 문항(question) 객체의 publisherAnswerVerified 계약과 감사의 false 기대는 바꾸지 않았다. 실제 출판사 답지 대조가 아니라는 점을 그대로 기록한다.
+- 원본과 다르던 것 수정:
+  - 6-1-u5-e1-mission-3(generators.js variant 8 pool 0): 나 공장 34000 → 원본 그림(1만 자루 3개+100자루 4개) 30400자루. 답 1,100자루는 그대로.
+  - 6-1-u3-e4-mission-4(source-grade6-decimal-e4-mission4.js): 원본 그림의 왼쪽 아래 정삼각형 2개(한 변 ㄴㄹ+ㄱㄴ, 한 변 ㄴㄹ)가 빠져 있어 그림만으로는 왼쪽 정삼각형의 한 변을 알 수 없었다. 점 B를 더해 선 L-B, ㄴ-B, B-Q를 그린다. 답 4.4cm 그대로. ?v=20261124-book-figure.
+- 그래프 색(styles.css): .geometry-diagram 공통 규칙 fill:none이 6-1 5단원 그래프 생성기의 fill 속성을 지워 원그래프 부채꼴·범례 칸이 모두 흰색이었다(6-1-u5-e3 원그래프는 54°가 어느 항목인지 알 수 없었다). source61-graphs-e1~e4·pictograph·e3-pets 그림에서 fill 속성이 있는 도형만 fill:revert-layer로 되살렸다. 6학년 그림 중 같은 덮어쓰기가 있는 나머지(6-1-u1-e2, 비율 그림 등 약 10개)는 장식 색뿐이라 그대로 둠. ?v=20261124-graph-fill.
+- 감사 통과: source-6-1-graphs-e1/e2/e3(독립·브라우저), e4-mission6-basis, graph-exploration-crosswalk, graphs-e2-missions12-crosswalk, stage-styles, typography-browser, source-6-1-decimal-division-e4-mission4, decimal-division-e4-browser. 분류표·index.html·styles.css를 읽는 감사 454개를 작업본에서 일괄 실행해 448개 통과(pdfjs 경로가 필요한 4개는 HSE_PDFJS_PATH를 주고 다시 실행해 통과). 실패 6개는 모두 Windows E: 증거가 필요한 기존 감사(colored-cut-mission1-questions, layer-cut-mission3-contracts, plane-cut-questions, stack-operation-learner, stack-pattern-models, three-point-cut-mission2-questions)로, 사용자 결정에 따라 건너뛴 27개 목록에 들어 있다.
+- 캐시 꼬리표: generators.js ?v=20261124-book-values, styles.css ?v=20261124-graph-fill, source-grade6-answer-exception.js ?v=20261124.
+- 풀이 자료(앱 정답을 뺀 문항 목록, 서브에이전트 풀이 out-*.json, 책 쪽 렌더)는 세션 임시 폴더에만 있고 저장소에 넣지 않았다(책 PDF·손글씨 이미지 비공개).
+
 ## 2026-11-24 — 6-2 3단원 개념탐구 4 Mission 4·5에 SVG 변형(pool 1·2) 추가 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 결정("SVG로 변형 추가"): 원문 PNG·sha256 목록은 그대로 두고, 3문항 요청 시 1문항만 나오던 6-2-u3-e4-mission-4·5에 같은 물음의 고정 문항 pool 1·2를 더했다. 새 그림은 공용 SVG 모듈 source-6-2-iso-cube-svg.js(원문 PNG와 같은 방향·면 색, 칸마다 `<g data-cell>`·칠한 면 `data-marked`)로 그린다. pool 0(원문)의 문제·정답·풀이·그림 출력은 변경 전과 같고 finiteVariantCount 1→3만 달라짐(변경 전후 render 결과 비교).

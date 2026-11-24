@@ -1774,3 +1774,6 @@ button{
 
 /* 6-1 2단원 원본 복원: Mission 6 종이 사용표, 예제 3-1 조건식 */
 .source61-e3-paper-usage{border-collapse:collapse;margin:10px auto 0;font-variant-numeric:tabular-nums}.source61-e3-paper-usage th,.source61-e3-paper-usage td{border:1px solid #9aa8b3;padding:4px 14px;text-align:center}.source61-e3-paper-usage thead th{background:#eef3f6}.source61-e3-condition{text-align:center;margin:10px 0 0}
+
+/* 2026-11-24: 6-1 5단원 그래프(그림그래프·띠그래프·원그래프) 그림은 생성기가 fill 속성으로 칸·범례 색을 정한다. 위의 .geometry-diagram 공통 fill:none 규칙이 이 색을 지워 원그래프 범례와 부채꼴을 구분할 수 없었으므로, fill 속성이 있는 도형만 그 색을 되살린다. */
+.geometry-diagram:is(.source61-graphs-e1-diagram,.source61-graphs-e2-diagram,.source61-graphs-e2-pictograph,.source61-graphs-e3-diagram,.source61-e3-pets,.source61-graphs-e4-diagram) :is(path,polygon,rect,circle,ellipse)[fill]{fill:revert-layer}
