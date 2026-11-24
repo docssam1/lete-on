@@ -62,5 +62,5 @@ test('the prior mixture manuscript and print view remain available without mutat
  const quick=data.bankPaper({...data,mode:'quick'});
  const rows=[...quick.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/td><td>([\s\S]*?)<\/td><\/tr>/g)];
  assert.equal(rows.length,96);assert.equal(new Set(rows.map(r=>r[1])).size,96);
- for(const row of rows){const q=workbook.questions.find(q=>q.no===Number(row[1]));assert(q);assert.equal(row[2],['written','draw'].includes(q.form)?'교사 확인':escape(q.answer));}
+ for(const row of rows){const q=visibleWorkbook.questions.find(q=>q.no===Number(row[1]));assert(q);assert.equal(row[2],['written','draw'].includes(q.form)?'교사 확인':escape(q.answer));}
 });

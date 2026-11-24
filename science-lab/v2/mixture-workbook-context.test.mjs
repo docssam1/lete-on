@@ -12,7 +12,7 @@ test('actual mixture student and teacher routes distinguish actions and show bot
  assert(!q(workbook,4).prompt.includes('사진'));for(const n of[8,44])assert(q(workbook,n).choices.every(c=>c.endsWith('다.')));assert(q(workbook,11).prompt.includes('[ ] 하고'));assert(q(workbook,89).prompt.includes('[ ] 것은 아닌지'));assert.equal(q(workbook,52).topic,'얻은 소금의 무게 비교');assert.equal(q(workbook,54).topic,'무게를 비교할 조건');assert(!q(workbook,58).criteria.includes('재설명'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true}),mod.bankPaper({...mod,mode})]){
   for(const n of[4,8,11,44,89]){const item=q(visibleWorkbook,n);for(const part of item.prompt.split('[ ]'))assert(html.includes(esc(part.trim())));for(const choice of item.choices||[])assert(html.includes(esc(choice)));}
-  assert.equal(html.includes(esc(q(workbook,32).answer)),mode==='teacher');assert.equal(html.includes(esc(q(visibleWorkbook,58).criteria)),mode==='teacher');
+  assert.equal(html.includes(esc(q(workbook,32).answer)),mode==='teacher');assert.equal(q(visibleWorkbook,58).responseContract.teacherRequired,false);assert(html.includes(q(visibleWorkbook,58).id));if(mode==='teacher')assert(html.includes(esc(q(visibleWorkbook,58).answer)));
  }
  for(const mode of['answers','quick'])for(const html of[paper.workbookPaper({mode}),mod.bankPaper({...mod,mode})]){assert(html.includes('ㄹ → ㄴ → ㄱ → ㄷ'));assert(html.includes('ㄴ → ㄹ → ㄱ → ㄷ'));}
  for(const name of['v2.js','revised-lesson.js','index.html','mixture-bank-paper.js'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&mixtureContext='+version));

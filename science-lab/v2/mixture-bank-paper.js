@@ -1,8 +1,8 @@
-import{reviewStudentWorkbook}from'./student-language-review.js?v=20261117-student-language-review&mixtureGuided=20261124-mixture-guided-tasks&mixtureLayout=3';
+import{reviewStudentWorkbook}from'./student-language-review.js?v=20261117-student-language-review&mixtureGuided=20261124-mixture-guided-tasks&mixtureLayout=3&mixtureMixed=20261124-mixture-mixed-responses&mixtureMixedLayout=1';
 import{withElementaryReadingDirections}from'../data/book/elementary-reading-directions.js';
 import{withObservedPhotoAlt}from'../data/book/observation-language.js';
 import {workbook as currentWorkbook} from '../data/book/c22-s52-u01.workbook.js?v=20261115-grade5-question-review&mixtureContext=20261116-mixture-workbook-context';
-import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-learning-note-roles&mixtureGuided=20261124-mixture-guided-tasks&mixtureLayout=3';
+import {makeWorkbookPaper} from './revised-workbook-paper.js?v=20261108-learning-note-roles&mixtureGuided=20261124-mixture-guided-tasks&mixtureLayout=3&mixtureMixed=20261124-mixture-mixed-responses&mixtureMixedLayout=1';
 import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 교재와 정답표는 동일한96문항·해설 객체를 사용한다.
 import {chapter,art,quickPages} from '../data/book/c22-s52-u01.book.js';

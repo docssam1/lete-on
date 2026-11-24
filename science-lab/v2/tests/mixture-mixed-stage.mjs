@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{MIXTURE_MIXED_VERSION}from'../mixture-mixed-response.js';
+const cache=new WeakMap();export function beforeMixtureMixed(q){if(q?.contentVersion!==MIXTURE_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4, 16, 28, 34, 40, 45, 46, 50, 54, 58, 68, 72, 76, 80, 84, 92, 95]);
+export function mixtureMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==96)throw Error('혼합물의 분리 정답표96행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}
