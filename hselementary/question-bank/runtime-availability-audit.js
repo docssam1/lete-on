@@ -361,7 +361,7 @@ if (!sourceGrade6.every(type => {
     return type.reviewLocked && type.verifiedVariantTarget === 0 && type.verifiedVariantCount === 0;
   }
   return type.generationMode === "fixed-verified-pool"
-    && type.verifiedVariantTarget === (["6-1-u2-e4-example-4-1", "6-2-u3-e4-mission-4", "6-2-u3-e4-mission-5"].includes(type.sourceItemId) ? 1 : 3);
+    && type.verifiedVariantTarget === (["6-2-u3-e4-mission-4", "6-2-u3-e4-mission-5"].includes(type.sourceItemId) ? 1 : 3);
 })) failures.push("6학년 원문 세부 유형의 정답 그림·고정 문항 계약이 다릅니다.");
 
 for (const type of ready) {

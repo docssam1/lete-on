@@ -1503,8 +1503,8 @@ window.HSE_SOURCE_INVENTORY_GRADE6 = {
       "answerVisualRequired": true,
       "answerVisualStatus": "verified",
       "generationMode": "fixed-verified-pool",
-      "verifiedVariantTarget": 1,
-      "verifiedVariantCount": 1,
+      "verifiedVariantTarget": 3,
+      "verifiedVariantCount": 3,
       "variant": 0
     },
     {

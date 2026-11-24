@@ -49,11 +49,6 @@
     return exposed;
   };
   const hasNeighbor = (p, cells) => dirs.some(([dx, dy, dz]) => cells.has(key([p[0] + dx, p[1] + dy, p[2] + dz])));
-  const rotate = (cells, turn) => cells.map(([x, y, z]) => {
-    if (turn === 1) return [2 - y, x, z];
-    if (turn === 2) return [2 - x, 2 - y, z];
-    return [x, y, z];
-  });
 
   const box = (x, y, z, w, d, h, role = "solid", divisions = null) => ({ x, y, z, w, d, h, role, divisions });
   const contactArea = (a, b) => {
@@ -80,21 +75,28 @@
   };
 
   const explorationBase = [[0, 0, 0], [1, 0, 0], [2, 0, 0], [0, 2, 0], [1, 2, 0], [0, 1, 1], [1, 1, 1], [2, 2, 1], [0, 0, 2], [1, 0, 2], [2, 2, 2]];
-  const explorationPools = [explorationBase, rotate(explorationBase, 1), rotate(explorationBase, 2)];
-  const mission1Pools = [
+  // 2026-11-24: 6학년 변형 추가. pool 0은 원문(3×3×3, 답 16개) 그대로 두고, pool 1·2는 같은 조건을 4×4×4·5×5×5 정육면체로 바꾼 문항이다.
+  // 남길 수 있는 가장 적은 개수 k: k개 모두 이웃이 있으면 맞닿은 면이 적어도 올림(k÷2)곳이므로 겉넓이는 6k-2×올림(k÷2) 이하이다.
+  const columnCells = columns => columns.flatMap(([x, y, z0, h]) => Array.from({ length: h }, (_, index) => [x, y, z0 + index]));
+  const explorationPools = [
+    explorationBase,
+    // 4×4×4: 바둑판처럼 서로 닿지 않는 8칸에 3층 기둥 4개와 2층 기둥 4개(20개, 맞닿은 면 12곳)
+    { size: 4, cells: columnCells([[0, 0, 0, 3], [2, 0, 0, 3], [0, 2, 0, 3], [2, 2, 0, 3], [1, 1, 0, 2], [3, 1, 0, 2], [1, 3, 0, 2], [3, 3, 0, 2]]) },
+    // 5×5×5: 서로 닿지 않는 13칸의 아래 2층 막대 13개와 두 모서리 칸의 위 2층 막대 2개(30개, 맞닿은 면 15곳)
     {
-      maxCells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0]],
-      minCells: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
-    },
-    {
-      maxCells: [[0, 0, 0], [0, 1, 0], [0, 2, 0], [0, 3, 0], [0, 4, 0], [0, 5, 0], [0, 6, 0], [0, 7, 0]],
-      minCells: [[0, 0, 0], [0, 1, 0], [1, 0, 0], [1, 1, 0], [0, 0, 1], [0, 1, 1], [1, 0, 1], [1, 1, 1]]
-    },
-    {
-      maxCells: [[0, 0, 0], [0, 0, 1], [0, 0, 2], [0, 0, 3], [0, 0, 4], [0, 0, 5], [0, 0, 6], [0, 0, 7]],
-      minCells: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
+      size: 5,
+      cells: columnCells([
+        ...[[0, 0], [2, 0], [4, 0], [1, 1], [3, 1], [0, 2], [2, 2], [4, 2], [1, 3], [3, 3], [0, 4], [2, 4], [4, 4]].map(([x, y]) => [x, y, 0, 2]),
+        [0, 0, 3, 2], [4, 4, 3, 2]
+      ])
     }
   ];
+  const mission1Base = {
+    maxCells: [[0, 0, 0], [1, 0, 0], [2, 0, 0], [3, 0, 0], [4, 0, 0], [5, 0, 0], [6, 0, 0], [7, 0, 0]],
+    minCells: [[0, 0, 0], [1, 0, 0], [0, 1, 0], [1, 1, 0], [0, 0, 1], [1, 0, 1], [0, 1, 1], [1, 1, 1]]
+  };
+  // 2026-11-24: pool 0은 원문(한 모서리 1cm)이고, pool 1·2는 같은 쌓기나무 8개의 한 모서리를 2cm·3cm로 바꾼 문항이다.
+  const mission1Pools = [mission1Base, { ...mission1Base, edge: 2 }, { ...mission1Base, edge: 3 }];
   const mission5Base = [[0, 0, 1], [0, 1, 0], [0, 1, 1], [1, 0, 0], [1, 0, 1], [1, 1, 0], [1, 1, 1], [0, 0, 2]];
   const mission5Pools = [
     mission5Base,
@@ -234,8 +236,31 @@
     const holes = ["front", "side", "top"].map(name => `<polygon class="source61-surface-e1-hole ${solved ? "is-solved" : ""}" points="${points(openings[name])}" data-visual-element="${name}-center-hole"/>`).join("");
     return `<svg class="geometry-diagram source61-surface-e1-diagram source61-surface-e1-tunnel" viewBox="0 0 ${fit.width} ${fit.height}" role="img" aria-label="${esc(note)}" data-model="continuous-centered-three-tunnels" data-side="${side}" data-hole="${hole}">${faces}${holes}<text class="source61-surface-e1-measure" x="24" y="30">한 모서리 ${esc(side)}cm · 구멍 한 변 ${esc(hole)}cm</text></svg>`;
   };
-  const layerMapSvg = (cells, note) => {
+  const layerMapSvg = (cells, note, size = 3) => {
     const present = new Set(cells.map(key));
+    if (size !== 3) {
+      // 4층·5층 지도: 아래층부터 1층, 2층 … 으로 적습니다. 5층은 한 줄에 3개, 다음 줄에 2개를 놓습니다.
+      const cell = size === 4 ? 26 : 28;
+      const perRow = size === 4 ? 4 : 3;
+      const gap = size === 4 ? 36 : 40;
+      const mapSize = cell * size;
+      const rowHeight = mapSize + 58;
+      const rows = Math.ceil(size / perRow);
+      const width = 594;
+      const height = 48 + rows * rowHeight - 46;
+      const parts = [];
+      for (let z = 0; z < size; z += 1) {
+        const row = Math.floor(z / perRow);
+        const inRow = Math.min(perRow, size - row * perRow);
+        const left = (width - (inRow * mapSize + (inRow - 1) * gap)) / 2 + (z % perRow) * (mapSize + gap);
+        const top = 48 + row * rowHeight;
+        parts.push(`<text class="source61-surface-e1-layer-label" x="${left + mapSize / 2}" y="${top - 18}" text-anchor="middle">${z + 1}층${z === 0 ? "(아래)" : z === size - 1 ? "(위)" : ""}</text>`);
+        for (let y = 0; y < size; y += 1) for (let x = 0; x < size; x += 1) {
+          parts.push(`<rect class="source61-surface-e1-layer-cell${present.has(key([x, y, z])) ? " is-present" : ""}" x="${left + x * cell}" y="${top + y * cell}" width="${cell}" height="${cell}"/>`);
+        }
+      }
+      return `<svg class="geometry-diagram source61-surface-e1-diagram source61-surface-e1-layer-map" viewBox="0 0 ${width} ${height}" role="img" aria-label="${esc(note)}" data-model="${size === 4 ? "four" : "five"}-layer-map">${parts.join("")}</svg>`;
+    }
     const cell = 34;
     const starts = [42, 246, 450];
     const labels = ["아래층", "가운데층", "위층"];
@@ -275,14 +300,27 @@
 
   const generateOne = (kind, p, solved, poolIndex) => {
     if (kind === "exploration") {
-      const remaining = new Set(p.map(key));
+      const size = Array.isArray(p) ? 3 : p.size;
+      const cells = Array.isArray(p) ? p : p.cells;
+      const total = size ** 3;
+      const kept = cells.length;
+      const remaining = new Set(cells.map(key));
       const removed = new Set();
-      for (let z = 0; z < 3; z += 1) for (let y = 0; y < 3; y += 1) for (let x = 0; x < 3; x += 1) if (!remaining.has(key([x, y, z]))) removed.add(key([x, y, z]));
-      const answer = "16개";
+      for (let z = 0; z < size; z += 1) for (let y = 0; y < size; y += 1) for (let x = 0; x < size; x += 1) if (!remaining.has(key([x, y, z]))) removed.add(key([x, y, z]));
+      // 생성 시 검산: 남은 칸의 겉넓이가 처음과 같고, 모든 칸에 이웃이 있으며, 한 개 적게 남기면 처음 겉넓이에 닿을 수 없어야 한다.
+      const contacts = (6 * kept - surfaceSet(cells)) / 2;
+      const fewer = kept - 1;
+      const fewerContacts = Math.ceil(fewer / 2);
+      const fewerMax = 6 * fewer - 2 * fewerContacts;
+      if (remaining.size !== kept || cells.some(c => c.some(v => v < 0 || v >= size)) || surfaceSet(cells) !== 6 * size * size
+        || cells.some(([x, y, z]) => !dirs.some(([dx, dy, dz]) => remaining.has(key([x + dx, y + dy, z + dz])))) || fewerMax >= 6 * size * size) {
+        throw new Error(`6-1 겉넓이 개념탐구 고정 문항 ${poolIndex + 1}의 남은 정육면체 검산이 맞지 않습니다.`);
+      }
+      const answer = `${total - kept}개`;
       const visual = solved
-        ? `<div class="source61-surface-e1-answer">${voxelSvg(3, removed, true, answer, "작은 정육면체 11개가 남은 한 가지 방법", { presentOverride: p })}${layerMapSvg(p, "남은 작은 정육면체 11개의 층별 위치")}</div>`
-        : voxelSvg(3, new Set(), false, answer, "작은 정육면체 27개로 만든 3×3×3 정육면체");
-      return { answer, visual, prompt: `3×3×3 정육면체를 만들고 일부 정육면체를 덜어 냅니다. 남은 정육면체는 각각 적어도 한 면이 다른 정육면체와 붙어 있고, 새 도형의 겉넓이는 처음과 같습니다. 덜어 낼 수 있는 정육면체는 최대 몇 개인가요? ${visual}`, solution: `10개를 남기면 모든 정육면체에 이웃이 있어야 하므로 맞닿은 면이 적어도 5곳입니다. 이때 겉넓이는 많아도 6×10-2×5=50cm²이고, 더 적게 남기면 50cm²보다 커질 수 없습니다. 답 그림처럼 11개를 남기면 맞닿은 면이 6곳이고 겉넓이는 6×11-2×6=54cm²입니다. 따라서 최대 27-11=${answer}를 덜어 낼 수 있습니다.` };
+        ? `<div class="source61-surface-e1-answer">${voxelSvg(size, removed, true, answer, `작은 정육면체 ${kept}개가 남은 한 가지 방법`, { presentOverride: cells })}${layerMapSvg(cells, `남은 작은 정육면체 ${kept}개의 층별 위치`, size)}</div>`
+        : voxelSvg(size, new Set(), false, answer, `작은 정육면체 ${total}개로 만든 ${size}×${size}×${size} 정육면체`);
+      return { answer, visual, prompt: `${size}×${size}×${size} 정육면체를 만들고 일부 정육면체를 덜어 냅니다. 남은 정육면체는 각각 적어도 한 면이 다른 정육면체와 붙어 있고, 새 도형의 겉넓이는 처음과 같습니다. 덜어 낼 수 있는 정육면체는 최대 몇 개인가요? ${visual}`, solution: `${fewer}개를 남기면 모든 정육면체에 이웃이 있어야 하므로 맞닿은 면이 적어도 ${fewerContacts}곳입니다. 이때 겉넓이는 많아도 6×${fewer}-2×${fewerContacts}=${fewerMax}cm²이고, 더 적게 남기면 ${fewerMax}cm²보다 커질 수 없습니다. 답 그림처럼 ${kept}개를 남기면 맞닿은 면이 ${contacts}곳이고 겉넓이는 6×${kept}-2×${contacts}=${6 * kept - 2 * contacts}cm²입니다. 따라서 최대 ${total}-${kept}=${answer}를 덜어 낼 수 있습니다.` };
     }
     if (kind === "example-1") {
       const s = p.scale;
@@ -319,13 +357,18 @@
     if (kind === "mission-1") {
       const maxCells = p.maxCells;
       const minCells = p.minCells;
-      const max = surfaceSet(maxCells);
-      const min = surfaceSet(minCells);
+      const edge = p.edge || 1;
+      const faceArea = edge * edge;
+      const max = surfaceSet(maxCells) * faceArea;
+      const min = surfaceSet(minCells) * faceArea;
       const answer = `최대 ${max}, 최소 ${min}`;
       const visual = solved
         ? comparisonVoxelSvg([{ cells: maxCells, label: "가장 큰 경우" }, { cells: minCells, label: "가장 작은 경우" }], true, answer, "정육면체 8개를 붙여 만든 가장 큰 경우와 가장 작은 경우")
         : looseCubesSvg(8, "서로 붙이기 전의 쌓기나무 8개");
-      return { answer, visual, prompt: `한 모서리의 길이가 1cm인 쌓기나무 8개를 모두 사용하여 겉넓이가 가장 큰 경우와 가장 작은 경우를 각각 구하세요. 면과 면은 맞닿아야 합니다. ${visual}`, solution: `가장 큰 경우는 8개를 한 줄로 붙여 맞닿은 면이 7개라서 48-2×7=34cm²입니다. 가장 작은 경우는 2×2×2 정육면체라서 24cm²입니다. ${answer}cm²입니다.` };
+      const solution = edge === 1
+        ? `가장 큰 경우는 8개를 한 줄로 붙여 맞닿은 면이 7개라서 48-2×7=34cm²입니다. 가장 작은 경우는 2×2×2 정육면체라서 24cm²입니다. ${answer}cm²입니다.`
+        : `쌓기나무 한 면의 넓이는 ${edge}×${edge}=${faceArea}cm²입니다. 가장 큰 경우는 8개를 한 줄로 붙여 맞닿은 면이 7개라서 겉면은 48-2×7=34개이고 겉넓이는 34×${faceArea}=${max}cm²입니다. 가장 작은 경우는 2×2×2 정육면체 모양이라서 겉면은 24개이고 겉넓이는 24×${faceArea}=${min}cm²입니다. ${answer}cm²입니다.`;
+      return { answer, visual, prompt: `한 모서리의 길이가 ${edge}cm인 쌓기나무 8개를 모두 사용하여 겉넓이가 가장 큰 경우와 가장 작은 경우를 각각 구하세요. 면과 면은 맞닿아야 합니다. ${visual}`, solution };
     }
     if (kind === "mission-2") {
       const boxes = triangularBoxes(p.side, p.lowerGap, p.middleGap);
