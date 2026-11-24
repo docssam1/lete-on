@@ -21,3 +21,11 @@
 }
 
 .bk-editorial[data-unit="c22-s51-u04"] .ed-photo img{max-height:60mm;object-fit:contain}
+
+/* 한 글자 기호로 답하는 연결형은 항목 옆에 답칸을 둔다. 글자 크기와 쓰기 줄 높이는 유지한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question[data-form="match"]{display:grid;grid-template-columns:minmax(0,1fr) 19mm;grid-auto-rows:min-content;align-content:start;column-gap:3mm;row-gap:1mm}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question[data-form="match"]>*{grid-column:1/-1}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question[data-form="match"]>.ed-part{grid-column:1;margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question[data-form="match"]>.ed-part-response{grid-column:2;margin:0;gap:1mm}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question::after{display:none}
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s51-u04"] .ed-layout-body-density .ed-question[data-form="match"]>.ed-part{grid-column:1/-1}
