@@ -1,3 +1,4 @@
+import{energyMixedItems}from'./energy-mixed-response.js?v=20261124-energy-mixed-responses&layout=1';
 import {wireBankPrint} from './bank-print-ready.js?v=20261108-bank-print-ready';
 // 자원과 에너지 단원 원문·짝·독립보충의 동일 객체로 화면/인쇄 번호와 정답을 연결한다.
 import {photoFigureHtml} from './photo-figure.js?v=20261115-biology-comparison-photos';
@@ -6,6 +7,7 @@ const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&g
 const circ='①②③④⑤';
 export const solutionAnswer=a=>a.type==='single-choice'?circ[a.answer]:a.type==='multi-choice'?a.answers.map(i=>circ[i]).join(', '):a.sample??a.answer;
 export function energyBankPaperHtml({unit,source,similar,items,mode='student'}){
+ items=energyMixedItems(items,'c22-s52-u04');
  const show=mode!=='student',only=mode==='answers',quick=mode==='quick',all=[...source,...similar,...items];let no=0;
  const blankText=s=>esc(s).replace(/\[\s*\]|□/g,'<span class="energy-paper-blank"></span>');
  const line=()=>'<div class="solution-answer-line"></div>';

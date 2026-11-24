@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{ENERGY_MIXED_VERSION}from'../energy-mixed-response.js';
+const cache=new WeakMap();export function beforeEnergyMixed(q){if(q?.contentVersion!==ENERGY_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4, 10, 22, 28, 34, 40, 52, 55, 63, 71, 74, 76, 80, 89, 98, 103, 109, 111]);
+export function energyMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==112)throw Error('자원과 에너지 정답표112행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}

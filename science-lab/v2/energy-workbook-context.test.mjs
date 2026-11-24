@@ -10,7 +10,7 @@ test('energy routes align method choices and sufficient planning criteria with t
  const current=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),paper=await revisedTextbookPaper(unit),book=await revisedTextbook(unit,await import('../data/book/'+unit+'.book.js'));
  for(const mode of['student','teacher'])for(const html of[paper.workbookPaper({mode}),renderChapter(book.chapter,book.art,[],{teacher:mode==='teacher',live:true})]){
   for(const no of[9,20,32,67]){const item=q(workbook,no),a=html.indexOf('data-question="'+item.id+'"');assert(a>=0);const next=html.indexOf('data-question="',a+1),block=html.slice(a,next<0?undefined:next);assert(block.includes(esc(item.prompt)));for(const choice of item.choices||[])assert(block.includes(esc(choice)));assert.equal(block.includes('class="ed-key"'),mode==='teacher');}
-  for(const n of[9,10,69,78,79])assert.equal(html.includes(esc(q(current,n).criteria)),mode==='teacher');
+  for(const n of[9,10,69,78,79]){const shown=q(current,n);if(shown.energyMixedResponse&&shown.responseContract.teacherRequired===false){assert(html.includes(shown.id));if(mode==='teacher')assert(html.includes(esc(shown.answer)));}else assert.equal(html.includes(esc(shown.criteria)),mode==='teacher');}
   for(const page of(mode==='teacher'?current.teacherStudentPages:current.pages))for(const note of page.rail)assert(html.includes(esc(note.text)));
  }
  for(const name of['v2.js','revised-lesson.js','index.html'])assert(fs.readFileSync(new URL('./'+name,import.meta.url),'utf8').includes('&energyContext='+version));
