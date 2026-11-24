@@ -1,3 +1,4 @@
+import{skyMixedItems}from'./sky-mixed-response.js';
 import{skyGuidedItems}from'./sky-guided-review.js';
 import test from'node:test';import assert from'node:assert/strict';
 import{items as raw}from'../data/units/c22-s42-u01.js';import{items as think}from'../data/units/c22-s42-u01.think.js';
@@ -32,7 +33,7 @@ test('sky readability leaves originals, similar, other units and unexpected vers
  const rows=[{...old,status:'review'}];assert.equal(skyReadableCurrentItems(rows,unit),rows);assert.equal(skyReadableCurrentItems(baseline,'other'),baseline);assert.equal(skyReadableCurrentItems(null,unit),null);
 });
 test('sky repeated classroom and daily pool use the same three revised question objects',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=skyGuidedItems(skyResponseItems(skyReadableCurrentItems(baseline,unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),current=skyMixedItems(skyGuidedItems(skyResponseItems(skyReadableCurrentItems(baseline,unit),unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems.filter(q=>q.contentVersion===SKY_READABILITY_VERSION||q.previousVersions?.some(v=>v.version===SKY_READABILITY_VERSION))){linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);assert.deepEqual(current.find(x=>x.id===q.id),q);}
  assert.equal(linked,3);
 });
