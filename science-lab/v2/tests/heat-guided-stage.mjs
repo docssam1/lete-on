@@ -1,4 +1,5 @@
+import{beforeHeatMixed}from'./heat-mixed-stage.mjs';
 import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{HEAT_GUIDED_VERSION}from'../heat-guided-review.js';
 const previous=new WeakMap(),reviewed=new Set([4,8,14,20,26,32,38,44,50,52,54,56,59,62,64,67,80,84,89,93,96,99,101,102,104]);
-export function beforeHeatTask(q){if(q.contentVersion!==HEAT_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function beforeHeatTask(q){q=beforeHeatMixed(q);if(q.contentVersion!==HEAT_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
 export function heatUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s52-u02-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,104);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,79);return kept;}
