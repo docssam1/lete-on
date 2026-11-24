@@ -40,7 +40,7 @@
           const owner=button.closest("[data-final-mission-owner]"),data=owner?.dataset,host=button.closest(".source62-final-problem,.source62-final-teacher"),role=host?.matches(".source62-final-problem")?"problem":"teacher";
           if(!button.isConnected||!presentation||!owner||!host||host.closest("[data-final-mission-owner]")!==owner||!Object.hasOwn(presentation.profiles,data.sourceItemId)||!/^[0-2]$/.test(data.variant||"")||!/^[0-2]$/.test(data.level||"")||button.dataset.m3Figure!==data.variant||button.dataset.sourceDifficultyLevel!==data.level||data.finalMissionOwner!==role||button.dataset.sourceFigureFamily!=="e4-final-missions")throw RangeError("Invalid final-mission zoom owner");
           const figure=presentation.zoomFigure(data.sourceItemId,Number(data.variant),Number(data.level),button.dataset.sourceFigurePhase,role);
-          if(button.querySelector("img")?.getAttribute("src")!==figure.source)throw RangeError("Mismatched final-mission image");return figure;
+          if(figure.inlineSvg?Boolean(button.querySelector("img"))||button.querySelector("svg.source62-iso-cubes")?.getAttribute("data-figure-key")!==figure.figureKey:button.querySelector("img")?.getAttribute("src")!==figure.source)throw RangeError("Mismatched final-mission image");return figure;
         };
         try{layerFigure=requestFigure();const key=layerFigure.revisionKey;layerFigure={...layerFigure,isCurrent:()=>{try{return requestFigure().revisionKey===key;}catch{return false;}}};}catch{return;}
       }
@@ -86,7 +86,7 @@
             data.cubeAdditionContext!==role||button.dataset.sourceFigureFamily!=="cube-addition"||
             (role==="problem"?rawIndex!=="given":!/^\d+$/.test(rawIndex||"")||button.closest("figure[data-cube-class]")?.dataset.cubeClass!==rawIndex))throw new RangeError("Invalid cube-addition zoom context");
           const figure=presentation.zoomFigure(Number(data.variant),Number(data.level),role==="problem"?"given":Number(rawIndex),role);
-          if(button.querySelector("img")?.getAttribute("src")!==figure.source)throw new RangeError("Mismatched cube-addition image");return figure;
+          if(figure.inlineSvg?Boolean(button.querySelector("img"))||button.querySelector("svg.source62-iso-cubes")?.getAttribute("data-figure-key")!==figure.figureKey:button.querySelector("img")?.getAttribute("src")!==figure.source)throw new RangeError("Mismatched cube-addition image");return figure;
         };
         try{layerFigure=requestFigure();const key=layerFigure.revisionKey;layerFigure={...layerFigure,isCurrent:()=>{try{return requestFigure().revisionKey===key;}catch{return false;}}};}catch{return;}
       }
