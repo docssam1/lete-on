@@ -14,6 +14,7 @@
 // 분수는 빗금으로 적고 화면이 mathText로 위아래로 쌓는다(mathPrompt). 지수에 식이 들어간 거듭제곱·분수식은 MathML 한 줄 수식(math-markup.js)으로,
 // 4번 식은 그림(SVG 글자)으로, 좌표평면·반원·정사각형 그림은 우리 색표 SVG로 그렸다. 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc, text, svg, line } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "../course2-test-originals/len-arc.js?v=20261124a";
 import { mathText, expr, part, powPart, rowPart } from "../math-markup.js?v=20261122w";
 
 export const perPage = 4;
@@ -61,8 +62,9 @@ function q3() {
     out += `<polygon points="${sq.map(([x, y]) => `${f(x)},${f(y)}`).join(" ")}" fill="${i === 0 ? UT.greenSoft : "none"}" stroke="${UT.green}" stroke-width="${i < 5 ? 1.6 : 1.1}" stroke-linejoin="round"/>`;
     sq = sq.map((p, k) => { const q = sq[(k + 1) % 4]; return [(p[0] + q[0]) / 2, (p[1] + q[1]) / 2]; });
   }
-  const brace = `<path d="M${x0} ${y0 - 2} Q${x0 + s / 2} ${y0 - 26} ${x0 + s} ${y0 - 2}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
-  return svg(190, 190, "한 변이 2cm인 정사각형 안에 중점을 이은 정사각형을 거듭 그린 그림", brace + `<rect x="${x0 + s / 2 - 20}" y="${y0 - 22}" width="40" height="16" fill="#fff"/>` + small(x0 + s / 2, y0 - 14, "2cm", 12) + out, 190);
+  // 길이 표시: 위 변 양 끝을 잇는 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24)
+  const brace = lenArc({ x: x0, y: y0 }, { x: x0 + s, y: y0 }, "2cm", { side: -1 });
+  return svg(190, 190, "한 변이 2cm인 정사각형 안에 중점을 이은 정사각형을 거듭 그린 그림", brace + out, 190);
 }
 
 // 4. 분모에 거듭제곱이 있는 끝없는 합 — SVG 글자로 쌓은 분수

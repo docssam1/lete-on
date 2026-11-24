@@ -1,5 +1,5 @@
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115f";
-import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261115d";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261124d";
+import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261124d";
 import { mathText } from "./math-markup.js?v=20261122w";
 
 // 2과정 권별 테스트 시험지 보기·인쇄 — 원장 2026-11-14 「G4 테스트는 다시 만들어」.

@@ -1,7 +1,7 @@
 // 2과정 권 목록(기하 G1~G5 · 대수 A) — 권마다 그림으로 따져 보기·직접 해 보기·권별 테스트를 모은 카드 HTML.
 // 2과정 첫 화면(course2.html)과 사고력 문제은행의 「2과정」 탭(similar.html?course=2, 원장 2026-11-15 「문제은행 안에 들어가면 1과정 2과정 3과정」)이 같이 쓴다.
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115f";
-import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261115d";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261124d";
+import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261124d";
 export const COURSE2_BOOKS = [
   { id: "g1", name: "G1", title: "돌리기와 뒤집기" },
   { id: "g2", name: "G2", title: "도형분할과 넓이" },

@@ -44,6 +44,25 @@ for (const b of BOOKS) {
   }
 }
 
+// ④ 길이 표시(스킬 gfield-textbook-design 4-3, 원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」):
+//    그림 속 「12cm」 같은 길이 글자는 바깥 곡선 점선의 끊은 자리 글자(length-dim.js·kit dim — 명조 style)여야 한다. 변 옆 맨 글자는 실패.
+const LEN_TEXT = /<text\b([^>]*)>\s*([\d.]+\s*(?:cm|m|㎝))\s*<\/text>/g;
+// 예외(길이가 아니거나 호를 둘 자리가 없는 것): 조각마다 안에 쓴 둘레(G4 직사각형 조각) · 30px 안팎의 가장 작은 정사각형 안 한 변(G2 피보나치)
+const LEN_OK = new Set(["rect-parts", "c2RectPartsPerimeter", "c2FibonacciRect"]);
+const plainLengths = (svgText) => [...String(svgText).matchAll(LEN_TEXT)].filter((m) => !/Serif|serif/.test(m[1])).map((m) => m[2]);
+for (const [bookId, book] of Object.entries(PACK_BOOKS)) for (const [key, list] of Object.entries(book)) for (const p of list) for (const part of ["recall", "summary", "example"]) {
+  const f = p[part]?.figure; if (!f || LEN_OK.has(p.id)) continue;
+  const bad = plainLengths(draw(f)); if (bad.length) fails.push(`${bookId} ${key} ${p.id} ${part}: 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`);
+}
+for (const b of BOOKS) {
+  const mod = await import(`../course2-${b}-generators.js`);
+  const gens = Object.values(mod).find((v) => v && typeof v === "object" && !Array.isArray(v) && Object.values(v).every((fn) => typeof fn === "function"));
+  for (const [name, fn] of Object.entries(gens || {})) for (const difficulty of [1, 2, 3]) for (let k = 0; k < 4; k += 1) {
+    let r; try { r = fn({ difficulty }); } catch { continue; }
+    const bad = LEN_OK.has(name) ? [] : plainLengths(r?.visual?.html || ""); if (bad.length) { fails.push(`${b} ${name}: 그림 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`); break; }
+  }
+}
+
 const unique = [...new Set(fails)];
 if (unique.length) { console.log(unique.join("\n")); console.log(`COURSE2_CONCEPTS_FAIL ${unique.length}`); process.exit(1); }
 console.log("COURSE2_CONCEPTS_OK");

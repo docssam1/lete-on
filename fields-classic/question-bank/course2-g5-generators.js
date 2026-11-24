@@ -253,14 +253,16 @@ function c2ShadowHeight({ difficulty = 2 }) {
     const mult = randomInt(3, 12);
     const T = shadow * mult, H = stick * mult;
     const base = 190, sx = 300 / (T + shadow + 4), sy = Math.min(14, 150 / H);
-    const tower = P(40, base), top = P(40, base - H * sy), tip = P(40 + T * sx, base);
-    const st = P(40 + T * sx + 30, base), stTop = P(st.x, base - stick * sy * 3), stTip = P(st.x + shadow * sx * 3, base);
+    const X0 = 64, tower = P(X0, base), top = P(X0, base - H * sy), tip = P(X0 + T * sx, base);
+    const st = P(X0 + T * sx + 30, base), stTop = P(st.x, base - stick * sy * 3), stTip = P(st.x + shadow * sx * 3, base);
     let body = line(P(20, base), P(stTip.x + 20, base), { color: "#9aa39e", width: 1.4 });
     body += `<rect x="${f1(tower.x - 9)}" y="${f1(top.y)}" width="18" height="${f1(base - top.y)}" fill="${SOFT}" stroke="${INK}" stroke-width="2"/>` + line(top, tip, { color: "#e0a63c", dash: "5 4", width: 1.6 }) + line(tower, tip, { color: "#6b5b45", width: 5 });
     body += line(st, stTop, { width: 3 }) + line(stTop, stTip, { color: "#e0a63c", dash: "4 3", width: 1.4 }) + line(st, stTip, { color: "#6b5b45", width: 4 });
-    body += text(mid(tower, tip).x, base + 14, kind === "height" ? `${T}m` : "?", { size: 13, color: kind === "height" ? INK : MARK }) + text(tower.x - 16, (top.y + base) / 2, kind === "height" ? "?" : `${H}m`, { size: 13, anchor: "end", color: kind === "height" ? MARK : INK });
-    body += text(st.x - 8, (stTop.y + base) / 2, `${stick}m`, { size: 12, anchor: "end" }) + text(mid(st, stTip).x, base + 14, `${shadow}m`, { size: 12 });
-    const html = svg(stTip.x + 40, base + 30, body, "탑과 막대의 그림자");
+    // 길이는 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3): 높이는 왼쪽, 그림자는 땅 아래
+    body += dimArc(tower.x - 9, top.y, tower.x - 9.01, base, 14, kind === "height" ? "?" : `${H}m`, { labelColor: kind === "height" ? MARK : null })
+      + dimArc(tower.x, base, tip.x, base, 12, kind === "height" ? `${T}m` : "?", { labelColor: kind === "height" ? null : MARK });
+    body += dimArc(st.x, stTop.y, st.x - 0.01, base, 12, `${stick}m`, { size: 12 }) + dimArc(st.x, base, stTip.x, base, 12, `${shadow}m`, { size: 12 });
+    const html = svg(stTip.x + 40, base + 40, body, "탑과 막대의 그림자");
     if (kind === "height") return problem({
       prompt: `같은 시각에 길이 ${stick}m인 막대의 그림자는 ${shadow}m이고, 탑의 그림자는 ${T}m입니다. 탑의 높이는 몇 m인가요?`,
       subtype: "shadow", html, answer: `${H}m`,

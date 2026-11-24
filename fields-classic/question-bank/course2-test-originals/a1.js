@@ -4,6 +4,7 @@
 // 글·수·배치는 원문 그대로, 그림은 우리 색표(워밍업 그림 색)로 다시 그렸다. 흑백이 규칙인 그림(2·25번 도형, 바둑돌)은 검정·흰색을 그대로 둔다.
 // 분수는 글 속 빗금(1/3)으로 적고 화면이 mathText로 위아래로 쌓는다(mathPrompt). 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, shape, cell, ringed, balance, stone } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "A1", title: "양팔저울과 규칙찾기" };
@@ -32,7 +33,6 @@ function stacks(cols, { step = 26, s = 20, rise = 24, x0 = 18, base, label }) {
 const noteBox = (lines, { size = 13, width = 400 } = {}) =>
   `<div style="display:grid;place-items:center;width:100%"><div style="width:min(100%,${width}px);padding:10px 16px;border:1.5px solid ${UT.soft};border-radius:10px;background:#fdfbf5">${lines.map((l) => `<p style="margin:0;font-size:${size}px;font-weight:700;line-height:1.75;color:${INK};word-break:keep-all">${l}</p>`).join("")}</div></div>`;
 // 점선 길이 표시(a→b 를 잇는 볼록한 곡선, bend 가 음수면 위로)
-const arc = (x1, y1, x2, y2, bend) => `<path d="M${f(x1)} ${f(y1)} Q${f((x1 + x2) / 2)} ${f((y1 + y2) / 2 + bend * 2)} ${f(x2)} ${f(y2)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
 const blank = (x, y, w = 26, h = 20) => `<rect x="${f(x)}" y="${f(y)}" width="${w}" height="${h}" fill="#fff" stroke="${UT.box}" stroke-width="1.5" rx="2"/>`;
 const word = (x, y, value, size = 13, anchor = "middle") => text(x, y, value, { size, weight: 600, anchor });
 
@@ -118,20 +118,23 @@ function q9() {
   const h = 24;
   const bar = (x, y, n, w, mark) => Array.from({ length: n }, (_, i) => cell(x + i * w, y, w, h, "", { fill: UT.greenSoft, stroke: UT.green, width: 1.4 })
     + ringed(x + i * w + w / 2, y + h / 2, mark === "㉠" ? "ㄱ" : "ㄴ", { r: 8, size: 10 })).join("");
+  // 길이 표시는 바깥 곡선 점선 + 끊은 자리에 글자·빈 칸(스킬 gfield-textbook-design 4-3, 원장 2026-11-24).
+  // 오른쪽 그림은 빈 칸 둘이 부딪히지 않게 왼쪽 그림보다 조금 크게(비는 그대로) 그린다.
+  const P = (x, y) => ({ x, y });
+  const len = (x1, y, x2, label, side, opts = {}) => lenArc(P(x1, y), P(x2, y), label, { side, size: 12, boxW: 20, boxH: 17, ...opts });
   // (1) ㉠ 4개 = ㉡ 3개, ㉠과 ㉡을 이은 길이 42cm
-  const a1 = 36, b1 = 48, y1 = 18, rx1 = 206;
+  const a1 = 36, b1 = 48, y1 = 18, rx1 = 206, ra = 42, rb = 56;
   let out = word(14, y1 + 4, "(1)", 13) + bar(32, y1, 4, a1, "㉠") + bar(32, y1 + h, 3, b1, "㉡")
-    + bar(rx1, y1 + 18, 1, a1, "㉠") + bar(rx1 + a1, y1 + 18, 1, b1, "㉡")
-    + blank(rx1 + 5, y1 - 14) + word(rx1 + 33, y1 - 4, "cm", 12, "start") + blank(rx1 + a1 + 18, y1 - 14) + word(rx1 + a1 + 46, y1 - 4, "cm", 12, "start")
-    + arc(rx1, y1 + 18, rx1 + a1, y1 + 18, -7) + arc(rx1 + a1, y1 + 18, rx1 + a1 + b1, y1 + 18, -7)
-    + arc(rx1, y1 + 18 + h, rx1 + a1 + b1, y1 + 18 + h, 9) + word(rx1 + (a1 + b1) / 2, y1 + 18 + h + 26, "42cm", 13);
+    + bar(rx1, y1 + 18, 1, ra, "㉠") + bar(rx1 + ra, y1 + 18, 1, rb, "㉡")
+    + len(rx1, y1 + 18, rx1 + ra, "", -1, { blank: true }) + len(rx1 + ra, y1 + 18, rx1 + ra + rb, "", -1, { blank: true })
+    + len(rx1, y1 + 18 + h, rx1 + ra + rb, "42cm", 1, { size: 13 });
   // (2) ㉠ 2개 = ㉡ 3개, ㉠이 ㉡보다 5cm 김
-  const a2 = 72, b2 = 48, y2 = 150, rx2 = 206;
+  const a2 = 72, b2 = 48, y2 = 150, rx2 = 222, ra2 = 90, rb2 = 60;
   out += word(14, y2 + 4, "(2)", 13) + bar(32, y2, 2, a2, "㉠") + bar(32, y2 + h, 3, b2, "㉡")
-    + bar(rx2, y2, 1, a2, "㉠") + bar(rx2, y2 + h, 1, b2, "㉡")
-    + arc(rx2, y2, rx2 + a2, y2, -9) + blank(rx2 + a2 / 2 - 13, y2 - 30) + word(rx2 + a2 / 2 + 17, y2 - 20, "cm", 12, "start")
-    + arc(rx2 + b2, y2 + h, rx2 + a2, y2 + h, 5) + word(rx2 + a2 + 4, y2 + h + 12, "5cm", 12, "start")
-    + arc(rx2, y2 + 2 * h, rx2 + b2, y2 + 2 * h, 8) + blank(rx2 + b2 / 2 - 13, y2 + 2 * h + 18) + word(rx2 + b2 / 2 + 17, y2 + 2 * h + 28, "cm", 12, "start");
+    + bar(rx2, y2, 1, ra2, "㉠") + bar(rx2, y2 + h, 1, rb2, "㉡")
+    + len(rx2, y2, rx2 + ra2, "", -1, { blank: true })
+    + len(rx2 + rb2, y2 + h, rx2 + ra2, "5cm", 1)
+    + len(rx2, y2 + 2 * h, rx2 + rb2, "", 1, { blank: true });
   return svg(318, 252, "두 막대의 길이를 비교한 그림 두 개", out, 330);
 }
 const q10 = () => noteBox(["① A의 4배는 B의 5배와 같습니다.", "② 두 수 A, B의 합은 54입니다."]);

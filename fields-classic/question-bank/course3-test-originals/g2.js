@@ -9,6 +9,7 @@
 // 17번은 원문 그림의 길이(접선 길이 8·10·6cm)대로 그렸다 — 이 길이면 내접원 반지름은 4cm보다 조금 크다(원문 조건 그대로 둠).
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, mark } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "../course2-test-originals/len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "G2", title: "원과 사이클로이드" };
@@ -65,13 +66,11 @@ function rightMark(v, p1, p2, s = 7) {
   const a = u(p1), b = u(p2);
   return `<polyline points="${pts([P(v.x + a.x, v.y + a.y), P(v.x + a.x + b.x, v.y + a.y + b.y), P(v.x + b.x, v.y + b.y)])}" fill="none" stroke="${INK}" stroke-width="1"/>`;
 }
-// 길이 표시: a→b 옆으로 볼록한 점선과 글자(side 1 = 화면에서 a→b 진행 방향의 왼쪽… y가 아래로 커지므로 오른쪽으로 갈 때는 아래)
-function brace(a, b, label, { side = 1, bend = 10, off = 11, size = 12 } = {}) {
-  const l = dist(a, b), nx = (-(b.y - a.y) / l) * side, ny = ((b.x - a.x) / l) * side;
-  const m = lerp(a, b, 0.5), c = P(m.x + nx * bend * 2, m.y + ny * bend * 2), tip = P(m.x + nx * (bend + off), m.y + ny * (bend + off));
-  return `<path d="${M(a)} Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`
-    + (label ? halo(small(tip, label)) : "");
-}
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24).
+// side 1 = a→b 진행 방향의 (−dy, dx) 쪽(y가 아래로 커지므로 오른쪽으로 갈 때는 아래). far = 더 띄울 만큼 · halo = 다른 선 위에 놓이는 글자에 흰 테.
+const brace = (a, b, label, { side = 1, far = 0, halo = false, bend = null } = {}) => lenArc(a, b, label, { side, far, halo, bend });
+// 점 p가 a→b의 어느 쪽인지(brace의 side 약속으로)
+const toward = (a, b, p) => (-(b.y - a.y) * (p.x - a.x) + (b.x - a.x) * (p.y - a.y) >= 0 ? 1 : -1);
 // 글자 둘레에 흰 테(선 위에서도 읽히게)
 const halo = (markup) => markup.replace('style="', 'style="paint-order:stroke;stroke:#fff;stroke-width:3.5px;stroke-linejoin:round;');
 const italic = (p, value, size = 15) =>
@@ -86,25 +85,26 @@ function q1() {
   return svg(220, 200, "지름이 10cm, 6cm인 두 원을 품은 큰 원",
     circle(O, 8 * k, { fill: SHADE }) + circle(left, 5 * k, { fill: "#fff" }) + circle(right, 3 * k, { fill: "#fff" })
     + seg(T(-8, 0), T(8, 0), { width: 1.4 }) + dot(left) + dot(right)
-    + brace(T(-8, 0), touch, "10cm", { bend: 7, off: 9 }) + brace(touch, T(8, 0), "6cm", { bend: 6, off: 9 }), 220);
+    + brace(T(-8, 0), touch, "10cm") + brace(touch, T(8, 0), "6cm"), 220);
 }
 function q2() {
-  const k = 6.6, T = grid(122, 104, k), O = T(0, 0), base = Math.sqrt(15 * 15 - 9);
+  // 고깔 밑면 반지름(3cm) 길이 표시가 왼쪽에 들어가도록 그림을 오른쪽으로 18 옮기고 폭을 늘림
+  const k = 6.6, T = grid(140, 104, k), O = T(0, 0), base = Math.sqrt(15 * 15 - 9);
   const top = T(-base, 3), bot = T(-base, -3), bc = T(-base, 0);
-  return svg(240, 212, "반지름 15cm인 원 위를 굴러가는 고깔",
+  return svg(262, 212, "반지름 15cm인 원 위를 굴러가는 고깔",
     circle(O, 15 * k) + seg(O, T(15, 0), { width: 1.2 })
     + poly([O, top, bot], { fill: UT.yellowSoft, stroke: INK, width: 1.5 })
     + `<ellipse cx="${f(bc.x)}" cy="${f(bc.y)}" rx="${f(0.9 * k)}" ry="${f(3 * k)}" fill="${UT.yellowSoft}" stroke="${INK}" stroke-width="1.5"/>`
     + seg(bc, top, { stroke: UT.line, width: 1.1, dash: "3 2.5" })
-    + halo(small(P(bc.x + 14, top.y - 12), "3cm")) + dot(O) + name(P(O.x, O.y + 14), "O")
-    + brace(O, T(15, 0), "15cm", { side: -1, bend: 6, off: 8 }), 240);
+    + brace(top, bc, "3cm", { side: 1, halo: true }) + dot(O) + name(P(O.x, O.y + 14), "O")
+    + brace(O, T(15, 0), "15cm", { side: -1 }), 258);
 }
 function q3() {
   const h = 84, c = P(100, 96), d = h / Math.SQRT2;
   return svg(200, 210, "정사각형 안의 원, 원 안의 정사각형",
     poly([P(c.x - h, c.y - h), P(c.x + h, c.y - h), P(c.x + h, c.y + h), P(c.x - h, c.y + h)])
     + circle(c, h, { fill: SHADE }) + poly([P(c.x - d, c.y - d), P(c.x + d, c.y - d), P(c.x + d, c.y + d), P(c.x - d, c.y + d)], { fill: "#fff" })
-    + dot(c) + brace(P(c.x - h, c.y + h), P(c.x + h, c.y + h), "12cm", { bend: 6, off: 9 }), 200);
+    + dot(c) + brace(P(c.x - h, c.y + h), P(c.x + h, c.y + h), "12cm"), 200);
 }
 function q4() {
   const k = 8.6, T = grid(160, 160, k), C = T(0, 0);
@@ -115,7 +115,7 @@ function q4() {
     region + arc(C, 16 * k, 180, 30) + arc(C, 8 * k, -30, 120, { width: 1.3 })
     + poly([A, B, C]) + poly([A2, B2, C]) + rightMark(A, B, C) + rightMark(A2, B2, C)
     + ang.path + small(at(C, 28, ang.mid + 4), "60°", 11)
-    + halo(small(P(lerp(C, A, 0.55).x + 16, lerp(C, A, 0.55).y), "8cm", 11))
+    + brace(C, A, "8cm", { side: -toward(C, A, B), halo: true })
     + name(P(A.x - 3, A.y - 11), "A") + name(P(B.x - 9, B.y + 5), "B") + name(P(C.x + 2, C.y + 13), "C")
     + name(P(B2.x + 12, B2.y - 2), "B′") + name(P(A2.x + 4, A2.y + 13), "A′"), 300);
 }
@@ -126,7 +126,7 @@ function q5() {
     path(`${M(A)}${L(C)}${arcTo(O, r, 30, 180)}Z`, { fill: SHADE, stroke: "none" })
     + arc(O, r, 0, 180) + seg(A, B) + seg(A, C) + ang.path + halo(small(at(A, 54, ang.mid), "15°", 11))
     + dot(O) + name(P(O.x + 4, O.y + 13), "O") + name(P(A.x - 9, A.y + 2), "A") + name(P(B.x + 9, B.y + 2), "B") + name(P(C.x + 9, C.y - 8), "C")
-    + brace(A, O, "12cm", { bend: 6, off: 9 }), 250);
+    + brace(A, O, "12cm"), 250);
 }
 
 // ── 7~12번 (사이클로이드 · 곡선으로 둘러싸인 도형)
@@ -135,7 +135,7 @@ function q7() {
   const cow = P(K.x + 54, K.y + 42);
   return svg(250, 228, "가로 12m, 세로 8m인 직사각형 울타리와 귀퉁이에 묶인 송아지",
     poly([P(x0, y0), P(x0 + w, y0), K, P(x0, y0 + h)], { fill: UT.yellowSoft, stroke: UT.line, width: 2.2 })
-    + brace(P(x0, y0), P(x0 + w, y0), "12m", { side: -1, bend: 6, off: 8 }) + brace(P(x0, y0 + h), P(x0, y0), "8m", { side: -1, bend: 6, off: 12 })
+    + brace(P(x0, y0), P(x0 + w, y0), "12m", { side: -1 }) + brace(P(x0, y0 + h), P(x0, y0), "8m", { side: -1 })
     + `<path d="${M(K)} C${f(K.x + 14)} ${f(K.y + 30)} ${f(K.x + 30)} ${f(K.y + 6)} ${f(cow.x - 14)} ${f(cow.y - 4)}" fill="none" stroke="${UT.line}" stroke-width="1.3"/>`
     + dot(K, 3) + `<rect x="${f(cow.x - 16)}" y="${f(cow.y - 10)}" width="40" height="20" rx="10" fill="#fff" stroke="${UT.soft}" stroke-width="1.2"/>`
     + small(P(cow.x + 4, cow.y), "송아지", 11), 250);
@@ -160,7 +160,7 @@ function q9() {
     + poly([A, D, C, B]) + seg(A, C) + arc(C, 8 * k, 90, 180)
     + mark(lerp(A, D, 0.55).x, A.y + 20, "가", { r: 9, size: 11 }) + mark(lerp(E, C, 0.55).x + 4, C.y - 18, "나", { r: 9, size: 11 })
     + name(P(A.x - 8, A.y - 9), "A") + name(P(D.x + 8, D.y - 9), "D") + name(P(B.x - 8, B.y + 11), "B") + name(P(C.x + 8, C.y + 11), "C") + name(P(E.x, E.y + 13), "E")
-    + brace(D, C, "8cm", { side: -1, bend: 6, off: 12 }), 250);
+    + brace(D, C, "8cm", { side: -1 }), 250);
 }
 function q10() {
   const k = 17, T = grid(46, 172, k), s = 9, c3 = Math.sqrt(3) / 2;
@@ -170,7 +170,7 @@ function q10() {
   return svg(220, 184, "정사각형의 네 꼭짓점을 중심으로 그린 사분원",
     path(shade, { fill: SHADE, stroke: "none" }) + poly([TL, TR, BR, BL])
     + arc(BL, r, 0, 90, { width: 1.3 }) + arc(BR, r, 90, 180, { width: 1.3 }) + arc(TR, r, 180, 270, { width: 1.3 }) + arc(TL, r, 270, 360, { width: 1.3 })
-    + brace(BL, TL, "9cm", { side: -1, bend: 6, off: 12 }), 210);
+    + brace(BL, TL, "9cm", { side: -1 }), 210);
 }
 function q11() {
   const k = 25, T = grid(54, 172, k), r = 3 * k;
@@ -179,7 +179,7 @@ function q11() {
     path(`${M(TL)}${L(TR)}${L(BR)}${arcTo(cb, r, 0, 90)}${arcTo(cl, r, 0, 90)}Z`, { fill: SHADE, stroke: "none" })
     + path(`${M(BL)}${arcTo(cl, r, -90, 0)}${arcTo(cb, r, 90, 180)}Z`, { fill: SHADE, stroke: "none" })
     + poly([TL, TR, BR, BL]) + arc(cl, r, 90, -90) + arc(cb, r, 180, 0)
-    + brace(BL, TL, "6cm", { side: -1, bend: 6, off: 12 }) + brace(BL, BR, "6cm", { bend: 6, off: 9 }), 220);
+    + brace(BL, TL, "6cm", { side: -1 }) + brace(BL, BR, "6cm"), 220);
 }
 function q12() {
   const k = 13, O = P(110, 100), r = 6 * k, w = 3 * Math.sqrt(3) * k, h = 3 * k;
@@ -207,14 +207,14 @@ function q14() {
   return svg(250, 186, "직각삼각형 ABC와 외심 M",
     poly([A, B, C]) + seg(B, Mm) + rightMark(B, A, C, 9) + dot(Mm, 2.2)
     + name(P(A.x, A.y - 11), "A") + name(P(B.x - 8, B.y + 9), "B") + name(P(C.x + 10, C.y + 4), "C") + name(P(Mm.x + 3, Mm.y + 15), "M")
-    + brace(B, A, "3cm", { side: -1, bend: 6, off: 12 }) + brace(B, C, "4cm", { bend: 6, off: 9 }) + brace(A, C, "5cm", { side: -1, bend: 11, off: 11 }), 240);
+    + brace(B, A, "3cm", { side: -1 }) + brace(B, C, "4cm") + brace(A, C, "5cm", { side: -1 }), 240);
 }
 function q15() {
   const k = 22, T = grid(30, 166, k), C = T(8, 0), B = T(0, 0), A = T(8, 6), I = T(6, 2);
   return svg(252, 196, "직각삼각형 ABC와 내심 I",
     poly([A, B, C]) + circle(I, 2 * k, { width: 1.3 }) + seg(I, B) + seg(I, C) + rightMark(C, B, A, 9) + dot(I)
     + name(P(I.x, I.y - 12), "I") + name(P(A.x + 6, A.y - 10), "A") + name(P(B.x - 9, B.y + 6), "B") + name(P(C.x + 10, C.y + 6), "C")
-    + brace(B, A, "10cm", { side: -1, bend: 8, off: 10 }) + brace(C, A, "6cm", { bend: 6, off: 12 }) + brace(B, C, "8cm", { bend: 6, off: 9 }), 240);
+    + brace(B, A, "10cm", { side: -1 }) + brace(C, A, "6cm") + brace(B, C, "8cm"), 240);
 }
 function q16() {
   const k = 17, T = grid(26, 186, k), B = T(0, 0), C = T(11, 0), A = T(3.5, Math.sqrt(100 - 12.25));
@@ -233,7 +233,7 @@ function q17() {
     poly([A, B, C]) + circle(I, r, { width: 1.3 }) + seg(I, E, { width: 1.2 }) + rightMark(E, C, I, 6) + dot(I) + dot(D, 1.8) + dot(E, 1.8) + dot(F, 1.8)
     + name(P(I.x - 9, I.y - 9), "I") + name(P(A.x, A.y - 11), "A") + name(P(B.x - 9, B.y + 6), "B") + name(P(C.x + 9, C.y + 6), "C")
     + name(P(D.x - 11, D.y - 4), "D") + name(P(F.x + 11, F.y - 2), "F") + name(P(E.x, E.y + 13), "E")
-    + brace(B, A, "18cm", { side: -1, bend: 9, off: 10 }) + brace(B, E, "10cm", { bend: 6, off: 10 }) + brace(E, C, "6cm", { bend: 5, off: 9 }), 228);
+    + brace(B, A, "18cm", { side: -1, far: 22 }) + brace(B, E, "10cm") + brace(E, C, "6cm"), 228);
 }
 function q18() {
   const B = P(70, 104), C = P(186, 104), A = meet(B, at(B, 10, 56), C, at(C, 10, 132));
@@ -265,7 +265,7 @@ function q19() {
     + rightMark(Pp, A, S, 6) + rightMark(Q, B, Pp, 6) + rightMark(Rr, C, Q, 6) + rightMark(S, D, Rr, 6)
     + name(P(A.x - 8, A.y - 8), "A") + name(P(D.x + 8, D.y - 8), "D") + name(P(B.x - 8, B.y + 9), "B") + name(P(C.x + 8, C.y + 9), "C")
     + name(P(Pp.x - 10, Pp.y + 4), "P") + name(P(Q.x - 2, Q.y + 13), "Q") + name(P(Rr.x + 11, Rr.y), "R") + name(P(S.x + 2, S.y - 12), "S")
-    + brace(B, A, "26cm", { side: -1, bend: 7, off: 16 }) + brace(A, Pp, "10cm", { side: -1, bend: 5, off: 12 }), 240);
+    + brace(B, A, "26cm", { side: -1 }) + brace(A, Pp, "10cm", { side: -1 }), 240);
 }
 function q20() {
   const k = 13, T = grid(66, 142, k), B = T(0, 0), C = T(8, 0), A = T(2.5, Math.sqrt(880) / 8);
@@ -286,7 +286,7 @@ function q21() {
     poly([A, D, C, B]) + seg(D, E) + seg(E, F) + seg(D, F) + seg(D, G) + seg(G, H) + rightMark(F, E, D, 6) + rightMark(H, G, D, 6)
     + name(P(A.x - 8, A.y - 8), "A") + name(P(D.x + 8, D.y - 8), "D") + name(P(B.x - 8, B.y + 8), "B") + name(P(C.x + 8, C.y + 8), "C")
     + name(P(E.x - 9, E.y), "E") + name(P(F.x, F.y + 13), "F") + name(P(G.x, G.y + 13), "G") + name(P(H.x - 10, H.y - 4), "H")
-    + brace(A, D, "10cm", { side: -1, bend: 6, off: 8 }) + brace(D, C, "8cm", { side: -1, bend: 6, off: 12 }), 230);
+    + brace(A, D, "10cm", { side: -1 }) + brace(D, C, "8cm", { side: -1 }), 230);
 }
 function q22() {
   const k = 15, T = grid(40, 164, k), A = T(0, 9), D = T(12, 9), B = T(0, 0), C = T(12, 0);
@@ -295,7 +295,7 @@ function q22() {
     poly([A, D, C, B]) + seg(A, C) + seg(E, F) + rightMark(H, C, E, 6)
     + name(P(A.x - 8, A.y - 8), "A") + name(P(D.x + 8, D.y - 8), "D") + name(P(B.x - 8, B.y + 8), "B") + name(P(C.x + 8, C.y + 8), "C")
     + name(P(E.x, E.y - 11), "E") + name(P(F.x, F.y + 13), "F") + name(P(H.x - 2, H.y - 13), "H")
-    + brace(B, A, "9cm", { side: -1, bend: 6, off: 12 }) + brace(B, C, "12cm", { bend: 6, off: 9 }), 240);
+    + brace(B, A, "9cm", { side: -1 }) + brace(B, C, "12cm"), 240);
 }
 function q23() {
   const k = 22, T = grid(36, 172, k), C = T(8, 0), B = T(0, 0), A = T(8, 6), Mm = lerp(A, B, 0.5);
@@ -304,7 +304,7 @@ function q23() {
     poly([A, B, C]) + seg(C, D) + seg(C, Mm) + seg(D, H) + rightMark(C, B, A, 7) + rightMark(D, A, C, 5) + rightMark(H, D, C, 5)
     + name(P(A.x + 6, A.y - 10), "A") + name(P(B.x - 9, B.y + 6), "B") + name(P(C.x + 10, C.y + 6), "C")
     + name(P(D.x - 1, D.y - 12), "D") + name(P(Mm.x - 6, Mm.y + 13), "M") + name(P(H.x + 6, H.y + 13), "H")
-    + brace(B, A, "10cm", { side: -1, bend: 12, off: 10 }) + brace(C, A, "6cm", { bend: 6, off: 12 }) + brace(B, C, "8cm", { bend: 6, off: 9 }), 240);
+    + brace(B, A, "10cm", { side: -1 }) + brace(C, A, "6cm") + brace(B, C, "8cm"), 240);
 }
 function q24() {
   const k = 13, T = grid(26, 186, k), B = T(0, 0), C = T(17, 0), A = T(225 / 17, 120 / 17);
@@ -319,7 +319,7 @@ function q24() {
     + semi(A, B, C, { fill: "none" }) + semi(A, C, B, { fill: "none" }) + semi(B, C, top, { fill: "none" })
     + poly([A, B, C]) + rightMark(A, B, C, 6)
     + name(P(A.x + 6, A.y - 11), "A") + name(P(B.x - 4, B.y + 12), "B") + name(P(C.x + 4, C.y + 12), "C")
-    + halo(small(P(lerp(A, C, 0.5).x - 12, lerp(A, C, 0.5).y), "8cm", 11)) + brace(B, C, "17cm", { bend: 5, off: 9 }), 280);
+    + brace(A, C, "8cm", { side: toward(A, C, B) }) + brace(B, C, "17cm"), 280);
 }
 
 // ── 25번 (회전)
@@ -328,7 +328,7 @@ function q25() {
   const O1 = P(104, 72), O2 = P(96, 234);
   const sq = (O, turn) => [O, at(O, s, turn), at(O, d, turn - 45), at(O, s, turn - 90)];
   const fig1 = circle(O1, s) + poly(sq(O1, 0)) + seg(at(O1, s, -90), at(O1, s, 0))
-    + brace(at(O1, s, -90), at(O1, s, 0), "12cm", { side: -1, bend: 8, off: 4 }) + dot(O1);
+    + brace(at(O1, s, -90), at(O1, s, 0), "12cm", { side: -1, bend: s / Math.SQRT2 + 24 })   // 글자가 정사각형 밖(점 O 왼쪽 위)에 오도록 + dot(O1);
   const F15 = at(O2, d, 15);
   const region = `${M(at(O2, s, 60))}${L(F15)}${arcTo(O2, d, 15, -45)}${L(at(O2, s, -90))}${arcTo(O2, s, -90, 60)}Z`;
   const ang = angleArc(O2, at(O2, s, -90), at(O2, s, -30), 16);

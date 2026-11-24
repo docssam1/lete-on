@@ -10,10 +10,10 @@ import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generat
 import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20261119a";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20261101m";
 import { COURSE2_G1_GENERATORS } from "./course2-g1-generators.js?v=20261123c";
-import { COURSE2_G2_GENERATORS } from "./course2-g2-generators.js?v=20261124b";
+import { COURSE2_G2_GENERATORS } from "./course2-g2-generators.js?v=20261124e";
 import { COURSE2_G3_GENERATORS } from "./course2-g3-generators.js?v=20261124b";
 import { COURSE2_G4_GENERATORS } from "./course2-g4-generators.js?v=20261124b";
-import { COURSE2_G5_GENERATORS } from "./course2-g5-generators.js?v=20261124b";
+import { COURSE2_G5_GENERATORS } from "./course2-g5-generators.js?v=20261124e";
 import { COURSE2_A1_GENERATORS } from "./course2-a1-generators.js?v=20261122zi";
 import { COURSE2_A2_GENERATORS } from "./course2-a2-generators.js?v=20261123c";
 import { COURSE2_A3_GENERATORS } from "./course2-a3-generators.js?v=20261123c";

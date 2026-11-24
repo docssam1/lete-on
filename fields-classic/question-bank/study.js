@@ -1,4 +1,4 @@
-import { CURRICULUM, GM_PATH, typeById, bookById } from "./source-data.js?v=20261124b";
+import { CURRICULUM, GM_PATH, typeById, bookById } from "./source-data.js?v=20261124e";
 import { unitParts, loadGoldenBell } from "./study-map.js?v=20261123a";
 import { sessionPrintHref, PHASES, FIXED_LINES, voiceLine, pickOf, partPickOption, buildSessionSlides, sessionCount, sessionTypes, dailyTypes, unitTestTypes, DAILY_COUNT, UNIT_TEST_COUNT, slideLine, bellLabel, refOf, sheetLine, testResultLine, SHEET_BACK } from "./study-deck.js?v=20261124c";
 import { readRecord, saveRecord, checkSession, loggedIn } from "./study-progress.js?v=20261117a";

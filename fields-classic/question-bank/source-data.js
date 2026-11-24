@@ -1,9 +1,9 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
-import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124b";
+import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124e";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261124b";
 import { COURSE2_G4_TYPE_ROWS, COURSE2_G4_GUIDES } from "./course2-g4-generators.js?v=20261124b";
-import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261124b";
+import { COURSE2_G5_TYPE_ROWS, COURSE2_G5_GUIDES } from "./course2-g5-generators.js?v=20261124e";
 import { COURSE2_A1_TYPE_ROWS, COURSE2_A1_GUIDES } from "./course2-a1-generators.js?v=20261122zi";
 import { COURSE2_A2_TYPE_ROWS, COURSE2_A2_GUIDES } from "./course2-a2-generators.js?v=20261123c";
 import { COURSE2_A3_TYPE_ROWS, COURSE2_A3_GUIDES } from "./course2-a3-generators.js?v=20261123c";
