@@ -1,3 +1,5 @@
+import{withEcologyMixedWorkbook}from'./ecology-mixed-response.js';
+import{beforeEcologyMixed}from'./tests/ecology-mixed-stage.mjs';
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
@@ -23,7 +25,7 @@ const unit=workbook.unit,entry=new URL('./v2.js',import.meta.url),code=fs.readFi
 const a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a);
 const loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,entry).href)}).runInContext(vm.createContext({withThink}));
 const raw=await loaders[unit](),current=await reviewStudentModule(unit,raw);
-const priorBank=ecologyConservationItems(ecologyWritingItems([...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],unit),unit),bank=[...current.similar,...current.items];
+const priorBank=ecologyConservationItems(ecologyWritingItems([...reviewQuestionRows(raw.similar,review),...reviewQuestionRows(raw.items,review)],unit),unit),bank=[...current.similar,...current.items].map(beforeEcologyMixed);
 const base=reviewWorkbookTableText(reviewTextTree(withObservedPhotoAlt(withElementaryReadingDirections(workbook)),review.text),review);
 const priorBook=withEcologyConservationWorkbook(withEcologyWritingWorkbook(withEcologyGuidedWorkbook(base))),snapshot=JSON.parse(JSON.stringify(priorBook));
 const next=withEcologyFoodwebWorkbook(priorBook),nos=[27,28,36,43,44,45,48,53,54,55,56],plain=x=>JSON.parse(JSON.stringify(x)),normalize=q=>({...q,contentVersion:questionVersion(q)});
@@ -69,7 +71,7 @@ test('eleven concrete ecology tasks preserve the other sixty-nine questions and 
 });
 
 test('the current web book, teacher solutions, quick key and bank share the new food-web tasks without redundant drawing lines',async()=>{
- assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),next);
+ assert.deepEqual(await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook))),withEcologyMixedWorkbook(next));
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),answers=paper.workbookPaper({mode:'answers'}),quick=paper.workbookPaper({mode:'quick'});
  for(const q of next.questions.filter(q=>nos.includes(q.no))){
   const start=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('<li class="ed-question"',start),card=student.slice(start,end<0?undefined:end);assert(start>0);assert(!card.includes('ed-key'));

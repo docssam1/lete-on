@@ -11,7 +11,7 @@ test('four print summaries derive counts from the provided arrays without changi
  for(const[unit,name,fn]of [['s41-u04','biology','biologyBankPaperHtml'],['c22-s42-u01','sky','skyBankPaperHtml'],['c22-s42-u02','ecology','ecologyBankPaperHtml'],['c22-s42-u04','climate','climateBankPaperHtml']]){
   const raw=await import('../data/units/'+unit+'.js'),{source}=await import('../data/units/'+unit+'.source.js'),{similar}=await import('../data/units/'+unit+'.similar.js'),mod=await import('./'+name+'-bank-paper.js');
   const input={unit:raw.unit,source:source.slice(0,1),similar:similar.slice(0,1),items:raw.items.slice(0,2)},before=structuredClone(input),total=4;
-  for(const mode of name==='biology'?['student','teacher','answers']:['student','teacher','answers','quick']){const html=mod[fn]({...input,mode});assert(html.includes(name==='climate'?'단원 연습 문제 2개 · 모두 '+total+'문항':'보충2 ='+total+'문항.'));assert.equal((html.match(/data-paper-item=/g)||[]).length,4);}
+  for(const mode of name==='biology'?['student','teacher','answers']:['student','teacher','answers','quick']){const html=mod[fn]({...input,mode});assert(html.includes((name==='climate'||name==='ecology'&&mode==='student')?'단원 연습 문제 2개 · 모두 '+total+'문항':'보충2 ='+total+'문항.'));assert.equal((html.match(/data-paper-item=/g)||[]).length,4);}
   assert.deepEqual(input,before);
  }
 });

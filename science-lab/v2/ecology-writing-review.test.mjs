@@ -1,3 +1,5 @@
+import{withEcologyMixedWorkbook}from'./ecology-mixed-response.js';
+import{beforeEcologyMixed}from'./tests/ecology-mixed-stage.mjs';
 import {withEcologyFoodwebWorkbook} from './ecology-foodweb-review.js';
 import {beforeEcologyConservation} from './tests/ecology-writing-stage.mjs';
 import {withEcologyConservationWorkbook} from './ecology-conservation-review.js';
@@ -38,7 +40,7 @@ test('eight authored explanations have short concrete tasks while every earlier 
  for(let i=0;i<priorBank.length;i++){
   const old=priorBank[i],now=currentBank[i];
   if(now.contentVersion!==version){assert.deepEqual(now,old);assert.equal(ecologyWritingItems([old],unit)[0],old);continue;}
-  assert.equal(now.sourceRef,old.sourceRef);assert.equal(now.taxonomy,old.taxonomy);assert.equal(now.responseContract,old.responseContract);
+  assert.deepEqual(now.sourceRef,old.sourceRef);assert.deepEqual(now.taxonomy,old.taxonomy);assert.equal(now.responseContract,old.responseContract);
   assert.equal(now.answerContract.reviewRequired,true);assert(now.answerContract.rubric.required.length<=2);
   assert.deepEqual(now.previousVersions.slice(0,-1),old.previousVersions||[]);
   for(const v of new Set([questionVersion(old),...(old.previousVersions||[]).map(p=>p.version)])){
@@ -74,29 +76,29 @@ test('the workbook preserves all other questions, data and science standards, wi
  assert.deepEqual(ids([correction]),[unit+'-w037',unit+'-w038']);
  assert(!correction.blocks.some(b=>b.type==='diagram'&&b.key==='ecoWeb'));
  for(const patch of[{unit:'other'},{pages:priorBook.pages.slice(1)},{teacherPages:priorBook.teacherPages.slice(1)},{figures:{...priorBook.figures,future:'new'}},{questions:priorBook.questions.map((q,i)=>i?q:{...q,future:true})}]){const input={...priorBook,...patch};assert.equal(withEcologyWritingWorkbook(input),input);}
- const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,withEcologyFoodwebWorkbook(withEcologyConservationWorkbook(next)));
+ const reviewed=await reviewStudentWorkbook(unit,withObservedPhotoAlt(withElementaryReadingDirections(workbook)));assert.deepEqual(reviewed,withEcologyMixedWorkbook(withEcologyFoodwebWorkbook(withEcologyConservationWorkbook(next))));
  const paper=await revisedTextbookPaper(unit),student=paper.workbookPaper({mode:'student'}),teacher=paper.workbookPaper({mode:'teacher'});
- for(const q of next.questions.filter(q=>q.guidedWriting)){
-  const at=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('</li>',at),card=student.slice(at,end);
-  assert(!card.includes(q.answer));assert(!card.includes('ed-key'));
+ for(const q of reviewed.questions.filter(q=>q.guidedWriting)){
+  const at=student.indexOf('data-question="'+q.id+'"'),end=student.indexOf('<li class="ed-question"',at+1),card=student.slice(at,end);
+  if(q.form==='written')assert(!card.includes(q.answer));assert(!card.includes('ed-key'));
   assert.equal((card.match(/ed-part-response/g)||[]).length,q.parts?.length||0);
-  if(q.parts)assert(!card.includes('class="ed-lines"'));else assert.equal((card.match(/<i><\/i>/g)||[]).length,2);
+  if(q.parts)assert(!card.includes('class="ed-lines"'));else assert.equal((card.match(/<i><\/i>/g)||[]).length,q.form==='written'?1:0);
   assert(teacher.includes(q.answer));
  }
 });
 
 test('real classroom, web book and bank print use the same current revision without exposing solutions',async()=>{
- const mod=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,mod),cls=await revisedClassroom(unit,mod),pool=classroomQuestions(cls,currentBank);
+ const mod=await import('../data/book/'+unit+'.book.js'),book=await revisedTextbook(unit,mod),cls=await revisedClassroom(unit,mod),pool=classroomQuestions(cls,[...current.similar,...current.items]);
  assert.equal(book.plan,mod.plan);assert.equal(book.workbook.pages.length,45);
- assert.equal(cls.classroomItems.filter(q=>q.contentVersion===version).length,5);
+ assert.equal(cls.classroomItems.map(beforeEcologyMixed).filter(q=>q.contentVersion===version).length,5);
  const slides=buildSlides(cls.chapter,cls.art,cls.plan,pool,'self');
- for(const q of cls.classroomItems.filter(q=>q.contentVersion===version)){const selected=slides.filter(s=>s.item===q.id);assert(selected.length);for(const slide of selected){assert.equal(slide.questionVersion,version);assert.deepEqual(deckQuestionSnapshot(slide,pool),q);assert(deckSlideRecordKey(cls.chapter,slide).includes(':version:'+version));}}
- for(const q of currentBank.filter(q=>q.contentVersion===version))assert.deepEqual(pool.find(p=>p.id===q.id),q);
+ for(const q of cls.classroomItems.filter(q=>beforeEcologyMixed(q).contentVersion===version)){const selected=slides.filter(s=>s.item===q.id);assert(selected.length);for(const slide of selected){assert.equal(slide.questionVersion,questionVersion(q));assert.deepEqual(deckQuestionSnapshot(slide,pool),q);assert(deckSlideRecordKey(cls.chapter,slide).includes(':version:'+questionVersion(q)));}}
+ for(const q of [...current.similar,...current.items].filter(q=>q.guidedWriting))assert.deepEqual(pool.find(p=>p.id===q.id),q);
  const student=current.bankPaper({...current,mode:'student'}),teacher=current.bankPaper({...current,mode:'teacher'});
- for(const q of currentBank.filter(q=>q.contentVersion===version)){
+ for(const q of [...current.similar,...current.items].filter(q=>q.guidedWriting)){
   const start=student.indexOf('data-paper-item="'+q.id+'"'),end=student.indexOf('</article>',start),card=student.slice(start,end);
-  assert(start>=0);assert(!card.includes('eco-key'));assert(!card.includes(q.answerContract.sample));
-  assert.equal((card.match(/eco-answer-line/g)||[]).length,2);
+  assert(start>=0);assert(!card.includes('eco-key'));if(q.answerContract.type==='written-explanation')assert(!card.includes(q.answerContract.sample));
+  assert.equal((card.match(/eco-answer-line/g)||[]).length,q.ecologyMixedResponse?(q.answerContract.type==='written-explanation'?1:0):2);
   assert(teacher.includes(q.explanation));
  }
  const paper=await revisedTextbookPaper(unit);for(const[mode,count]of Object.entries({student:45,teacher:73,answers:27,quick:5}))assert.equal((paper.workbookPaper({mode}).match(/<section class="bk-page /g)||[]).length,count);
