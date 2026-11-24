@@ -1,6 +1,7 @@
 // 2과정 G3 「정육면체와 각·넓이」 교재 유사문제 생성기. 약속은 G1·G2 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산하고, 세는 문제는 하나씩 세어 본다(주사위는 굴려 보고, 전개도는 접어 본다).
 import { plainText } from "./course2-plain.js?v=20261122zi";
+import { dimArc, isLength } from "./length-dim.js?v=20261124a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -37,7 +38,20 @@ function angleMark(v, a1, a2, r, label, { color = MARK, size = 14, keep = false 
     + (label ? text(m.x, m.y, label, { size, color }) : "");
 }
 const rightMark = (v, a1, s = 10, color = INK) => { const p = at(v, s, a1), q = at(v, s, a1 + 90), c = at(p, s, a1 + 90); return `<path d="M ${f1(p.x)} ${f1(p.y)} L ${f1(c.x)} ${f1(c.y)} L ${f1(q.x)} ${f1(q.y)}" fill="none" stroke="${color}" stroke-width="1.6"/>`; };
-const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => { const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color }); };
+// 길이(「12cm」「?」)는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3), 그 밖의 글자는 변 옆 그대로.
+// offset 쪽(변 진행 방향 왼쪽이 +)으로 휜다 — dimArc의 bend는 오른쪽이 +라 부호를 바꾼다.
+// 세로에 가까운 변은 가로로 쓴 글자가 변에 닿지 않게 글자 반 폭만큼은 띄운다(clearBend)
+const clearBend = (a, b, value, bend, size = 13) => {
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1, w = String(value).length * 0.62 * size, h = size * 1.1;
+  const need = Math.abs(b.y - a.y) / len * w / 2 + Math.abs(b.x - a.x) / len * h / 2 + 3;
+  return Math.sign(bend || 1) * Math.max(Math.abs(bend), need);
+};
+const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => {
+  if (isLength(value)) return dimArc(a.x, a.y, b.x, b.y, clearBend(a, b, value, -offset * 0.9, size), value, { size, labelColor: color === INK ? null : color });
+  const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color });
+};
+// 높이 = 꼭짓점에서 내린 수선 옆 곡선 점선(위에서 아래로 그은 선이라 bend −가 오른쪽, +가 왼쪽 — 자리가 넓은 쪽), 모르는 높이 「?」는 MARK
+const heightLabel = (top, foot, value, side = "right") => dimArc(top.x, top.y, foot.x, foot.y, clearBend(top, foot, value, side === "left" ? 14 : -14), value, { size: 13, labelColor: value === "?" ? MARK : null });
 
 // ── 디지털 숫자(1은 가운데에 선다) ──
 const SEG = { 0: "abcdef", 2: "abged", 3: "abgcd", 4: "fgbc", 5: "afgcd", 6: "afgedc", 7: "abc", 8: "abcdefg", 9: "abcdfg" };
@@ -317,37 +331,46 @@ function c2RhombusArea({ difficulty = 2 }) {
   const kind = difficulty <= 1 ? "rhombus" : sample(["rhombus", "kite", "square", "reverse"]);
   const d1 = randomInt(3, 9) * 2, d2 = randomInt(3, 9) * 2;
   const s = 200 / Math.max(d1, d2);
-  const c = P(130, 120);
+  let c = P(130, 120);
   let pts, prompt, answer, solution, label;
+  // 대각선은 도형 안에서 서로 엇갈려 글자를 둘 빈자리가 없다 → 대각선 두 끝을 잇는 곡선 점선을 도형 바깥으로 크게 돌린다
+  // (세로 대각선은 오른쪽 꼭짓점 바깥, 가로 대각선은 아래 꼭짓점 바깥 — 곡선이 변과 만나지 않게 꼭짓점 거리 + 16)
   if (kind === "square") {
     const d = randomInt(3, 10) * 2;
     pts = [P(c.x, c.y - 90), P(c.x + 90, c.y), P(c.x, c.y + 90), P(c.x - 90, c.y)];
-    const body = poly(pts, { fill: YELLOW }) + line(pts[0], pts[2], { color: GREEN, dash: "5 4" }) + line(pts[1], pts[3], { color: GREEN, dash: "5 4" }) + text(c.x + 12, c.y - 40, `${d}cm`, { size: 13, anchor: "start" });
+    const body = poly(pts, { fill: YELLOW }) + line(pts[0], pts[2], { color: GREEN, dash: "5 4" }) + line(pts[1], pts[3], { color: GREEN, dash: "5 4" }) + dimArc(pts[0].x, pts[0].y, pts[2].x, pts[2].y, -(90 + 34), `${d}cm`, { size: 13 });
     return problem({
       prompt: `대각선의 길이가 ${d}cm인 정사각형의 넓이는 몇 ㎠인가요?`,
-      subtype: "rhombus-area", html: svg(260, 240, body, "정사각형"), answer: `${(d * d) / 2}㎠`,
+      subtype: "rhombus-area", html: svg(300, 240, body, "정사각형"), answer: `${(d * d) / 2}㎠`,
       solution: `정사각형은 두 대각선의 길이가 같고 서로 수직이므로 마름모처럼 (대각선) × (대각선) ÷ 2로 넓이를 구합니다. ${d} × ${d} ÷ 2 = ${(d * d) / 2}㎠입니다(둘러싼 큰 정사각형의 반).`,
       family: "rhombus-square", meta: { d }
     });
   }
   const off = kind === "kite" ? 0.3 : 0.5;
+  c = P(40 + (d1 * s) / 2, 20 + d2 * s * off);
   pts = [P(c.x, c.y - d2 * s * off), P(c.x + (d1 * s) / 2, c.y - d2 * s * (off - 0.5) * 0 + 0), P(c.x, c.y + d2 * s * (1 - off)), P(c.x - (d1 * s) / 2, c.y)];
   pts[1] = P(c.x + (d1 * s) / 2, c.y);
   const area = (d1 * d2) / 2;
   let body = poly(pts, { fill: YELLOW }) + line(pts[0], pts[2], { color: GREEN, dash: "5 4" }) + line(pts[1], pts[3], { color: GREEN, dash: "5 4" }) + rightMark(c, 0, 9, GREEN);
+  const half1 = (d1 * s) / 2, below = d2 * s * (1 - off);
+  // 연 모양은 오른쪽 꼭짓점이 세로 대각선 가운데가 아니어서 더 크게 돌린다. 두 곡선은 도형 밖에서 한 번 엇갈리므로 둥글게(대각선 길이의 0.35 이상) 돌려 또렷이 엇갈리게
+  const bendV = Math.max(half1 / (4 * off * (1 - off)) + 34, d2 * s * 0.35), bendH = Math.max(below + 16, d1 * s * 0.35);
+  const diag2 = (v) => dimArc(pts[0].x, pts[0].y, pts[2].x, pts[2].y, -bendV, v, { size: 13 });
+  const diag1 = (v) => dimArc(pts[3].x, pts[3].y, pts[1].x, pts[1].y, bendH, v, { size: 13, labelColor: v === "?" ? MARK : null });
+  const figW = c.x + bendV + 36, figH = c.y + bendH + 22;
   if (kind === "reverse") {
-    body += text(c.x + 8, c.y + 30, `${d2}cm`, { size: 13, anchor: "start" }) + text(c.x - 40, c.y - 12, "?", { size: 15, color: MARK });
+    body += diag2(`${d2}cm`) + diag1("?");
     prompt = `두 대각선이 서로 수직인 사각형의 넓이가 ${area}㎠이고 한 대각선이 ${d2}cm입니다. 다른 대각선은 몇 cm인가요?`;
     answer = `${d1}cm`;
     solution = `넓이 = (대각선) × (대각선) ÷ 2이므로 ${area} × 2 ÷ ${d2} = ${d1}cm입니다.`;
   } else {
-    body += text(c.x + 8, c.y + 30, `${d2}cm`, { size: 13, anchor: "start" }) + text(c.x - (d1 * s) / 4, c.y - 12, `${d1}cm`, { size: 13 });
+    body += diag2(`${d2}cm`) + diag1(`${d1}cm`);
     label = kind === "kite" ? "두 대각선이 서로 수직인 사각형(연 모양)" : "마름모";
     prompt = `${label}의 두 대각선이 ${d1}cm, ${d2}cm입니다. 넓이는 몇 ㎠인가요?`;
     answer = `${area}㎠`;
     solution = `대각선이 서로 수직이면 사각형을 둘러싸는 직사각형(${d1} × ${d2})을 그릴 수 있고, 사각형은 그 직사각형의 꼭 반입니다(바깥 삼각형 넷이 안쪽 삼각형 넷과 같습니다). ${d1} × ${d2} ÷ 2 = ${area}㎠입니다.`;
   }
-  return problem({ prompt, subtype: "rhombus-area", html: svg(260, 250, body, "대각선이 수직인 사각형"), answer, solution, family: `rhombus-${kind}`, meta: { d1, d2 } });
+  return problem({ prompt, subtype: "rhombus-area", html: svg(f1(figW), f1(figH), body, "대각선이 수직인 사각형"), answer, solution, family: `rhombus-${kind}`, meta: { d1, d2 } });
 }
 function c2ParallelogramArea({ difficulty = 2 }) {
   const kind = difficulty <= 1 ? "area" : sample(["area", "reverse", "otherBase"]);
@@ -357,17 +380,17 @@ function c2ParallelogramArea({ difficulty = 2 }) {
   const side = Math.round(Math.sqrt(h * h + slantX * slantX) * 10) / 10;
   const foot = P(A.x, D.y);
   let body = poly([A, B, C, D], { fill: YELLOW }) + line(A, foot, { color: GREEN, dash: "5 4" }) + rightMark(foot, 0, 8, GREEN);
-  body += lenLabel(D, C, `${b}cm`, { offset: -14 }) + text(A.x + 6, (A.y + foot.y) / 2, `${h}cm`, { size: 13, anchor: "start", color: GREEN }) + lenLabel(D, A, `${Math.ceil(side)}cm`, { offset: 14, color: "#7a857f" });
+  const sides = lenLabel(D, C, `${b}cm`, { offset: -14 }) + lenLabel(D, A, `${Math.ceil(side)}cm`, { offset: 14, color: "#7a857f" });
   const area = b * h;
   if (kind === "area") return problem({
     prompt: `밑변이 ${b}cm, 높이가 ${h}cm인 평행사변형의 넓이는 몇 ㎠인가요? (비스듬한 변의 길이 ${Math.ceil(side)}cm는 쓰지 않아도 됩니다.)`,
-    subtype: "parallelogram-area", html: svg((b + slantX) * s + 60, h * s + 70, body, "평행사변형"), answer: `${area}㎠`,
+    subtype: "parallelogram-area", html: svg((b + slantX) * s + 60, h * s + 70, body + sides + heightLabel(A, foot, `${h}cm`), "평행사변형"), answer: `${area}㎠`,
     solution: `높이 선을 따라 왼쪽 삼각형을 잘라 오른쪽에 붙이면 가로 ${b}cm, 세로 ${h}cm인 직사각형이 됩니다. 넓이 = 밑변 × 높이 = ${b} × ${h} = ${area}㎠입니다. 비스듬한 변은 높이가 아닙니다.`,
     family: "parallelogram-area", meta: { b, h }
   });
   if (kind === "reverse") return problem({
     prompt: `넓이가 ${area}㎠인 평행사변형의 밑변이 ${b}cm입니다. 높이는 몇 cm인가요?`,
-    subtype: "parallelogram-area", html: svg((b + slantX) * s + 60, h * s + 70, body.replace(`>${h}cm<`, ">?<"), "평행사변형"), answer: `${h}cm`,
+    subtype: "parallelogram-area", html: svg((b + slantX) * s + 60, h * s + 70, body + sides + heightLabel(A, foot, "?"), "평행사변형"), answer: `${h}cm`,
     solution: `넓이 = 밑변 × 높이이므로 높이 = ${area} ÷ ${b} = ${h}cm입니다.`,
     family: "parallelogram-reverse", meta: { b, h }
   });
@@ -379,7 +402,7 @@ function c2ParallelogramArea({ difficulty = 2 }) {
     const sx = Math.sqrt(b2 * b2 - h * h), sc = 200 / (b + sx);
     const A2 = P(30 + sx * sc, 30), B2 = P(30 + (b + sx) * sc, 30), C2 = P(30 + b * sc, 30 + h * sc), D2 = P(30, 30 + h * sc), F2 = P(A2.x, D2.y);
     const fig = poly([A2, B2, C2, D2], { fill: YELLOW }) + line(A2, F2, { color: GREEN, dash: "5 4" }) + rightMark(F2, 0, 8, GREEN)
-      + lenLabel(D2, C2, `${b}cm`, { offset: -14 }) + text(A2.x + 6, (A2.y + F2.y) / 2, `${h}cm`, { size: 13, anchor: "start", color: GREEN }) + lenLabel(D2, A2, `${b2}cm`, { offset: 14 });
+      + lenLabel(D2, C2, `${b}cm`, { offset: -14 }) + heightLabel(A2, F2, `${h}cm`) + lenLabel(D2, A2, `${b2}cm`, { offset: 14 });
     return problem({
       prompt: `평행사변형의 밑변이 ${b}cm일 때 높이는 ${h}cm입니다. 같은 평행사변형에서 비스듬한 변 ${b2}cm를 밑변으로 하면 높이는 몇 cm인가요?`,
       subtype: "parallelogram-area", html: svg((b + sx) * sc + 60, h * sc + 70, fig, "평행사변형"), answer: `${h2}cm`,
@@ -400,7 +423,7 @@ function c2TriangleArea({ difficulty = 2 }) {
     const A = P(C.x + t * s, 30);
     const foot = P(A.x, C.y);
     const body = poly([A, B, C], { fill: YELLOW }) + line(C, foot, { color: GREEN, dash: "4 4" }) + line(A, foot, { color: GREEN, dash: "5 4" }) + rightMark(foot, 90, 8, GREEN)
-      + lenLabel(B, C, `${b}cm`, { offset: -14 }) + text(A.x + 6, (A.y + foot.y) / 2, `${h}cm`, { size: 13, anchor: "start", color: GREEN });
+      + lenLabel(B, C, `${b}cm`, { offset: -14 }) + heightLabel(A, foot, `${h}cm`);
     return problem({
       prompt: `밑변이 ${b}cm이고, 꼭짓점에서 밑변을 늘인 선까지 내린 높이가 ${h}cm인 둔각삼각형의 넓이는 몇 ㎠인가요?`,
       subtype: "triangle-area", html: svg(A.x + 50, h * s + 70, body, "둔각삼각형"), answer: `${area}㎠`,
@@ -409,7 +432,7 @@ function c2TriangleArea({ difficulty = 2 }) {
     });
   }
   const A = P(30 + randomInt(2, b - 1) * s, 30);
-  const foot = P(A.x, C.y);
+  const foot = P(A.x, C.y), hSide = A.x - B.x > C.x - A.x ? "left" : "right";   // 높이 표시는 삼각형 안 넓은 쪽
   let body = poly([A, B, C], { fill: YELLOW }) + line(A, foot, { color: GREEN, dash: "5 4" }) + rightMark(foot, 0, 8, GREEN) + lenLabel(B, C, `${b}cm`, { offset: -14 });
   if (kind === "sameHeight") {
     const b2 = randomInt(2, 8) * 2;
@@ -423,7 +446,7 @@ function c2TriangleArea({ difficulty = 2 }) {
     });
   }
   if (kind === "reverse") {
-    body += text(A.x + 6, (A.y + foot.y) / 2, "?", { size: 15, anchor: "start", color: MARK });
+    body += heightLabel(A, foot, "?", hSide);
     return problem({
       prompt: `넓이가 ${area}㎠인 삼각형의 밑변이 ${b}cm입니다. 높이는 몇 cm인가요?`,
       subtype: "triangle-area", html: svg(C.x + 40, h * s + 70, body, "삼각형"), answer: `${h}cm`,
@@ -431,7 +454,7 @@ function c2TriangleArea({ difficulty = 2 }) {
       family: "triangle-reverse", meta: { b, h }
     });
   }
-  body += text(A.x + 6, (A.y + foot.y) / 2, `${h}cm`, { size: 13, anchor: "start", color: GREEN });
+  body += heightLabel(A, foot, `${h}cm`, hSide);
   return problem({
     prompt: `밑변이 ${b}cm, 높이가 ${h}cm인 삼각형의 넓이는 몇 ㎠인가요?`,
     subtype: "triangle-area", html: svg(C.x + 40, h * s + 70, body, "삼각형"), answer: `${area}㎠`,
@@ -450,7 +473,7 @@ function c2TrapezoidArea({ difficulty = 2 }) {
     const foot = P(B.x, C.y);
     let body = poly([A, B, C, D], { fill: YELLOW }) + line(B, foot, { color: GREEN, dash: "5 4" }) + rightMark(foot, 90, 8, GREEN);
     body += lenLabel(A, B, kind === "reverseSide" ? "?" : `${a}cm`, { offset: 14, color: kind === "reverseSide" ? MARK : INK }) + lenLabel(D, C, `${b}cm`, { offset: -14 });
-    body += text(B.x + 6, (B.y + foot.y) / 2, kind === "reverseHeight" ? "?" : `${h}cm`, { size: 13, anchor: "start", color: kind === "reverseHeight" ? MARK : GREEN });
+    body += heightLabel(B, foot, kind === "reverseHeight" ? "?" : `${h}cm`, "left");   // 사다리꼴 안쪽(왼쪽)이 넓다
     const html = svg(b * s + 70, h * 14 + 70, body, "사다리꼴");
     if (kind === "area") return problem({
       prompt: `윗변이 ${a}cm, 아랫변이 ${b}cm, 높이가 ${h}cm인 사다리꼴의 넓이는 몇 ㎠인가요?`,

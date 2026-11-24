@@ -1,6 +1,7 @@
 // 2과정 G4 「도형의 복원과 측정」 교재 유사문제 생성기. 약속은 G1~G3 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
+import { dimArc, isLength } from "./length-dim.js?v=20261124a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -38,7 +39,18 @@ const tick = (a, b, n = 1) => {   // 같은 길이 표시
   const m = mid(a, b), d = dirOf(a, b) + 90;
   return Array.from({ length: n }, (_, k) => { const c = at(m, (k - (n - 1) / 2) * 5, dirOf(a, b)); return line(at(c, 6, d), at(c, -6, d), { width: 1.8 }); }).join("");
 };
-const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => { const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color }); };
+// 길이(「12cm」「?」)는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3), 그 밖의 글자는 변 옆 그대로.
+// offset 쪽(변 진행 방향 왼쪽이 +)으로 휜다 — dimArc의 bend는 오른쪽이 +라 부호를 바꾼다.
+// 세로에 가까운 변은 가로로 쓴 글자가 변에 닿지 않게 글자 반 폭만큼은 띄운다(clearBend)
+const clearBend = (a, b, value, bend, size = 13) => {
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1, w = String(value).length * 0.62 * size, h = size * 1.1;
+  const need = Math.abs(b.y - a.y) / len * w / 2 + Math.abs(b.x - a.x) / len * h / 2 + 3;
+  return Math.sign(bend || 1) * Math.max(Math.abs(bend), need);
+};
+const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => {
+  if (isLength(value)) return dimArc(a.x, a.y, b.x, b.y, clearBend(a, b, value, -offset * 0.9, size), value, { size, labelColor: color === INK ? null : color });
+  const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color });
+};
 const name = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });
 
 // ════ 1단원 특수각과 도형의 복원 ════
@@ -136,7 +148,7 @@ function c2SetSquareSide({ difficulty = 2 }) {
   }
   const a = randomInt(3, 9) * 2, b = randomInt(4, 12);
   const ang = kind === "area30" ? 30 : 150;
-  const B = P(60, 170), C = at(B, b * 16, 0), A = at(B, a * 12, ang);
+  const B = P(60, 170), C = at(B, b * 16, 0), A = at(B, Math.max(a * 12, ang === 150 ? 96 : 0), ang);   // 150°는 변과 늘인 밑변 사이가 좁아 짧은 변이면 길이 글자가 들어갈 자리가 없다
   const minX = Math.min(A.x, B.x, C.x) - 30;
   const shift = (p) => P(p.x - minX + 10, p.y);
   const [pa, pb, pc] = [A, B, C].map(shift);
@@ -189,7 +201,7 @@ function c2FoldTapeAngle({ difficulty = 2 }) {
 function c2RectilinearPerimeter({ difficulty = 2 }) {
   const kind = difficulty <= 1 ? "stair" : sample(["stair", "notch"]);
   const W = randomInt(8, 16), H = randomInt(6, 12);
-  const k = Math.min(16, 220 / W), o = P(30, 30);
+  const k = Math.min(16, 220 / W), o = P(48, 30);   // 왼쪽 세로 길이 곡선 점선이 도형 바깥(왼쪽)에 들어갈 자리
   let pts, extra = 0, d = 0;
   if (kind === "stair") {
     // 왼쪽 위에서 오른쪽 아래로 내려가는 계단(꺾인 자리 2~3번)
@@ -201,20 +213,25 @@ function c2RectilinearPerimeter({ difficulty = 2 }) {
     pts.push(P(W, ys[steps - 1])); pts.push(P(W, H)); pts.push(P(0, H));
   } else {
     d = randomInt(2, Math.max(2, Math.floor(H / 2)));
-    const x1 = randomInt(2, W - 5), x2 = x1 + randomInt(2, 3);
+    const x1 = randomInt(2, W - 5), x2 = x1 + 3;   // 홈 폭은 문제에 쓰지 않는다 — 깊이 길이 글자가 홈 안에 들어가게 3칸
     pts = [P(0, 0), P(x1, 0), P(x1, d), P(x2, d), P(x2, 0), P(W, 0), P(W, H), P(0, H)];
     extra = 2 * d;
   }
   const scr = pts.map((p) => P(o.x + p.x * k, o.y + p.y * k));
   let body = poly(scr, { fill: YELLOW, width: 2.4 });
-  body += lenLabel(P(o.x, o.y + H * k), P(o.x + W * k, o.y + H * k), `${W}cm`, { offset: -14 }) + lenLabel(P(o.x, o.y), P(o.x, o.y + H * k), `${H}cm`, { offset: 16 });
-  if (kind === "notch") body += text(o.x + (pts[2].x + pts[3].x) / 2 * k, o.y + (d * k) / 2 + 2, `${d}cm`, { size: 12, color: MARK });
+  body += lenLabel(P(o.x, o.y + H * k), P(o.x + W * k, o.y + H * k), `${W}cm`, { offset: -14 }) + lenLabel(P(o.x, o.y), P(o.x, o.y + H * k), `${H}cm`, { offset: -16 });
+  // 홈의 깊이 = 홈 왼쪽 벽의 두 끝을 잇는 곡선 점선, 홈 안쪽(도형 바깥)으로 휜다
+  // 홈이 얕아 글자가 곡선 밖으로 나가면(글자 폭 > 홈 깊이의 0.6) 곡선을 벽에 붙여 글자가 홈 안에 남게
+  if (kind === "notch") {
+    const dl = `${d}cm`, outside = dl.length * 0.62 * 12 + 8 > d * k * 0.6;
+    body += dimArc(scr[1].x, scr[1].y, scr[2].x, scr[2].y, outside ? -6 : clearBend(scr[1], scr[2], dl, -8, 12), dl, { size: 12 });
+  }
   const per = 2 * (W + H) + extra;
   return problem({
     prompt: kind === "stair"
       ? `모든 각이 직각인 계단 모양 도형입니다. 가장 긴 가로가 ${W}cm, 가장 긴 세로가 ${H}cm일 때 둘레는 몇 cm인가요?`
       : `모든 각이 직각인 도형입니다. 가로 ${W}cm, 세로 ${H}cm인 직사각형의 윗변에서 깊이 ${d}cm만큼 안으로 파인 홈이 있습니다. 둘레는 몇 cm인가요?`,
-    subtype: "rectilinear-perimeter", html: svg(W * k + 70, H * k + 60, body, "직각으로 꺾인 도형"), answer: `${per}cm`,
+    subtype: "rectilinear-perimeter", html: svg(W * k + 88, H * k + 60, body, "직각으로 꺾인 도형"), answer: `${per}cm`,
     solution: kind === "stair"
       ? `계단의 가로 토막을 위로, 세로 토막을 오른쪽으로 옮기면 가로 ${W}cm, 세로 ${H}cm인 직사각형의 둘레와 꼭 같아집니다. (${W} + ${H}) × 2 = ${per}cm입니다.`
       : `파인 홈의 바닥을 위로 옮기면 직사각형의 둘레 (${W} + ${H}) × 2 = ${2 * (W + H)}cm가 되고, 홈의 양옆 세로 변 ${d}cm 두 개가 더 남습니다. ${2 * (W + H)} + ${d} × 2 = ${per}cm입니다.`,

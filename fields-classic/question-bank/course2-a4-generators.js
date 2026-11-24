@@ -3,6 +3,7 @@
 // 분수는 글 속에 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(math-markup.js mathText).
 import { plainText } from "./course2-plain.js?v=20261122zi";
 import { mathText } from "./math-markup.js?v=20261122w";
+import { dimArc } from "./length-dim.js?v=20261124a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -39,9 +40,12 @@ function c2GcdWord({ difficulty = 2 }) {
   let a, b, c;
   do { a = g * randomInt(2, 9); b = g * randomInt(2, 9); c = g * randomInt(2, 9); } while (a === b || gcd(gcd(a / g, b / g), c / g) !== 1 || gcd(a / g, b / g) !== 1);
   if (kind === "tile") {
+    // 가로·세로 길이는 변의 두 끝을 잇는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3)
+    const w = Math.min(260, a * 3), h = Math.min(110, b * 3);
+    const sheet = rect(20, 20, w, h, { fill: YELLOW }) + dimArc(20, 20 + h, 20 + w, 20 + h, 13, `${a}cm`, { size: 14 }) + dimArc(20 + w, 20, 20 + w, 20 + h, -(String(b).length + 2) * 4.4 - 4, `${b}cm`, { size: 14 });
     return problem({
       prompt: `가로 ${a}cm, 세로 ${b}cm인 직사각형 종이를 남김없이 똑같은 크기의 정사각형으로 자르려고 합니다. 가장 큰 정사각형으로 자르면 한 변은 몇 cm이고, 모두 몇 장이 되나요?`,
-      subtype: "gcd", html: svg(300, 150, rect(20, 20, Math.min(260, a * 3), Math.min(110, b * 3), { fill: YELLOW }) + text(150, 140, `${a}cm × ${b}cm`, { size: 14 }), "직사각형 종이"),
+      subtype: "gcd", html: svg(w + 92, h + 60, sheet, "직사각형 종이"),
       answer: `${g}cm, ${(a / g) * (b / g)}장`,
       solution: `정사각형의 한 변은 ${a}와 ${b}를 모두 나누어떨어지게 해야 하니 공약수, 가장 크게는 최대공약수 ${g}cm입니다. 가로에 ${a / g}장, 세로에 ${b / g}장이라 ${a / g} × ${b / g} = ${(a / g) * (b / g)}장입니다.`,
       family: "c2-gcd", meta: { a, b, g }
