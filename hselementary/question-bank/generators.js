@@ -28926,7 +28926,8 @@
       }
 
       if (variant === 8) {
-        const values = [[21500, 34000, 16000, 32000, 25200, 5, 8, 4, 10, 6], [18000, 32000, 18000, 33000, 25200, 5, 8, 4, 10, 6], [22000, 30000, 16400, 35000, 23400, 5, 8, 4, 10, 6]][poolIndex];
+        // 2026-11-24: pool 0의 나 공장은 원본 그림(1만 자루 3개, 100자루 4개)대로 30400자루다.
+        const values = [[21500, 30400, 16000, 32000, 25200, 5, 8, 4, 10, 6], [18000, 32000, 18000, 33000, 25200, 5, 8, 4, 10, 6], [22000, 30000, 16400, 35000, 23400, 5, 8, 4, 10, 6]][poolIndex];
         const production = values.slice(0, 5), machines = values.slice(5);
         const rates = production.map((value, index) => value / machines[index]);
         const answerValue = Math.max(...rates) - Math.min(...rates);

@@ -39,7 +39,10 @@
     const U = { x: data.side - f.largeSide / 2, y: -h * f.largeSide };
     const V = { x: data.side + f.largeSide / 2, y: -h * f.largeSide };
     const L = { x: G.x - (data.nr + data.side), y: G.y };
-    const points = { G, N, D, R, M, Q, U, V, L };
+    // 2026-11-24: 원본 그림처럼 왼쪽 아래를 닫는다. ㄱ에서 ㄴ을 지나 ㄴㄹ만큼 더 간 점 B로
+    // 정삼각형 L-ㄱ-B(한 변 ㄴㄹ+ㄱㄴ)와 정삼각형 ㄴ-B-Q(한 변 ㄴㄹ)가 생겨야 왼쪽 정삼각형의 한 변을 알 수 있다.
+    const B = { x: -data.nr / 2, y: h * data.nr };
+    const points = { G, N, D, R, M, Q, U, V, L, B };
     const bounds = Object.values(points).reduce((box, point) => ({
       minX: Math.min(box.minX, point.x), maxX: Math.max(box.maxX, point.x),
       minY: Math.min(box.minY, point.y), maxY: Math.max(box.maxY, point.y)
@@ -65,7 +68,7 @@
     const pointData = ["G", "N", "D", "R", "M"].map(name => `${name}:${pointText(name)}`).join(";");
     return `<svg class="geometry-diagram source61-decimal-e4-diagram source61-e4m4-diagram ${solved ? "is-solved" : ""}" viewBox="0 0 600 345" role="img" aria-label="정삼각형이 이어진 도형" data-source61-e4-structure="equilateral-triangle-segment-chain" data-source61-e4-values="${[data.nr, m.f.nm, data.side, m.f.rm, m.f.largeSide].join(",")}" data-source61-e4m4-model="equilateral-triangle-segment-chain" data-source61-e4m4-phase="${solved ? "answer" : "problem"}" data-source61-e4m4-points="${pointData}" data-source61-e4m4-values="${[data.nr, m.f.nm, data.side, m.f.rm, m.f.largeSide].join(",")}" data-pool="${poolIndex}">
       ${solved ? `<polygon class="source61-e4m4-target is-solved" points="${triangle.map(keyPoint).join(" ")}"/>` : ""}
-      <g class="source61-e4m4-shape">${line("U", "V")}${line("V", "D")}${line("D", "U")}${line("V", "M")}${line("M", "D")}${line("U", "L")}${line("L", "G")}${line("G", "N")}${line("N", "D")}${line("N", "Q")}${line("Q", "R")}${line("N", "R")}</g>
+      <g class="source61-e4m4-shape">${line("U", "V")}${line("V", "D")}${line("D", "U")}${line("V", "M")}${line("M", "D")}${line("U", "L")}${line("L", "G")}${line("G", "N")}${line("N", "D")}${line("N", "Q")}${line("Q", "R")}${line("N", "R")}${line("L", "B")}${line("N", "B")}${line("B", "Q")}</g>
       ${solved ? line("R", "M", "source61-e4m4-rm is-solved") : ""}
       <g class="source61-e4m4-dimension">${line("N", "M", "source61-e4m4-guide")}${`<path d="M${n.x},${longDimensionY} H${mPoint.x} M${n.x},${longDimensionY - 5} V${longDimensionY + 5} M${mPoint.x},${longDimensionY - 5} V${longDimensionY + 5}"/>`}${`<path d="M${n.x},${shortDimensionY} H${r.x} M${n.x},${shortDimensionY - 5} V${shortDimensionY + 5} M${r.x},${shortDimensionY - 5} V${shortDimensionY + 5}"/>`}</g>
       <text class="source61-e4m4-measure" x="${round((n.x + mPoint.x) / 2, 3)}" y="${longDimensionY + 17}">ㄴㅁ ${fmt(m.f.nm)}cm</text>
