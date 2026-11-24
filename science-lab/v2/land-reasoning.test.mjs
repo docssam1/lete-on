@@ -1,3 +1,4 @@
+import{groundMixedItems}from'./ground-mixed-response.js';
 import{groundGuidedItems}from'./ground-guided-review.js';
 import{landElementaryCurrentItems}from'../data/book/s41-u03.elementary.js';
 import test from'node:test';import assert from'node:assert/strict';
@@ -33,7 +34,7 @@ test('land overlay excludes raw originals, similar, other-unit and unexpected ve
  const rows=[{...old,status:'review'}];assert.equal(landReasoningCurrentItems(rows,unit),rows);assert.equal(landReasoningCurrentItems(baseline,'other'),baseline);
 });
 test('repeated land classroom and daily pools share the same current authored question objects',async()=>{
- const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),reasoning=landReasoningCurrentItems(baseline,unit),current=groundGuidedItems(landElementaryCurrentItems(reasoning,unit),unit),daily=classroomQuestions(second,current);let linked=0;
+ const first=await revisedClassroom(unit,book),second=await revisedClassroom(unit,book),reasoning=landReasoningCurrentItems(baseline,unit),current=groundMixedItems(groundGuidedItems(landElementaryCurrentItems(reasoning,unit),unit),unit),daily=classroomQuestions(second,current);let linked=0;
  for(const q of first.classroomItems.filter(q=>reasoning.find(x=>x.id===q.id)?.contentVersion===LAND_REASONING_VERSION)){
   linked++;assert.equal(second.classroomItems.find(x=>x.id===q.id),q);assert.equal(daily.find(x=>x.id===q.id),q);
   assert.deepEqual(current.find(x=>x.id===q.id),q);

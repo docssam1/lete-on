@@ -1,4 +1,5 @@
+import{beforeGroundMixed}from'./ground-mixed-stage.mjs';
 import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{GROUND_GUIDED_VERSION}from'../ground-guided-review.js';
-const previous=new WeakMap(),reviewed=new Set([19,20,40,49,50,60,67,68,79,80]);
-export function beforeGroundTask(q){if(q.contentVersion!==GROUND_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
-export function groundUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="s41-u03-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,80);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,70);return kept;}
+const previous=new WeakMap(),reviewed=new Set([6,19,20,28,29,40,49,50,60,62,67,68,79,80]);
+export function beforeGroundTask(q){q=beforeGroundMixed(q);if(q.contentVersion!==GROUND_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function groundUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="s41-u03-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,80);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,66);return kept;}
