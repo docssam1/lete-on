@@ -2,7 +2,7 @@
 // 판서의 모눈 도형·쌓기나무 모양·마방진 수는 골든벨 9권 문항(직사각형 2×1·3×2, 틀 안의 기운 사각형 3·4·5칸 틀,
 // 계단 쌓기 4·5층, 27개 정육면체 칠하기, 위·앞·옆 모양 12개 …)과 같은 판이 되지 않게 새로 짰다.
 
-import { jo, polyArea, iso, topGrid, sum2 } from "./concept-board-kit.js?v=20261026b";
+import { jo, polyArea, iso, topGrid, sum2 } from "./concept-board-kit.js?v=20261124f";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

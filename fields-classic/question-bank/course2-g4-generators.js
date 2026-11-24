@@ -1,7 +1,7 @@
 // 2과정 G4 「도형의 복원과 측정」 교재 유사문제 생성기. 약속은 G1~G3 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
-import { dimArc, isLength } from "./length-dim.js?v=20261124a";
+import { dimArc, isLength } from "./length-dim.js?v=20261124h";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

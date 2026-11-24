@@ -1,5 +1,5 @@
 import { typeExampleGroups } from "./golden-bell-type-examples.js?v=20261110m";
-import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261123a";
+import { typeExamplesMarkup } from "./golden-bell-type-examples-view.js?v=20261124h";
 
 // 개념 단계 안의 학습 순서: ① 개념 설명 → ② 유형별 예제 → ③ 게임 → (골든벨 문제).
 // 원장 지시: "개념마다 설명하는 튜토리얼, 문제 유형마다 예제 1~2개, 그다음 게임."
@@ -208,7 +208,7 @@ function exampleView(view, groups) {
 
 // 학습 덱의 우리 게임(study-map.js OWN_GAMES와 같은 파일·꼬리표). 끝내면 골든벨 문제로 간다
 const OWN_FLOW_GAMES = {
-  digital: { module: "./game-digital.js?v=20261119a", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
+  digital: { module: "./game-digital.js?v=20261124f", css: "./game-digital.css?v=20261028zb", mount: "mountDigitalWorkshop" },
   "shape-moves": { module: "./game-shape-moves.js?v=20261119a", css: "./game-shape-moves.css?v=20261028zb", mount: "mountShapeMoves" }
 };
 async function mountGame(gameId, host, { saved, onQuestions, onComplete, lesson }) {

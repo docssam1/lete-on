@@ -1,9 +1,19 @@
 import { frac } from "./math-markup.js?v=20261122w";
+import { dimOut, dimArc, isLength } from "./length-dim.js?v=20261124h";
 const escapeHtml = (value) => String(value)
   .replaceAll("&", "&amp;")
   .replaceAll("<", "&lt;")
   .replaceAll(">", "&gt;")
   .replaceAll('"', "&quot;");
+// 변의 길이 = 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」).
+// a·b는 변의 두 끝 [x, y], c는 도형 가운데 — 바깥쪽으로 휜다. 길이가 아닌 글(가·나 같은 이름)은 그대로 쓴다.
+// 세로에 가까운 변은 가로로 긴 글자가 변에 닿지 않게, 글자 폭의 반만큼 더 바깥으로 휜다.
+const len = (a, b, c, label, { off = 16, size = 16 } = {}) => {
+  if (label == null || label === "") return "";
+  const L = Math.hypot(b[0] - a[0], b[1] - a[1]) || 1, across = Math.abs(b[1] - a[1]) / L, w = String(label).length * size * 0.56;
+  return dimOut({ x: a[0], y: a[1] }, { x: b[0], y: b[1] }, { x: c[0], y: c[1] }, String(label), { off: off + across * w * 0.5, size });
+};
+const cmOf = (v) => (/^\d+(?:\.\d+)?$/.test(String(v)) ? `${v}cm` : String(v));
 
 function numberLine(visual) {
   const width = 520;
@@ -83,21 +93,21 @@ function stride(visual) {
 }
 
 function rectangle(visual) {
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 220" role="img" aria-label="직사각형"><rect x="55" y="35" width="250" height="135"/><text class="measure-label" x="180" y="205">${escapeHtml(visual.widthLabel)}</text><text class="measure-label" x="327" y="108">${escapeHtml(visual.heightLabel)}</text>${visual.perimeterLabel ? `<text class="note" x="180" y="24">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 220" role="img" aria-label="직사각형"><rect x="55" y="35" width="250" height="135"/>${len([55, 170], [305, 170], [180, 102], visual.widthLabel)}${len([305, 35], [305, 170], [180, 102], visual.heightLabel)}${visual.perimeterLabel ? `<text class="note" x="180" y="24">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
 }
 
 function equalQuadrilateral(visual) {
   const shape = visual.shape === "마름모" ? `<polygon points="180,24 305,108 180,192 55,108"/>` : `<rect x="80" y="25" width="200" height="168"/>`;
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 225" role="img" aria-label="${visual.shape}">${shape}<text x="180" y="218">한 변 ${escapeHtml(visual.sideLabel)}</text>${visual.perimeterLabel ? `<text class="note" x="180" y="18">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 360 225" role="img" aria-label="${visual.shape}">${shape}${visual.shape === "마름모" ? len([180, 192], [305, 108], [180, 108], visual.sideLabel) : len([80, 193], [280, 193], [180, 109], visual.sideLabel)}${visual.perimeterLabel ? `<text class="note" x="180" y="18">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
 }
 
 function joinedRectangles(visual) {
   const total = visual.widths.length;
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 220" role="img" aria-label="붙인 두 직사각형"><rect x="45" y="35" width="330" height="140"/><line x1="205" y1="35" x2="205" y2="175"/><text class="measure-label" x="125" y="205">${visual.widths[0]}cm</text><text class="measure-label" x="290" y="205">${visual.widths[1] === "?" ? "?" : `${visual.widths[1]}cm`}</text><text class="measure-label" x="399" y="108">${visual.height}cm</text><text class="note" x="210" y="22">둘레 ${escapeHtml(visual.perimeterLabel)}</text></svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 220" role="img" aria-label="붙인 두 직사각형"><rect x="45" y="35" width="330" height="140"/><line x1="205" y1="35" x2="205" y2="175"/>${len([45, 175], [205, 175], [125, 105], cmOf(visual.widths[0]))}${len([205, 175], [375, 175], [290, 105], cmOf(visual.widths[1]))}${len([375, 35], [375, 175], [210, 105], cmOf(visual.height))}<text class="note" x="210" y="22">둘레 ${escapeHtml(visual.perimeterLabel)}</text></svg>`;
 }
 
 function joinedOffset(visual) {
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 240" role="img" aria-label="일부 변을 붙인 두 직사각형"><rect x="40" y="32" width="210" height="125"/><rect x="250" y="92" width="140" height="105"/><line class="target-line" x1="250" y1="92" x2="250" y2="157"/><text x="270" y="125">?</text><text x="145" y="225">맞닿은 변의 길이</text></svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 430 240" role="img" aria-label="일부 변을 붙인 두 직사각형"><rect x="40" y="32" width="210" height="125"/><rect x="250" y="92" width="140" height="105"/><line class="target-line" x1="250" y1="92" x2="250" y2="157"/>${len([250, 92], [250, 157], [200, 125], "?", { off: 14 })}<text x="145" y="225">맞닿은 변의 길이</text></svg>`;
 }
 
 function polygonPoints(sides, cx, cy, radius, rotation = -Math.PI / 2) {
@@ -132,18 +142,23 @@ function attachedPolygons(visual) {
   if (count === 2) {
     const first = { x: 190, y: 63 };
     const second = { x: 190, y: 133 };
-    const shapes = `<polygon points="${polygonFromSharedEdge(visual.sides[0], first, second, 1)}"/><polygon points="${polygonFromSharedEdge(visual.sides[1], first, second, -1)}"/><line class="shared-edge" x1="${first.x}" y1="${first.y}" x2="${second.x}" y2="${second.y}"/>`;
-    return `<svg class="b6-svg b6-geometry" viewBox="0 0 380 225" role="img" aria-label="한 변을 붙인 두 정다각형">${shapes}<text x="190" y="214">한 변 ${escapeHtml(visual.sideLabel)}</text>${visual.perimeterLabel ? `<text class="note" x="190" y="18">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
+    const firstPoints = polygonFromSharedEdge(visual.sides[0], first, second, 1);
+    const shapes = `<polygon points="${firstPoints}"/><polygon points="${polygonFromSharedEdge(visual.sides[1], first, second, -1)}"/><line class="shared-edge" x1="${first.x}" y1="${first.y}" x2="${second.x}" y2="${second.y}"/>`;
+    // 한 변의 길이는 첫 도형의 맨 아래 바깥 변에 점선 호로
+    const pts = firstPoints.split(" ").map((p) => p.split(",").map(Number)), c = [pts.reduce((t, p) => t + p[0], 0) / pts.length, pts.reduce((t, p) => t + p[1], 0) / pts.length];
+    const edges = pts.map((p, i) => [p, pts[(i + 1) % pts.length]]).filter(([a, b]) => !(Math.abs(a[0] - first.x) < 1 && Math.abs(b[0] - first.x) < 1));
+    const [ea, eb] = edges.sort((u, v) => (v[0][1] + v[1][1]) - (u[0][1] + u[1][1]))[0];
+    return `<svg class="b6-svg b6-geometry" viewBox="0 0 380 225" role="img" aria-label="한 변을 붙인 두 정다각형">${shapes}${len(ea, eb, c, visual.sideLabel, { off: 14 })}${visual.perimeterLabel ? `<text class="note" x="190" y="18">둘레 ${escapeHtml(visual.perimeterLabel)}</text>` : ""}</svg>`;
   }
   const side = 66;
   const startX = 45;
   const shapes = visual.sides.map((_, index) => `<rect x="${startX + index * side}" y="55" width="${side}" height="${side}"/>`).join("");
   const width = startX * 2 + count * side;
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 ${width} 190" role="img" aria-label="한 변씩 붙인 여러 정사각형">${shapes}<text x="${width / 2}" y="175">한 변 ${escapeHtml(visual.sideLabel)}</text></svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 ${width} 190" role="img" aria-label="한 변씩 붙인 여러 정사각형">${shapes}${len([startX, 121], [startX + side, 121], [startX + side / 2, 88], visual.sideLabel)}</svg>`;
 }
 
 function diagonalRectangle(visual) {
-  return `<svg class="b6-svg b6-geometry" viewBox="0 0 390 235" role="img" aria-label="대각선으로 나눈 직사각형"><rect x="55" y="35" width="275" height="150"/><line class="diagonal" x1="55" y1="185" x2="330" y2="35"/><text x="190" y="222">${visual.labels[0]}</text><text x="353" y="112">${visual.labels[1]}</text><text class="diagonal-label" x="190" y="100">${visual.labels[2]}</text></svg>`;
+  return `<svg class="b6-svg b6-geometry" viewBox="0 0 390 235" role="img" aria-label="대각선으로 나눈 직사각형"><rect x="55" y="35" width="275" height="150"/><line class="diagonal" x1="55" y1="185" x2="330" y2="35"/>${len([55, 185], [330, 185], [192, 110], visual.labels[0])}${len([330, 35], [330, 185], [192, 110], visual.labels[1])}${len([55, 185], [330, 35], [330, 185], visual.labels[2], { off: 18 })}</svg>`;
 }
 
 function cellStrip(visual) {
@@ -283,6 +298,7 @@ function unitTestNumberLine(part, index) {
 }
 
 function unitTestVisual(visual) {
+  const ulen = (a, b, c, label, opts = {}) => len(a, b, c, label, { size: 19, ...opts });
   const row = (values) => `<div class="ut-row">${values.map((value) => `<span>${escapeHtml(value)}</span>`).join("")}</div>`;
   switch (visual.layout) {
     case "midpoint-pair":
@@ -304,9 +320,9 @@ function unitTestVisual(visual) {
     case "symbol-chain":
       return `<div class="b6-ut b6-ut-symbol"><p>수 카드 ${visual.cards.map((card) => `<b>${card}</b>`).join("")}</p>${visual.equations.map((equation) => `<span>${escapeHtml(equation)}</span>`).join("")}<strong>${escapeHtml(visual.target)} = ?</strong></div>`;
     case "rectangle-rhombus":
-      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 220" role="img" aria-label="직사각형과 마름모"><rect x="45" y="45" width="210" height="125"/><polygon points="255,45 365,107.5 255,170 145,107.5"/><line class="shared" x1="255" y1="45" x2="255" y2="170"/><text x="145" y="202">${visual.width}cm</text><text x="24" y="112">?</text><text class="note" x="150" y="28">직사각형 둘레 ${visual.rectanglePerimeter}cm</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 220" role="img" aria-label="직사각형과 마름모"><rect x="45" y="45" width="210" height="125"/><polygon points="255,45 365,107.5 255,170 145,107.5"/><line class="shared" x1="255" y1="45" x2="255" y2="170"/>${ulen([45, 170], [255, 170], [150, 107], `${visual.width}cm`)}${ulen([45, 45], [45, 170], [150, 107], "?")}<text class="note" x="150" y="28">직사각형 둘레 ${visual.rectanglePerimeter}cm</text></svg></div>`;
     case "three-shapes":
-      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 280" role="img" aria-label="직사각형 정삼각형 정사각형"><rect x="35" y="45" width="235" height="110"/><polygon points="270,45 365,100 270,155"/><polygon points="365,100 270,155 325,250 420,195"/><text x="150" y="182">직사각형의 긴 변 ?</text><text x="390" y="232">한 변 ${visual.side}cm</text><text class="note" x="250" y="22">전체 둘레 ${visual.perimeter}cm</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 280" role="img" aria-label="직사각형 정삼각형 정사각형"><rect x="35" y="45" width="235" height="110"/><polygon points="270,45 365,100 270,155"/><polygon points="365,100 270,155 325,250 420,195"/>${ulen([35, 155], [270, 155], [152, 100], "?")}${ulen([325, 250], [420, 195], [345, 175], `${visual.side}cm`)}<text class="note" x="250" y="22">전체 둘레 ${visual.perimeter}cm</text></svg></div>`;
     case "three-squares": {
       const largeSize = 170;
       const middleSize = largeSize * visual.middle / visual.large;
@@ -316,12 +332,12 @@ function unitTestVisual(visual) {
       const rightStart = left + largeSize;
       const lowerTop = top + middleSize;
       const shadeWidth = middleSize - smallSize;
-      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 470 225" role="img" aria-label="크기가 다른 세 정사각형"><rect x="${left}" y="${top}" width="${largeSize}" height="${largeSize}"/><rect x="${rightStart}" y="${top}" width="${middleSize}" height="${middleSize}"/><rect x="${rightStart}" y="${lowerTop}" width="${smallSize}" height="${smallSize}"/><rect class="shade" x="${rightStart + smallSize}" y="${lowerTop}" width="${shadeWidth}" height="${smallSize}"/><text x="${left + largeSize / 2}" y="216">${visual.large}cm</text><text x="${rightStart + middleSize / 2}" y="18">${visual.middle}cm</text><text class="target-label" x="${rightStart + smallSize + shadeWidth / 2}" y="${lowerTop + smallSize / 2 + 5}">둘레 ?</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 470 225" role="img" aria-label="크기가 다른 세 정사각형"><rect x="${left}" y="${top}" width="${largeSize}" height="${largeSize}"/><rect x="${rightStart}" y="${top}" width="${middleSize}" height="${middleSize}"/><rect x="${rightStart}" y="${lowerTop}" width="${smallSize}" height="${smallSize}"/><rect class="shade" x="${rightStart + smallSize}" y="${lowerTop}" width="${shadeWidth}" height="${smallSize}"/>${ulen([left, top + largeSize], [left + largeSize, top + largeSize], [left + largeSize / 2, top + largeSize / 2], `${visual.large}cm`, { off: 12 })}${ulen([rightStart, top], [rightStart + middleSize, top], [rightStart + middleSize / 2, top + middleSize / 2], `${visual.middle}cm`, { off: 10 })}<text class="target-label" x="${rightStart + smallSize + shadeWidth / 2}" y="${lowerTop + smallSize / 2 + 5}">둘레 ?</text></svg></div>`;
     }
     case "scattered-perimeter":
-      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 235" role="img" aria-label="직각으로 꺾인 도형"><polygon points="45,35 215,35 215,75 365,75 365,195 155,195 155,150 45,150"/><text x="125" y="24">${visual.horizontal[0]}cm</text><text x="284" y="64">${visual.horizontal[1]}cm</text><text x="380" y="130">${visual.vertical[0]}cm</text><text x="24" y="98">${visual.vertical[1]}cm</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 430 235" role="img" aria-label="직각으로 꺾인 도형"><polygon points="45,35 215,35 215,75 365,75 365,195 155,195 155,150 45,150"/>${ulen([45, 35], [215, 35], [130, 110], `${visual.horizontal[0]}cm`, { off: 12 })}${ulen([215, 75], [365, 75], [290, 135], `${visual.horizontal[1]}cm`, { off: 12 })}${ulen([365, 75], [365, 195], [260, 135], `${visual.vertical[0]}cm`)}${ulen([45, 35], [45, 150], [130, 92], `${visual.vertical[1]}cm`)}</svg></div>`;
     case "square-triangle-strip":
-      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 270" role="img" aria-label="정사각형 두 개와 정삼각형 네 개를 붙인 도형"><rect x="155" y="85" width="90" height="90"/><rect x="245" y="85" width="90" height="90"/><polygon points="155,85 110,130 155,175"/><polygon points="335,85 380,130 335,175"/><polygon points="155,85 200,33 245,85"/><polygon points="155,175 200,227 245,175"/><text x="420" y="135">한 변 ${visual.side}cm</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry" viewBox="0 0 500 270" role="img" aria-label="정사각형 두 개와 정삼각형 네 개를 붙인 도형"><rect x="155" y="85" width="90" height="90"/><rect x="245" y="85" width="90" height="90"/><polygon points="155,85 110,130 155,175"/><polygon points="335,85 380,130 335,175"/><polygon points="155,85 200,33 245,85"/><polygon points="155,175 200,227 245,175"/>${ulen([335, 85], [380, 130], [335, 130], `${visual.side}cm`, { off: 14 })}</svg></div>`;
     case "square-tiling": {
       const unit = 38;
       const left = 48;
@@ -329,7 +345,7 @@ function unitTestVisual(visual) {
       const large = 5 * unit;
       const medium = 2 * unit;
       const total = 7 * unit;
-      return `<div class="b6-ut"><svg class="b6-ut-geometry b6-ut-square-tiling" viewBox="0 0 390 250" role="img" aria-label="크기가 다른 정사각형으로 나눈 큰 정사각형"><rect x="${left}" y="${top}" width="${large}" height="${large}"/><rect x="${left + large}" y="${top}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + medium}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/><rect class="shade" x="${left + large + unit}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/><path class="measure" d="M ${left} ${top + large + 12} Q ${left + total / 2} ${top + large + 38} ${left + total} ${top + large + 12}"/><text x="${left + total / 2}" y="242">전체 ${visual.total}cm</text><text class="target-label" x="${left + large + 1.5 * unit}" y="${top + 2.5 * medium + 5}">?</text></svg></div>`;
+      return `<div class="b6-ut"><svg class="b6-ut-geometry b6-ut-square-tiling" viewBox="0 0 390 250" role="img" aria-label="크기가 다른 정사각형으로 나눈 큰 정사각형"><rect x="${left}" y="${top}" width="${large}" height="${large}"/><rect x="${left + large}" y="${top}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + medium}" width="${medium}" height="${medium}"/><rect x="${left + large}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/><rect class="shade" x="${left + large + unit}" y="${top + 2 * medium}" width="${unit}" height="${unit}"/>${ulen([left, top + large], [left + total, top + large], [left + total / 2, top], `${visual.total}cm`, { off: 14 })}<text class="target-label" x="${left + large + 1.5 * unit}" y="${top + 2.5 * medium + 5}">?</text></svg></div>`;
     }
     case "two-parts":
       return `<div class="b6-ut b6-ut-parts">${visual.parts.map((part) => `<p>${escapeHtml(part)}</p>`).join("")}</div>`;

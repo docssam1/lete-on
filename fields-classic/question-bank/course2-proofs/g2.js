@@ -4,7 +4,7 @@
 // 「원 = 같은 거리의 점」「맞꼭지각은 같다」 같은 이미 아는 사실을 근거로 쌓아, 왜 반드시 그런지 따진다.
 // 「다른 …으로」를 눌러 다른 모양·다른 수에도 같은 논증이 통하는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 import { C, P, add, sub, mul, lerp, mid, dirDeg, polar, rot, angleAt, clamp, phase } from "../proof-board.js";
-import { dimArc } from "../length-dim.js?v=20261124a";
+import { dimArc } from "../length-dim.js?v=20261124h";
 
 const pick = (list, seed) => list[seed % list.length];
 // 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,

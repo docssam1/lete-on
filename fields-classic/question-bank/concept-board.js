@@ -6,7 +6,7 @@
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
 import { mathText } from "./math-markup.js?v=20261122w";
 import { icon, setIcon } from "./ui-icons.js?v=20261105b";
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261122zg";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261124f";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -288,7 +288,7 @@ export function mountConceptBoard(host, { say = () => Promise.resolve(), onDone 
       let ok = true;
       if (prim.kind === "text") ok = await drawText(prim, instant);
       else if (prim.kind === "fill") ok = await drawRectFill(prim, instant);
-      else if (prim.kind === "path") ok = await drawPath(prim.d, { stroke: color(prim.stroke), "stroke-width": prim.width || 3, "stroke-dasharray": prim.dash ? "10 9" : undefined, ...(prim.fill ? { fill: color(prim.fill) } : {}) }, instant, prim.quick ? 0.6 : 1.6);
+      else if (prim.kind === "path") ok = await drawPath(prim.d, { stroke: color(prim.stroke), "stroke-width": prim.width || 3, "stroke-dasharray": prim.dash ? (typeof prim.dash === "string" ? prim.dash : "10 9") : undefined, ...(prim.fill ? { fill: color(prim.fill) } : {}) }, instant, prim.quick ? 0.6 : 1.6);
       if (!ok) return false;
     }
     return true;

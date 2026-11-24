@@ -3,6 +3,7 @@
 //  ① 디지털 숫자: 디지털 꾸러미의 보기·숫자 나열·「디지털 숫자 N」을 아라비아 숫자로 쓰지 않는다 → [[d:N]](digital-inline.js)
 //  ② 색종이: 색종이를 접는 꾸러미 그림은 장면 줄(fold-visuals.js foldWordStrip 등 — class fold-*-svg)로 그린다
 //  ③ 문제 글: 「디지털 숫자로 쓴 123」처럼 디지털 수를 글 속 아라비아 숫자로 쓰지 않는다
+//  ④ 그림 속 길이 글자는 점선 호(2·3과정 + 1과정 3권·6권 문제 그림·워밍업 유형 예제)
 import { PACK_BOOKS } from "../course2-concepts/packs.js";
 
 const fails = [];
@@ -61,6 +62,26 @@ for (const b of BOOKS) {
     let r; try { r = fn({ difficulty }); } catch { continue; }
     const bad = LEN_OK.has(name) ? [] : plainLengths(r?.visual?.html || ""); if (bad.length) { fails.push(`${b} ${name}: 그림 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`); break; }
   }
+}
+
+// ④-1 1과정(원장 2026-11-24 「배꿔」 — 1과정 그림도 같은 기준): 3권·6권 문제 그림, 워밍업 유형 예제(거리 줄·사각형)의 길이 글자
+{
+  const { BOOK03_GENERATORS } = await import("../book03-generators.js");
+  const { book03Markup } = await import("../book03-renderers.js");
+  const M6 = await import("../book06-generators.js");
+  const { book06Markup } = await import("../book06-renderers.js");
+  const books = [["3권", BOOK03_GENERATORS, book03Markup], ["6권", Object.assign({}, ...Object.values(M6).filter((v) => v && typeof v === "object")), book06Markup]];
+  for (const [name, gens, markup] of books) for (const [k, fn] of Object.entries(gens)) for (const difficulty of [1, 2, 3]) for (let i = 0; i < 3; i += 1) {
+    let r; try { r = fn({ difficulty }); } catch { continue; }
+    if (!r?.visual) continue; let html = ""; try { html = markup(r.visual) || ""; } catch { continue; }
+    const bad = plainLengths(html); if (bad.length) { fails.push(`1과정 ${name} ${k}: 그림 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")} (점선 호로)`); break; }
+  }
+  const { TYPE_EXAMPLE_SETS } = await import("../golden-bell-type-examples.js");
+  const { figureMarkup } = await import("../golden-bell-type-examples-view.js");
+  const seen = new Set(), figs = [];
+  const walk = (o, d = 0) => { if (!o || d > 9 || seen.has(o)) return; if (typeof o === "function") { if (o.length === 0) { try { walk(o(), d + 1); } catch { /* 예제 만들기 실패는 다른 검사가 본다 */ } } return; } if (typeof o !== "object") return; seen.add(o); if (o.kind === "dist-line" || o.kind === "quad") figs.push(o); Object.values(o).forEach((v) => walk(v, d + 1)); };
+  walk(TYPE_EXAMPLE_SETS);
+  for (const f of figs) { const bad = plainLengths(figureMarkup(f)); if (bad.length) { fails.push(`워밍업 유형 예제 ${f.kind}: 길이를 맨 글자로 — ${bad.slice(0, 3).join(", ")}`); break; } }
 }
 
 const unique = [...new Set(fails)];

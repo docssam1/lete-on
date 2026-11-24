@@ -4,7 +4,7 @@
 // 「다른 …으로」를 눌러 크기·방향·모양이 달라도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 // 엇각은 G4 전체에서 같은 몸짓으로 보인다: 각을 가로지르는 선을 따라 밀어 올리고(동위각) 반 바퀴 돌린다(맞꼭지각).
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, phase } from "../proof-board.js";
-import { dimArc } from "../length-dim.js?v=20261124a";
+import { dimArc } from "../length-dim.js?v=20261124h";
 
 const U1 = "1단원 · 특수각과 도형의 복원";
 const U2 = "2단원 · 평행선과 색종이 접기";

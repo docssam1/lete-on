@@ -3,7 +3,7 @@
 // 그림 꼴은 교재(N30) 활동 쪽과 대조해 맞췄다(2026-11-23): 원 위 같은 간격 점으로 그린 별 · 합동 조건 세 짝 · 같은 각 표시(•, ×) ·
 // 꼭짓점/밑변 옮기기 · 비를 두 번 쓰는 보조선 · 둔각삼각형의 높이(연장선) · 두 높이로 밑변의 비 · 넓이 구하는 세 가지 길 · 닮음의 중심 · 피라미드/모래시계 닮음.
 import { svg, text, line, poly, rect, dot, at, P, angleMark, dirOf, tick, regular, circle, sector, INK, GREEN, SOFT, MARK, YELLOW } from "./pack-kit.js?v=20261123b";
-import { dimOut } from "../length-dim.js?v=20261124a";
+import { dimOut } from "../length-dim.js?v=20261124h";
 // 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
 // beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
 const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });

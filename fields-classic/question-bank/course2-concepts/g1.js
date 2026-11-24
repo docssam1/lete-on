@@ -5,7 +5,7 @@
 // 예제는 창작 문제다(교재 문항을 옮기지 않는다). 단계 답은 그림을 만든 수에서 직접 계산해 적었다.
 import { foldWordStrip, foldStageSvg, foldCreaseSvg } from "../fold-visuals.js?v=20261123a";
 import { svg, text, line, poly, rect, circle, dot, at, P, arrow, sector, angleMark, dirOf, tick, regular, grid, clock, digital, INK, GREEN, SOFT, MARK, BLUE, YELLOW, PINK } from "./pack-kit.js?v=20261123b";
-import { dimOut } from "../length-dim.js?v=20261124a";
+import { dimOut } from "../length-dim.js?v=20261124h";
 // 길이 표시(스킬 gfield-textbook-design 4-3): 구간 두 끝을 잇는 바깥 곡선 점선 + 가운데 끊은 자리에 수·단위. c = 도형 안쪽 점(그 반대쪽으로 휜다).
 // beside: 글자가 넓은 세로 구간(높이 등)은 점선을 끊지 않고 글자를 곡선 꼭대기 바깥 옆에 둔다.
 const dim = (a, b, c, t, { off = 12, color = null, size = 13, beside = false } = {}) => dimOut(a, b, c, t, { off, size, labelColor: color, ...(beside ? { gap: 999 } : {}) });

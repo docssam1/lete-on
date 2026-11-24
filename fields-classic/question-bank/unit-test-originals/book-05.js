@@ -2,7 +2,7 @@
 // 문제 글·수·배치는 원문 그대로, 그림은 우리 색표(.claude/skills/golden-bell-figure-style)로 새로 그렸다.
 // 정답은 두지 않는다 — 정답은 비공개 DB(unit-test-answers)에만 있다. 그림 함수가 values 를 받는 것은 답안지 그림용일 뿐이다.
 // 원문 글 속 도형 그림(오각형·십자 모양)은 글꼴에 없어 낱말로 바꿔 적었다(13·14·15번).
-import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261124g";
 
 // 도형 색(색표: ○ 빨강 · △ 초록 · □ 파랑 · ◇ 보라 · ⬠ 주황 · 십자 노랑)
 const SHAPE = Object.freeze({

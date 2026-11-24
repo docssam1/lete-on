@@ -1,6 +1,8 @@
 // 더클래식 1과정 3권 전용 시각 자료. 생성기는 수학 데이터만 만들고,
 // 이 모듈은 문제 카드와 인쇄물에 같은 SVG/HTML을 그린다.
 
+import { dimArc } from "./length-dim.js?v=20261124h";
+
 const esc = (value) => String(value).replace(/[&<>"']/g, (character) => ({
   "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
 }[character]));
@@ -602,7 +604,8 @@ function segmentChainMarkup(visual) {
     if (text == null || text === "" || text === "?") return "";
     const m = (xs[from] + xs[to]) / 2;
     const y = side === "up" ? base - depth : base + depth;
-    return `<path d="M${xs[from]} ${base}Q${m} ${y} ${xs[to]} ${base}"/><text x="${m}" y="${side === "up" ? base - depth / 2 - 6 : base + depth / 2 + 16}">${text}cm</text>`;
+    // 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24)
+    return dimArc(xs[from], base, xs[to], base, side === "up" ? -depth / 2 : depth / 2 + 22, `${text}cm`, { size: 14 });   // 아래 곡선은 점 이름(A·B·C·D) 아래로
   };
   const g = visual.givens || {};
   const arcs = g.AD != null

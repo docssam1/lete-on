@@ -1,7 +1,7 @@
 // 10권 권별 테스트 원문(다시 짠 것) — 원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」.
 // 문장·수·배치는 원문 그대로, 그림은 우리 색표(kit.js)로 새로 그린다. 정답은 여기에 두지 않는다(비공개 DB).
 // figure(visual) 는 문항 그림과 답 그림(비공개 정답의 visual) 을 같은 함수로 그린다 — 빈칸에 들어갈 값은 visual.fill 로만 받는다.
-import { UT, esc, text, svg, box, line, cardsRow, conditionsBox } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, cardsRow, conditionsBox } from "./kit.js?v=20261124g";
 
 // ── 작은 부품 ──
 const INK = UT.ink;

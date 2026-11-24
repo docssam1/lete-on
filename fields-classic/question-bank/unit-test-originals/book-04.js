@@ -1,7 +1,7 @@
 // 4권 권별 테스트 원문(다시 짠 것) — 원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」.
 // 문장·수·이름·배치·놓인 방향은 원문 그대로, 그림은 우리 색표(.claude/skills/golden-bell-figure-style)로 새로 그린다.
 // 정답은 두지 않는다 — 원문 풀기 화면은 「답안 확인 및 진단하기」에서 비공개 DB의 정답을 받아 온다.
-import { UT, esc, text, svg, box, line, conditionsBox } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, conditionsBox } from "./kit.js?v=20261124g";
 
 // ── 공용 ────────────────────────────────────────────────────────────────
 const P = (points) => points.map(([x, y]) => `${(+x).toFixed(1)},${(+y).toFixed(1)}`).join(" ");

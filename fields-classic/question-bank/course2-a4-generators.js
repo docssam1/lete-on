@@ -3,7 +3,7 @@
 // 분수는 글 속에 「3/5」로 쓰면 화면·인쇄에서 수식 분수로 바뀐다(math-markup.js mathText).
 import { plainText } from "./course2-plain.js?v=20261122zi";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { dimArc } from "./length-dim.js?v=20261124a";
+import { dimArc } from "./length-dim.js?v=20261124h";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

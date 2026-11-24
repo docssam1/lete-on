@@ -10,12 +10,13 @@ const f1 = (v) => Math.round(v * 10) / 10;
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 export const DIM_STYLE = Object.freeze({ line: "#5f6b66", ink: "#24302b", width: 0.9, dash: "3.5 2.8", font: "'FC Serif','Noto Serif KR',serif" });
 
-export const dimText = (x, y, value, { size = 14, anchor = "middle", color = DIM_STYLE.ink, font = DIM_STYLE.font } = {}) =>
-  `<text x="${f1(x)}" y="${f1(y)}" text-anchor="${anchor}" dominant-baseline="central" style="font-family:${font};font-size:${size}px;font-weight:400;fill:${color};letter-spacing:0">${esc(value)}</text>`;
+// halo: 다른 곡선이 글자 뒤를 지나갈 때 글자 둘레를 흰 테로(겹친 거리 그림)
+export const dimText = (x, y, value, { size = 14, anchor = "middle", color = DIM_STYLE.ink, font = DIM_STYLE.font, halo = false } = {}) =>
+  `<text x="${f1(x)}" y="${f1(y)}" text-anchor="${anchor}" dominant-baseline="central" style="font-family:${font};font-size:${size}px;font-weight:400;fill:${color};${halo ? "stroke:#fff;stroke-width:4px;paint-order:stroke;stroke-linejoin:round" : "stroke:none"};letter-spacing:0">${esc(value)}</text>`;
 
 export function dimArc(x1, y1, x2, y2, bend, label = "", {
   blank = false, unit = "cm", size = 14, boxW = 28, boxH = 22, gap = 4,
-  color = DIM_STYLE.line, ink = DIM_STYLE.ink, width = DIM_STYLE.width, dash = DIM_STYLE.dash, font = DIM_STYLE.font, labelColor = null
+  color = DIM_STYLE.line, ink = DIM_STYLE.ink, width = DIM_STYLE.width, dash = DIM_STYLE.dash, font = DIM_STYLE.font, labelColor = null, halo = false
 } = {}) {
   const len = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
   const cx = (x1 + x2) / 2 + nx * bend * 2, cy = (y1 + y2) / 2 + ny * bend * 2;
@@ -31,14 +32,15 @@ export function dimArc(x1, y1, x2, y2, bend, label = "", {
   if (blank) {
     const bx = ax - w / 2;
     body = `<rect x="${f1(bx)}" y="${f1(ay - boxH / 2)}" width="${boxW}" height="${boxH}" rx="2" fill="#fff" stroke="${ink}" stroke-width="1.1"/>` + (unit ? dimText(bx + boxW + 4, ay + 1, unit, { size, anchor: "start", color: ink, font }) : "");
-  } else if (label !== "" && label != null) body = dimText(ax, ay + 1, label, { size, color: labelColor || ink, font });
+  } else if (label !== "" && label != null) body = dimText(ax, ay + 1, label, { size, color: labelColor || ink, font, halo });
   const inside = (t) => { const [px, py] = at(t); return Math.abs(px - ax) <= w / 2 + gap && Math.abs(py - ay) <= h / 2 + gap; };
   let t0 = 0.5, t1 = 0.5;
   if (body && !outside) { while (t0 > 0 && inside(t0 - 0.002)) t0 -= 0.002; while (t1 < 1 && inside(t1 + 0.002)) t1 += 0.002; }
   const piece = (ta, tb) => {
     const [sx, sy] = at(ta), [ex, ey] = at(tb);
     const qx = x1 * (1 - ta) * (1 - tb) + cx * ((1 - ta) * tb + ta * (1 - tb)) + x2 * ta * tb, qy = y1 * (1 - ta) * (1 - tb) + cy * ((1 - ta) * tb + ta * (1 - tb)) + y2 * ta * tb;
-    return `<path d="M${f1(sx)} ${f1(sy)} Q${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}" fill="none" stroke="${color}" stroke-width="${width}" stroke-dasharray="${dash}" stroke-linecap="round"/>`;
+    // 모양은 style로 — 그림마다 있는 「svg path{…}」 규칙(1과정 그림 CSS)이 점선을 실선·다른 색으로 덮지 않게
+    return `<path class="len-dim" d="M${f1(sx)} ${f1(sy)} Q${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}" style="fill:none;stroke:${color};stroke-width:${width}px;stroke-dasharray:${dash};stroke-linecap:round;vector-effect:none"/>`;
   };
   return (body && !outside ? piece(0, t0) + piece(t1, 1) : piece(0, 1)) + body;
 }

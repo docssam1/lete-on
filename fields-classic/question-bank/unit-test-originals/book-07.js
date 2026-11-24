@@ -1,6 +1,6 @@
 // 7권 권별 테스트 원문(다시 짠 것) — 원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」.
 // 문항 글·수·이름·그림 배치는 원문 시험지 그대로, 그림은 우리 색표(kit.js)로 새로 그린다. 정답은 두지 않는다(비공개 DB).
-import { UT, esc, text, svg, box, line, conditionsBox } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, conditionsBox } from "./kit.js?v=20261124g";
 
 // ── 공용 조각 ──
 const STONE = { fill: "#ffd45c", stroke: "#a8741a" }; // 세는 점·바둑돌

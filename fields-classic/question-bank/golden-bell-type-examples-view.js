@@ -3,6 +3,7 @@
 // 색은 골든벨 색표(쌓기나무·모양·숫자판·저울), 안내 단계 색은 주어진 것 파랑 · 하는 일 금색 · 확인 진초록.
 
 import { frac } from "./math-markup.js?v=20261122w";
+import { dimArc, dimOut, isLength } from "./length-dim.js?v=20261124h";
 import { book04Markup, obliqueCubes, digitGlyph, opIcon, sevenSegNumber } from "./book04-renderers.js?v=20261123a";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
@@ -323,7 +324,12 @@ function quadFigure(f) {
     if (v === undefined || v === null) continue;
     const [mx, my] = mid(i), off = [[0, -16], [22, 0], [0, 18], [-22, 0]][i];
     const txt = /^\d+$/u.test(v) ? `${v}cm` : v;
-    body += `<text x="${mx + off[0]}" y="${my + off[1]}" font-size="15" font-weight="900" fill="${v === "가" ? "#5b2fa8" : "#222"}" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(txt)}</text>`;
+    // 길이는 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3). 「가」 같은 빈칸 이름도 같은 곡선 위에.
+    const a = pts[i], b = pts[(i + 1) % 4], cx = pts.reduce((t, p) => t + p[0], 0) / 4, cy = pts.reduce((t, p) => t + p[1], 0) / 4;
+    const across = Math.abs(b[1] - a[1]) / (Math.hypot(b[0] - a[0], b[1] - a[1]) || 1);
+    body += isLength(txt) || txt === "가"
+      ? dimOut({ x: a[0], y: a[1] }, { x: b[0], y: b[1] }, { x: cx, y: cy }, txt, { off: 12 + across * txt.length * 4.5, size: 15, labelColor: txt === "가" ? "#5b2fa8" : null })
+      : `<text x="${mx + off[0]}" y="${my + off[1]}" font-size="15" font-weight="900" fill="#222" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(txt)}</text>`;
   }
   if (f.inner) body += text(130, 86, f.inner, { size: 15, weight: 900, fill: /가/u.test(f.inner) ? "#5b2fa8" : "#222" });
   return `<div class="tx-quad">${svg(320, 172, `<g transform="translate(25 0)">${body}</g>`, `${{ rect: "직사각형", square: "정사각형", para: "평행사변형", rhombus: "마름모", trapezoid: "사다리꼴" }[f.shape]}${f.top ? `, 위 변 ${f.top}` : ""}${f.right ? `, 오른쪽 변 ${f.right}` : ""}${f.inner ? `, ${f.inner}` : ""}`)}</div>`;
@@ -390,8 +396,9 @@ function lakeFigure(f) {
 }
 // ───── 수직선 위의 거리: 점 위치 비율대로, 위(over)·아래(under)에 거리 호 ─────
 function distLineFigure(f) {
-  // 거리는 꺾쇠 괄호로: 위쪽 거리는 줄 위로, 아래쪽 거리는 점 이름 밑으로, 하나마다 한 층씩 쌓는다.
-  const color = TONE[f.tone || "given"], W = 340, x0 = 30, x1 = W - 30, L = 26;
+  // 거리는 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24 — 예전 꺾쇠 괄호 대신):
+  // 위쪽 거리는 줄 위로, 아래쪽 거리는 점 이름 밑에서 시작해, 하나마다 한 층씩 높게.
+  const color = TONE[f.tone || "given"], W = 340, x0 = 30, x1 = W - 30, L = 30;
   const overs = f.arcs.filter((a) => a.side === "over"), unders = f.arcs.filter((a) => a.side !== "over");
   // min이 있으면 그 수부터 그린다(크기 비교에서 기준 수를 넣은 줄). 점에 value가 있으면 이름 밑에 작게
   const valued = f.points.some((p) => p.value !== undefined);
@@ -403,9 +410,8 @@ function distLineFigure(f) {
   const bracket = (a, lvl, up) => {
     const xa = pos[a.from], xb = pos[a.to], on = a.ask || mark.has(`${a.from}~${a.to}`);
     const stroke = a.ask ? (f.tone === "check" ? TONE.check : "#8e5bd8") : on ? color : "#f39a1e";
-    const base = up ? axis - 6 : nameY + 12, y = up ? base - (lvl + 1) * L + 8 : base + (lvl + 1) * L - 8;
-    body += `<path d="M${xa} ${base} V${y} H${xb} V${base}" fill="none" stroke="${stroke}" stroke-width="${on ? 3 : 2}"${a.ask ? ' stroke-dasharray="6 4"' : ""}/>`;
-    body += `<text x="${(xa + xb) / 2}" y="${up ? y - 8 : y + 9}" font-size="13" font-weight="900" fill="${a.ask ? "#5b2fa8" : "#222"}" text-anchor="middle" dominant-baseline="central" stroke="#fff" stroke-width="4" paint-order="stroke">${esc(a.label)}</text>`;
+    const base = up ? axis - 2 : nameY + 10, rise = (lvl + 1) * L - 6;
+    body += dimArc(xa, base, xb, base, up ? -rise : rise, String(a.label), { size: 14, color: stroke, width: on ? 2 : 1.4, dash: "5 3.5", labelColor: a.ask ? "#5b2fa8" : "#222", halo: true });
   };
   // 짧은 거리가 안쪽(줄 가까이)에 오도록
   const byLen = (a, b) => Math.abs(pos[a.to] - pos[a.from]) - Math.abs(pos[b.to] - pos[b.from]);

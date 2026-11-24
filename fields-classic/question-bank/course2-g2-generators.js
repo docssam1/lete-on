@@ -2,7 +2,7 @@
 // G1 생성기(course2-g1-generators.js)와 같은 약속: ({ difficulty }) → { prompt, visual:{kind:"c2", html}, answer, solution, meta }.
 // 문제는 모두 새로 지은 것이다(교재 문장·그림을 옮기지 않는다). 답은 그림을 만든 수에서 계산하고, 세는 문제는 하나씩 세어 본다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
-import { dimArc, isLength } from "./length-dim.js?v=20261124a";
+import { dimArc, isLength } from "./length-dim.js?v=20261124h";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];

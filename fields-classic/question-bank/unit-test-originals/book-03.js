@@ -1,7 +1,7 @@
 // 3권 권별 테스트 원문(다시 짠 것) — 원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」.
 // 문장·수·이름·그림 배치는 원문 시험지 그대로, 그림은 우리 색표(.claude/skills/golden-bell-figure-style)로 새로 그린다.
 // 정답은 두지 않는다 — 비공개 DB(fields_unit_test_answer_keys)에서 「답안 확인」 때만 받는다. 답 그림(visual.values)도 그 DB에서 온다.
-import { UT, esc, svg, box, line } from "./kit.js?v=20261028ze";
+import { UT, esc, svg, box, line, dim, dimText } from "./kit.js?v=20261124g";
 
 const INK = "#333";
 const GRID = UT.soft;
@@ -240,10 +240,9 @@ FIG[7] = () => {
 FIG[8] = () => {
   const y = 64, A = 22, B = 137, C = 215, D = 372;
   let body = seg([A, y], [D, y], { width: 1.6 });
-  body += arc(A, C, y, 30, -1) + arc(B, D, y, 30, -1) + arc(B, C, y, 12, 1);
+  // 길이 = 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3)
+  body += dim(A, y, C, y, -30, "21cm", { size: 19, halo: true }) + dim(B, y, D, y, -30, "26cm", { size: 19, halo: true }) + dim(B, y, C, y, 12, "14cm", { size: 18 });
   body += [A, B, C, D].map((x) => `<circle cx="${x}" cy="${y}" r="4.6" fill="${UT.dot}"/>`).join("");
-  body += T((A + C) / 2, y - 31, "21cm", { size: 19, weight: 500, halo: true }) + T((B + D) / 2, y - 31, "26cm", { size: 19, weight: 500, halo: true });
-  body += T((B + C) / 2, y + 24, "14cm", { size: 18, weight: 500, halo: true });
   body += [["A", A], ["B", B], ["C", C], ["D", D]].map(([n, x]) => T(x + (n === "B" ? -8 : n === "C" ? 8 : 0), y + 24, n, { size: 19, weight: 500 })).join("");
   return svg(394, 100, "수직선 위의 점 A, B, C, D 사이의 거리", body, 400);
 };
@@ -258,12 +257,11 @@ FIG[9] = () => {
     for (let i = 0; i < many; i += 1) body += bar(x0 + i * unit, oy, unit, 34, "ㄱ");
     body += bar(x0, oy + 34, unit * many, 34, "ㄴ");
     const by = oy + 140;
-    body += arc(x0, x0 + unit, by, 22, -1) + arc(x0 + unit, x0 + unit * (many + 1), by, 22, -1);
+    // 길이 = 바깥 곡선 점선 + 끊은 자리에 빈 답 칸·글자(스킬 gfield-textbook-design 4-3). 짧은 ㉠ 구간은 칸이 곡선 꼭대기 바깥으로 나간다.
+    const slot = { blank: true, unit: "cm", size: 18, boxW: 36, boxH: 32, box: (bx, bt, bw, bh) => blank(bx, bt, bw, bh) };
+    body += dim(x0, by, x0 + unit, by, -14, "", slot) + dim(x0 + unit, by, x0 + unit * (many + 1), by, -26, "", slot);
     body += bar(x0, by, unit, 34, "ㄱ") + bar(x0 + unit, by, unit * many, 34, "ㄴ");
-    body += arc(x0, x0 + unit * (many + 1), by + 34, 22, 1);
-    body += T(x0 + (unit * (many + 1)) / 2, by + 34 + 22, total, { size: 19, weight: 500, halo: true });
-    const slot = (cx) => blank(cx - 18, by - 42, 36, 32) + T(cx + 23, by - 25, "cm", { size: 18, anchor: "start", weight: 500, halo: true });
-    body += slot(x0 + unit / 2 - 8) + slot(x0 + unit + (unit * many) / 2 - 8);
+    body += dim(x0, by + 34, x0 + unit * (many + 1), by + 34, 22, total, { size: 19 });
     return body;
   };
   let body = T(18, 14, "(1)", { size: 18 }) + part(6, 100, 2, "18cm");
@@ -297,7 +295,7 @@ FIG[11] = () => {
       : `<circle cx="${f1(m)}" cy="${top}" r="4.4" fill="#fff" stroke="${UT.orange}" stroke-width="1.6"/>`;
   }
   body += circ(xs[0], y - 44, "가", 12, 13) + circ(xs[3], y - 44, "나", 12, 13) + circ(xs[7], y - 44, "다", 12, 13);
-  body += T(xs[0], y + 30, "30cm", { size: 21, weight: 500 }) + circ(xs[1], y + 30, "ㄱ", 12, 14) + T(xs[3], y + 30, "42cm", { size: 21, weight: 500 }) + circ(xs[6], y + 30, "ㄴ", 12, 14) + T(xs[7], y + 30, "54cm", { size: 21, weight: 500 });
+  body += dimText(xs[0], y + 30, "30cm", { size: 21 }) + circ(xs[1], y + 30, "ㄱ", 12, 14) + dimText(xs[3], y + 30, "42cm", { size: 21 }) + circ(xs[6], y + 30, "ㄴ", 12, 14) + dimText(xs[7], y + 30, "54cm", { size: 21 });
   return svg(538, 116, "세 점 ㉮, ㉯, ㉰를 3칸과 4칸으로 나눈 수직선", body, 470);
 };
 
@@ -437,11 +435,10 @@ FIG[25] = () => {
   const y = 72;
   const X = { A: 22, B: 74, C: 143, D: 212, E: 408, F: 450 };
   let body = seg([X.A, y], [X.F, y], { width: 1.6 });
-  body += arc(X.A, X.D, y, 34, -1) + arc(X.C, X.E, y, 34, -1);
-  body += arc(X.A, X.C, y, 30, 1) + arc(X.B, X.D, y, 42, 1) + arc(X.B, X.F, y, 66, 1);
+  // 거리 = 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3). 서로 겹치는 구간이라 글자에 흰 테.
+  const d = (a, b, bend, value) => dim(X[a], y, X[b], y, bend, value, { size: 19, halo: true });
+  body += d("A", "D", -34, "52") + d("C", "E", -34, "58") + d("A", "C", 30, "32") + d("B", "D", 42, "34") + d("B", "F", 66, "88");
   body += Object.values(X).map((x) => `<circle cx="${x}" cy="${y}" r="4.6" fill="${UT.dot}"/>`).join("");
-  body += T((X.A + X.D) / 2, y - 34, "52", { size: 19, weight: 500, halo: true }) + T((X.C + X.E) / 2, y - 34, "58", { size: 19, weight: 500, halo: true });
-  body += T((X.A + X.C) / 2, y + 30, "32", { size: 19, weight: 500, halo: true }) + T((X.B + X.D) / 2, y + 42, "34", { size: 19, weight: 500, halo: true }) + T((X.B + X.F) / 2, y + 66, "88", { size: 19, weight: 500, halo: true });
   body += Object.entries(X).map(([n, x]) => T(x + ({ A: -9, B: -9, C: 9, D: 9, F: 9 }[n] || 0), y + 17, n, { size: 17, weight: 500, halo: true })).join("");
   return svg(472, 150, "수직선 위의 점 A부터 F까지와 거리", body, 470);
 };

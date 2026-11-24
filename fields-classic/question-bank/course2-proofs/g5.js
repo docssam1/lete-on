@@ -4,7 +4,7 @@
 // 여기서는 그 성질이 반드시 그런 까닭(이등변삼각형·외각·평행선·합동)을 장면마다 근거로 쌓고,
 // 「다른 …으로」를 눌러 다른 모양·다른 비에서도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, clamp, ease, phase } from "../proof-board.js";
-import { dimArc } from "../length-dim.js?v=20261124a";
+import { dimArc } from "../length-dim.js?v=20261124h";
 
 const pick = (list, seed) => list[seed % list.length];
 // 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,

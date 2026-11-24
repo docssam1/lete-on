@@ -2,7 +2,7 @@
 // 본책은 「잘라서 맞춰 보니 일직선」으로 확인한다. 여기서는 한 걸음 더: 접는 까닭·같은 길이의 까닭을 근거로 쌓고,
 // 「다른 모양으로」를 눌러 어떤 모양이어도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, ease, phase } from "../proof-board.js";
-import { dimArc } from "../length-dim.js?v=20261124a";
+import { dimArc } from "../length-dim.js?v=20261124h";
 
 const pick = (list, seed) => list[seed % list.length];
 // 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,

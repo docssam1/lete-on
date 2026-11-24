@@ -3,7 +3,7 @@
 // 「다른 …으로」를 눌러 모양·수가 달라도 같은 논증이 통한다는 것(일반화)을 본다. 그림 도구는 proof-board.js.
 // 정육면체·전개도는 이 파일 안의 작은 3D 도구(돌리기·투영·앞뒤 순서)로 그린다 — 진행값 k의 순수 함수 그대로.
 import { C, P, add, sub, mul, lerp, mid, dist, dirDeg, polar, rot, fold, angleAt, clamp, ease, phase } from "../proof-board.js";
-import { dimArc } from "../length-dim.js?v=20261124a";
+import { dimArc } from "../length-dim.js?v=20261124h";
 
 const pick = (list, seed) => list[seed % list.length];
 // 길이 = 두 끝을 짚는 바깥 곡선 점선 + 그 가운데 끊은 자리에 손글씨(스킬 gfield-textbook-design 4-3,
