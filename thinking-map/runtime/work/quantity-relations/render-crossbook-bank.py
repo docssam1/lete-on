@@ -101,5 +101,7 @@ if (out/'native-runtime-manifest.json').exists():
     page=page.replace('</body>','<script>const NATIVE_RUNTIME_CONFIG='+json.dumps(native,ensure_ascii=False).replace('</',r'<\/')+';\n'+Path('work/quantity-relations/native-runtime-ui.js').read_text()+'</script></body>')
 page=page.replace('</body>','<script>'+Path('work/quantity-relations/generated-library-ui.js').read_text()+'</script></body>')
 page=page.replace('</body>','<script>'+Path('work/quantity-relations/generated-library-migration-ui.js').read_text()+'</script></body>')
+taxonomy=json.loads((out/'taxonomy-hierarchy.json').read_text())
+page=page.replace('</body>','<script>const TAXONOMY_BROWSER_CONFIG='+json.dumps(taxonomy,ensure_ascii=False).replace('</',r'<\/')+';\n'+Path('work/quantity-relations/type-explorer.js').read_text()+'</script></body>')
 (out/'quantity-crossbook-bank.html').write_text(page)
 print('Cross-book map and working selection/print bank created.')

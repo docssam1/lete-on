@@ -1,11 +1,11 @@
 {
   "schema": "gfield-thinking-map-private-data/v1",
-  "date": "2026-11-24",
+  "date": "2026-11-25",
   "files": [
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 46467784,
-      "sha256": "13ff7f2893c48b15ed3e704a83d2c595bd520d9f5c5f5904175fbbdcb77df443",
+      "bytes": 46542532,
+      "sha256": "3a070353f2608ce7b54cffca2f2edc3455466dc6f0979ec80619dfcbc626f7b4",
       "contentIncludedInGit": false
     },
     {
@@ -61,6 +61,12 @@
       "bytes": 29095,
       "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
       "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/taxonomy-hierarchy.json",
+      "contentIncludedInGit": false,
+      "bytes": 70051,
+      "sha256": "1a5e7577741fd253a33b77560dae3ac06679e10f123633fdd0574933ef162c43"
     }
   ],
   "source": "Existing owner-controlled Drive research folder; preserve file IDs and verify checksums.",

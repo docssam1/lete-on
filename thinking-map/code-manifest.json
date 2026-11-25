@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
-  "date": "2026-11-24",
-  "sourceCheckpoint": 63,
+  "date": "2026-11-25",
+  "sourceCheckpoint": 65,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -133,8 +133,8 @@
     {
       "path": "work/quantity-relations/render-crossbook-bank.py",
       "storedPath": "runtime/work/quantity-relations/render-crossbook-bank.py",
-      "bytes": 26539,
-      "sha256": "5f9fa24cffac8fa6376a7a50ee70b8413e21031f2c021fd7848f6397bc7ddf73"
+      "bytes": 26821,
+      "sha256": "e5a23139a45445af5fb4b9e7c4888b95ad33f34606044e33c748b53595e2df52"
     },
     {
       "path": "work/quantity-relations/reviewed-native-ui.js",
@@ -249,6 +249,18 @@
       "storedPath": "runtime/work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/package.json",
       "bytes": 33,
       "sha256": "89c47db7851f89caec72da4f215ebc21cf1e294aeef3b45d2583562d846ab035"
+    },
+    {
+      "path": "work/quantity-relations/type-explorer.js",
+      "storedPath": "runtime/work/quantity-relations/type-explorer.js",
+      "bytes": 18969,
+      "sha256": "1700e5f3fc44a22fceeb1b2fa1c642ba76e429fbbc937c4a90dda2c5cbf99654"
+    },
+    {
+      "path": "work/quantity-relations/build-taxonomy-hierarchy.py",
+      "storedPath": "runtime/work/quantity-relations/build-taxonomy-hierarchy.py",
+      "bytes": 3767,
+      "sha256": "0961c277f9b42b269db9e33259190f5e9981bbd928e0f0d6be2d797a261d3fbc"
     }
   ],
   "pinnedGitFiles": [
