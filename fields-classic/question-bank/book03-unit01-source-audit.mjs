@@ -1,5 +1,6 @@
 import { GENERATORS } from "./generators.js";
 import { CURRICULUM, typeById } from "./source-data.js";
+import { mixed } from "./math-markup.js";
 import {
   partitionGeometryForAudit,
   tangramBoardGeometryForAudit,
@@ -267,7 +268,7 @@ function assertReadyStructure(typeId, problem, difficulty) {
     assert(problem.meta.connected === true, `${typeId}/L${difficulty} must be one connected source-style silhouette`);
     assert(problem.meta.areaTwice > 0, `${typeId}/L${difficulty} must have positive area`);
     assert(problem.visual.points.length >= 3, `${typeId}/L${difficulty} must draw one polygon`);
-    assert(problem.answer === (problem.meta.areaTwice % 2 === 0 ? String(problem.meta.areaTwice / 2) : `${Math.floor(problem.meta.areaTwice / 2)}와 1/2`), `${typeId}/L${difficulty} area answer mismatch`);
+    assert(problem.answer === (problem.meta.areaTwice % 2 === 0 ? String(problem.meta.areaTwice / 2) : mixed(Math.floor(problem.meta.areaTwice / 2), 1, 2)), `${typeId}/L${difficulty} area answer mismatch`);
   }
 
   if (typeId === "equal-part-shaded-fraction") {
