@@ -14,7 +14,7 @@ test('Eden common1 round3 preserves all fields of the existing 47 exams',()=>{
  const old=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(old.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(old)).digest('hex'),'003cc9f3b955f0f655b234ea190ce2405f41c6e0910f02448559a0062db08b00');
 });
 test('Eden common1 round3 stays in the common1 selection flow',()=>{
- const nav=ctx.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-common1-basic-r03'))),{program:'ED',course:'high-advance'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','high-advance',all))).map(e=>e.id),['ed-common1-basic-r01','ed-common1-basic-r02','ed-common1-basic-r03']);
+ const nav=ctx.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-common1-basic-r03'))),{program:'ED',course:'high-advance'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','high-advance',all))).map(e=>e.id),['ed-common1-basic-r01','ed-common1-basic-r02','ed-common1-basic-r03','ed-common1-basic-r04']);
 });
 test('Eden common1 round3 public catalog contains no private questions, keys or object routes',()=>{
  const e=all.find(e=>e.id==='ed-common1-basic-r03');for(const k of ['questions','stem','text','answer','solution','choices','pages','answerPages','analysisPages','assetFunctions'])assert.equal(Object.hasOwn(e,k),false,k);
