@@ -9,7 +9,7 @@ import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_R
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125h";
 import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125k";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
-import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125o";
+import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125p";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124h";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261124h";
@@ -1045,7 +1045,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "tree-planting": Object.freeze(["rect-perimeter-tree-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
   "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "month-date-palindrome-b7", "clock-palindrome-unpadded-unit-test-book7", "reverse-add-chain-b7"]),
   "catch-up": Object.freeze(["catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10"]),
-  "number-baseball": Object.freeze(["number-baseball-b10"]),
+  "number-baseball": Object.freeze(["number-baseball-mixed-b10"]),
   "unit-area-fraction": Object.freeze(["unit-grid-area", "equal-part-shaded-fraction", "incomplete-partition-fraction", "paired-hexagon-fractions", "triangle-twelve-part-fraction", "concentric-square-sixteen-fraction"]),
   "unit-length-multiple": Object.freeze(["aligned-rod-common-length", "g1-summer-one-three-rods", "rod-ratio-total-book3"]),
   "magic-card": Object.freeze(["binary-weight-selection", "colored-cell-number-code", "four-cell-binary-code"]),

@@ -8,7 +8,7 @@ import { BOOK06_GENERATORS } from "./book06-generators.js?v=20261101c";
 import { BOOK07_GENERATORS } from "./book07-generators.js?v=20260826h";
 import { BOOK08_GENERATORS, BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js?v=20261101n";
 import { BOOK09_GENERATORS, BOOK09_UNIT_TEST_GENERATORS } from "./book09-generators.js?v=20261125j";
-import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20261125o";
+import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS } from "./book10-generators.js?v=20261125p";
 import { COURSE2_G1_GENERATORS } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_GENERATORS } from "./course2-g2-generators.js?v=20261124h";
 import { COURSE2_G3_GENERATORS } from "./course2-g3-generators.js?v=20261124h";
@@ -30,7 +30,7 @@ import { BOOK06_STRUCTURE_GENERATORS } from "./book06-structure-generators.js?v=
 import { BOOK07_STRUCTURE_GENERATORS } from "./book07-structure-generators.js?v=20261125h";
 import { BOOK08_STRUCTURE_GENERATORS } from "./book08-structure-generators.js?v=20261125k";
 import { BOOK09_STRUCTURE_GENERATORS } from "./book09-structure-generators.js?v=20261125j";
-import { BOOK10_STRUCTURE_GENERATORS } from "./book10-structure-generators.js?v=20261125o";
+import { BOOK10_STRUCTURE_GENERATORS } from "./book10-structure-generators.js?v=20261125p";
 import { BOOK02_MATRIX_GENERATORS } from "./book02-matrix-generators.js?v=20261125a";
 import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
 

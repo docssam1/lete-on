@@ -1037,6 +1037,204 @@ function equalStepDigitNumbersB10({ difficulty = 2 }) {
   });
 }
 
+// ── 4단원 숫자 야구게임 · 쓴 숫자 세기 ───────────────────────
+const digitsIn = (v) => String(v).split("").map(Number);
+const countDigitRange = (from, to, digit) => { let c = 0; for (let v = from; v <= to; v += 1) c += digitsIn(v).filter((d) => d === digit).length; return c; };
+const containsCount = (from, to, digit) => range(from, to).filter((v) => digitsIn(v).includes(digit)).length;
+const placeCounts = (from, to, digit) => {
+  const names = ["일", "십", "백", "천"];
+  const out = [];
+  for (let p = 0; p < 4; p += 1) {
+    let c = 0;
+    for (let v = from; v <= to; v += 1) { const d = digitsIn(v); if (d.length > p && d[d.length - 1 - p] === digit) c += 1; }
+    if (c) out.push(`${names[p]}의 자리 ${c}번`);
+  }
+  return out;
+};
+const digitTotal = (from, to) => { let c = 0; for (let v = from; v <= to; v += 1) c += String(v).length; return c; };
+const rangeHtml = (from, to) => htmlPanel(`<div style="text-align:center;font-size:17px">${from}, ${from + 1}, ${from + 2}, … , ${to - 1}, ${to}</div>`, 420);
+
+// 1부터 600대까지 — 특정 숫자를 쓴 횟수·들어 있는 수
+function digitOccurrenceWideB10({ difficulty = 2 }) {
+  const to = difficulty === 1 ? randomInt(120, 300) : difficulty === 2 ? randomInt(250, 500) : randomInt(400, 699);
+  const digit = randomInt(1, 9);
+  const contains = randomInt(0, 2) === 0;
+  const result = contains ? containsCount(1, to, digit) : countDigitRange(1, to, digit);
+  return problem("digit-occurrence-wide-b10", {
+    prompt: contains ? `1부터 ${to}까지의 수 중 숫자 ${iga(digit)} 들어 있는 수는 모두 몇 개인가요?` : `1부터 ${to}까지의 수를 모두 쓸 때 숫자 ${eun(digit)} 모두 몇 번 쓰나요?`,
+    visual: fig(rangeHtml(1, to)),
+    answer: contains ? `${result}개` : `${result}번`,
+    solution: contains
+      ? `백의 자리대마다 나누어 셉니다. ${range(0, Math.floor(to / 100)).map((h) => { const a = Math.max(1, h * 100); const b = Math.min(to, h * 100 + 99); return `${a}~${b}: ${containsCount(a, b, digit)}개`; }).join(", ")} → 모두 ${result}개.`
+      : `자리마다 나누어 셉니다. ${placeCounts(1, to, digit).join(", ")} → 모두 ${result}번.`,
+    meta: { from: 1, to, digit, contains, result }
+  });
+}
+
+// 1부터 300대까지 — 가장 많이 쓴 숫자와 그 횟수
+function mostFrequentDigitCountB10({ difficulty = 2 }) {
+  for (let tries = 0; tries < 300; tries += 1) {
+    const to = difficulty === 1 ? randomInt(60, 199) : difficulty === 2 ? randomInt(150, 399) : randomInt(250, 399);
+    const counts = range(0, 9).map((d) => countDigitRange(1, to, d));
+    const max = Math.max(...counts);
+    const winners = counts.filter((c) => c === max);
+    if (winners.length !== 1) continue;
+    const digit = counts.indexOf(max);
+    return problem("most-frequent-digit-count-b10", {
+      prompt: `1부터 ${to}까지의 수를 모두 쓸 때 가장 많이 쓰는 숫자는 무엇이고, 몇 번 쓰나요?`,
+      visual: fig(rangeHtml(1, to)),
+      answer: `숫자 ${digit}, ${max}번`,
+      solution: `끝 수의 앞자리 숫자가 백·십의 자리에 많이 나옵니다. 후보 숫자를 자리마다 세면 ${digit}: ${placeCounts(1, to, digit).join(", ")} → ${max}번으로 가장 많고, 다음으로 많은 숫자는 ${Math.max(...counts.filter((c, i) => i !== digit))}번입니다.`,
+      meta: { to, counts, digit, max }
+    });
+  }
+  return mostFrequentDigitCountB10({ difficulty });
+}
+
+// 1부터 세 자리 수 전체 구간까지 쓴 숫자 수
+function totalWrittenDigitsBlockB10({ difficulty = 2 }) {
+  const to = difficulty === 1 ? randomInt(100, 250) : difficulty === 2 ? randomInt(200, 700) : randomInt(500, 999);
+  const result = digitTotal(1, to);
+  return problem("total-written-digits-block-b10", {
+    prompt: `1부터 ${to}까지의 수를 모두 쓸 때 쓴 숫자는 모두 몇 개인가요?`,
+    visual: fig(rangeHtml(1, to)),
+    answer: `${result}개`,
+    solution: `한 자리 수 9개 × 1 = 9, 두 자리 수 90개 × 2 = 180, 세 자리 수 100~${eun(to)} ${to - 99}개 × 3 = ${(to - 99) * 3} → 9 + 180 + ${(to - 99) * 3} = ${result}개.`,
+    meta: { to, result }
+  });
+}
+// 1부터 네 자리 수까지
+function totalWrittenDigitsFourB10({ difficulty = 2 }) {
+  const to = randomInt(1000, difficulty === 3 ? 2999 : 1999);
+  const result = digitTotal(1, to);
+  return problem("total-written-digits-four-b10", {
+    prompt: `1부터 ${to}까지의 수를 모두 쓸 때 쓴 숫자는 모두 몇 개인가요?`,
+    visual: fig(rangeHtml(1, to)),
+    answer: `${result}개`,
+    solution: `한 자리 9 × 1 = 9, 두 자리 90 × 2 = 180, 세 자리 900 × 3 = 2700, 네 자리 1000~${eun(to)} ${to - 999}개 × 4 = ${(to - 999) * 4} → 9 + 180 + 2700 + ${(to - 999) * 4} = ${result}개.`,
+    meta: { to, result }
+  });
+}
+
+// 여러 구간 — 수의 개수와 쓴 숫자의 개수 표
+function rangeDigitTableB10({ difficulty = 2 }) {
+  const rows = [
+    [randomInt(1, 5), randomInt(20, 60)],
+    [randomInt(11, 40), randomInt(60, 99)],
+    [randomInt(60, 95), randomInt(101, difficulty === 1 ? 140 : 200)],
+    [randomInt(101, 300), randomInt(320, difficulty === 3 ? 999 : 600)]
+  ];
+  const cells = rows.map(([a, b]) => ({ a, b, count: b - a + 1, digits: digitTotal(a, b) }));
+  const td = (v) => `<td style="padding:7px 10px;border:1px solid #cfc5b0;text-align:center">${v}</td>`;
+  const table = `<table style="border-collapse:collapse;width:100%"><tr>${["", "수", "수의 개수", "쓴 숫자의 개수"].map((h) => `<th style="padding:7px 10px;border:1px solid #cfc5b0;background:#efe8d6">${h}</th>`).join("")}</tr>${cells.map((c, i) => `<tr>${td(PARTS[i])}${td(`${c.a}부터 ${c.b}까지`)}${td(box("", "min-width:46px"))}${td(box("", "min-width:46px"))}</tr>`).join("")}</table>`;
+  return problem("range-digit-table-b10", {
+    prompt: "표의 빈칸에 알맞은 수를 써넣으세요. 각 줄은 그 범위의 수를 모두 쓸 때입니다.",
+    visual: fig(htmlPanel(table, 520)),
+    answer: cells.map((c, i) => `${PARTS[i]} ${c.count}개, ${c.digits}개`).join(" / "),
+    solution: `수의 개수 = 끝 수 - 첫 수 + 1. 쓴 숫자 수는 한 자리·두 자리·세 자리로 나누어 (개수 × 자리 수)를 더합니다. ${cells.map((c, i) => `${PARTS[i]} ${c.count}개, ${c.digits}개`).join(", ")}.`,
+    meta: { cells }
+  });
+}
+
+// 백의 자리대에서 시작하는 범위 — 특정 숫자를 쓴 횟수
+function digitOccurrenceHundredsB10({ difficulty = 2 }) {
+  const from = randomInt(1, difficulty === 3 ? 6 : 4) * 100 + randomInt(0, 80);
+  const to = from + randomInt(difficulty === 1 ? 80 : 150, difficulty === 3 ? 260 : 210);
+  const digit = randomInt(1, 9);
+  const result = countDigitRange(from, to, digit);
+  return problem("digit-occurrence-hundreds-b10", {
+    prompt: `${from}부터 ${to}까지의 수를 모두 쓸 때 숫자 ${eun(digit)} 모두 몇 번 쓰나요?`,
+    visual: fig(rangeHtml(from, to)),
+    answer: `${result}번`,
+    solution: `자리마다 나누어 셉니다. ${placeCounts(from, to, digit).join(", ")} → 모두 ${result}번.`,
+    meta: { from, to, digit, result }
+  });
+}
+
+// 숫자 야구 — 2S·3B·1S1B·아웃이 섞인 단서
+const BALL_SECRETS = permutations(range(1, 9), 3);
+const ballScore = (secret, guess) => {
+  let s = 0, b = 0;
+  guess.forEach((d, i) => { if (secret[i] === d) s += 1; else if (secret.includes(d)) b += 1; });
+  return [s, b];
+};
+const scoreKey = ([s, b]) => `${s}S${b}B`;
+const FEATURED = ["2S0B", "0S3B", "1S1B", "0S0B"];
+function guessFor(secret, kind) {
+  const decoys = shuffle(range(1, 9).filter((d) => !secret.includes(d)));
+  const idx = shuffle([0, 1, 2]);
+  const g = [null, null, null];
+  if (kind === "2S0B") { g[idx[0]] = secret[idx[0]]; g[idx[1]] = secret[idx[1]]; g[idx[2]] = decoys[0]; }
+  else if (kind === "0S3B") { const d = pick([[1, 2, 0], [2, 0, 1]]); return d.map((j) => secret[j]); }
+  else if (kind === "1S1B") { g[idx[0]] = secret[idx[0]]; g[idx[1]] = secret[idx[2]]; g[idx[2]] = decoys[0]; }
+  else if (kind === "0S0B") return decoys.slice(0, 3);
+  else if (kind === "1S0B") { g[idx[0]] = secret[idx[0]]; g[idx[1]] = decoys[0]; g[idx[2]] = decoys[1]; }
+  else if (kind === "0S1B") { g[idx[0]] = secret[idx[1]]; g[idx[1]] = decoys[0]; g[idx[2]] = decoys[1]; }
+  else if (kind === "0S2B") { g[idx[0]] = secret[idx[1]]; g[idx[1]] = secret[idx[0]]; g[idx[2]] = decoys[0]; }
+  else return shuffle(range(1, 9)).slice(0, 3);
+  return g;
+}
+function baseballPuzzle(difficulty) {
+  const maxClues = difficulty === 1 ? 4 : 5;
+  const needFeatured = difficulty === 1 ? 1 : difficulty === 2 ? 2 : 3;
+  for (let tries = 0; tries < 2000; tries += 1) {
+    const secret = pick(BALL_SECRETS);
+    const kinds = [];
+    const featured = shuffle(FEATURED).slice(0, needFeatured);
+    kinds.push(...featured);
+    const others = ["1S0B", "0S1B", "0S2B", "1S1B", "2S0B", "0S0B", "any"];
+    while (kinds.length < maxClues) kinds.push(pick(others));
+    const clues = shuffle(kinds).map((k) => guessFor(secret, k)).filter((g) => new Set(g).size === 3).map((guess) => ({ guess, score: ballScore(secret, guess) }));
+    const fits = (list) => BALL_SECRETS.filter((c) => list.every((cl) => scoreKey(ballScore(c, cl.guess)) === scoreKey(cl.score)));
+    if (fits(clues).length !== 1) continue;
+    // 없어도 되는 단서는 뺀다(모든 단서가 꼭 필요하게)
+    let kept = clues.slice();
+    for (let i = kept.length - 1; i >= 0; i -= 1) { const without = kept.filter((_, j) => j !== i); if (fits(without).length === 1) kept = without; }
+    const keys = new Set(kept.map((c) => scoreKey(c.score)));
+    if (FEATURED.filter((k) => keys.has(k)).length < needFeatured) continue;
+    if (kept.length < 3 || kept.length > maxClues) continue;
+    if (new Set(kept.map((c) => c.guess.join(""))).size !== kept.length) continue;
+    return { secret, clues: kept };
+  }
+  return baseballPuzzle(difficulty);
+}
+const scoreText = ([s, b]) => (s === 0 && b === 0 ? "아웃" : [s ? `${s}S` : "", b ? `${b}B` : ""].filter(Boolean).join(" "));
+const scoreSymbols = ([s, b]) => (s === 0 && b === 0 ? "없음" : `${"□".repeat(s)}${"△".repeat(b)}`);
+function baseballHtml(clues, symbols) {
+  const rowsHtml = clues.map((c, i) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:14px;padding:6px 4px;border-bottom:1px dashed #d8cfbd"><span style="display:flex;gap:5px;align-items:center"><small style="color:${SOFT};min-width:22px">${CIRCLED[i]}</small>${c.guess.map((d) => `<span style="display:inline-grid;place-items:center;width:32px;height:36px;border:1.5px solid ${LINE};border-radius:5px;background:#fff;font-size:20px;font-weight:800">${d}</span>`).join("")}</span><b style="font-size:18px;letter-spacing:2px;white-space:nowrap">${symbols ? scoreSymbols(c.score) : scoreText(c.score)}</b></div>`).join("");
+  const legend = symbols ? `<div style="font-size:13px;color:${SOFT};padding-top:6px">□ : 숫자와 자리가 모두 맞음 &nbsp; △ : 숫자만 맞고 자리는 다름</div>` : "";
+  return htmlPanel(rowsHtml + legend, 400);
+}
+function baseballSolution(secret, clues, symbols) {
+  const show = symbols ? scoreSymbols : scoreText;
+  const out = clues.filter((c) => c.score[0] === 0 && c.score[1] === 0).map((c) => c.guess.join(", "));
+  const all = clues.filter((c) => c.score[0] + c.score[1] === 3 && c.score[0] === 0);
+  const hints = [];
+  if (out.length) { const list = out.join(" / "); hints.push(`${show([0, 0])}인 단서의 숫자 ${list.slice(0, -1)}${eun(Number(list.slice(-1)))} 비밀 수에 없습니다`); }
+  if (all.length) hints.push(`${show([0, 3])}이면 세 숫자가 모두 있고 자리는 모두 다릅니다`);
+  return `${hints.length ? `${hints.join(". ")}. ` : ""}남은 단서에 하나씩 맞춰 보면 조건을 모두 만족하는 수는 ${secret.join("")} 하나뿐입니다. 확인: ${clues.map((c, i) => `${CIRCLED[i]} ${c.guess.join("")} → ${show(c.score)}`).join(", ")}.`;
+}
+function numberBaseballMixedB10({ difficulty = 2 }) {
+  const { secret, clues } = baseballPuzzle(difficulty);
+  return problem("number-baseball-mixed-b10", {
+    prompt: "1부터 9까지의 서로 다른 숫자 세 개로 만든 비밀 수를 찾으세요. 숫자와 자리가 모두 맞으면 S, 숫자만 맞으면 B, 하나도 없으면 아웃입니다.",
+    visual: fig(baseballHtml(clues, false)),
+    answer: secret.join(""),
+    solution: baseballSolution(secret, clues, false),
+    meta: { secret, clues }
+  });
+}
+function numberBaseballSymbolB10({ difficulty = 3 }) {
+  const { secret, clues } = baseballPuzzle(Math.max(2, difficulty));
+  return problem("number-baseball-symbol-b10", {
+    prompt: "1부터 9까지의 서로 다른 숫자 세 개로 만든 비밀 수를 찾으세요. 단서의 기호를 보고 답을 구하세요.",
+    visual: fig(baseballHtml(clues, true)),
+    answer: secret.join(""),
+    solution: baseballSolution(secret, clues, true),
+    meta: { secret, clues }
+  });
+}
+
 // ── 내보내기 ────────────────────────────────────────
 
 export const BOOK10_STRUCTURE_GENERATORS = {
@@ -1071,7 +1269,15 @@ export const BOOK10_STRUCTURE_GENERATORS = {
   repeatedNonzeroDigitCountB10,
   cardSetTargetSumAllB10,
   digitSumRankedLargeB10,
-  equalStepDigitNumbersB10
+  equalStepDigitNumbersB10,
+  digitOccurrenceWideB10,
+  mostFrequentDigitCountB10,
+  totalWrittenDigitsBlockB10,
+  totalWrittenDigitsFourB10,
+  rangeDigitTableB10,
+  digitOccurrenceHundredsB10,
+  numberBaseballMixedB10,
+  numberBaseballSymbolB10
 };
 
 const row = (id, middle, label, generator, aliases = [], domain = "number") => ({
@@ -1111,7 +1317,15 @@ export const BOOK10_STRUCTURE_TYPE_ROWS = [
   row("repeated-nonzero-digit-count-b10", "조건에 맞는 수", "0 아닌 숫자 몇 개를 여러 번 써서 만드는 수의 개수", "repeatedNonzeroDigitCountB10", ["여러 번 쓰기", "경우의 수"]),
   row("card-set-target-sum-all-b10", "숫자 카드", "1부터 n까지 카드 중 몇 장으로 합 만들기 — 방법 모두 쓰기", "cardSetTargetSumAllB10", ["카드 합", "모두 쓰기"]),
   row("digit-sum-ranked-large-b10", "조건에 맞는 수", "자리 숫자의 합이 같은 수를 큰 수부터 쓸 때 몇 번째 수", "digitSumRankedLargeB10", ["자리 숫자의 합", "순서"]),
-  row("equal-step-digit-numbers-b10", "조건에 맞는 수", "이웃한 자리 숫자가 같은 크기씩 커지는(작아지는) 수", "equalStepDigitNumbersB10", ["같은 간격", "자리 숫자"])
+  row("equal-step-digit-numbers-b10", "조건에 맞는 수", "이웃한 자리 숫자가 같은 크기씩 커지는(작아지는) 수", "equalStepDigitNumbersB10", ["같은 간격", "자리 숫자"]),
+  row("digit-occurrence-wide-b10", "숫자 포함", "1부터 600대까지 특정 숫자를 쓴 횟수·들어 있는 수", "digitOccurrenceWideB10", ["숫자 세기", "자리마다"]),
+  row("most-frequent-digit-count-b10", "수와 숫자", "1부터 300대까지 가장 많이 쓴 숫자와 그 횟수", "mostFrequentDigitCountB10", ["가장 많이 쓴 숫자"]),
+  row("total-written-digits-block-b10", "수와 숫자", "1부터 세 자리 수까지 쓴 숫자의 전체 개수", "totalWrittenDigitsBlockB10", ["쓴 숫자 수", "세 자리"]),
+  row("total-written-digits-four-b10", "수와 숫자", "1부터 네 자리 수까지 쓴 숫자의 전체 개수", "totalWrittenDigitsFourB10", ["쓴 숫자 수", "네 자리"]),
+  row("range-digit-table-b10", "수와 숫자", "여러 범위의 수의 개수와 쓴 숫자의 개수 표 채우기", "rangeDigitTableB10", ["쓴 숫자 수", "표"]),
+  row("digit-occurrence-hundreds-b10", "수와 숫자", "백의 자리대 범위에서 특정 숫자를 쓴 횟수", "digitOccurrenceHundredsB10", ["숫자 세기", "범위"]),
+  row("number-baseball-mixed-b10", "숫자 야구", "2S·3B·1S 1B·아웃이 섞인 단서로 비밀 수 찾기", "numberBaseballMixedB10", ["숫자 야구", "스트라이크"], "logic"),
+  row("number-baseball-symbol-b10", "숫자 야구", "□·△ 기호 단서로 비밀 수 찾기", "numberBaseballSymbolB10", ["숫자 야구", "기호"], "logic")
 ];
 
 export const BOOK10_STRUCTURE_GUIDES = {
@@ -1146,7 +1360,15 @@ export const BOOK10_STRUCTURE_GUIDES = {
   "repeated-nonzero-digit-count-b10": "자리마다 고를 수 있는 숫자 수를 자리 수만큼 곱합니다.",
   "card-set-target-sum-all-b10": "가장 작은 카드를 정하고 나머지를 커지는 차례로 맞춰 같은 묶음을 두 번 쓰지 않습니다.",
   "digit-sum-ranked-large-b10": "백의 자리를 크게, 십의 자리를 큰 것부터 내려가며 차례로 셉니다.",
-  "equal-step-digit-numbers-b10": "차를 정하고 첫 숫자를 바꿔 가며 끝 숫자가 0~9 안에 있는지 봅니다."
+  "equal-step-digit-numbers-b10": "차를 정하고 첫 숫자를 바꿔 가며 끝 숫자가 0~9 안에 있는지 봅니다.",
+  "digit-occurrence-wide-b10": "일의 자리·십의 자리·백의 자리로 나누어 그 숫자가 몇 번 나오는지 셉니다.",
+  "most-frequent-digit-count-b10": "앞자리에 많이 나오는 숫자가 후보입니다. 후보를 자리마다 세어 견줍니다.",
+  "total-written-digits-block-b10": "한 자리·두 자리·세 자리 수로 나누어 (개수 × 자리 수)를 더합니다.",
+  "total-written-digits-four-b10": "자리 수가 같은 수끼리 묶어 (개수 × 자리 수)를 더합니다. 네 자리 수는 1000부터.",
+  "range-digit-table-b10": "수의 개수 = 끝 - 처음 + 1. 자리 수가 바뀌는 곳에서 나누어 셉니다.",
+  "digit-occurrence-hundreds-b10": "자리마다 나누고, 백의 자리대가 바뀌는 곳에서 끊어 셉니다.",
+  "number-baseball-mixed-b10": "아웃 단서의 숫자를 먼저 지우고, 2S·3B처럼 많이 알려 주는 단서부터 맞춰 봅니다.",
+  "number-baseball-symbol-b10": "□는 숫자와 자리, △는 숫자만 맞습니다. 기호가 없는 단서의 숫자부터 지웁니다."
 };
 
 export const BOOK10_STRUCTURE_REMAPS = [
@@ -1212,7 +1434,19 @@ export const BOOK10_STRUCTURE_REMAPS = [
   ["book-10", 3, "practice", 1, [14, 15, 16], "card-set-target-sum-all-b10"],
   ["book-10", 3, "advanced", 1, [5], "card-set-target-sum-all-b10"],
   ["book-10", 3, "advanced", 1, [2], "digit-sum-ranked-large-b10"],
-  ["book-10", 3, "advanced", 1, [3], "equal-step-digit-numbers-b10"]
+  ["book-10", 3, "advanced", 1, [3], "equal-step-digit-numbers-b10"],
+  // 4단원 — 넓은 범위 숫자 세기, 가장 많이 쓴 숫자와 횟수, 세·네 자리까지 쓴 숫자 수, 범위 표, 백의 자리대 범위, 섞인 단서 숫자 야구·기호
+  ["book-10", 4, "check", 1, [1, 2, 4], "digit-occurrence-wide-b10"],
+  ["book-10", 4, "practice", 1, [6, 7], "digit-occurrence-wide-b10"],
+  ["book-10", 4, "check", 1, [3], "most-frequent-digit-count-b10"],
+  ["book-10", 4, "check", 2, [1, 3], "total-written-digits-block-b10"],
+  ["book-10", 4, "practice", 1, [18, 20], "total-written-digits-block-b10"],
+  ["book-10", 4, "advanced", 1, [3], "total-written-digits-four-b10"],
+  ["book-10", 4, "practice", 1, [9], "range-digit-table-b10"],
+  ["book-10", 4, "advanced", 1, [1, 2], "digit-occurrence-hundreds-b10"],
+  ["book-10", 4, "activity", 1, [1, 2, 3, 4], "number-baseball-mixed-b10"],
+  ["book-10", 4, "practice", 1, [1, 2, 3, 4], "number-baseball-mixed-b10"],
+  ["book-10", 4, "advanced", 1, [5], "number-baseball-symbol-b10"]
 ];
 
 // ── 독립 검산(book10-audit.mjs가 부름) — 생성기 코드와 따로 meta로 다시 셈 ─────────
@@ -1232,6 +1466,28 @@ function uniqueLinear(rows, totals, values) {
     rank += 1;
   }
   return values.every((v) => Number.isInteger(v) && v > 0);
+}
+function baseballCheck(p) {
+  const { secret, clues } = p.meta;
+  const score = (s, g) => { let a = 0, b = 0; g.forEach((d, i) => { if (s[i] === d) a += 1; else if (s.includes(d)) b += 1; }); return `${a}-${b}`; };
+  const fits = [];
+  for (let v = 123; v <= 987; v += 1) {
+    const d = String(v).split("").map(Number);
+    if (d.includes(0) || new Set(d).size !== 3) continue;
+    if (clues.every((c) => score(d, c.guess) === `${c.score[0]}-${c.score[1]}`)) fits.push(v);
+  }
+  if (fits.length !== 1 || String(fits[0]) !== p.answer || p.answer !== secret.join("")) return false;
+  // 모든 단서가 꼭 필요
+  return clues.every((_, i) => {
+    const rest = clues.filter((__, j) => j !== i);
+    let n = 0;
+    for (let v = 123; v <= 987 && n < 2; v += 1) {
+      const d = String(v).split("").map(Number);
+      if (d.includes(0) || new Set(d).size !== 3) continue;
+      if (rest.every((c) => score(d, c.guess) === `${c.score[0]}-${c.score[1]}`)) n += 1;
+    }
+    return n >= 2;
+  });
 }
 function monotoneCheck(p) {
   const m = p.meta;
@@ -1369,5 +1625,28 @@ export const BOOK10_STRUCTURE_CHECKS = {
     });
     if (!m.numbers.every((v) => fits.includes(v))) return "같은 간격 수";
     return (m.listMode ? p.answer === m.numbers.join(", ") && m.numbers.length >= 2 : p.answer === `${m.numbers.length}개`) || "같은 간격 답";
-  }
+  },
+  "digit-occurrence-wide-b10": (p) => {
+    const m = p.meta;
+    let c = 0;
+    for (let v = m.from; v <= m.to; v += 1) { const s = String(v); c += m.contains ? (s.includes(String(m.digit)) ? 1 : 0) : s.split(String(m.digit)).length - 1; }
+    return p.answer === `${c}${m.contains ? "개" : "번"}` || "숫자 세기";
+  },
+  "most-frequent-digit-count-b10": (p) => {
+    const m = p.meta;
+    const counts = range(0, 9).map((d) => { let c = 0; for (let v = 1; v <= m.to; v += 1) c += String(v).split(String(d)).length - 1; return c; });
+    const max = Math.max(...counts);
+    return (counts.filter((c) => c === max).length === 1 && p.answer === `숫자 ${counts.indexOf(max)}, ${max}번`) || "가장 많이 쓴 숫자";
+  },
+  "total-written-digits-block-b10": (p) => p.answer === `${range(1, p.meta.to).map(String).join("").length}개` || "쓴 숫자 수",
+  "total-written-digits-four-b10": (p) => (p.meta.to >= 1000 && p.answer === `${range(1, p.meta.to).map(String).join("").length}개`) || "네 자리까지 쓴 숫자 수",
+  "range-digit-table-b10": (p) => p.meta.cells.every((c) => c.count === c.b - c.a + 1 && c.digits === range(c.a, c.b).map(String).join("").length) || "범위 표",
+  "digit-occurrence-hundreds-b10": (p) => {
+    const m = p.meta;
+    let c = 0;
+    for (let v = m.from; v <= m.to; v += 1) c += String(v).split(String(m.digit)).length - 1;
+    return (m.from >= 100 && p.answer === `${c}번`) || "범위 숫자 세기";
+  },
+  "number-baseball-mixed-b10": (p) => baseballCheck(p) || "숫자 야구 답 하나",
+  "number-baseball-symbol-b10": (p) => baseballCheck(p) || "기호 숫자 야구 답 하나"
 };
