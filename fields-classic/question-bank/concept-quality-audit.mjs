@@ -21,8 +21,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 607, `expected 607 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 676, `expected 676 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 631, `expected 631 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 700, `expected 700 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
 assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 80, `expected 80 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
@@ -298,12 +298,12 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03"])
   }),
-  "cryptarithm-fixed-digit-addition": Object.freeze({
+  "crypt-shape-digit-sum-b3": Object.freeze({
     conceptId: "concept:number:fixed-digit-cryptarithm",
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03"])
   }),
-  "cryptarithm-multi-symbol-carry": Object.freeze({
+  "crypt-ab-double-b3": Object.freeze({
     conceptId: "concept:number:multi-symbol-carry",
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03"])
@@ -318,10 +318,10 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03"])
   }),
-  "magic-square-three-target": Object.freeze({
+  "magic-sum-then-fill-b3": Object.freeze({
     conceptId: "concept:number:magic-square-target",
     sourceBookId: "book-03",
-    placementBooks: Object.freeze(["book-03", "book-09"])
+    placementBooks: Object.freeze(["book-03"])
   }),
   "wide-snake-number-grid-b5": Object.freeze({
     conceptId: "concept:pattern:path-indexed-number-grid",
@@ -557,7 +557,7 @@ for (const typeId of curriculumTypeIds) {
 }
 
 assert(sourceBackedCount === 80, `expected 80 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 527, `expected 527 principle-only types, got ${principleOnlyCount}`);
+assert(principleOnlyCount === 551, `expected 551 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
