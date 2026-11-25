@@ -1442,21 +1442,36 @@ const reverseFloorMovesB8 = (o) => reverseStepsBase({ ...o, ctx: "floor" });
 const reversePeopleMarblesB8 = (o) => reverseStepsBase({ ...o, ctx: "people" });
 
 // 상대가 가진 만큼 준 뒤 「둘 다 N」
-function transferTableSvg(names, rowLabels, lastRow) {
+// 거꾸로 풀기 표는 마지막 결과(나중)를 맨 위 줄에 두고, 아래로 한 번씩 되돌려 맨 아래 「처음」에 닿는다
+// (원장 2026-11-25 「표를 이용한 거꾸로 풀기는 결과를 마지막을 제일 위로」). 줄 사이 오른쪽에 그 줄에서 되돌리는 주고받기를 적는다.
+const TIMES_KO = ["", "한", "두", "세", "네", "다섯"];
+function transferTableSvg(names, stepLabels, lastRow) {
   const c0 = 92;
-  const c = 78;
+  const c = Math.max(78, ...names.map((n) => String(n).length * 15 + 18));
   const rh = 32;
-  const w = c0 + 2 * c + 8;
-  const h = (rowLabels.length + 2) * rh + 8;
+  const note = 12 + Math.max(...stepLabels.map((l) => (String(l).length + 5) * 12));
+  const k = stepLabels.length;
+  const w = c0 + 2 * c + note + 8;
+  const h = (k + 2) * rh + 8;
+  const stateLabel = (after) => (after === 0 ? "처음" : after === k ? "나중" : `${TIMES_KO[after] || after} 번 뒤`);
+  const rowsAll = [["", ...names], ["나중", ...lastRow]];
+  for (let after = k - 1; after >= 0; after -= 1) rowsAll.push([stateLabel(after), "", ""]);
   let body = "";
-  const rowsAll = [["", ...names], ...rowLabels.map((l) => [l, "", ""]), ["나중", ...lastRow]];
   rowsAll.forEach((row, r) => row.forEach((v, col) => {
     const x = col === 0 ? 4 : c0 + (col - 1) * c;
     const ww = col === 0 ? c0 - 4 : c;
     body += `<rect x="${x}" y="${4 + r * rh}" width="${ww}" height="${rh}" fill="${r === 0 ? "#e3eef2" : "#fff"}" stroke="${INK}" stroke-width="1.1"/>`;
     if (v !== "") body += text(x + ww / 2, 4 + r * rh + rh / 2 + 6, v, 15);
   }));
-  return `${svgOpen(w, h, "주고받기 표")}${body}</svg>`;
+  // 줄 r(나중부터)과 r+1 사이 = 되돌리는 주고받기(마지막 것부터)
+  const nx = c0 + 2 * c + 10;
+  for (let r = 1; r <= k; r += 1) {
+    const y = 4 + (r + 1) * rh;
+    const step = stepLabels[k - r];
+    body += `<path d="M${nx} ${y - 9}v18" stroke="#8a9aa0" stroke-width="1.4" fill="none"/><path d="M${nx - 4} ${y + 4}l4 6 4-6" stroke="#8a9aa0" stroke-width="1.4" fill="none"/>`;
+    body += `<text x="${nx + 8}" y="${y + 5}" font-size="12" style="fill:#5b6b70;${FONT}">${step} 되돌리기</text>`;
+  }
+  return `${svgOpen(w, h, "거꾸로 채우는 주고받기 표")}${body}</svg>`;
 }
 
 const PAIRS = [["형", "동생"], ["언니", "동생"], ["누나", "동생"], ["다온", "새롬"], ["하랑", "이솔"]];
