@@ -1,9 +1,9 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { applyTextbookRemaps, TEXTBOOK_REMAPS } from "./textbook-remaps.js?v=20261125b";
-import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125c";
+import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125f";
 import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125c";
-import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125c";
+import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
 import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125d";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125c";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125c";
@@ -1039,7 +1039,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "operator-insertion": Object.freeze(["plus-minus-multi-target", "number-card-plus-minus"]),
   "function-machine": Object.freeze(["two-function-machine-chain", "g1-fall-linear-input-output-table"]),
   "fold-diagonal-unfold": Object.freeze(["three-fold-line-unfold", "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw"]),
-  "shape-transform": Object.freeze(["shape-flip-composition", "shape-quarter-half-turn", "shape-rotate-flip-grid"]),
+  "shape-transform": Object.freeze(["line-letter-two-flips-half-b1", "line-letter-turn-four-b1", "shape-rotate-flip-grid"]),
   "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
   "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
   "tree-planting": Object.freeze(["closed-perimeter-object-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),

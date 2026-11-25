@@ -493,19 +493,8 @@ export const CONCEPT_DEFINITION_BY_ID = Object.freeze(Object.fromEntries(
 ));
 
 export const TYPE_CONCEPT_LESSONS = Object.freeze({
-  "shape-quarter-half-turn": sourceLesson(
-    "concept:geometry:rotation-center-turn",
-    [
-      beat("rotation-center", "중심을 찾아요", "도형이 돌아가는 중심을 먼저 표시합니다."),
-      beat("rotation-amount", "회전량을 정해요", "반의 반 바퀴인지 반 바퀴인지, 어느 방향으로 도는지 확인합니다."),
-      beat("move-vertices", "꼭짓점을 옮겨요", "각 꼭짓점을 중심에서 같은 거리로 같은 회전량만큼 옮긴 뒤 차례로 잇습니다.")
-    ],
-    "도형 전체를 밀거나 회전 방향을 반대로 잡지 않았는지 확인합니다.",
-    [
-      evidence("도형 움직이기", 1, [2, 3, 5, 6])
-    ]
-  ),
-  "fold-cut-shape-choice": Object.freeze({
+  // 1권 활동 2-3·4번(두 대각선으로 접어 자르고 펼친 모양 그리기)이 옮겨 간 유형으로 수업도 옮겼다(2026-11-25)
+  "fold-diagonal-twice-unfold-draw-b1": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
     scope: "global-type-id",
     sharedByDesign: true,
@@ -560,11 +549,13 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ],
     "한 조건만 보고 바로 정하지 말고 하나씩 대응 조건과 모든 문장을 함께 확인합니다.",
     [
-      evidence("수 추리와 논리 추리", 2, [1, 2, 3, 4]),
+      // 1권 활동 2-1·2번(세 사람 선 잇기)은 person-item-three-b1로 옮겼다(2026-11-25)
+      evidence("수 추리와 논리 추리", 2, [3, 4]),
       book4Evidence("논리추리와 자리배치", 1, [1, 2, 3, 4])
     ]
   ),
-  "shape-mirror-direction": Object.freeze({
+  // 1권 활동 1-1번(선 모양을 네 방향으로 뒤집어 그리기)이 옮겨 간 유형으로 수업도 옮겼다(2026-11-25)
+  "line-letter-flip-four-b1": Object.freeze({
     conceptId: "concept:geometry:mirror-line-reflection",
     scope: "global-type-id",
     sharedByDesign: true,
@@ -610,7 +601,8 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "shape-flip-composition": Object.freeze({
+  // 1권 활동 1-4번(두 번 뒤집기 → 반 바퀴)이 옮겨 간 유형으로 수업도 옮겼다(2026-11-25)
+  "line-letter-two-flips-half-b1": Object.freeze({
     conceptId: "concept:geometry:sequential-rigid-transforms",
     scope: "global-type-id",
     sharedByDesign: true,
@@ -625,18 +617,6 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "digital-digit-transform": sourceLesson(
-    "concept:pattern:seven-segment-transform",
-    [
-      beat("mark-lit-segments", "켜진 막대를 표시해요", "처음 숫자를 이루는 위·아래·양옆·가운데 막대를 빠짐없이 확인합니다."),
-      beat("move-segments", "막대를 함께 움직여요", "각 막대를 제자리 모양 그대로 주어진 방향으로 뒤집거나 돌립니다."),
-      beat("read-new-digit", "새 막대 모양을 읽어요", "움직인 뒤 켜진 막대의 위치를 보고 완성된 한 자리 숫자를 찾습니다.")
-    ],
-    "숫자 모양을 외워서 바꾸거나 막대 하나만 따로 움직이지 않았는지 확인합니다.",
-    [
-      evidence("도형 움직이기", 2, [1, 2])
-    ]
-  ),
   "digital-two-digit-transform": Object.freeze({
     conceptId: "concept:pattern:seven-segment-transform",
     scope: "global-type-id",
@@ -652,18 +632,19 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "t-shape-magic-sum": Object.freeze({
+  // 1권 활동 1-4번(T자 세 가지)이 옮겨 간 유형으로 수업도 옮겼다. 1-5번(ㄱ자)은 corner-magic-three-ways-b1(2026-11-25)
+  "t-magic-three-ways-b1": Object.freeze({
     conceptId: "concept:number:shared-junction-equal-sum",
     scope: "global-type-id",
     sharedByDesign: true,
     beats: Object.freeze([
-      beat("mark-shared-junction", "두 줄이 만나는 칸을 찾아요", "가로줄과 세로줄에 모두 들어가는 T자의 꺾이는 칸을 표시합니다."),
+      beat("mark-shared-junction", "두 줄이 만나는 칸을 찾아요", "가로줄과 세로줄에 모두 들어가는 칸(T자는 가로줄 가운데 칸)을 표시합니다."),
       beat("pair-remaining-cards", "나머지 네 수를 짝지어요", "공통 칸을 제외한 가로 두 칸과 세로 두 칸의 합이 같도록 수 카드를 두 쌍으로 나눕니다."),
       beat("verify-t-lines", "T자의 두 줄을 더해요", "카드를 놓은 뒤 가로 세 수와 세로 세 수를 각각 더해 두 합이 같은지 확인합니다.")
     ]),
-    misconception: "T자의 꺾이는 칸을 두 번 놓거나 공통 칸이 아닌 다른 칸을 함께 세지 않았는지 확인합니다.",
+    misconception: "두 줄이 만나는 칸의 수를 두 번 놓거나 공통 칸이 아닌 다른 칸을 함께 세지 않았는지 확인합니다.",
     sourceEvidence: Object.freeze([
-      evidence("마방진과 가쿠로 퍼즐", 1, [4, 5])
+      evidence("마방진과 가쿠로 퍼즐", 1, [4])
     ]),
     verificationState: "source-confirmed"
   }),
@@ -712,21 +693,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "three-digit-step-sequence": Object.freeze({
-    conceptId: "concept:pattern:constant-step-sequence",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
-      beat("find-neighbor-difference", "이웃한 두 수의 차를 구해요", "연달아 보이는 두 수에서 뒤 수와 앞 수의 차를 계산합니다."),
-      beat("check-direction-step", "같은 방향과 크기인지 봐요", "다른 이웃한 수도 같은 만큼 커지거나 작아지는지 확인해 규칙을 정합니다."),
-      beat("continue-step", "빈칸까지 같은 차를 이어요", "앞뒤에서 같은 수만큼 더하거나 빼 빈칸의 수를 채우고 다시 차를 확인합니다.")
-    ]),
-    misconception: "각 자리 숫자만 따로 보거나 커지는 수열과 작아지는 수열의 부호를 바꾸지 않았는지 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("수 추리와 논리 추리", 1, [1])
-    ]),
-    verificationState: "source-confirmed"
-  }),
+  // three-digit-step-sequence 수업: 1권 활동 1-1번이 「같은 크기만큼 변하는 자리 숫자 표」(three-digit-equal-step-table-b1)로 옮겨 가 근거 번호가 없어져 뺐다(2026-11-25)
   "two-digit-even-ones-greater-gap": Object.freeze({
     conceptId: "concept:number:two-digit-place-conditions",
     scope: "global-type-id",

@@ -21,17 +21,13 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 584, `expected 584 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 653, `expected 653 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 607, `expected 607 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 676, `expected 676 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 83, `expected 83 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 80, `expected 80 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
-  "shape-quarter-half-turn": Object.freeze({
-    conceptId: "concept:geometry:rotation-center-turn",
-    placementBooks: Object.freeze(["book-01", "book-04"])
-  }),
   "tetromino-family-choice": Object.freeze({
     conceptId: "concept:geometry:tetromino-connectivity-fit",
     sourceBookId: "book-04",
@@ -101,7 +97,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
   }),
-  "fold-cut-shape-choice": Object.freeze({
+  "fold-diagonal-twice-unfold-draw-b1": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
     placementBooks: Object.freeze(["book-01"])
   }),
@@ -117,9 +113,9 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:logic:one-to-one-elimination",
     placementBooks: Object.freeze(["book-01", "book-04"])
   }),
-  "shape-mirror-direction": Object.freeze({
+  "line-letter-flip-four-b1": Object.freeze({
     conceptId: "concept:geometry:mirror-line-reflection",
-    placementBooks: Object.freeze(["book-01", "book-04"])
+    placementBooks: Object.freeze(["book-01"])
   }),
   "cross-shape-magic-sum": Object.freeze({
     conceptId: "concept:number:cross-center-equal-sum",
@@ -129,19 +125,15 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:number:two-digit-place-conditions",
     placementBooks: Object.freeze(["book-01"])
   }),
-  "shape-flip-composition": Object.freeze({
+  "line-letter-two-flips-half-b1": Object.freeze({
     conceptId: "concept:geometry:sequential-rigid-transforms",
     placementBooks: Object.freeze(["book-01"])
-  }),
-  "digital-digit-transform": Object.freeze({
-    conceptId: "concept:pattern:seven-segment-transform",
-    placementBooks: Object.freeze(["book-01", "book-04"])
   }),
   "digital-two-digit-transform": Object.freeze({
     conceptId: "concept:pattern:seven-segment-transform",
     placementBooks: Object.freeze(["book-01"])
   }),
-  "t-shape-magic-sum": Object.freeze({
+  "t-magic-three-ways-b1": Object.freeze({
     conceptId: "concept:number:shared-junction-equal-sum",
     placementBooks: Object.freeze(["book-01"])
   }),
@@ -155,10 +147,6 @@ const expectedPilot = Object.freeze({
   }),
   "gakuro-grid-nine-sum": Object.freeze({
     conceptId: "concept:number:row-column-sum-constraints",
-    placementBooks: Object.freeze(["book-01"])
-  }),
-  "three-digit-step-sequence": Object.freeze({
-    conceptId: "concept:pattern:constant-step-sequence",
     placementBooks: Object.freeze(["book-01"])
   }),
   "two-digit-even-ones-greater-gap": Object.freeze({
@@ -568,8 +556,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 83, `expected 83 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 501, `expected 501 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 80, `expected 80 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 527, `expected 527 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
