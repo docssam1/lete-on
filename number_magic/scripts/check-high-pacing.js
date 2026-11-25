@@ -95,7 +95,8 @@ for(const [tier, courseCount, expectedFour] of [['highmath1', 11, 1], ['highmath
   }
 }
 assert.equal(estimatedTests, 32, 'all canonical high-school tests have a time estimate');
-for(const [tier, expected] of [['highmath1', 2304], ['highmath2', 2004], ['algebra', 3030]]){
+/* 2026-11-25 하루 20문항(학습 묶음 100문항) 뒤 다시 잰 값 — 전에는 2304 · 2004 · 3030 */
+for(const [tier, expected] of [['highmath1', 2886], ['highmath2', 2712], ['algebra', 3379]]){
   near(Object.values(courses).filter(course => course.tier === tier)
     .reduce((n, course) => n + course.studyPlan.lessons.reduce((sum, lesson) => sum + lesson.estimatedMinutes, 0), 0), expected,
     tier + ': estimated subject minutes include every test');
@@ -193,7 +194,7 @@ for(const cadence of ['w1', 'w2']) for(const speed of [0.7, 0.85, 1, 1.25, 1.5])
   }
   assert.deepEqual(seenLessons, expectedRefs, 'every planned lesson appears once, in order across courses and subjects');
   assert.deepEqual(seenSources, expectedSources, 'every canonical session appears once over the entire calendar');
-  near(assignedMinutes, 2304 + 2004 + 3030);
+  near(assignedMinutes, 2886 + 2712 + 3379);   // 하루 20문항 전 2304 + 2004 + 3030
   assert.equal(subjectLastWeek.highmath1, Math.ceil(24 / (perWeek * speed)));
   assert.equal(subjectLastWeek.highmath2, Math.ceil(48 / (perWeek * speed)));
   assert.equal(subjectLastWeek.algebra, completionWeeks);

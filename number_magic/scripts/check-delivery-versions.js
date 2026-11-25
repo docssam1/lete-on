@@ -44,7 +44,9 @@ for(const [key,c]of Object.entries(courses).filter(([k,c])=>c.studyPlan)){
   const before=legacy[key].studyPlan.lessons,after=c.studyPlan.lessons;
   check(()=>assert.equal(after.length,before.length,key));
   check(()=>assert.deepEqual(after.flatMap(l=>l.sourceIndices),Array.from({length:c.sessions.length},(_,i)=>i),key));
-  check(()=>assert(Math.max(...after.map(l=>l.estimatedMinutes))<=Math.max(...before.map(l=>l.estimatedMinutes))+1e-8,key));
+  /* 하루 20문항(2026-11-25)은 묶음을 나눈 뒤 문항을 더하므로, 나누기 비교는 채우기 전 시간(baseMinutes)으로 */
+  const baseOf=l=>l.estimatedMinutes-l.sourceIndices.reduce((n,i)=>{const s=c.sessions[i];return n+(s.baseMinutes!=null?s.minutes-s.baseMinutes:0);},0);
+  check(()=>assert(Math.max(...after.map(baseOf))<=Math.max(...before.map(l=>l.estimatedMinutes))+1e-8,key));
 }
 (async()=>{
  const runtime=await import(path.join(root,B.OUTPUT));

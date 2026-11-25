@@ -30,9 +30,9 @@ assert.equal(withoutPlans(), before, 'all canonical fields, source sessions and 
 const near = (actual, expected, label) => assert(Math.abs(actual - expected) < 1e-8, label || `${actual} != ${expected}`);
 const bands = [
   /* 2026-11-25 중1-1 세분화 — 과정 29에 새 유형이 들어가 원본 회차 29 → 34 (묶음 수 6·6·8은 그대로) */
-  {tier:'middle1', from:29, source:34, practice:31, seconds:40, minutes:1126.3333333333333, drawing:12},
-  {tier:'middle2', from:32, source:26, practice:23, seconds:45, minutes:1010, drawing:12},
-  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1249.3333333333335, drawing:12}   /* 복습 칸이 새 중1 유형을 고르며 +5분(2026-11-25) */
+  {tier:'middle1', from:29, source:34, practice:31, seconds:40, minutes:1429.3333333333333, drawing:12},   /* 하루 20문항(묶음 100문항, 2026-11-25) 전 1126.33 */
+  {tier:'middle2', from:32, source:26, practice:23, seconds:45, minutes:1630, drawing:12},   /* 하루 20문항 전 1010 */
+  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1602.3333333333335, drawing:12}   /* 복습 칸이 새 중1 유형을 고르며 +5분 · 하루 20문항 전 1249.33(2026-11-25) */
 ];
 const WEEK_MS = 7 * 86400000;
 const startMs = Date.parse('2026-10-26T00:00:00Z');

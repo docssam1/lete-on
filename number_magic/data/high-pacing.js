@@ -45,6 +45,9 @@
     };
   }
   const totalMinutes = course => sessions(course).reduce((n, session) => n + minutesOf(session), 0);
+  // 묶음을 나눌 때는 하루 20문항 채우기 전 시간(courses.js baseMinutes)을 쓴다 — courses.js 가 같은 나누기로 채웠다.
+  const baseOf = session => session && !session.test && session.baseMinutes != null ? Number(session.baseMinutes) : null;
+  const baseTotal = course => sessions(course).reduce((n, session) => n + (baseOf(session) ?? minutesOf(session)), 0);
   const contentSize = course => sessions(course).reduce((n, session) => n
     + (session.magic || []).length + (session.drills || []).length
     + (session.creative || []).length + (session.pool || []).length, 0);
@@ -79,7 +82,9 @@
     // Partition the same source sessions using the full estimate, including a
     // missing-duration test attached to the final view.
     // No source is split, inserted, removed or renumbered.
-    const weights = source.map((_, i) => timeEstimate(course, [i]).estimatedMinutes);
+    // 하루 20문항 채우기(courses.js fillLessonDaily) 전 시간으로 나눈다 — 채운 뒤에 다시 불러도 같은 묶음.
+    const weights = source.map((session, i) => session && session.baseMinutes != null && !session.test
+      ? Number(session.baseMinutes) : timeEstimate(course, [i]).estimatedMinutes);
     if(!weights.some(Boolean)) weights.fill(1);
     const prefix = [0];
     weights.forEach(weight => prefix.push(prefix[prefix.length - 1] + weight));
@@ -111,7 +116,7 @@
       // Two lessons per course; the largest courses receive the extra pairs.
       const extraPairs = Math.max(0, Math.min(band.length, (24 - band.length * 2) / 2));
       const larger = band.slice().sort((a, b) => sessions(b).length - sessions(a).length
-        || totalMinutes(b) - totalMinutes(a) || contentSize(b) - contentSize(a)
+        || baseTotal(b) - baseTotal(a) || contentSize(b) - contentSize(a)
         || (Number(a.order) || 0) - (Number(b.order) || 0));
       const four = new Set(larger.slice(0, Math.floor(extraPairs)));
       band.forEach(course => {
