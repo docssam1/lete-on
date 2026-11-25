@@ -532,9 +532,205 @@
     };
   };
 
+
+  /* ── 중1-1 소인수분해·최대공약수 세분화용 공용 도구(2026-11-25, 원장 「시중 교재와 너무 차이」 — 디딤돌 개념연산 중1-1A 유형 대조) ── */
+  /* 소인수분해를 거듭제곱 꼴 묶음으로: 60 → [{p:2,e:2},{p:3,e:1},{p:5,e:1}] */
+  function powerParts(n) {
+    const out = [];
+    primeFactorArr(n).forEach(p => { const last = out[out.length - 1]; if (last && last.p === p) last.e++; else out.push({ p, e: 1 }); });
+    return out;
+  }
+  /* 2^{2} \times 3 \times 5 — 지수 1은 쓰지 않는다(교과서 표기) */
+  function powTex(parts) { return parts.map(({ p, e }) => e > 1 ? `${p}^{${e}}` : String(p)).join(' \\times '); }
+  /* 같은 모양의 빈칸: □^□ × □ … 와 그 답 */
+  function powBlankTex(parts) { return parts.map(({ e }) => e > 1 ? '\\square^{\\square}' : '\\square').join(' \\times '); }
+  function powBlankAns(parts) { return [].concat(...parts.map(({ p, e }) => e > 1 ? [p, e] : [p])); }
+  /* 짧은 나눗셈(거꾸로 나눗셈) 표 — rows: [[나눈 수, 수1, 수2…]…], last: 남은 몫들. blanks: 칸 → '\\square' 로 바꿀지 */
+  function ladderTex(rows, last, blank) {
+    const cols = rows[0].length - 1;
+    const cell = (v, r, c) => blank && blank(r, c) ? '\\square' : String(v);
+    const body = rows.map((row, r) => `${cell(row[0], r, 0)} & ${row.slice(1).map((v, c) => cell(v, r, c + 1)).join(' & ')}`)
+      .concat([` & ${last.map((v, c) => cell(v, rows.length, c + 1)).join(' & ')}`]);
+    return `\\begin{array}{r|${'r'.repeat(cols)}} ${body.join(' \\\\ \\hline ')} \\end{array}`;
+  }
+  /* 여러 수를 공통 소인수로 나누는 사다리 — 모두 나누는 소수가 없을 때까지(최대공약수용).
+     lcm=true 면 두 수 이상을 나누는 소수로 계속(나누어떨어지지 않는 수는 그대로 내려온다, 최소공배수용). */
+  function commonLadder(nums, lcm) {
+    const rows = []; let cur = nums.slice();
+    for (let guard = 0; guard < 12; guard++) {
+      const p = [2, 3, 5, 7, 11, 13].find(q => lcm ? cur.filter(v => v % q === 0).length >= 2 : cur.every(v => v % q === 0));
+      if (!p) break;
+      rows.push([p].concat(cur));
+      cur = cur.map(v => v % p === 0 ? v / p : v);
+    }
+    return { rows, last: cur };
+  }
+
   /* ── DV7 — 약수·배수·최대공약수·최소공배수 ─────────────── */
   NM_TGEN['dv7_gcdLcm'] = function (params, rng) {
     const mode = (params && params.mode) || 'factors';
+
+    const L3 = (ko, en, zh) => ({ ko, en, zh });
+    /* 소인수의 거듭제곱 꼴로 뽑은 2~3개 수 — 공통 소인수가 꼭 하나 이상 */
+    const pickPowerSet = (k) => {
+      for (let t = 0; t < 200; t++) {
+        const primes = shuffle(rng, [2, 3, 5, 7]).slice(0, R(rng, 2, 3)).sort((a, b) => a - b);
+        const sets = [];
+        for (let i = 0; i < k; i++) {
+          const parts = primes.map(p => ({ p, e: R(rng, 0, p <= 3 ? 3 : 2) })).filter(x => x.e > 0);
+          sets.push(parts);
+        }
+        const common = primes.filter(p => sets.every(ps => ps.some(x => x.p === p)));
+        const distinct = new Set(sets.map(ps => powTex(ps))).size === k;
+        if (common.length && distinct && sets.every(ps => ps.length >= 2)) return sets;
+      }
+      return k === 3 ? [[{p:2,e:3},{p:3,e:1}],[{p:2,e:2},{p:3,e:2}],[{p:2,e:1},{p:3,e:1},{p:5,e:1}]]
+                     : [[{p:2,e:3},{p:3,e:2},{p:5,e:1}],[{p:2,e:2},{p:3,e:3},{p:7,e:1}]];
+    };
+    const valOf = parts => parts.reduce((a, { p, e }) => a * Math.pow(p, e), 1);
+
+    /* ---- 소인수분해를 이용한 최대공약수·최소공배수 (거듭제곱 꼴) ----
+       공통인 소인수에서 지수가 작은 쪽(최대공약수) · 모든 소인수에서 지수가 큰 쪽(최소공배수). 셋에 한 번은 세 수. */
+    if (mode === 'gcdPow' || mode === 'lcmPow') {
+      const isG = mode === 'gcdPow', k = R(rng, 1, 3) === 3 ? 3 : 2;
+      const sets = pickPowerSet(k);
+      const primes = [...new Set([].concat(...sets.map(ps => ps.map(x => x.p))))].sort((a, b) => a - b);
+      const ans = primes.map(p => {
+        const es = sets.map(ps => (ps.find(x => x.p === p) || { e: 0 }).e);
+        return { p, e: isG ? Math.min(...es) : Math.max(...es) };
+      }).filter(x => x.e > 0);
+      const name = isG ? '최대공약수' : '최소공배수';
+      const given = sets.map(ps => powTex(ps)).join(',\\;\\; ');
+      return {
+        prompt: isG ? L3('소인수분해를 이용해 최대공약수를 거듭제곱으로 나타내요 — 공통인 소인수에서 지수가 작은 것을 곱합니다',
+                         'Use the prime factorizations to write the GCD with powers — take each common prime with its smaller exponent.',
+                         '利用质因数分解，用乘方表示最大公因数——取公共质因数中指数较小的相乘。')
+                    : L3('소인수분해를 이용해 최소공배수를 거듭제곱으로 나타내요 — 모든 소인수에서 지수가 큰 것을 곱합니다',
+                         'Use the prime factorizations to write the LCM with powers — take every prime with its larger exponent.',
+                         '利用质因数分解，用乘方表示最小公倍数——取所有质因数中指数较大的相乘。'),
+        tex: `${given} \\;\\Rightarrow\\; \\text{${name}} = ${powBlankTex(ans)}`,
+        answer: powBlankAns(ans), answerType: 'number', widget: 'numpad',
+        solution: [
+          { tex: isG ? `\\text{공통인 소인수}: ${ans.map(x => x.p).join(',\\,')}` : `\\text{모든 소인수}: ${ans.map(x => x.p).join(',\\,')}` },
+          { tex: `\\text{${name}} = ${powTex(ans)} = ${valOf(ans)}` }
+        ]
+      };
+    }
+
+    /* ---- 나눗셈(짧은 나눗셈)을 이용한 최대공약수·최소공배수 ----
+       위쪽 줄은 다 보여 주고 마지막 몫 줄과 결과를 쓴다. 칸은 4개까지(펜·사진 채점 한도). */
+    if (mode === 'gcdLadder' || mode === 'lcmLadder') {
+      const isG = mode === 'gcdLadder', k = R(rng, 1, 3) === 3 ? 3 : 2;
+      let nums, lad, res;
+      for (let t = 0; t < 300; t++) {
+        if (isG) {
+          const g = pick(rng, k === 3 ? [6, 8, 9, 10, 12, 14, 15, 18] : [6, 8, 9, 10, 12, 14, 15, 18, 20, 24, 28, 30, 36]);
+          const cof = shuffle(rng, [2, 3, 4, 5, 7, 9, 11]).slice(0, k);
+          nums = cof.map(c => g * c);
+          if (nums.some(v => v > 200)) continue;
+          lad = commonLadder(nums, false);
+          if (lad.rows.length < 2) continue;
+          res = lad.rows.reduce((a, r) => a * r[0], 1);
+        } else {
+          nums = Array.from({ length: k }, () => R(rng, 6, k === 3 ? 30 : 48));
+          if (new Set(nums).size < k) continue;
+          lad = commonLadder(nums, true);
+          if (lad.rows.length < 2) continue;
+          res = lad.rows.reduce((a, r) => a * r[0], 1) * lad.last.reduce((a, v) => a * v, 1);
+          if (res > 600) continue;
+        }
+        nums.sort((a, b) => a - b);
+        lad = commonLadder(nums, !isG);
+        break;
+      }
+      const name = isG ? '최대공약수' : '최소공배수';
+      const divs = lad.rows.map(r => r[0]);
+      return {
+        prompt: isG ? L3('공통인 소수로 계속 나누어 최대공약수를 구해요 — 왼쪽에 나눈 수를 모두 곱합니다',
+                         'Keep dividing by a prime that divides every number; the GCD is the product of the divisors on the left.',
+                         '用公共质数连续去除，左边除数的乘积就是最大公因数。')
+                    : L3('두 수 이상을 나누는 소수로 계속 나누어 최소공배수를 구해요 — 왼쪽 수와 마지막 몫을 모두 곱합니다',
+                         'Keep dividing by a prime that divides at least two numbers; the LCM is the product of the divisors and the last row.',
+                         '用能整除至少两个数的质数连续去除，左边除数与最后一行的乘积就是最小公倍数。'),
+        tex: `${ladderTex(lad.rows, lad.last, (r) => r === lad.rows.length)} \\;\\Rightarrow\\; \\text{${name}} = \\square`,
+        answer: lad.last.concat([res]), answerType: 'number', widget: 'numpad',
+        solution: [
+          { tex: `\\text{마지막 몫}: ${lad.last.join(',\\,')}` },
+          { tex: `\\text{${name}} = ${(isG ? divs : divs.concat(lad.last)).join(' \\times ')} = \\square`, blank: res }
+        ]
+      };
+    }
+
+    /* ---- 최대공약수와 최소공배수의 관계: A × B = (최대공약수) × (최소공배수) ---- */
+    if (mode === 'gcdLcmRelation') {
+      let G, a, b;
+      do { G = R(rng, 2, 12); a = R(rng, 2, 7); b = R(rng, 3, 9); } while (a >= b || gcdCalc(a, b) !== 1 || G * a * b > 400);
+      const A = G * a, B = G * b, L = G * a * b, ask = pick(rng, ['B', 'L', 'G']);
+      const gT = '\\text{최대공약수}', lT = '\\text{최소공배수}';
+      const parts = { B: [`A=${A}`, `${gT}=${G}`, `${lT}=${L}`, 'B=\\square'],
+                      L: [`A=${A}`, `B=${B}`, `${gT}=${G}`, `${lT}=\\square`],
+                      G: [`A=${A}`, `B=${B}`, `${lT}=${L}`, `${gT}=\\square`] }[ask];
+      const answer = { B, L, G }[ask];
+      const sol = { B: `B = ${G}\\times${L}\\div${A} = \\square`, L: `${lT} = ${A}\\times${B}\\div${G} = \\square`, G: `${gT} = ${A}\\times${B}\\div${L} = \\square` }[ask];
+      return {
+        prompt: L3('두 자연수의 곱은 최대공약수와 최소공배수의 곱과 같아요 — A × B = (최대공약수) × (최소공배수)',
+                   'The product of two numbers equals GCD × LCM: A × B = GCD × LCM.',
+                   '两个自然数的积等于最大公因数与最小公倍数的积：A × B = 最大公因数 × 最小公倍数。'),
+        tex: `${parts.slice(0, 3).join(',\\;\\; ')} \\;\\Rightarrow\\; ${parts[3]}`,
+        answer, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `A\\times B = ${gT}\\times${lT}` }, { tex: sol, blank: answer }]
+      };
+    }
+
+    /* ---- 최대공약수·최소공배수의 활용(문장제) ---- 답을 먼저 고르고 이야기의 수를 거꾸로 만든다. */
+    if (mode === 'gcdApply' || mode === 'lcmApply') {
+      const word = (story, ask, unit, answer, sol) => {
+        const prompt = {}; ['ko', 'en', 'zh'].forEach(l => { prompt[l] = story[l] + (l === 'zh' ? '' : ' ') + ask[l]; });
+        return { prompt, word: story, wordAsk: ask, wordUnit: unit, answer, answerType: 'number', widget: 'numpad', solution: sol };
+      };
+      if (mode === 'gcdApply') {
+        let g, a, b;
+        do { g = R(rng, 3, 15); a = R(rng, 2, 8); b = R(rng, 3, 9); } while (a >= b || gcdCalc(a, b) !== 1);
+        const x = g * a, y = g * b, kind = pick(rng, ['share', 'square', 'pack']);
+        const sol = [{ tex: `${x},\\,${y}\\text{의 최대공약수} = \\square`, blank: g }];
+        if (kind === 'share') return word(
+          L3(`사탕 ${x}개와 초콜릿 ${y}개를 될 수 있는 대로 많은 학생에게 남김없이 똑같이 나누어 주려고 합니다.`,
+             `You want to share ${x} candies and ${y} chocolates equally among as many students as possible, with none left over.`,
+             `要把${x}颗糖和${y}块巧克力平均分给尽可能多的学生，没有剩余。`),
+          L3('몇 명에게 나누어 줄 수 있습니까?', 'How many students can get them?', '最多能分给几名学生？'), L3('명', 'students', '名'), g, sol);
+        if (kind === 'square') return word(
+          L3(`가로 ${y}cm, 세로 ${x}cm인 직사각형 종이를 남는 부분 없이 똑같은 크기의 가장 큰 정사각형으로 자르려고 합니다.`,
+             `A rectangle of paper ${y} cm by ${x} cm is cut, with nothing left over, into equal squares that are as large as possible.`,
+             `把长${y}cm、宽${x}cm的长方形纸无剩余地剪成同样大小、尽可能大的正方形。`),
+          L3('정사각형의 한 변은 몇 cm입니까?', 'How long is a side of each square, in cm?', '正方形的边长是多少cm？'), L3('cm', 'cm', 'cm'), g, sol);
+        return word(
+          L3(`연필 ${x}자루와 지우개 ${y}개를 같은 개수씩 남김없이 봉투에 나누어 담으려고 합니다. 봉투는 될 수 있는 대로 많이 씁니다.`,
+             `${x} pencils and ${y} erasers are packed into envelopes, the same number of each per envelope with none left, using as many envelopes as possible.`,
+             `把${x}支铅笔和${y}块橡皮平均装进信封，没有剩余，信封要尽可能多。`),
+          L3('봉투는 몇 개 필요합니까?', 'How many envelopes are needed?', '需要几个信封？'), L3('개', 'envelopes', '个'), g, sol);
+      }
+      let x, y, L;
+      do { x = R(rng, 4, 20); y = R(rng, 5, 24); L = lcmCalc(x, y); } while (x >= y || gcdCalc(x, y) < 2 || L === y || L > 180);
+      const kind = pick(rng, ['bus', 'tile', 'gear']);
+      const sol = [{ tex: `${x},\\,${y}\\text{의 최소공배수} = \\square`, blank: L }];
+      if (kind === 'bus') return word(
+        L3(`버스 두 대가 각각 ${x}분, ${y}분마다 출발합니다. 오전 9시에 두 버스가 함께 출발했습니다.`,
+           `Two buses leave every ${x} minutes and every ${y} minutes. They both left at 9 a.m.`,
+           `两辆公交车分别每${x}分钟、每${y}分钟发车一次。上午9点两车同时发车。`),
+        L3('다음에 처음으로 함께 출발하는 것은 몇 분 뒤입니까?', 'How many minutes later do they next leave together?', '下一次同时发车是在几分钟后？'), L3('분', 'minutes', '分钟'), L, sol);
+      if (kind === 'tile') return word(
+        L3(`가로 ${y}cm, 세로 ${x}cm인 직사각형 카드를 같은 방향으로 빈틈없이 늘어놓아 될 수 있는 대로 작은 정사각형을 만들려고 합니다.`,
+           `Rectangular cards ${y} cm by ${x} cm are laid side by side, all the same way with no gaps, to make the smallest possible square.`,
+           `把长${y}cm、宽${x}cm的长方形卡片朝同一方向无空隙地排列，拼成尽可能小的正方形。`),
+        L3('정사각형의 한 변은 몇 cm입니까?', 'How long is a side of the square, in cm?', '正方形的边长是多少cm？'), L3('cm', 'cm', 'cm'), L, sol);
+      return word(
+        L3(`톱니가 ${x}개인 톱니바퀴 A와 ${y}개인 톱니바퀴 B가 맞물려 돌고 있습니다.`,
+           `Gear A with ${x} teeth meshes with gear B with ${y} teeth.`,
+           `齿数为${x}的齿轮A与齿数为${y}的齿轮B互相啮合转动。`),
+        L3('처음에 맞물렸던 톱니가 다시 처음으로 맞물리는 것은 A가 몇 바퀴 돈 뒤입니까?', 'After how many turns of A do the starting teeth meet again for the first time?', '最初啮合的齿第一次再次啮合时，A转了几圈？'),
+        L3('바퀴', 'turns', '圈'), L / x,
+        [{ tex: `${x},\\,${y}\\text{의 최소공배수} = ${L}` }, { tex: `${L}\\div ${x} = \\square`, blank: L / x }]);
+    }
 
     /* ---- 약수 찾기 ---- */
     if (mode === 'factors') {
@@ -668,6 +864,27 @@
       };
     }
     if (mode === 'powerNotation') {
+      /* 네 꼴(2026-11-25, 디딤돌 중1-1A 「거듭제곱」 대조): 지수만 · 밑과 지수 · 두 밑 · 분수 밑 */
+      const v = R(rng, 0, 3);
+      if (v === 1) {
+        const base = R(rng, 2, 9), e = R(rng, 2, 5);
+        return { prompt:{ko:'같은 수를 거듭 곱한 것을 거듭제곱으로 나타내요. 밑과 지수를 쓰세요.',en:'Write the repeated product as a power: base and exponent.',zh:'把相同数的连乘写成乘方：写出底数和指数。'},
+          tex:`${Array(e).fill(base).join(' \\times ')}=\\square^{\\square}`, answer:[base,e], answerType:'number', widget:'numpad',
+          solution:[{tex:`${Array(e).fill(base).join(' \\times ')}=${base}^{${e}}`}] };
+      }
+      if (v === 2) {
+        const [p1, p2] = shuffle(rng, [2, 3, 5, 7]).slice(0, 2).sort((x, y) => x - y), e1 = R(rng, 2, 4), e2 = R(rng, 1, 3) + 1;
+        const prod = Array(e1).fill(p1).concat(Array(e2).fill(p2)).join(' \\times ');
+        return { prompt:{ko:'같은 수끼리 묶어 거듭제곱으로 나타내요.',en:'Group equal factors and write them as powers.',zh:'把相同的因数合在一起写成乘方。'},
+          tex:`${prod}=${p1}^{\\square}\\times ${p2}^{\\square}`, answer:[e1,e2], answerType:'number', widget:'numpad',
+          solution:[{tex:`${prod}=${p1}^{${e1}}\\times ${p2}^{${e2}}`}] };
+      }
+      if (v === 3) {
+        const d = R(rng, 2, 9), e = R(rng, 2, 5), f = `\\dfrac{1}{${d}}`;
+        return { prompt:{ko:'분수를 거듭 곱한 것도 괄호로 묶어 거듭제곱으로 나타내요. 지수를 쓰세요.',en:'A repeated fraction is written as a power in brackets. Write the exponent.',zh:'分数的连乘也用括号写成乘方，填写指数。'},
+          tex:`${Array(e).fill(f).join(' \\times ')}=\\left(${f}\\right)^{\\square}`, answer:e, answerType:'number', widget:'numpad',
+          solution:[{tex:`${Array(e).fill(f).join(' \\times ')}=\\left(${f}\\right)^{${e}}`}] };
+      }
       const base=R(rng,2,12), exponent=R(rng,2,6);
       return {
         prompt:{ko:`${NM_RNG.koJosa(base,'을','를')} ${exponent}번 곱했어요. 거듭제곱의 지수를 쓰세요.`,
@@ -679,6 +896,15 @@
       };
     }
     if (mode === 'primeFactorMeaning') {
+      /* 반은 「소인수를 모두 쓰기」(2026-11-25, 디딤돌 중1-1A 「인수와 소인수」 대조) */
+      if (R(rng, 0, 1) === 1) {
+        const n = pick(rng, [12,18,20,24,28,30,36,40,42,44,45,48,50,52,54,56,60,63,66,70,72,75,78,84,90,98,100,105,126,132,140,150]);
+        const ps = [...new Set(primeFactorArr(n))];
+        return { prompt:{ko:`${n}의 소인수를 작은 것부터 모두 쓰세요.`,en:`Write all the prime factors of ${n}, smallest first.`,zh:`从小到大写出${n}的所有质因数。`},
+          tex:`${n}=${powTex(powerParts(n))}\\;\\Rightarrow\\;\\text{소인수}: ${ps.map(() => '\\square').join(',\\,')}`,
+          answer:ps, answerType:'number', widget:'numpad',
+          solution:[{tex:`\\text{소인수}: ${ps.join(',\\,')}`}] };
+      }
       const n=pick(rng,[12,18,20,24,28,30,36,40,42,48,54,60,72,84]);
       const factors=allFactors(n), primeFactors=[...new Set(primeFactorArr(n))];
       const otherFactors=factors.filter(v=>v===1||(v>1&&smallestPF(v)!==v));
@@ -691,6 +917,53 @@
         answer:yes?1:2,answerType:'number',widget:'numpad',
         solution:[{tex:yes?`${factor}\\text{${NM_RNG.koJosa(factor,'은','는').slice(String(factor).length)} 소수이므로 소인수}`
           :`${factor}\\text{${NM_RNG.koJosa(factor,'은','는').slice(String(factor).length)} 소수가 아니므로 소인수가 아님}`,blank:yes?1:2}]
+      };
+    }
+
+    /* ---- 나눗셈(짧은 나눗셈)으로 소인수분해 (2026-11-25, 디딤돌 중1-1A 「소인수분해하는 방법」) ----
+       반은 몫을, 반은 나눈 소수를 쓴다. 칸은 4개까지. */
+    if (mode === 'ladder') {
+      let n, pf;
+      do { n = R(rng, 24, 300); pf = primeFactorArr(n); } while (pf.length < 3 || pf.length > 5 || pf[pf.length - 1] > 13);
+      const rows = []; let cur = n;
+      pf.slice(0, -1).forEach(p => { rows.push([p, cur]); cur /= p; });
+      const askDiv = R(rng, 0, 1) === 1;
+      const blank = askDiv ? ((r, c) => c === 0 && r < rows.length) : ((r, c) => c === 1 && r > 0);
+      let ans = askDiv ? rows.map(r => r[0]) : rows.slice(1).map(r => r[1]).concat([cur]);
+      let tex = ladderTex(rows, [cur], blank);
+      if (ans.length > 4) {   /* 칸이 넘치면 앞 줄을 보여 준다 */
+        const keep = ans.length - 4;
+        const b2 = askDiv ? ((r, c) => c === 0 && r >= keep && r < rows.length) : ((r, c) => c === 1 && r > keep);
+        tex = ladderTex(rows, [cur], b2); ans = ans.slice(keep);
+      }
+      return {
+        prompt: askDiv ? {ko:'나누어떨어지는 가장 작은 소수로 차례로 나누어요. 나눈 소수를 쓰세요.',en:'Divide by the smallest prime that works, again and again. Write the primes you divided by.',zh:'依次用能整除的最小质数去除，写出所用的质数。'}
+                       : {ko:'나누어떨어지는 가장 작은 소수로 차례로 나누어요. 몫을 쓰세요.',en:'Divide by the smallest prime that works, again and again. Write each quotient.',zh:'依次用能整除的最小质数去除，写出每次的商。'},
+        tex, answer: ans, answerType: 'number', widget: 'numpad',
+        solution: [{ tex: ladderTex(rows, [cur]) }, { tex: `${n}=${powTex(powerParts(n))}` }]
+      };
+    }
+
+    /* ---- 제곱인 수 만들기 (2026-11-25, 디딤돌 중1-1A 「제곱인 수」) ----
+       지수가 홀수인 소인수를 곱하면(나누면) 모든 지수가 짝수가 된다. 답 = [곱할(나눌) 가장 작은 수, 그때의 제곱근]. */
+    if (mode === 'squareMake') {
+      let parts, n, k;
+      for (let t = 0; t < 200; t++) {
+        const primes = shuffle(rng, [2, 3, 5, 7]).slice(0, R(rng, 2, 3)).sort((a, b) => a - b);
+        parts = primes.map(p => ({ p, e: R(rng, 1, p <= 3 ? 4 : 2) }));
+        n = parts.reduce((a, { p, e }) => a * Math.pow(p, e), 1);
+        k = parts.filter(x => x.e % 2).reduce((a, x) => a * x.p, 1);
+        if (k > 1 && n <= 1000 && n / k > 1) break;
+      }
+      const mul = R(rng, 0, 1) === 1;
+      const sq = mul ? n * k : n / k, root = Math.round(Math.sqrt(sq));
+      return {
+        prompt: mul ? {ko:`${n}에 가장 작은 자연수를 곱하여 어떤 자연수의 제곱이 되게 해요.`,en:`Multiply ${n} by the smallest natural number that makes a perfect square.`,zh:`给${n}乘上一个最小的自然数，使它成为某个自然数的平方。`}
+                    : {ko:`${NM_RNG.koJosa(n,'을','를')} 가장 작은 자연수로 나누어 어떤 자연수의 제곱이 되게 해요.`,en:`Divide ${n} by the smallest natural number that makes a perfect square.`,zh:`用一个最小的自然数去除${n}，使商成为某个自然数的平方。`},
+        tex: `${n}${mul ? '\\times' : '\\div'}\\square=\\square^{2}`,
+        answer: [k, root], answerType: 'number', widget: 'numpad',
+        solution: [{ tex: `${n}=${powTex(parts)}` },
+                   { tex: `${n}${mul ? '\\times' : '\\div'}${k}=${sq}=${root}^{2}` }]
       };
     }
 
@@ -776,6 +1049,16 @@
      * 고정 목록 대신 n = p^a × q^b 형태를 직접 조합해 (a+1)(b+1) 공식을
      * 연습한다. n이 너무 커지지 않도록(≤1000) 지수를 제한한다.
      */
+    /* 반은 거듭제곱 꼴을 바로 주고(세 소인수까지) 약수의 개수 (2026-11-25, 디딤돌 중1-1A 「소인수분해와 약수」) */
+    if (R(rng, 0, 1) === 1) {
+      const primes = shuffle(rng, [2, 3, 5, 7, 11]).slice(0, R(rng, 2, 3)).sort((x, y) => x - y);
+      const parts = primes.map(pp => ({ p: pp, e: R(rng, 1, 4) }));
+      const cnt = parts.reduce((acc, x) => acc * (x.e + 1), 1);
+      return { prompt:{ko:'소인수분해한 꼴을 보고 약수의 개수를 구해요 — (지수 + 1)을 모두 곱합니다',en:'Count the factors from the prime factorization: multiply (exponent + 1) for every prime.',zh:'根据质因数分解求因数个数：把每个(指数+1)相乘。'},
+        tex:`${powTex(parts)}\\text{의 약수의 개수}=\\square`,
+        answer:cnt, answerType:'number', widget:'numpad',
+        solution:[{tex:`${parts.map(x => `(${x.e}+1)`).join(' \\times ')}=\\square`, blank:cnt}] };
+    }
     const PRIMES = [2, 3, 5, 7, 11];
     let n, p, a, q, b;
     let tries = 0;
@@ -796,7 +1079,7 @@
         en: `Use prime factorization to count the divisors of ${n}`,
         zh: `用质因数分解求${n}的因数个数`
       },
-      tex: `${n} = ${p}^{${a}} \\times ${q}^{${b}} \\Rightarrow \\text{약수의 개수} = \\square`,
+      tex: `${n} = ${powTex([{ p, e: a }, { p: q, e: b }].sort((x, y) => x.p - y.p))} \\Rightarrow \\text{약수의 개수} = \\square`,
       answer:     count,
       answerType: 'steps',
       widget:     'steps',

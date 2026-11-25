@@ -6,7 +6,7 @@
 // 대본은 concept-boards.js(BOARDS). 숫자·정답은 대본의 규칙 함수로 계산한다(골든벨 정답 DB를 쓰지 않는다).
 import { mathText } from "./math-markup.js?v=20261122w";
 import { icon, setIcon } from "./ui-icons.js?v=20261105b";
-import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261124f";
+import { BOARDS, lineId, segGeom } from "./concept-boards.js?v=20261125k";
 
 const NS = "http://www.w3.org/2000/svg";
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);

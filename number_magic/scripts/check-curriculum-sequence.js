@@ -89,7 +89,7 @@ if(process.argv.includes('--expect-regressions')){
 }
 assert.deepEqual(result.issues,[],'ordered prerequisites and required skill coverage');
 assert.equal(Object.keys(C).length,74);
-assert.equal(Object.values(C).reduce((n,c)=>n+c.sessions.length,0),551);
+assert.equal(Object.values(C).reduce((n,c)=>n+c.sessions.length,0),556);   // 2026-11-25 과정 29·30 중1-1 세분화 +5
 assert.equal(C.C0.sessions.length,19);
 assert(Object.values(C.C36.studyPlan.lessons).every(l=>!l.extraPractice),'regular middle-three course excludes high-school cube factoring');
 for(const [i,s] of C.C0.sessions.entries()){
@@ -126,5 +126,5 @@ assert(audit(mutated).issues.some(x=>x==='C73 required pin absent: MD62@2'));
 const reversed=JSON.parse(JSON.stringify(C));
 reversed.C31.sessions[0].application=[{t:'MD70',lv:1}];
 assert(audit(reversed).issues.some(x=>x.includes('C31 s1 application MD70@1 before MD50@1')));
-console.log(JSON.stringify({status:'PASS',courses:74,sourceSessions:551,requiredPins:Object.values(required).reduce((n,a)=>n+a.length,0),mutationsRejected:2,
+console.log(JSON.stringify({status:'PASS',courses:74,sourceSessions:556,requiredPins:Object.values(required).reduce((n,a)=>n+a.length,0),mutationsRejected:2,
   plans:Object.fromEntries(['C29','C30','C31','C32','C35','C36','C37','C59','C71','C72','C73'].map(id=>[id,C[id].sessions.map((s,i)=>({session:i+1,school:(s.school||[]).map(key),application:(s.application||[]).map(key),assessment:(s.pool||[]).map(key),minutes:s.minutes}))]))},null,2));
