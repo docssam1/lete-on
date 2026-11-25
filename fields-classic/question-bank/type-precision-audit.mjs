@@ -128,7 +128,7 @@ const precisionBookTypeCounts = new Map([
   ["book-07", 111],
   ["book-08", 101],
   ["book-09", 88],
-  ["book-10", 76]
+  ["book-10", 84]
 ]);
 for (const [bookId, expectedCount] of precisionBookTypeCounts) {
   const book = CURRICULUM.find((item) => item.id === bookId);

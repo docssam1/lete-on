@@ -582,7 +582,7 @@ function distinctCardTargetSumBook10({ difficulty = 2 }) {
   const [target, [chosen]] = sample(unique);
   const answer = chosen.join(", ");
   return book10Problem({
-    prompt: `서로 다른 카드 ${pickCount}장을 골라 합이 ${target}이 되게 하세요.`,
+    prompt: `서로 다른 카드 ${pickCount}장을 골라 합이 ${target}${[2, 4, 5, 9].includes(target % 10) ? "가" : "이"} 되게 하세요.`,
     subtype: "target-cards", visual: { cards, pickCount, target }, answer,
     solution: `작은 카드부터 짝을 바꾸어 합을 확인하면 ${answer}만 조건에 맞습니다.`,
     family: "distinct-card-target-sum-b10", meta: { difficulty, cards, pickCount, target, solutions: [chosen], result: answer }
