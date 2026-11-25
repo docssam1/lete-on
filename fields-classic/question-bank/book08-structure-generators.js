@@ -891,7 +891,11 @@ function allShapeOnce({ lens, minRepeat = 1 }) {
 function allShapeCryptarithmB8({ difficulty = 2 }) {
   const parts = difficulty === 3 ? 1 : 2;
   const lensList = difficulty === 3 ? [[4, 3]] : [[3, 2], pick([[3, 2], [2, 2], [3, 3]])];
-  const made = lensList.map((lens) => allShapeOnce({ lens }));
+  // 드물게 3000번 안에 답이 하나인 식을 못 찾으면 몇 번 더, 그래도 없으면 세 자리 + 두 자리로
+  const made = lensList.map((lens) => {
+    for (let i = 0; i < 6; i += 1) { const m = allShapeOnce({ lens }); if (m) return m; }
+    return allShapeOnce({ lens: [3, 2] }) || allShapeOnce({ lens: [3, 2] });
+  });
   if (made.some((m) => !m)) throw new Error("book08 all-shape cryptarithm generation failed");
   const out = made.map((m) => {
     const sh = shuffle(SHAPES.map((_, i) => i)).slice(0, m.k);
