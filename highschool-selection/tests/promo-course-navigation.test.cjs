@@ -9,7 +9,7 @@ const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
 test('all released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,46);
+  assert.equal(visible.length,47);
   assert.equal(new Set(visible).size,visible.length);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
@@ -101,7 +101,7 @@ test('Won middle22 transfer preserves historical R1 and adds the latest-timetabl
 
 test('Eden elementary-entry and common1 papers remain separate despite sharing a 100-minute duration',()=>{
  const middle=nav.examsFor('ED','middle1',mocks),common=nav.examsFor('ED','high-advance',mocks);
- assert.deepEqual(middle.map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04']);assert.equal(common.length,2);
+ assert.deepEqual(middle.map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04','ed-middle1-authored-final']);assert.equal(common.length,2);
  assert.match(middle[0].scope,/초5.*초6/);assert.ok(common.every(e=>/중2.*중3/.test(e.scope)));
  assert.equal(middle[0].pageCount,10);assert.equal(middle[0].answerPageCount,10);assert.equal(middle[0].analysisPageCount,3);
  assert.deepEqual(nav.selectionForExam(middle[0].id),{program:'ED',course:'middle1'});
@@ -111,6 +111,8 @@ test('Eden elementary-entry and common1 papers remain separate despite sharing a
  assert.deepEqual([middle[2].questionCount,middle[2].durationMinutes,middle[2].pageCount,middle[2].answerPageCount,middle[2].analysisPageCount],[30,100,14,16,4]);
  assert.deepEqual(nav.selectionForExam(middle[3].id),{program:'ED',course:'middle1'});
  assert.deepEqual([middle[3].questionCount,middle[3].durationMinutes,middle[3].pageCount,middle[3].answerPageCount,middle[3].analysisPageCount],[30,100,16,16,4]);
+ assert.deepEqual(nav.selectionForExam(middle[4].id),{program:'ED',course:'middle1'});
+ assert.deepEqual([middle[4].questionCount,middle[4].durationMinutes,middle[4].pageCount,middle[4].answerPageCount,middle[4].analysisPageCount],[30,100,16,17,4]);
 });
 
 test('Won middle31 transfer is distinct from middle22 and common1',()=>{
