@@ -540,6 +540,22 @@ function validate(type, problem, difficulty) {
       assert(/반 바퀴/.test(problem.answer), id, difficulty, "digital set answer missing half turn");
       return;
     }
+    case "digital-three-moves-board-b4": {
+      // 행렬을 쓰지 않고 칸 하나의 위·오른쪽 방향 화살표를 직접 움직여 다시 센다.
+      const act = { LR: ([x, y]) => [-x, y], UD: ([x, y]) => [x, -y], CW: ([x, y]) => [-y, x], CCW: ([x, y]) => [y, -x], R180: ([x, y]) => [-x, -y] };
+      const keyVectors = { I: [[0, -1], [1, 0]], LR: [[0, -1], [-1, 0]], UD: [[0, 1], [1, 0]], R180: [[0, 1], [-1, 0]], CW: [[1, 0], [0, 1]], CCW: [[-1, 0], [0, -1]], T: [[-1, 0], [0, 1]], AT: [[1, 0], [0, -1]] };
+      const upright = meta.cells.filter((cell) => {
+        let [up, right] = keyVectors[cell.key];
+        for (const op of meta.ops) { up = act[op](up); right = act[op](right); }
+        return up[0] === 0 && up[1] === -1 && right[0] === 1 && right[1] === 0;
+      }).map((cell) => cell.value);
+      assert(JSON.stringify(upright) === JSON.stringify(meta.upright), id, difficulty, `upright cells mismatch ${upright}`);
+      const expected = meta.n === 2 ? upright[0] : upright.reduce((a, b) => a + b, 0);
+      assert(meta.n !== 2 || upright.length === 1, id, difficulty, "2x2 board must have one upright number");
+      assert(expected === meta.answer && problem.answer.endsWith(`(2) ${expected}`), id, difficulty, "board answer mismatch");
+      assert(!meta.cells.some((cell) => [6, 8, 9].includes(cell.value) && upright.includes(cell.value)), id, difficulty, "look-alike digit stands upright");
+      return;
+    }
     default:
       // 1~3권과 Geometry Worksheet에서 이미 독립 검산한 재사용 생성기다.
       assert(meta.family || type.generator, id, difficulty, "reused generator has no audit identity");
@@ -548,7 +564,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-04 missing");
 if (units.length !== 4) throw new Error(`book-04 unit count ${units.length}`);
-if (typeIds.length !== 72) throw new Error(`book-04 type count ${typeIds.length}`);
+if (typeIds.length !== 74) throw new Error(`book-04 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-04 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-04 unit test number ${question.number}, expected ${index + 1}`);

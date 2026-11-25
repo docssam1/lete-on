@@ -1060,9 +1060,114 @@ function digitalFlipTurnSet() {
   };
 }
 
+// ── 1단원 · 세 번 움직이기(뒤집고 돌리고 뒤집기) + 숫자 1 따라가기 + 숫자판 ─────────
+// 교재 활동 2-5, 2-6·연습 16: 뒤집기 → 돌리기 → 뒤집기 세 단계를 (1) 숫자 1로 따라가 그리고,
+//   (2) 여러 방향으로 놓인 숫자 네 개(2×2)를 같은 방법으로 움직였을 때 똑바로 놓이는 수를 찾는다.
+// 도전 4: 같은 꼴에 3×3 숫자판, 똑바로 놓이는 수들의 합.
+// 숫자마다 놓인 방향을 2×2 행렬로 두고, 판 전체 움직임을 곱해 「처음 그대로(I)」가 되는 칸만 똑바로 선다.
+
+const MOVE = Object.freeze({
+  I: [1, 0, 0, 1], LR: [-1, 0, 0, 1], UD: [1, 0, 0, -1], R180: [-1, 0, 0, -1],
+  CW: [0, -1, 1, 0], CCW: [0, 1, -1, 0], T: [0, 1, 1, 0], AT: [0, -1, -1, 0]
+});
+const matMul = (a, b) => [a[0] * b[0] + a[1] * b[2], a[0] * b[1] + a[1] * b[3], a[2] * b[0] + a[3] * b[2], a[2] * b[1] + a[3] * b[3]];
+const matKey = (m) => Object.keys(MOVE).find((k) => MOVE[k].every((v, i) => v === m[i]));
+const FLIPS = Object.freeze([
+  { key: "LR", doing: "왼쪽으로 뒤집고", label: "왼쪽으로 뒤집기" },
+  { key: "LR", doing: "오른쪽으로 뒤집고", label: "오른쪽으로 뒤집기" },
+  { key: "UD", doing: "위로 뒤집고", label: "위로 뒤집기" },
+  { key: "UD", doing: "아래로 뒤집고", label: "아래로 뒤집기" }
+]);
+const TURNS = Object.freeze([
+  { key: "CW", doing: "시계 방향으로 반의 반 바퀴 돌린 후", label: "시계 방향 반의 반 바퀴" },
+  { key: "CCW", doing: "시계 반대 방향으로 반의 반 바퀴 돌린 후", label: "시계 반대 방향 반의 반 바퀴" },
+  { key: "R180", doing: "반 바퀴 돌린 후", label: "반 바퀴" }
+]);
+
+function glyphSvg(digit, key, { size = 40, box = true } = {}) {
+  const m = MOVE[key];
+  const c = size / 2;
+  const frame = box ? `<rect x="0.5" y="0.5" width="${size - 1}" height="${size - 1}" fill="#fff" stroke="#1f6f86" stroke-width="1.2"/>` : "";
+  const text = digit === null ? "" : `<g transform="translate(${c} ${c}) matrix(${m[0]},${m[2]},${m[1]},${m[3]},0,0)"><text x="0" y="${size * 0.25}" text-anchor="middle" font-size="${size * 0.7}" font-weight="700" fill="#d2372c" style="font-family:Arial,Helvetica,sans-serif">${digit}</text></g>`;
+  return `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="width:${size}px;height:auto;flex:none" aria-hidden="true">${frame}${text}</svg>`;
+}
+
+function boardSvg(cells, n) {
+  const size = n === 2 ? 46 : 42;
+  const W = n * size + 2;
+  let body = "";
+  cells.forEach((cell, i) => {
+    const r = Math.floor(i / n);
+    const c = i % n;
+    const m = MOVE[cell.key];
+    const cx = 1 + c * size + size / 2;
+    const cy = 1 + r * size + size / 2;
+    body += `<rect x="${1 + c * size}" y="${1 + r * size}" width="${size}" height="${size}" fill="#fff" stroke="#1f6f86" stroke-width="1.2"/>`;
+    body += `<g transform="translate(${cx} ${cy}) matrix(${m[0]},${m[2]},${m[1]},${m[3]},0,0)"><text x="0" y="${size * 0.24}" text-anchor="middle" font-size="${size * 0.62}" fill="#1f2a30" style="font-family:Arial,Helvetica,sans-serif">${cell.value}</text></g>`;
+  });
+  return `<svg width="${W}" height="${W}" viewBox="0 0 ${W} ${W}" style="width:${W}px;max-width:100%;height:auto" role="img" aria-label="여러 방향으로 놓인 숫자판">${body}</svg>`;
+}
+
+// 6·9·8은 돌리거나 뒤집으면 다른 숫자나 같은 모양으로 읽힐 수 있다(6을 반 바퀴 = 9, 8을 좌우로 뒤집기 = 8).
+// 그래서 이 숫자들은 어떻게 읽어도 똑바로 서지 않는 방향에만 두고, 처음부터 똑바로 보이는 방향에도 두지 않는다.
+const LOOK_ALIKE = Object.freeze({ 6: ["I", "R180"], 9: ["I", "R180"], 8: ["I", "LR", "UD", "R180"] });
+function safeKeysFor(value, inverse) {
+  const same = LOOK_ALIKE[value];
+  if (!same) return Object.keys(MOVE).filter((k) => k !== inverse && k !== "I");
+  return Object.keys(MOVE).filter((k) => same.every((s) => matKey(matMul(MOVE[s], MOVE[k])) !== inverse && matKey(matMul(MOVE[s], MOVE[k])) !== "I"));
+}
+
+function digitalThreeMovesBoard({ difficulty = 2 } = {}, n) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const first = pick(FLIPS);
+    const turn = pick(TURNS);
+    const last = pick(FLIPS.filter((f) => f.key !== first.key || Math.random() < 0.3));
+    const total = matMul(MOVE[last.key], matMul(MOVE[turn.key], MOVE[first.key]));
+    const totalKey = matKey(total);
+    if (totalKey === "I") continue;
+    // 숫자 1을 따라가며 그릴 세 모양
+    const steps = [];
+    let cur = MOVE.I;
+    for (const op of [first, turn, last]) { cur = matMul(MOVE[op.key], cur); steps.push(matKey(cur)); }
+    // 판 전체를 total로 움직이면 처음 방향 M인 칸은 total·M 방향이 된다. 똑바로 서려면 M = total의 거꾸로.
+    const inverse = Object.keys(MOVE).find((k) => matKey(matMul(total, MOVE[k])) === "I");
+    const values = n === 2 ? shuffle([1, 2, 3, 4, 5, 7]).slice(0, 4) : shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+    const uprightCount = n === 2 ? 1 : randomInt(2, 4);
+    const plain = values.map((v, i) => [v, i]).filter(([v]) => !LOOK_ALIKE[v]).map(([, i]) => i);
+    const uprightIdx = new Set(shuffle(plain).slice(0, uprightCount));
+    // 처음부터 똑바로 선 칸은 두지 않는다(움직임과 상관없이 고르게 되므로).
+    if (inverse === "I") continue;
+    if (values.some((value, i) => !uprightIdx.has(i) && !safeKeysFor(value, inverse).length)) continue;
+    const cells = values.map((value, i) => ({ value, key: uprightIdx.has(i) ? inverse : pick(safeKeysFor(value, inverse)) }));
+    const upright = cells.filter((cell) => matKey(matMul(total, MOVE[cell.key])) === "I").map((cell) => cell.value);
+    if (upright.length !== uprightCount) continue;
+    const sum = upright.reduce((a, b) => a + b, 0);
+    const answerValue = n === 2 ? upright[0] : sum;
+    const ops = [first, turn, last];
+    const strip = `<div style="${FONT};font-size:14px;color:#1f2a30;margin-bottom:8px">${ops.map((op) => `<span style="display:inline-block;border:1px solid #b7d6de;border-radius:8px;padding:3px 8px;margin:2px">${esc(op.label)}</span>`).join(" → ")}</div>`;
+    const arrow = `<span style="color:#2f7d8f;font-size:18px">→</span>`;
+    const follow = (shown) => `<div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">${glyphSvg(1, "I")}${shown.map((k) => `${arrow}${glyphSvg(k ? 1 : null, k || "I")}`).join("")}</div>`;
+    const q = `<div style="display:inline-block;text-align:left">${strip}<div style="${FONT};font-size:14px;margin:6px 0 4px">(1)</div>${follow([null, null, null])}<div style="${FONT};font-size:14px;margin:12px 0 4px">(2)</div>${boardSvg(cells, n)}</div>`;
+    const a = `<div style="display:inline-block;text-align:left"><div style="${FONT};font-size:14px;margin:0 0 4px">(1)</div>${follow(steps)}</div>`;
+    const whatWord = n === 2 ? "똑바로 놓이는 수를 구하세요." : "똑바로 놓이는 수들의 합을 구하세요.";
+    return {
+      prompt: `도형을 ${first.doing}, ${turn.doing}, 다시 ${last.doing.replace("뒤집고", "뒤집으려고")} 합니다. (1) 숫자 1을 같은 방법으로 움직일 때 나오는 모양을 차례로 그리세요. (2) 다음 숫자판을 같은 방법으로 움직였을 때 ${whatWord}`,
+      answer: `(1) 그림 답안, (2) ${answerValue}`,
+      responseKind: "drawing",
+      solution: `(1) 숫자 1을 한 번에 하나씩 움직여 그립니다. 세 번 움직인 1의 모양은 처음 1을 한 번에 어떻게 움직인 것과 같은지 보여 줍니다. (2) 숫자판의 각 수가 지금 놓인 모양을 세 번 움직인 1의 모양과 견주어, 움직인 뒤 처음 1처럼 똑바로 서게 되는 수를 찾습니다. ${n === 2 ? `똑바로 놓이는 수는 ${answerValue}입니다.` : `똑바로 놓이는 수는 ${upright.join(", ")}이므로 합은 ${upright.join(" + ")} = ${sum}입니다.`}`,
+      visual: { kind: "fig", html: q },
+      answerVisual: { kind: "fig", html: a },
+      meta: { family: "digital-three-moves-board-b4", n, ops: ops.map((op) => op.key), steps, cells, upright, answer: answerValue }
+    };
+  }
+  return null;
+}
+
 export const BOOK04_STRUCTURE_INTERNALS = { makeBalanceSystem, childSolve, ratioDetermined, eqNormalize };
 
 export const BOOK04_STRUCTURE_GENERATORS = {
+  numberBoardThreeMovesTwoB4: (options) => digitalThreeMovesBoard(options, 2),
+  numberBoardThreeMovesThreeB4: (options) => digitalThreeMovesBoard(options, 3),
   polylineTurnFourB4: polylineTurnFour,
   polylineFlipFourB4: polylineFlipFour,
   digitalFlipTurnSetB4: digitalFlipTurnSet,
@@ -1093,6 +1198,8 @@ export const BOOK04_STRUCTURE_TYPE_ROWS = [
   { id: "polyline-turn-four-b4", domain: "geometry", middle: "도형 움직이기", label: "선 그림을 반의 반 바퀴씩 돌린 네 모양 모두 그리기", generator: "polylineTurnFourB4", catalogGroup: "선 그림·디지털 숫자 돌리고 뒤집기", catalogStrategy: "끝점을 하나씩 옮겨 찍고 잇기", searchAliases: ["돌리기", "반의 반 바퀴", "회전"] },
   { id: "polyline-flip-four-b4", domain: "geometry", middle: "도형 움직이기", label: "선 그림을 위·아래·왼쪽·오른쪽으로 뒤집은 모양 그리기", generator: "polylineFlipFourB4", catalogGroup: "선 그림·디지털 숫자 돌리고 뒤집기", catalogStrategy: "바뀌는 쪽과 그대로인 쪽 나누어 보기", searchAliases: ["뒤집기", "대칭", "거울"] },
   { id: "digital-flip-turn-set-b4", domain: "geometry", middle: "도형 움직이기", label: "디지털 숫자를 두 번 뒤집은 모양과 반 바퀴 돌린 모양 비교하기", generator: "digitalFlipTurnSetB4", catalogGroup: "선 그림·디지털 숫자 돌리고 뒤집기", catalogStrategy: "막대마다 자리를 바꾸어 그리기", searchAliases: ["디지털 숫자", "뒤집기", "반 바퀴"] },
+  { id: "number-board-three-moves-2x2-b4", domain: "geometry", middle: "도형 움직이기", label: "뒤집고 돌리고 뒤집은 뒤 2×2 숫자판에서 똑바로 서는 수 찾기", generator: "numberBoardThreeMovesTwoB4", catalogGroup: "선 그림·디지털 숫자 돌리고 뒤집기", catalogStrategy: "숫자 1로 세 동작을 따라간 뒤 견주기", searchAliases: ["숫자판", "뒤집기", "돌리기"] },
+  { id: "number-board-three-moves-3x3-b4", domain: "geometry", middle: "도형 움직이기", label: "뒤집고 돌리고 뒤집은 뒤 3×3 숫자판에서 똑바로 서는 수의 합", generator: "numberBoardThreeMovesThreeB4", catalogGroup: "선 그림·디지털 숫자 돌리고 뒤집기", catalogStrategy: "숫자 1로 세 동작을 따라간 뒤 똑바로 서는 수 더하기", searchAliases: ["숫자판", "뒤집기", "돌리기"] },
   { id: "mixed-pan-balance-two-b4", domain: "logic", middle: "양팔저울", label: "섞인 접시 저울 두 개로 바꾸어 넣어 같은 무게 구하기", generator: "mixedPanBalanceTwoB4", catalogGroup: BAL_GROUP, catalogStrategy: "바꾸어 넣고 양쪽의 같은 것 덜어 내기", searchAliases: ["양팔저울", "바꾸어 넣기", "평형"] },
   { id: "mixed-pan-balance-three-b4", domain: "logic", middle: "양팔저울", label: "섞인 접시 저울 세 개로 바꾸어 넣어 같은 무게 구하기", generator: "mixedPanBalanceThreeB4", catalogGroup: BAL_GROUP, catalogStrategy: "한 가지 물건뿐인 저울부터 차례로 바꾸어 넣기", searchAliases: ["양팔저울", "바꾸어 넣기", "평형"] },
   { id: "shape-difference-tree-b4", domain: "number", middle: "비교와 차", label: "순서가 섞이고 빼기가 있는 도형 식으로 두 도형의 차 구하기", generator: "shapeDifferenceTreeB4", catalogGroup: DIFF_GROUP, catalogStrategy: "한 도형을 어떤 수로 두고 차례로 구하기", searchAliases: ["도형의 차", "크기 비교", "기준 정하기"] },
@@ -1111,6 +1218,8 @@ export const BOOK04_STRUCTURE_GUIDES = {
   "polyline-turn-four-b4": "선의 끝점이 어느 꼭짓점에 있는지 보고, 반의 반 바퀴 돌리면 위쪽이 오른쪽으로 가도록 끝점을 하나씩 옮겨 잇습니다.",
   "polyline-flip-four-b4": "위아래로 뒤집으면 위쪽과 아래쪽만, 왼쪽·오른쪽으로 뒤집으면 왼쪽과 오른쪽만 서로 바뀝니다.",
   "digital-flip-turn-set-b4": "오른쪽으로 뒤집으면 양옆 막대가, 아래로 뒤집으면 위아래 막대가 바뀌고, 두 번 뒤집으면 반 바퀴 돌린 것과 같습니다.",
+  "number-board-three-moves-2x2-b4": "숫자 1을 세 동작대로 차례로 움직여 보고, 그 마지막 모양과 똑같이 놓인 수를 숫자판에서 찾습니다.",
+  "number-board-three-moves-3x3-b4": "숫자 1로 세 동작을 따라가 마지막 모양을 구하고, 그 모양과 똑같이 놓인 수만 골라 더합니다.",
   "mixed-pan-balance-two-b4": "한 가지 물건뿐인 쪽이 있는 저울로 다른 저울의 물건을 바꾸어 넣고, 양쪽에 같은 물건은 덜어 냅니다.",
   "mixed-pan-balance-three-b4": "바꾸어 넣을 수 있는 저울부터 차례로 바꾸고, 양쪽의 같은 물건을 덜어 내어 두 가지 물건만 남깁니다.",
   "shape-difference-tree-b4": "한 도형을 20처럼 정해 두고 식을 하나씩 따라가며 나머지 도형의 수를 구한 뒤 차를 뺍니다.",
@@ -1133,6 +1242,9 @@ export const BOOK04_STRUCTURE_REMAPS = [
   ["book-04", 1, "practice", 1, [11], "polyline-flip-four-b4"],
   ["book-04", 1, "activity", 2, [2], "digital-flip-turn-set-b4"],
   ["book-04", 1, "practice", 1, [13], "digital-flip-turn-set-b4"],
+  ["book-04", 1, "activity", 2, [5, 6], "number-board-three-moves-2x2-b4"],
+  ["book-04", 1, "practice", 1, [16], "number-board-three-moves-2x2-b4"],
+  ["book-04", 1, "advanced", 1, [4], "number-board-three-moves-3x3-b4"],
   // 3단원 · 차를 이어 두 사이의 차
   ["book-04", 3, "activity", 1, [1, 2, 3, 4], "shape-difference-tree-b4"],
   ["book-04", 3, "practice", 1, [3, 4, 5, 6], "shape-difference-tree-b4"],

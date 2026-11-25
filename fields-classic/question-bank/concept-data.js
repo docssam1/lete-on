@@ -1112,14 +1112,14 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "네 조각의 개수만 맞추고 칸 수, 연결 모양, 빈틈과 겹침을 함께 확인하지 않았는지 살펴봅니다.",
     [book4Evidence("도형 분할과 움직이기", 1, [3])]
   ),
-  "digital-grid-transform": sourceLesson(
+  "number-board-three-moves-2x2-b4": sourceLesson(
     "concept:geometry:sequential-rigid-transforms",
     [
       beat("read-whole-digit-grid", "숫자판 전체를 살펴봐요", "숫자 하나씩만 보지 않고 숫자판 전체의 칸과 자리 순서를 확인합니다."),
       beat("apply-one-grid-transform", "전체를 한 번 움직여요", "숫자판 전체를 주어진 방향으로 회전하거나 뒤집고 움직인 뒤의 모양을 표시합니다."),
-      beat("apply-two-grid-transforms", "두 동작을 순서대로 해요", "두 동작이 있으면 첫 동작 뒤의 숫자판에 두 번째 회전이나 뒤집기를 차례로 적용합니다.")
+      beat("apply-two-grid-transforms", "동작을 순서대로 해요", "동작이 여러 개면 앞 동작 뒤의 숫자판에 다음 회전이나 뒤집기를 차례로 적용합니다.")
     ],
-    "숫자 하나만 따로 움직이거나 두 동작을 처음 숫자판에 각각 적용하고, 정해진 순서를 바꾸지 않았는지 확인합니다.",
+    "숫자 하나만 따로 움직이거나 여러 동작을 처음 숫자판에 각각 적용하고, 정해진 순서를 바꾸지 않았는지 확인합니다.",
     [book4Evidence("도형 분할과 움직이기", 2, [5, 6])]
   ),
   "fold-cut-unfold-one-draw": sourceLesson(
