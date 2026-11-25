@@ -120,7 +120,8 @@ function factorPairDivisorCountBook10({ difficulty = 2 }) {
   });
 }
 
-function consecutiveRuns(target, maxLength = 12, minLength = 2) {
+// 길이 제한 없이(1부터 이어 더해 target을 넘지 않는 가장 긴 길이까지) — 예전 기본값 12는 13개 이상 연속수를 빠뜨렸다(1~10권 대조 2026-11-25)
+function consecutiveRuns(target, maxLength = Math.floor((Math.sqrt(8 * target + 1) - 1) / 2), minLength = 2) {
   const found = [];
   for (let length = minLength; length <= maxLength; length += 1) {
     for (let start = 1; start <= target; start += 1) {
@@ -397,7 +398,7 @@ function sameBudgetPriceCountBook10({ difficulty = 2 }) {
   const secondCount = budget / secondPrice;
   const result = secondCount - firstCount;
   return book10Problem({
-    prompt: `같은 돈으로 한 개에 ${firstPrice}천 원인 물건과 ${secondPrice}천 원인 물건을 살 수 있습니다. 싼 물건을 몇 개 더 살 수 있나요?`,
+    prompt: `${budget}천 원으로 한 개에 ${firstPrice}천 원인 물건과 한 개에 ${secondPrice}천 원인 물건을 각각 살 수 있는 만큼 삽니다. 싼 물건을 몇 개 더 살 수 있나요?`,
     subtype: "budget-table", visual: { budget, firstPrice, secondPrice }, answer: `${result}개`,
     solution: `${budget}천 원으로 각각 ${firstCount}개와 ${secondCount}개를 살 수 있으므로 ${result}개 더 살 수 있습니다.`,
     family: "same-budget-price-count-b10", meta: { difficulty, budget, firstPrice, secondPrice, firstCount, secondCount, result }
@@ -581,7 +582,7 @@ function distinctCardTargetSumBook10({ difficulty = 2 }) {
   const [target, [chosen]] = sample(unique);
   const answer = chosen.join(", ");
   return book10Problem({
-    prompt: `서로 다른 카드 ${pickCount}장을 골라 합이 ${target}이 되게 하세요.`,
+    prompt: `서로 다른 카드 ${pickCount}장을 골라 합이 ${target}${[2, 4, 5, 9].includes(target % 10) ? "가" : "이"} 되게 하세요.`,
     subtype: "target-cards", visual: { cards, pickCount, target }, answer,
     solution: `작은 카드부터 짝을 바꾸어 합을 확인하면 ${answer}만 조건에 맞습니다.`,
     family: "distinct-card-target-sum-b10", meta: { difficulty, cards, pickCount, target, solutions: [chosen], result: answer }

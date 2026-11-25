@@ -1,5 +1,9 @@
 import { GENERATORS } from "./generators.js";
 import { CURRICULUM, typeById } from "./source-data.js";
+import { BOOK03_STRUCTURE_TYPE_ROWS } from "./book03-structure-generators.js";
+// 교재 번호 꼴 새 유형(book03-structure-generators.js)은 book03-audit.mjs가 따로 검산한다(2026-11-25).
+const STRUCTURE_IDS = new Set(BOOK03_STRUCTURE_TYPE_ROWS.map((row) => row.id));
+import { mixed } from "./math-markup.js";
 import {
   partitionGeometryForAudit,
   tangramBoardGeometryForAudit,
@@ -188,7 +192,7 @@ function unit01FromCurriculum() {
   assert(book, "book-03 missing from curriculum");
   const unit = book.units?.[0];
   assert(unit?.label === "단위넓이와 분수", `unexpected book03 unit01 label: ${unit?.label}`);
-  return unit.typeIds;
+  return unit.typeIds.filter((id) => !STRUCTURE_IDS.has(id));
 }
 
 function generate(typeId, difficulty) {
@@ -267,7 +271,7 @@ function assertReadyStructure(typeId, problem, difficulty) {
     assert(problem.meta.connected === true, `${typeId}/L${difficulty} must be one connected source-style silhouette`);
     assert(problem.meta.areaTwice > 0, `${typeId}/L${difficulty} must have positive area`);
     assert(problem.visual.points.length >= 3, `${typeId}/L${difficulty} must draw one polygon`);
-    assert(problem.answer === (problem.meta.areaTwice % 2 === 0 ? String(problem.meta.areaTwice / 2) : `${Math.floor(problem.meta.areaTwice / 2)}와 1/2`), `${typeId}/L${difficulty} area answer mismatch`);
+    assert(problem.answer === (problem.meta.areaTwice % 2 === 0 ? String(problem.meta.areaTwice / 2) : mixed(Math.floor(problem.meta.areaTwice / 2), 1, 2)), `${typeId}/L${difficulty} area answer mismatch`);
   }
 
   if (typeId === "equal-part-shaded-fraction") {

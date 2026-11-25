@@ -68,7 +68,7 @@
         scope: "초5·초6 전 과정", durationMinutes: 100, questionCount: 30,
         durationState: "official", checkedAt: "2026-11-15",
         sourceUrl: "https://blog.naver.com/edenmath/224367798692",
-        note: "초등관 1-1 신규 개강 안내 기준 · 지필드 자체 제작 대비"
+        note: "초등관 1-1 신규 개강 안내 기준"
       },
       "ED:high-advance": {
         branch: "대치", cohort: "2026년 12월 공통수학1 기본반 개강",

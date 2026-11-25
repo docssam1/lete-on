@@ -4,12 +4,12 @@ import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_R
 import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125g";
 import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
-import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125d";
-import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125c";
-import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125h";
-import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125c";
-import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125c";
-import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125c";
+import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125s";
+import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125j";
+import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125q";
+import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125k";
+import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
+import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125r";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124h";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261124h";
@@ -1028,7 +1028,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "square-side-composition": Object.freeze(["g1-summer-square-side-composition", "g1-fall-stacked-square-side-chain"]),
   "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "rectilinear-perimeter-book6"]),
   "latin-square": Object.freeze(["sudoku-fill-three-row-column-b2", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
-  "consecutive-number-addition": Object.freeze(["consecutive-vertical-addition-b10", "g1-fall-consecutive-three-sum-completion"]),
+  "consecutive-number-addition": Object.freeze(["consecutive-masked-triple-b10", "g1-fall-consecutive-three-sum-completion"]),
   "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
   "multiplication-matrix": Object.freeze(["multiplication-table-pattern", "multiplication-matrix-products", "multiplication-matrix-placement"]),
   "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),
@@ -1045,7 +1045,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "tree-planting": Object.freeze(["rect-perimeter-tree-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
   "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "month-date-palindrome-b7", "clock-palindrome-unpadded-unit-test-book7", "reverse-add-chain-b7"]),
   "catch-up": Object.freeze(["catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10"]),
-  "number-baseball": Object.freeze(["number-baseball-b10"]),
+  "number-baseball": Object.freeze(["number-baseball-mixed-b10"]),
   "unit-area-fraction": Object.freeze(["unit-grid-area", "equal-part-shaded-fraction", "incomplete-partition-fraction", "paired-hexagon-fractions", "triangle-twelve-part-fraction", "concentric-square-sixteen-fraction"]),
   "unit-length-multiple": Object.freeze(["aligned-rod-common-length", "g1-summer-one-three-rods", "rod-ratio-total-book3"]),
   "magic-card": Object.freeze(["binary-weight-selection", "colored-cell-number-code", "four-cell-binary-code"]),

@@ -20,3 +20,6 @@
 5. `science-lab/audio/docssam/`만 커밋한다(새 mp3 + manifest.json). 참조 녹음·중간 WAV는 올리지 않는다.
 
 녹음이 들어가기 전까지 이 24줄은 기기 음성으로 나온다. 덱 대사를 또 고치면 `node fields-classic/question-bank/tools/export-study-voice.mjs`와 `export-board-voice.mjs`로 목록을 다시 만든 뒤 2번부터 한다.
+
+## 2026-11-25 더함 — 1줄
+- `fcb-book-08-give-same-source-b04`(8권 4단원 「가진 만큼 주기」 판서): 거꾸로 채우는 표를 「나중」이 맨 위 줄이 되게 바꾸면서(원장 「표를 이용한 거꾸로 풀기는 결과를 마지막을 제일 위로」) 「표의 맨 아래 『나중』 줄부터 채워요」 → 「표의 맨 위 『나중』 줄부터 아래로 채워요」. 녹음 전에는 이 줄만 기기 음성.

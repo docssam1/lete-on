@@ -1,5 +1,6 @@
 // 더클래식 1과정 3권 전용 생성기.
 // 원본은 저장하지 않고, 원본에서 확인한 풀이 구조와 문제 번호 분류만 코드로 재현한다.
+import { mixed } from "./math-markup.js";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -158,8 +159,9 @@ function unitGridArea({ difficulty = 2 }) {
   return {
     prompt: "작은 정사각형 한 칸의 넓이를 1이라고 할 때, 색칠한 도형의 넓이를 구하세요.",
     visual: { kind: "book3", subtype: "unit-grid-area", width, height, points },
-    answer: Number.isInteger(answer) ? String(answer) : `${Math.floor(answer)}와 1/2`,
-    solution: `도형 안의 온칸을 세고, 대각선으로 나뉜 반칸 두 개를 온칸 하나로 묶습니다. 넓이는 ${Number.isInteger(answer) ? answer : `${Math.floor(answer)}와 1/2`}입니다.`,
+    // 반 칸이 남으면 대분수 꼴(빗금 분수 ✕ — math-markup)
+    answer: Number.isInteger(answer) ? String(answer) : mixed(Math.floor(answer), 1, 2),
+    solution: `도형 안의 온칸을 세고, 대각선으로 나뉜 반칸 두 개를 온칸 하나로 묶습니다. 넓이는 ${Number.isInteger(answer) ? answer : mixed(Math.floor(answer), 1, 2)}입니다.`,
     meta: { family: "unit-grid-area", points, width, height, areaTwice, connected: true, sourceReady: true }
   };
 }
