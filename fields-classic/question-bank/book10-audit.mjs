@@ -2,13 +2,17 @@ import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./s
 import { GENERATORS } from "./generators.js";
 import { BOOK10_GENERATORS, BOOK10_UNIT_TEST_GENERATORS, BOOK10_UNIT_TEST_REUSED_GENERATORS } from "./book10-generators.js";
 import { book10Markup } from "./book10-renderers.js";
+import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_CHECKS } from "./book10-structure-generators.js";
+// 교재 번호 꼴 새 유형(book10-structure-generators.js)은 모듈의 독립 검산으로 따로 본다(2026-11-25).
+const STRUCTURE_IDS = new Set(BOOK10_STRUCTURE_TYPE_ROWS.map((row) => row.id));
 
 const iterations = Number(process.env.BOOK10_ITERATIONS || 1000);
 const unitTestIterations = Math.max(100, Number(process.env.BOOK10_UNIT_TEST_ITERATIONS || 120));
 const book = CURRICULUM.find((item) => item.id === "book-10");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
-const book10TypeIds = typeIds.filter((id) => id.endsWith("-b10"));
+const book10TypeIds = typeIds.filter((id) => id.endsWith("-b10") && !STRUCTURE_IDS.has(id));
+const structureTypeIds = typeIds.filter((id) => STRUCTURE_IDS.has(id));
 const expectedUnitCounts = [61, 38, 40, 43];
 const fallbackGuide = "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
 const WEEKDAYS = ["일요일", "월요일", "화요일", "수요일", "목요일", "금요일", "토요일"];
@@ -40,7 +44,7 @@ function permutations(items, count = items.length, chosen = [], output = []) {
   return output;
 }
 
-function consecutiveRuns(target, maxLength = 12) {
+function consecutiveRuns(target, maxLength = Math.floor((Math.sqrt(8 * target + 1) - 1) / 2)) {
   const found = [];
   for (let length = 2; length <= maxLength; length += 1) {
     for (let start = 1; start <= target; start += 1) {
@@ -450,7 +454,8 @@ function validate(problem, id, difficulty) {
 assert(book, "book-10", 0, "10권 커리큘럼 없음");
 assert(units.length === 4, "book-10", 0, `단원 수 ${units.length}`);
 assert(same(units.map((unit) => Object.values(unit.studyRefs).flat().reduce((total, reference) => total + reference.to - reference.from + 1, 0)), expectedUnitCounts), "book-10", 0, "단원 문항 수 오류");
-assert(typeIds.length === 52, "book-10", 0, `유형 수 ${typeIds.length}`);
+assert(typeIds.length === 52 + structureTypeIds.length, "book-10", 0, `유형 수 ${typeIds.length}`);
+assert(structureTypeIds.length === STRUCTURE_IDS.size, "book-10", 0, `교재 꼴 새 유형이 단원에 다 이어지지 않음 ${structureTypeIds.length}/${STRUCTURE_IDS.size}`);
 assert(book10TypeIds.length === 42, "book-10", 0, `10권 전용 유형 수 ${book10TypeIds.length}`);
 assert(Object.keys(BOOK10_GENERATORS).length === 42, "book-10", 0, `전용 생성기 수 ${Object.keys(BOOK10_GENERATORS).length}`);
 assert(same(Object.keys(unitTestMapping), range(1, 25).map((number) => String(number))), "book-10-unit-test", 0, "단원 테스트 25문항 매핑 누락");
@@ -523,4 +528,24 @@ for (const id of book10TypeIds) {
   }
 }
 
-console.log(`BOOK10_AUDIT_OK sourceQuestions=182 types=${typeIds.length} book10Types=${book10TypeIds.length} unitDifficultyFingerprints=${unitDifficultyFingerprints} unitTestGenerated=${unitTestGenerated} reusedGenerated=${reusedGenerated} generated=${generated}`);
+let structureGenerated = 0;
+for (const id of structureTypeIds) {
+  const generator = GENERATORS[typeById(id).generator];
+  const check = BOOK10_STRUCTURE_CHECKS[id];
+  assert(typeof check === "function", id, 0, "독립 검산 없음");
+  for (const difficulty of [1, 2, 3]) {
+    const signatures = new Set();
+    for (let iteration = 0; iteration < Math.min(iterations, 300); iteration += 1) {
+      const problem = generator({ difficulty, max: 30 });
+      assert(problem?.prompt && problem.answer !== undefined && problem.solution, id, difficulty, "문항 꼴");
+      assert(!/undefined|NaN/.test(JSON.stringify(problem)), id, difficulty, "undefined/NaN");
+      const verdict = check(problem);
+      assert(verdict === true, id, difficulty, `검산 실패: ${verdict}`);
+      signatures.add(JSON.stringify([problem.prompt, problem.visual, problem.answer]));
+      structureGenerated += 1;
+    }
+    assert(signatures.size >= 3, id, difficulty, `출력 다양성 부족 ${signatures.size}`);
+  }
+}
+
+console.log(`BOOK10_AUDIT_OK sourceQuestions=182 types=${typeIds.length} book10Types=${book10TypeIds.length} unitDifficultyFingerprints=${unitDifficultyFingerprints} unitTestGenerated=${unitTestGenerated} reusedGenerated=${reusedGenerated} generated=${generated} structureTypes=${structureTypeIds.length} structureGenerated=${structureGenerated}`);

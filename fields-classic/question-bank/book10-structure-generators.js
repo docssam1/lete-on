@@ -580,3 +580,140 @@ function consecutiveMaskedTripleB10() {
     meta: { parts }
   });
 }
+
+// ── 내보내기 ────────────────────────────────────────
+
+export const BOOK10_STRUCTURE_GENERATORS = {
+  gaussFromOneEvenB10,
+  gaussFromOneOddB10,
+  consecutiveSumEvenLongB10,
+  consecutiveSumOddLongB10,
+  consecutiveFromSumLongB10,
+  consecutiveMultiLengthFillB10,
+  calendarWeekSpanWeekdayB10,
+  sameParityRunFromSumB10,
+  shapedGridSymmetricSumB10,
+  shapedGridReverseB10,
+  calendarBlockReverseB10,
+  sameTensComplementSheetB10,
+  consecutiveTensDigitTotalB10,
+  consecutiveMaskedTripleB10
+};
+
+const row = (id, middle, label, generator, aliases = [], domain = "number") => ({
+  id, domain, middle, label, generator,
+  catalogGroup: middle, catalogStrategy: label, searchAliases: aliases
+});
+
+export const BOOK10_STRUCTURE_TYPE_ROWS = [
+  row("gauss-from-one-even-b10", "연속수의 합", "1부터 짝수 개까지 더하기(첫 수와 끝 수 짝짓기)", "gaussFromOneEvenB10", ["가우스", "1부터 더하기"]),
+  row("gauss-from-one-odd-b10", "연속수의 합", "1부터 홀수 개까지 더하기(가운데 수 × 개수)", "gaussFromOneOddB10", ["가우스", "1부터 더하기"]),
+  row("consecutive-sum-even-long-b10", "연속수의 합", "짝수 개(10~12개) 연속수의 합", "consecutiveSumEvenLongB10", ["연속수의 합"]),
+  row("consecutive-sum-odd-long-b10", "연속수의 합", "홀수 개(9~13개) 연속수의 합", "consecutiveSumOddLongB10", ["연속수의 합"]),
+  row("consecutive-from-sum-long-b10", "연속수의 합", "합과 개수(7~10개)로 연속수 채우기", "consecutiveFromSumLongB10", ["연속수 찾기"]),
+  row("consecutive-multi-length-fill-b10", "연속수의 합", "한 수를 주어진 여러 개수의 연속수로 채우기", "consecutiveMultiLengthFillB10", ["연속수 분해"]),
+  row("calendar-week-span-weekday-b10", "연속수의 합", "요일이 정해진 날짜의 합으로 다른 날 요일 찾기", "calendarWeekSpanWeekdayB10", ["달력", "요일"]),
+  row("same-parity-run-from-sum-b10", "연속수의 합", "합·개수·홀짝으로 연속한 홀수(짝수) 찾기", "sameParityRunFromSumB10", ["연속한 홀수", "연속한 짝수"]),
+  row("shaped-grid-symmetric-sum-b10", "연속수의 합", "수 배열표의 대칭 모양 합(가운데 × 칸 수)", "shapedGridSymmetricSumB10", ["수 배열표"]),
+  row("shaped-grid-reverse-b10", "연속수의 합", "모양의 합으로 수 배열표의 가장 작은 칸 찾기", "shapedGridReverseB10", ["수 배열표", "거꾸로"]),
+  row("calendar-block-reverse-b10", "연속수의 합", "달력 묶음의 합으로 가장 작은·큰 날짜 찾기", "calendarBlockReverseB10", ["달력", "묶음 합"]),
+  row("same-tens-complement-sheet-b10", "곱셈의 규칙", "십의 자리가 같고 일의 자리 합이 10인 곱셈 판", "sameTensComplementSheetB10", ["곱셈 규칙"]),
+  row("consecutive-tens-digit-total-b10", "연속수의 합", "십의 자리 숫자의 합으로 연속수의 합 구하기", "consecutiveTensDigitTotalB10", ["연속수", "십의 자리"]),
+  row("consecutive-masked-triple-b10", "연속수의 합", "끝 두 자리만 보이는 연속한 세 수의 덧셈", "consecutiveMaskedTripleB10", ["연속수", "세로셈"])
+];
+
+export const BOOK10_STRUCTURE_GUIDES = {
+  "gauss-from-one-even-b10": "첫 수와 끝 수, 둘째와 끝에서 둘째를 짝지으면 합이 같습니다. 짝의 합 × 짝의 개수.",
+  "gauss-from-one-odd-b10": "홀수 개의 연속수는 가운데 수가 평균입니다. 가운데 수 × 개수.",
+  "consecutive-sum-even-long-b10": "양 끝부터 짝지어 같은 합을 만들고 짝의 개수만큼 곱합니다.",
+  "consecutive-sum-odd-long-b10": "가운데 수를 찾아 개수만큼 곱합니다.",
+  "consecutive-from-sum-long-b10": "합 ÷ 개수로 가운데(또는 가운데 두 수의 평균)를 먼저 찾고 양쪽으로 펼칩니다.",
+  "consecutive-multi-length-fill-b10": "개수마다 합 ÷ 개수로 가운데를 찾고, 가운데가 자연수(또는 ○.5)인지 보고 채웁니다.",
+  "calendar-week-span-weekday-b10": "이어진 날짜의 합으로 가운데 날짜를 찾고, 7일마다 같은 요일임을 써서 다른 날의 요일을 셉니다.",
+  "same-parity-run-from-sum-b10": "2씩 차이 나는 수도 합 ÷ 개수가 가운데 수입니다. 가운데에서 2씩 펼칩니다.",
+  "shaped-grid-symmetric-sum-b10": "가운데를 두고 마주 보는 칸끼리 짝지으면 평균이 가운데 수입니다. 가운데 × 칸 수.",
+  "shaped-grid-reverse-b10": "합 ÷ 칸 수로 가운데 칸의 수를 찾고, 거기서 가장 작은 칸까지 거꾸로 갑니다.",
+  "calendar-block-reverse-b10": "묶음의 합 ÷ 칸 수가 가운데 날짜입니다. 위아래는 7, 옆은 1 차이입니다.",
+  "same-tens-complement-sheet-b10": "십의 자리 수 × (그 수 + 1)을 앞에, 일의 자리 두 수의 곱을 두 자리로 뒤에 씁니다.",
+  "consecutive-tens-digit-total-b10": "십의 자리 숫자가 모두 같은지, 중간에 바뀌는지를 합으로 따져 수를 정합니다.",
+  "consecutive-masked-triple-b10": "연속한 세 수의 합은 가운데 수의 3배라 3의 배수입니다. 그런 합을 찾고 ÷ 3."
+};
+
+export const BOOK10_STRUCTURE_REMAPS = [
+  // 1단원 — 1부터 n까지·긴 연속수, 여러 개수로 채우기, 달력 요일, 거꾸로 찾기, 곱셈 규칙 판, 가린 세로셈
+  ["book-10", 1, "activity", 2, [3], "gauss-from-one-even-b10"],
+  ["book-10", 1, "practice", 1, [7], "gauss-from-one-even-b10"],
+  ["book-10", 1, "activity", 2, [4], "consecutive-sum-even-long-b10"],
+  ["book-10", 1, "practice", 1, [8], "consecutive-sum-even-long-b10"],
+  ["book-10", 1, "activity", 3, [1], "gauss-from-one-odd-b10"],
+  ["book-10", 1, "practice", 1, [15], "gauss-from-one-odd-b10"],
+  ["book-10", 1, "activity", 3, [2], "consecutive-sum-odd-long-b10"],
+  ["book-10", 1, "practice", 1, [16], "consecutive-sum-odd-long-b10"],
+  ["book-10", 1, "activity", 3, [5], "consecutive-from-sum-long-b10"],
+  ["book-10", 1, "check", 2, [1], "consecutive-from-sum-long-b10"],
+  ["book-10", 1, "practice", 1, [11, 19], "consecutive-from-sum-long-b10"],
+  ["book-10", 1, "activity", 3, [6], "consecutive-multi-length-fill-b10"],
+  ["book-10", 1, "check", 2, [2], "consecutive-multi-length-fill-b10"],
+  ["book-10", 1, "practice", 1, [12, 20, 26], "consecutive-multi-length-fill-b10"],
+  ["book-10", 1, "activity", 3, [7], "calendar-week-span-weekday-b10"],
+  ["book-10", 1, "check", 2, [3], "calendar-week-span-weekday-b10"],
+  ["book-10", 1, "practice", 1, [13, 21], "calendar-week-span-weekday-b10"],
+  ["book-10", 1, "check", 3, [1], "same-parity-run-from-sum-b10"],
+  ["book-10", 1, "practice", 1, [23], "same-parity-run-from-sum-b10"],
+  ["book-10", 1, "check", 3, [3], "shaped-grid-symmetric-sum-b10"],
+  ["book-10", 1, "practice", 1, [24], "shaped-grid-symmetric-sum-b10"],
+  ["book-10", 1, "advanced", 1, [2], "shaped-grid-reverse-b10"],
+  ["book-10", 1, "check", 3, [4], "calendar-block-reverse-b10"],
+  ["book-10", 1, "practice", 1, [25], "calendar-block-reverse-b10"],
+  ["book-10", 1, "check", 1, [2], "same-tens-complement-sheet-b10"],
+  ["book-10", 1, "practice", 1, [3], "same-tens-complement-sheet-b10"],
+  ["book-10", 1, "advanced", 1, [5], "consecutive-tens-digit-total-b10"],
+  ["book-10", 1, "advanced", 1, [6], "consecutive-masked-triple-b10"]
+];
+
+// ── 독립 검산(book10-audit.mjs가 부름) — 생성기 코드와 따로 meta로 다시 셈 ─────────
+const isRun = (values, step = 1) => values.every((v, i) => i === 0 || v - values[i - 1] === step);
+const sumOf = (values) => values.reduce((a, b) => a + b, 0);
+export const BOOK10_STRUCTURE_CHECKS = {
+  "gauss-from-one-even-b10": (p) => p.meta.ends.every((n, i) => n % 2 === 0 && p.meta.totals[i] === (n * (n + 1)) / 2) || "1부터 n까지 합",
+  "gauss-from-one-odd-b10": (p) => p.meta.ends.every((n, i) => n % 2 === 1 && p.meta.totals[i] === (n * (n + 1)) / 2) || "1부터 n까지 합",
+  "consecutive-sum-even-long-b10": (p) => p.meta.parts.every((q) => isRun(q.values) && q.values.length % 2 === 0 && sumOf(q.values) === q.total) || "짝수 개 연속수 합",
+  "consecutive-sum-odd-long-b10": (p) => p.meta.parts.every((q) => isRun(q.values) && q.values.length % 2 === 1 && sumOf(q.values) === q.total) || "홀수 개 연속수 합",
+  "consecutive-from-sum-long-b10": (p) => p.meta.parts.every((q) => isRun(q.values) && q.values.length === q.count && q.values[0] >= 1 && sumOf(q.values) === q.total) || "합·개수로 연속수",
+  "consecutive-multi-length-fill-b10": (p) => p.meta.parts.every((q, i) => isRun(q.values) && q.values.length === p.meta.lengths[i] && q.values[0] >= 1 && sumOf(q.values) === p.meta.target) || "여러 개수 연속수",
+  "calendar-week-span-weekday-b10": (p) => {
+    const m = p.meta;
+    if (!isRun(m.dates) || sumOf(m.dates) !== m.total || m.dates[0] !== m.start) return "이어진 날짜 합";
+    if (m.dates.length !== m.to - m.from + 1) return "요일 칸 수";
+    if (((m.dayOne + m.start - 1) % 7 + 7) % 7 !== m.from) return "첫날 요일";
+    if (((m.dayOne + m.date - 1) % 7 + 7) % 7 !== m.weekday) return "묻는 날 요일";
+    if (!p.answer.includes(["일", "월", "화", "수", "목", "금", "토"][m.weekday])) return "답 요일";
+    return m.date <= m.days || "날짜 범위";
+  },
+  "same-parity-run-from-sum-b10": (p) => p.meta.parts.every((q) => isRun(q.values, 2) && q.values.length === q.count && q.values.every((v) => v % 2 === (p.meta.parity === "짝수" ? 0 : 1)) && sumOf(q.values) === q.total) || "연속한 홀수·짝수",
+  "shaped-grid-symmetric-sum-b10": (p) => p.meta.shapes.every((s) => {
+    const values = s.cells.map((c) => p.meta.start + c);
+    return values.length === s.size && sumOf(values) === s.total && s.total === s.center * s.size;
+  }) || "모양 합 = 가운데 × 칸 수",
+  "shaped-grid-reverse-b10": (p) => {
+    const m = p.meta;
+    const values = m.shownCells.map((c) => m.start + c);
+    if (sumOf(values) !== m.center1 * m.size) return "처음 모양 합";
+    const moved = values.map((v) => v - m.center1 + m.center2);
+    if (sumOf(moved) !== m.total2) return "같은 모양 합";
+    return (m.askSmall ? Math.min(...moved) : Math.max(...moved)) === m.target || "가장 작은·큰 칸";
+  },
+  "calendar-block-reverse-b10": (p) => p.meta.parts.every((q) => (q.ask === "sum" ? q.answer === q.center * 9 : q.total === q.center * 9 && q.answer === q.center + (q.ask === "large" ? 8 : -8))) || "달력 묶음",
+  "same-tens-complement-sheet-b10": (p) => p.meta.items.every((it) => Math.floor(it.first / 10) === Math.floor(it.second / 10) && (it.first % 10) + (it.second % 10) === 10 && it.result === it.first * it.second) || "곱셈 규칙",
+  "consecutive-tens-digit-total-b10": (p) => {
+    const m = p.meta;
+    const fits = [];
+    for (let s = 10; s + m.count - 1 <= 99; s += 1) { const run = runOf(s, m.count); if (sumOf(run.map((v) => Math.floor(v / 10))) === m.tensSum) fits.push(run); }
+    if (fits.length !== 1) return `조건에 맞는 연속수 ${fits.length}가지`;
+    return String(m.askLargest ? fits[0].at(-1) : sumOf(fits[0])) === p.answer || "답";
+  },
+  "consecutive-masked-triple-b10": (p) => p.meta.parts.every((q) => {
+    const ok = [100, 200].map((h) => h + q.tail).filter((t) => t % 3 === 0 && t / 3 - 1 >= 10 && t / 3 + 1 <= 99);
+    return ok.length === 1 && ok[0] === q.total && isRun(q.values) && sumOf(q.values) === q.total;
+  }) || "가린 덧셈 답 하나"
+};

@@ -1028,7 +1028,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "square-side-composition": Object.freeze(["g1-summer-square-side-composition", "g1-fall-stacked-square-side-chain"]),
   "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "rectilinear-perimeter-book6"]),
   "latin-square": Object.freeze(["sudoku-fill-three-row-column-b2", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
-  "consecutive-number-addition": Object.freeze(["consecutive-vertical-addition-b10", "g1-fall-consecutive-three-sum-completion"]),
+  "consecutive-number-addition": Object.freeze(["consecutive-masked-triple-b10", "g1-fall-consecutive-three-sum-completion"]),
   "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
   "multiplication-matrix": Object.freeze(["multiplication-table-pattern", "multiplication-matrix-products", "multiplication-matrix-placement"]),
   "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),

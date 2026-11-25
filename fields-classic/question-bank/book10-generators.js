@@ -120,7 +120,8 @@ function factorPairDivisorCountBook10({ difficulty = 2 }) {
   });
 }
 
-function consecutiveRuns(target, maxLength = 12, minLength = 2) {
+// 길이 제한 없이(1부터 이어 더해 target을 넘지 않는 가장 긴 길이까지) — 예전 기본값 12는 13개 이상 연속수를 빠뜨렸다(1~10권 대조 2026-11-25)
+function consecutiveRuns(target, maxLength = Math.floor((Math.sqrt(8 * target + 1) - 1) / 2), minLength = 2) {
   const found = [];
   for (let length = minLength; length <= maxLength; length += 1) {
     for (let start = 1; start <= target; start += 1) {
