@@ -415,6 +415,109 @@ function validate(type, problem, difficulty) {
       assert(meta.difference === Math.abs(meta.black - meta.white), id, difficulty, "stone difference mismatch");
       assert(meta.moreColor === (meta.black > meta.white ? "검은색" : meta.black < meta.white ? "흰색" : "같음"), id, difficulty, "stone color winner mismatch");
       return;
+    // ── 교재 번호 꼴 새 유형(book05-structure-generators.js) — 생성기 풀이기와 따로 다시 센다.
+    case "symbol-card-network-b5": {
+      const k = meta.values.length;
+      const side = (list, op, vals) => list.slice(1).reduce((acc, s) => (op === "×" ? acc * vals[s] : op === "+" ? acc + vals[s] : acc - vals[s]), vals[list[0]]);
+      const ok = (vals) => meta.equations.every((eq) => side(eq.L, eq.lop, vals) === side(eq.R, eq.rop, vals)) && meta.orders.every((o) => vals[o.small] < vals[o.big]);
+      let count = 0;
+      const vals = new Array(k);
+      const used = new Set();
+      const visit = (i) => {
+        if (count > 1) return;
+        if (i === k) { if (ok(vals)) count += 1; return; }
+        for (const v of meta.cards) { if (used.has(v)) continue; used.add(v); vals[i] = v; visit(i + 1); used.delete(v); }
+      };
+      visit(0);
+      assert(count === 1 && ok(meta.values), id, difficulty, `symbol card network has ${count} solutions`);
+      assert(new Set(meta.values).size === k && meta.values.every((v) => meta.cards.includes(v)), id, difficulty, "symbol values not distinct cards");
+      if (meta.ask === "one") assert(numeric === meta.values[meta.asked[0]], id, difficulty, "symbol answer mismatch");
+      if (meta.ask === "pair") assert(numeric === meta.values[meta.asked[0]] + meta.values[meta.asked[1]], id, difficulty, "symbol pair sum mismatch");
+      if (meta.ask === "leftover") assert(String(problem.answer) === meta.cards.filter((v) => !meta.values.includes(v)).join(", "), id, difficulty, "leftover card mismatch");
+      return;
+    }
+    case "product-cycle-fill-b5":
+      for (const cycle of meta.cycles) {
+        const n = cycle.vertices.length;
+        assert(cycle.edges.every((e, i) => e === cycle.vertices[i] * cycle.vertices[(i + 1) % n]), id, difficulty, "cycle edge mismatch");
+        let solutions = 0;
+        for (let v0 = meta.lo; v0 <= meta.hi; v0 += 1) {
+          const vs = [v0];
+          for (let i = 0; i < n - 1; i += 1) vs.push(cycle.edges[i] / vs[i]);
+          if (vs.every((v) => Number.isInteger(v) && v >= meta.lo && v <= meta.hi) && vs[n - 1] * v0 === cycle.edges[n - 1]) solutions += 1;
+        }
+        assert(solutions === 1, id, difficulty, `cycle has ${solutions} solutions`);
+      }
+      assert(problem.responseKind === "visual-fill" && problem.answerVisual, id, difficulty, "cycle fill answer visual missing");
+      return;
+    case "square-layer-grid-b5": {
+      const order = [];
+      for (let layer = 1; layer <= meta.size; layer += 1) {
+        const cells = [];
+        for (let r = 0; r < layer; r += 1) cells.push([r, layer - 1]);
+        for (let c = layer - 2; c >= 0; c -= 1) cells.push([layer - 1, c]);
+        if (meta.zigzag && layer >= 3 && layer % 2 === 1) cells.reverse();
+        order.push(...cells.map(([r, c]) => (meta.transpose ? [c, r] : [r, c])));
+      }
+      meta.targets.forEach(([r, c], i) => {
+        const value = order.findIndex(([rr, cc]) => rr === r && cc === c) + 1;
+        assert(value === meta.values[i], id, difficulty, "square layer value mismatch");
+      });
+      return;
+    }
+    case "calendar-pair-sum-b5": {
+      assert(meta.b === meta.a + 7 && meta.a + meta.b === meta.total, id, difficulty, "pair dates mismatch");
+      assert((meta.firstWeekday + meta.a - 1) % 7 === meta.weekday && meta.a === ((meta.weekday - meta.firstWeekday + 7) % 7) + 1 + (meta.k - 1) * 7, id, difficulty, "pair ordinal mismatch");
+      const offset = meta.targetMonth === meta.month ? meta.target - 1 : meta.days + meta.target - 1;
+      assert((meta.firstWeekday + offset) % 7 === meta.targetWeekday, id, difficulty, "pair target weekday mismatch");
+      return;
+    }
+    case "calendar-mixed-weekday-sum-b5": {
+      const firstOf = (w, fw) => ((w - fw + 7) % 7) + 1;
+      const matches = [0, 1, 2, 3, 4, 5, 6].filter((fw) => firstOf(meta.x, fw) + firstOf(meta.y, fw) + (meta.ordY - 1) * 7 === meta.total);
+      assert(matches.length === 1 && matches[0] === meta.firstWeekday, id, difficulty, "mixed weekday sum not unique");
+      assert((meta.firstWeekday + meta.days + meta.target - 1) % 7 === meta.targetWeekday, id, difficulty, "mixed target weekday mismatch");
+      return;
+    }
+    case "mountain-row-sum-b5": {
+      const rowSum = (n) => sum([...Array.from({ length: n }, (_, i) => i + 1), ...Array.from({ length: n - 1 }, (_, i) => n - 1 - i)]);
+      assert(meta.answers[0] === rowSum(meta.p) && meta.answers[1] === rowSum(meta.q) && rowSum(meta.r) === meta.r * meta.r, id, difficulty, "mountain row sum mismatch");
+      return;
+    }
+    case "strip-rectangle-count-b5": {
+      const rects = (n) => { let c = 0; for (let a = 0; a < n; a += 1) for (let b = a; b < n; b += 1) c += 1; return c; };
+      assert(meta.answers[0] === rects(meta.a) && meta.answers[1] === rects(meta.b), id, difficulty, "strip rectangle count mismatch");
+      return;
+    }
+    case "wide-snake-grid-b5": {
+      const flat = [];
+      for (let r = 0; r < meta.rows; r += 1) {
+        const cols = Array.from({ length: meta.columns }, (_, c) => c);
+        if ((r % 2 === 1) !== meta.fromRight) cols.reverse();
+        cols.forEach((c) => flat.push([r, c]));
+      }
+      const valueAt = ([r, c]) => flat.findIndex(([rr, cc]) => rr === r && cc === c) + 1;
+      const got = meta.targets.map(valueAt);
+      assert(got.join() === meta.values.join(), id, difficulty, "snake value mismatch");
+      const expectedAnswer = meta.mode === "one" ? got[0] : meta.mode === "diff" ? Math.abs(got[1] - got[0]) : got[0] + got[1];
+      assert(numeric === expectedAnswer, id, difficulty, "snake answer mismatch");
+      return;
+    }
+    case "calendar-three-questions-b5": {
+      const dates = [];
+      for (let d = 1; d <= meta.days; d += 1) if ((meta.firstWeekday + d - 1) % 7 === meta.weekday) dates.push(d);
+      assert(dates[meta.nth - 1] === meta.nthDate, id, difficulty, "calendar nth date mismatch");
+      return;
+    }
+    case "route-joined-boards-b5":
+      assert(meta.first === countPaths(meta.h1 + 1, meta.w1 + 1) && meta.second === countPaths(meta.h2 + 1, meta.w2 + 1) && meta.answer === meta.first * meta.second && numeric === meta.answer, id, difficulty, "joined route count mismatch");
+      return;
+    case "route-strip-set-b5":
+      assert(meta.heights.every((h, i) => meta.answers[i] === countPaths(h + 1, 2)), id, difficulty, "strip route count mismatch");
+      return;
+    case "triangular-table-b5":
+      assert(meta.asked.every((n, i) => meta.answers[i] === sum(Array.from({ length: n }, (_, j) => j + 1))), id, difficulty, "triangular table mismatch");
+      return;
     default:
       // 2권에서 수학과 그림을 이미 독립 검산한 재사용 생성기다.
       assert(meta || type.generator, id, difficulty, "reused generator has no audit identity");
@@ -423,7 +526,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
-if (typeIds.length !== 52) throw new Error(`book-05 type count ${typeIds.length}`);
+if (typeIds.length !== 72) throw new Error(`book-05 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);

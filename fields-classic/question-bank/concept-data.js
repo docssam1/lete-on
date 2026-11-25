@@ -1244,7 +1244,8 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "기준 자리 없이 한 사람부터 마음대로 놓거나 대각선 자리를 위·아래·왼쪽·오른쪽으로 잘못 읽고, 마지막 검산을 빠뜨리지 않았는지 확인합니다.",
     [book4Evidence("논리추리와 자리배치", 2, [3, 4])]
   ),
-  "sequential-path-number-grid": sourceLesson(
+  // 1단원 활동 1-1은 줄마다 방향을 바꾸어 쓴 넓은 수 배열(교재 대조 2026-11-25)
+  "wide-snake-number-grid-b5": sourceLesson(
     "concept:pattern:path-indexed-number-grid",
     [
       beat("trace-path", "수가 놓이는 길을 찾아요", "시작점과 화살표를 확인하고 수가 이어지는 길을 한 칸씩 따라갑니다."),
@@ -1252,7 +1253,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-neighbors", "앞뒤 수로 확인해요", "찾은 수의 바로 앞자리와 뒷자리도 같은 규칙으로 이어지는지 다시 확인합니다.")
     ],
     "칸을 가로로만 읽거나 길이 꺾이는 곳에서 순서를 건너뛰지 않았는지 확인합니다.",
-    [book5Evidence("수 배열표와 달력", 1, [1, 4])]
+    [book5Evidence("수 배열표와 달력", 1, [1])]
   ),
   "diagonal-fill-number-grid": sourceLesson(
     "concept:pattern:path-indexed-number-grid",
@@ -1264,7 +1265,8 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "대각선을 가로줄처럼 읽거나 한 대각선이 끝난 뒤 다음 시작 칸을 잘못 잡지 않았는지 확인합니다.",
     [book5Evidence("수 배열표와 달력", 1, [3])]
   ),
-  "calendar-month-position": sourceLesson(
+  // 1단원 활동 2-1은 달력 일부로 푸는 작은 문제 셋(교재 대조 2026-11-25)
+  "calendar-three-questions-b5": sourceLesson(
     "concept:pattern:calendar-seven-day-cycle",
     [
       beat("locate-month-start", "1일의 요일을 찾아요", "달력에서 1일이 놓인 요일 칸을 먼저 표시합니다."),
@@ -1292,7 +1294,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("read-destination-count", "도착점의 수를 확인해요", "도착점에 모인 방법 수를 읽고 되돌아간 길이나 중복된 길이 없는지 확인합니다.")
     ],
     "가장 짧지 않은 되돌아가는 길을 포함하거나 갈림길에서 방법 수를 더하지 않고 칸 수만 세지 않았는지 확인합니다.",
-    [book5Evidence("최단거리와 숫자 카드", 1, [1, 2, 3, 4, 5, 6])]
+    [book5Evidence("최단거리와 숫자 카드", 1, [2, 3, 4, 5, 6])]
   ),
   "digit-card-number-enumeration": sourceLesson(
     "concept:number:digit-card-enumerate-rank",
@@ -1324,7 +1326,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "칸 안의 이웃한 수끼리 곱하거나 가로와 세로 머리수 중 하나를 빠뜨리지 않았는지 확인합니다.",
     [book5Evidence("곱셈 매트릭스", 1, [1])]
   ),
-  "product-cycle-completion": sourceLesson(
+  "product-cycle-fill-triangles-b5": sourceLesson(
     "concept:number:adjacent-product-cycle",
     [
       beat("match-edge-product", "변과 두 꼭짓점을 짝지어요", "각 변에 적힌 곱이 어느 두 이웃한 꼭짓점에서 만들어지는지 표시합니다."),
@@ -1332,7 +1334,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("close-product-cycle", "둘레를 한 바퀴 검산해요", "찾은 꼭짓점 수를 차례로 곱해 모든 변의 곱과 맞는지 한 바퀴 확인합니다.")
     ],
     "마주 보는 꼭짓점을 곱하거나 한 변의 조건만 맞춘 뒤 다른 변의 곱을 확인하지 않았는지 살펴봅니다.",
-    [book5Evidence("곱셈 매트릭스", 1, [2, 4])]
+    [book5Evidence("곱셈 매트릭스", 1, [2])]
   ),
   "symbol-product-pair": sourceLesson(
     "concept:number:symbol-product-equation-chain",
@@ -1354,7 +1356,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "모든 식을 한꺼번에 풀려 하거나 앞에서 찾은 도형값을 다음 식의 다른 도형에 넣지 않았는지 확인합니다.",
     [book5Evidence("곱셈 매트릭스", 2, [2])]
   ),
-  "symbol-mixed-operation-grid": sourceLesson(
+  "symbol-card-cross-pair-sum-b5": sourceLesson(
     "concept:number:symbol-product-equation-chain",
     [
       beat("solve-clear-equation", "값이 바로 정해지는 식부터 찾아요", "같은 도형이 반복되거나 하나만 모르는 식을 먼저 골라 도형값을 찾습니다."),
@@ -1372,7 +1374,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("add-decreasing-counts", "줄어드는 수를 모두 더해요", "사람마다 새로 생긴 악수 수를 차례로 더하고 같은 두 사람의 악수를 두 번 세지 않았는지 확인합니다.")
     ],
     "가와 나의 악수와 나와 가의 악수를 서로 다른 두 번으로 세거나 자기 자신과의 악수를 포함하지 않았는지 확인합니다.",
-    [book5Evidence("삼각수와 사각수", 1, [1, 2])]
+    [book5Evidence("삼각수와 사각수", 1, [2])]
   ),
   "pair-selection-count": sourceLesson(
     "concept:logic:unordered-pair-count",
@@ -1414,14 +1416,15 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "정사각형의 한 변 길이만 더하거나 새 가장자리에서 겹치는 모서리 칸을 두 번 세지 않았는지 확인합니다.",
     [book5Evidence("삼각수와 사각수", 2, [1])]
   ),
-  "pascal-row-sum": sourceLesson(
-    "concept:pattern:adjacent-sum-triangle",
+  // 4단원 활동 2-2는 1부터 커졌다가 다시 1까지 작아지는 줄(교재 대조 2026-11-25) — 이웃한 두 수를 더하는 수 삼각형이 아니다.
+  "mountain-row-sum-b5": sourceLesson(
+    "concept:pattern:figurative-number-growth",
     [
-      beat("identify-parent-pair", "바로 위의 이웃한 두 수를 찾아요", "빈칸의 왼쪽 위와 오른쪽 위에 있는 두 수를 한 쌍으로 표시합니다."),
-      beat("add-into-next-row", "두 수를 더해 아래 칸을 채워요", "표시한 두 수를 더해 바로 아래 칸에 쓰고 같은 방법으로 줄을 완성합니다."),
-      beat("sum-target-row", "완성한 줄의 수를 모두 더해요", "묻는 줄이 완성되면 그 줄의 수를 빠짐없이 더하고 위 줄의 규칙과 다시 맞춥니다.")
+      beat("write-small-rows", "앞의 몇 줄을 직접 써 봐요", "1, 1 2 1, 1 2 3 2 1처럼 앞의 줄을 쓰고 줄마다 수의 합을 구해 1, 4, 9를 적습니다."),
+      beat("pair-up-and-down", "올라가는 수와 내려가는 수를 짝지어요", "가운데 수를 빼고 올라가는 쪽과 내려가는 쪽의 수를 짝지으면 짝마다 줄 번호가 되어 줄 번호가 줄 번호만큼 모입니다."),
+      beat("square-row-number", "줄 번호를 두 번 곱해요", "묻는 줄의 합은 줄 번호를 두 번 곱한 수이고, 합을 알면 두 번 곱해 그 수가 되는 줄 번호를 찾습니다.")
     ],
-    "서로 이웃하지 않은 수를 더하거나 아래 줄을 완성하기 전에 보이는 수만 더하지 않았는지 확인합니다.",
+    "가운데 가장 큰 수를 두 번 더하거나 줄에 놓인 수의 개수와 줄 번호를 섞지 않았는지 확인합니다.",
     [book5Evidence("삼각수와 사각수", 2, [2])]
   )
 });
