@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47041218,
-      "sha256": "208d594b2204a01f190701d592b39ba21ea9c990346c28693930b7c59b224b13",
+      "bytes": 47053544,
+      "sha256": "d28b69e07e9142fb5f6703de0fa78bba247fbdefa174946071d909666e4d88f4",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59022861,
-      "sha256": "a260710769964ff054664c3ecbddb9565a0d85ce6f8574f63eb8e91af024c309",
+      "bytes": 59037271,
+      "sha256": "99526bbded23b52e42d83cb8ab5d5db6de06e5b14c320e2d84225fe07da7a03b",
       "contentIncludedInGit": false
     },
     {
@@ -70,8 +70,8 @@
     },
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 762839,
-      "sha256": "bf4118ac68f79d1299a1057132cddb576bffb4f8c0e6981e3e5cf610eff64428",
+      "bytes": 769405,
+      "sha256": "49ef910ebabc81bb654d4cabef8085fb3ebc431d064f84d5c7da8d675092e96a",
       "contentIncludedInGit": false
     }
   ],
