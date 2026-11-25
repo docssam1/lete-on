@@ -48,7 +48,7 @@ test('the motion only reads position and writes its own three values',()=>{
 });
 test('the introduction keeps its anchors, tabs, links and the single senior example',()=>{
  for(const id of ['introduction','introHeading','previewMap','previewGraph','previewTable','previewMapPanel','previewGraphPanel','previewTablePanel','inputExampleHeading','learningCycleHeading','goalRoadmapsHeading','mockAnalysis','mockHeading','unitTest','unitHeading','bookTest','bookTestHeading','growthHeading','seniorExample','seniorHeading','seniorCaseTitle','stageHeading','libraryHeading','howHeading','questionsHeading','startHeading','accountEntry','memberContent','memberTitle','memberStatus'])assert.equal(html.split(`id="${id}"`).length,2,id);
- for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?ox=1','assets/roadmap-program-unit-ox-20261111.png','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261111.jpg','assets/roadmap-program-graph-20261111.jpg','assets/roadmap-program-table-20261126-fields.jpg','assets/roadmap-program-mock-20261111.jpg','assets/roadmap-program-booktest-20261111.jpg','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
+ for(const href of ['#introduction','#seniorExample','planner.html?books=math','planner.html?goal=contest','planner.html?goal=medicine','planner.html?goal=giftedSchool','planner.html?view=seniors','planner.html?ox=1','assets/roadmap-program-unit-ox-20261111.png','planner.html?academy=schools','planner.html?academy=notices','planner.html?academy=soma-fields','assets/roadmap-program-map-20261111.jpg','assets/roadmap-program-graph-20261111.jpg','assets/roadmap-program-table-20261126-grade5.jpg','assets/roadmap-program-mock-20261111.jpg','assets/roadmap-program-booktest-20261111.jpg','assets/senior-seoul-science-roadmap-20261104.svg'])assert.ok(html.includes(`href="${href}"`),href);
  assert.equal((html.match(/role="tab"/g)||[]).length,3);assert.equal((html.match(/role="tabpanel"/g)||[]).length,3);
  assert.equal((html.match(/class="account-senior-example"/g)||[]).length,1);
 });
@@ -88,9 +88,9 @@ test('the example typed in is the one the screens and the graph were made from',
  const example=html.match(/<article class="account-input-example"[\s\S]*?<\/article>/)[0];
  assert.match(example,/<dt>교과 선행<\/dt><dd>디딤돌 기본\+응용 5-2<\/dd>/);
  assert.match(example,/<dt>교과 심화<\/dt><dd>최상위 수학 5-1<\/dd>/);
- assert.match(example,/<dt>연산<\/dt><dd>기적의 계산법 6권 · 두 자리 수 곱셈<\/dd>/);
+ assert.match(example,/<dt>연산<\/dt><dd>기적의 계산법 10권 · 5-2 분수·소수 곱셈<\/dd>/);
  assert.match(example,/<dt>사고력 참고<\/dt><dd>필즈 중급<\/dd>/);
- assert.doesNotMatch(example,/1031/);
+ assert.doesNotMatch(example,/1031|계산법 6권/);
  assert.equal((html.match(/class="line-(now|near|far)"/g)||[]).length,3);assert.equal((html.match(/class="key-(now|near|far)"/g)||[]).length,3);
  assert.match(html,/class="growth-chart" role="img" aria-label="[^"]{30,}"/);
 });
