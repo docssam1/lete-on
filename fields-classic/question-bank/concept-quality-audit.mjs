@@ -21,10 +21,10 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 563, `expected 563 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 632, `expected 632 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 584, `expected 584 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 653, `expected 653 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 84, `expected 84 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 83, `expected 83 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -42,17 +42,12 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
   }),
-  "rotational-partition-two": Object.freeze({
-    conceptId: "concept:geometry:rotational-congruent-partition",
-    sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-01", "book-04", "book-09"])
-  }),
   "rotational-partition-four": Object.freeze({
     conceptId: "concept:geometry:rotational-congruent-partition",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-01", "book-04", "book-09"])
   }),
-  "digital-grid-transform": Object.freeze({
+  "number-board-three-moves-2x2-b4": Object.freeze({
     conceptId: "concept:geometry:sequential-rigid-transforms",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
@@ -91,12 +86,12 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04", "book-05"])
   }),
-  "shape-difference-chain": Object.freeze({
+  "shape-difference-tree-b4": Object.freeze({
     conceptId: "concept:number:chained-difference-addition",
     sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-04", "book-09"])
+    placementBooks: Object.freeze(["book-04"])
   }),
-  "balance-unit-ratio": Object.freeze({
+  "mixed-pan-balance-two-b4": Object.freeze({
     conceptId: "concept:number:balance-equivalence-multiplicative-chain",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
@@ -434,12 +429,12 @@ const expectedPilot = Object.freeze({
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
 
 const expectedBook04ConceptTypes = Object.freeze([
-  "balance-unit-ratio", "circular-seat-blank-book4", "cube-count-solid", "cube-minimum-from-solid",
-  "cube-triangular-wall-growth", "digital-digit-transform", "digital-grid-transform", "digital-grid-upright-after-moves",
-  "digital-transform-board-sum", "directional-landmark-placement-book4", "directional-seat-placement", "fold-cut-unfold-one-draw",
-  "fold-number-grid-one", "fold-number-grid-two-diagonal", "fold-number-grid-two-orthogonal", "person-item-logic",
-  "rotational-partition-four", "rotational-partition-two", "shape-difference-chain", "shape-quarter-half-turn",
-  "tetromino-family-choice", "tetromino-square-composition"
+  "circular-seat-blank-book4", "cube-count-solid", "cube-minimum-from-solid", "cube-triangular-wall-growth",
+  "digital-flip-turn-set-b4", "digital-grid-upright-after-moves", "digital-transform-board-sum", "directional-landmark-placement-book4",
+  "directional-seat-placement", "fold-cut-unfold-one-draw", "fold-number-grid-one", "fold-number-grid-two-diagonal",
+  "fold-number-grid-two-orthogonal", "mixed-pan-balance-two-b4", "number-board-three-moves-2x2-b4", "pentomino-split-two-b4",
+  "person-item-logic", "polyline-turn-four-b4", "rotational-partition-four", "row-left-right-placement-b4",
+  "shape-difference-tree-b4", "tetromino-family-choice", "tetromino-square-composition"
 ].sort());
 const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04").units.flatMap((unit) =>
   Object.entries(unit.typeStudyRefs || {})
@@ -573,8 +568,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 84, `expected 84 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 479, `expected 479 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 83, `expected 83 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 501, `expected 501 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

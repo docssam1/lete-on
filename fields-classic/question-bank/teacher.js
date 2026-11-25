@@ -1,7 +1,7 @@
-import { CURRICULUM, typeById } from "./source-data.js?v=20261125d";
+import { CURRICULUM, typeById } from "./source-data.js?v=20261125e";
 import { checkSession, loadClass, logout, weekRate, memberCall } from "./study-progress.js?v=20261117a";
-import { initAdmin } from "./teacher-admin.js?v=20261125d";
-import { initAccess, refreshAccess, setRecords } from "./teacher-access.js?v=20261125d";
+import { initAdmin } from "./teacher-admin.js?v=20261125e";
+import { initAccess, refreshAccess, setRecords } from "./teacher-access.js?v=20261125e";
 
 // 관리자 화면(원장 2026-11-14 「어드민 좀 쉽게」 — 탭 셋: GM 회원 · 모의고사 회원 · 접속·학습 상황, teacher-admin.js).
 // 「접속·학습 상황」 탭 = 예전 선생님 보기(원장 2026-10-27): 학생마다 권·주차 수행률, 단원 평가·권별 테스트 점수, 약점 유형. 학생 이름을 누르면 그 학생의 「내 학습 상황」.
