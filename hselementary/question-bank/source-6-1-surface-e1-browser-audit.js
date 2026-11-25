@@ -104,14 +104,17 @@ async function inspectView(page, selector, sourceId, difficulty, viewportName, m
     };
   }, selector);
   const label = `${sourceId} / ${viewportName} / 난이도 ${difficulty} / ${mode}`;
-  if (!state.ready || state.itemStates.length !== 3) fail(`${label}: 3문항 화면이 열리지 않았습니다.`);
+  // 2026-11-24: 개념탐구는 3×3×3(원문)·4×4×4·5×5×5, Mission 1은 한 모서리 1cm(원문)·2cm·3cm 쌓기나무로
+  // 세 고정 문항의 문제 문장이 서로 다르므로 모든 유형에서 3문항을 기대한다.
+  const expectedItems = 3;
+  if (!state.ready || state.itemStates.length !== expectedItems) fail(`${label}: ${expectedItems}문항 화면이 열리지 않았습니다 (${state.itemStates.length}문항).`);
   if (state.pageOverflow || state.itemStates.some(item => item.overflow || item.rect.left < -2 || item.rect.right > (viewportName === "mobile" ? 390 : 1440) + 2)) fail(`${label}: 문항 가로 넘침 또는 화면 밖 배치`);
   if (!state.diagramCount || state.itemStates.some(item => !item.diagrams.length || item.diagrams.some(svg => svg.bbox.width <= 0 || svg.bbox.height <= 0 || svg.bbox.left < -2 || svg.bbox.right > (viewportName === "mobile" ? 390 : 1440) + 2))) fail(`${label}: 빈 그림 또는 잘린 그림`);
   if (state.itemStates.some(item => item.diagrams.some(svg => svg.geometry.x < svg.geometry.viewX - 1 || svg.geometry.y < svg.geometry.viewY - 1 || svg.geometry.right > svg.geometry.viewRight + 1 || svg.geometry.bottom > svg.geometry.viewBottom + 1))) fail(`${label}: SVG 내부 도형이 viewBox 밖으로 잘렸습니다.`);
   if (state.itemStates.some(item => item.diagrams.some(svg => svg.geometry.width < svg.geometry.viewWidth * 0.28 || svg.geometry.height < svg.geometry.viewHeight * 0.2))) fail(`${label}: 문제 그림이 너무 작아 구조를 읽기 어렵습니다.`);
   if (/undefined|null|NaN|Infinity|\$\{[^}]+\}/.test(state.text)) fail(`${label}: 깨진 값이 있습니다.`);
   if (state.hiddenAnswerData) fail(`${label}: 그림 속 숨은 답 데이터가 있습니다.`);
-  if (state.itemStates.some(item => item.diagrams.some(svg => svg.model !== "three-layer-map" && (!svg.faces.top || !svg.faces.front || !svg.faces.side)))) fail(`${label}: 입체의 윗면·앞면·오른쪽 면 중 보이지 않는 면이 있습니다.`);
+  if (state.itemStates.some(item => item.diagrams.some(svg => !svg.model.endsWith("-layer-map") && (!svg.faces.top || !svg.faces.front || !svg.faces.side)))) fail(`${label}: 입체의 윗면·앞면·오른쪽 면 중 보이지 않는 면이 있습니다.`);
   if (mode === "problem") {
     if (state.problemAnswerMarker || state.text.includes("답:")) fail(`${label}: 문제에 답 표시가 노출되었습니다.`);
     if ((sourceId.endsWith("example-1") || sourceId.endsWith("mission-1")) && state.arrangementLabels) fail(`${label}: 가장 큰·작은 경우의 답 그림이 문제에 노출되었습니다.`);

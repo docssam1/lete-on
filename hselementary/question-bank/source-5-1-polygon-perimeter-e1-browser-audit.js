@@ -94,6 +94,11 @@ function staticPreflight() {
   global.window = {};
   try {
     require("./curriculum.js");
+    // 2026-11-24: 11-22 공개 등록으로 검수 대기이던 Mission 6(variant 10)이 원문 생성기 orig51U6E1Mission6으로 공개되었다.
+    // 브라우저와 같은 상태를 보도록 공개 등록 파일을 함께 읽고, 11유형 모두 공개를 기대한다.
+    require("./source-lower-release-20261122-registry.js");
+    require("./source-lower-release-20261122.js");
+    require("./source-lock-reasons-20261122.js");
     const semester = window.HSE_CURRICULUM?.semesters?.find(item => item.id === "5-1");
     const unit = semester?.units?.find(item => item.id === "5-1-u6");
     const types = unit?.subunits?.flatMap(item => item.types || []).filter(type => type.sourceItemId?.startsWith("5-1-u6-e1-")) || [];
@@ -101,8 +106,8 @@ function staticPreflight() {
     const ids = types.map(type => type.sourceItemId);
     if (ids.join("|") !== sourceIds.join("|")) fail(`교육과정 E1 원문 유형 순서가 다릅니다: ${ids.join(", ")}`);
     for (const type of types) {
-      const expectedLocked = type.variant === 10;
-      if (Boolean(type.reviewLocked) !== expectedLocked) fail(`${type.sourceItemId}: 공개/검수대기 상태가 계약과 다릅니다.`);
+      if (type.reviewLocked) fail(`${type.sourceItemId}: 공개 상태가 계약과 다릅니다(11-22 공개 등록 뒤 잠금 0).`);
+      if (type.variant === 10 && (type.generatorKey !== "orig51U6E1Mission6" || window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key !== "orig51U6E1Mission6")) fail(`${type.sourceItemId}: 공개 등록 원문 생성기(orig51U6E1Mission6) 연결이 다릅니다.`);
     }
   } catch (error) {
     fail(`교육과정 읽기 실패: ${error.message}`);
@@ -282,8 +287,10 @@ function assertVariant(state, variant, key) {
   }
 }
 
+// 2026-11-24: 예전에는 Mission 6이 검수 대기로 막혀 있는지 보았다. 11-22 공개 등록 뒤에는 목록에서 고를 수 있고
+// 원문 생성기 문항(원문 묶음 5-1-u6-e1-mission-6)이 생성되는지 본다. 화면 1장은 그대로 남긴다.
 async function inspectLocked(page, baseUrl) {
-  const key = "Mission 6 검수대기";
+  const key = "Mission 6 공개";
   attachRuntimeListeners(page, key);
   await blockExternalFontRequest(page);
   await page.goto(`${baseUrl}?difficulty=0`, { waitUntil: "domcontentloaded", timeout: 90000 });
@@ -291,16 +298,29 @@ async function inspectLocked(page, baseUrl) {
   await page.locator("#termFilter [data-term='1']").click();
   await page.selectOption("#unitFilter", "5-1-u6");
   await page.locator(`input[data-type-id='${typeIdForVariant(10)}']`).waitFor({ state: "attached" });
-  const state = await page.evaluate(() => ({
+  const before = await page.evaluate(() => ({
     worksheet: !document.querySelector("#worksheet")?.hidden,
-    selected: String(document.querySelector("#selectedTypeCount")?.textContent || "").replace(/\s+/g, " ").trim(),
     questions: document.querySelectorAll("#problemView .question-item").length,
-    disabled: document.querySelector("input[data-type-id='5-1-u6-t1-11']")?.disabled === true,
-    buttonDisabled: document.querySelector("#generateButton")?.disabled === true
+    disabled: document.querySelector("input[data-type-id='5-1-u6-t1-11']")?.disabled === true
   }));
-  if (!generatorParseable) fail(`${key}: 생성기 파싱 실패로 UI 잠금 상태를 판정할 수 없습니다.`);
-  else if (state.worksheet || !/^0개?$/.test(state.selected) || state.questions || !state.disabled || !state.buttonDisabled) fail(`${key}: UI에서 생성 가능하거나 직접 생성되었습니다.`);
-  await captureScreenshot(page, path.join(outputDir, "mission-6-locked-desktop.png"));
+  if (!generatorParseable) fail(`${key}: 생성기 파싱 실패로 UI 공개 상태를 판정할 수 없습니다.`);
+  else if (before.worksheet || before.questions || before.disabled) fail(`${key}: 목록에서 고를 수 없거나 고르기 전에 문제가 생성되었습니다.`);
+  if (!before.disabled) {
+    await page.locator(`input[data-type-id='${typeIdForVariant(10)}']`).check();
+    await page.locator("#generateButton").click();
+    await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible", timeout: 12000 });
+    const after = await page.evaluate(() => {
+      const items = [...document.querySelectorAll("#problemView .question-item")];
+      return {
+        questions: items.length,
+        sourceIds: items.map(item => item.querySelector("[data-source-item-id]")?.getAttribute("data-source-item-id") || ""),
+        broken: /undefined|null|NaN|Infinity|SyntaxError/.test(document.body.innerText),
+        pageOverflow: document.documentElement.scrollWidth > innerWidth + 1
+      };
+    });
+    if (after.questions < 1 || after.questions > 3 || after.sourceIds.some(id => id !== "5-1-u6-e1-mission-6") || after.broken || after.pageOverflow) fail(`${key}: 원문 생성기 문항이 정상으로 생성되지 않았습니다. ${JSON.stringify(after)}`);
+  }
+  await captureScreenshot(page, path.join(outputDir, "mission-6-public-desktop.png"));
 }
 
 async function inspectFixedPoolCap(page, baseUrl) {

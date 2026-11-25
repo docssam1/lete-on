@@ -29,8 +29,8 @@ test('existing username/approval and email/pin submissions retain APIs and next 
 test('authenticated review member stays on existing account screen even from free-start link',async()=>{
  const h=await setup({review:true,username:'synthetic'});assert.match(h.node('memberContent').innerHTML,/내 계정/);h.external('signup');assert.match(h.node('memberContent').innerHTML,/내 계정/);assert.doesNotMatch(h.node('memberContent').innerHTML,/emailForm/);
 });
-test('first-screen CTA precedes video and makes no instant verification promise',()=>{
- const html=read('account.html');assert.ok(html.indexOf('이메일로 무료 시작하기')<html.indexOf('account-stage'));assert.match(html,/data-account-entry="login"/);assert.doesNotMatch(html+read('account.js'),/1초.*인증|인증.*1초|즉시 인증/);
+test('first-screen CTA opens guest planning before the video and keeps sign-in available',()=>{
+ const html=read('account.html');assert.match(html.slice(0,html.indexOf('account-stage')),/href="planner\.html\?guest=1">우리 아이 로드맵 만들기/);assert.match(html,/data-account-entry="login"/);assert.doesNotMatch(html+read('account.js'),/1초.*인증|인증.*1초|즉시 인증/);
 });
 
 test('the same login form routes DOCSSAM through verified admin authentication, never review fallback',async()=>{

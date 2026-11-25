@@ -2,6 +2,7 @@
 // 글·수·배치는 원문 그대로, 그림은 우리 색표(워밍업 그림 색)로 다시 그렸다. 디지털 숫자는 글꼴이 아니라 일곱 막대(SVG 선)로 그린다.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, box, cell, blockArrow } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "G1", title: "돌리기와 뒤집기" };
@@ -270,10 +271,10 @@ function q15() {
 }
 function q16() {
   const O = P(150, 104), r = 92, th = Math.asin(4 / 7) / R, A = at(O, r, 180 - th), B = at(O, r, 180 + th), E = P(O.x + r, O.y);
-  const brace = `<path d="M${f(O.x + 6)} ${f(O.y - 4)} Q${f(O.x + r / 2)} ${f(O.y - 30)} ${f(E.x - 4)} ${f(E.y - 4)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
+  // 길이 표시는 바깥 곡선 점선(스킬 gfield-textbook-design 4-3): 반지름 OE는 위로, 현 AB는 원 바깥 왼쪽으로
   return svg(260, 210, "원 안에 그린 삼각형",
-    circle(O, r, { stroke: UT.green }) + poly([O, A, B], { fill: UT.greenSoft, stroke: UT.green }) + seg(O, E, { stroke: UT.green, width: 1.4 }) + brace
-    + dot(O, 3, UT.green) + small(P(O.x + r / 2, O.y - 26), "7cm", 13) + small(P(A.x + 26, O.y), "8cm", 13), 250);
+    circle(O, r, { stroke: UT.green }) + poly([O, A, B], { fill: UT.greenSoft, stroke: UT.green }) + seg(O, E, { stroke: UT.green, width: 1.4 })
+    + dot(O, 3, UT.green) + lenArc(O, E, "7cm", { side: -1 }) + lenArc(A, B, "8cm", { bend: (A.x - (O.x - r)) + 22 }), 250);
 }
 
 // ── 17~20번

@@ -2,7 +2,7 @@
 // 문장·수·배치는 원문 그대로, 그림은 우리 색표(kit.js)로 새로 그린다. 정답은 여기에 두지 않는다(비공개 DB).
 // figure(visual) 는 문항 그림과 답 그림(비공개 정답의 visual)을 같은 함수로 그린다 — 채울 값은 visual.fill 로만 받는다.
 // 그림은 모두 SVG 한 장(조건 상자·표도 SVG 안)이라 쪽 칸 높이에 맞춰 통째로 줄어든다.
-import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261124g";
 
 const INK = UT.ink;
 const ANS = UT.blue; // 답 그림에 채운 수

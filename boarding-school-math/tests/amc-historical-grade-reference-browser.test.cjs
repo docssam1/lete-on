@@ -107,7 +107,7 @@ test("grade comparison stays hidden for grouped grades and unavailable years", a
   assert.match(await page.locator("#amc-grade-reference-summary").innerText(), /Grade 9 · 2011 AMC 10 A · 기록된 학년 참가자 24,410명/);
   assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 8 and below\s+81\.30 \/ 150\s+5,018명/);
   assert.match(await page.locator("#amc-grade-comparison-body").innerText(), /Grade 10\s+70\.50 \/ 150\s+35,727명/);
-  await page.locator("#archive-year").selectOption("2022");
+  await page.locator("#archive-year").selectOption("2022", { force: true });
   await page.getByRole("button", { name: "결과 보기" }).click();
   assert.equal(await page.locator("#amc-grade-reference").isHidden(), true);
   assert.deepEqual(await page.evaluate(() => [document.documentElement.scrollWidth, document.documentElement.clientWidth]), [390, 390]);

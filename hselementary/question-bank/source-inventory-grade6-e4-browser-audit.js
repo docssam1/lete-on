@@ -37,7 +37,7 @@ const cases = [
   { id: "6-1-u5-e4-exploration-2", pools: [
     { total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] },
     { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
-    { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }
+    { total: 4000, agree: 75, oppose: 25, agreeReasons: [34, 30, 24, 12], opposeReasons: [40, 30, 20, 10] }
   ] },
   { id: "6-1-u5-e4-example-1", pools: [
     { surname: [22, 15, 8, 55], branches: [42, 17, 9, 32] },
@@ -261,7 +261,7 @@ function verifySnapshot(problem, answer, sourceCase, difficulty, viewportName) {
           mobileMetrics.importantHeight = Math.min(mobileMetrics.importantHeight, metric.height);
           mobileMetrics.importantWidth = Math.min(mobileMetrics.importantWidth, metric.width);
         }
-        if (metric.width <= 0 || metric.height < minimum) fail(`${itemLabel}/${graphInfo.title}: '${metric.value}' 실제 글자 높이 ${metric.height.toFixed(2)}px < ${minimum}px`);
+        if (metric.width <= 0 || metric.height < minimum - 1e-3) fail(`${itemLabel}/${graphInfo.title}: '${metric.value}' 실제 글자 높이 ${metric.height.toFixed(4)}px < ${minimum}px`);
         if (metric.fontSize < (metric.important ? 22 : 20)) fail(`${itemLabel}/${graphInfo.title}: '${metric.value}' SVG 글자 설정 ${metric.fontSize}px 부족`);
       });
     });
@@ -296,7 +296,7 @@ function renderAndInspectPages(file, prefix, count) {
     " band=4",
     " threshold=238",
     " dark=lambda rgb:min(rgb)<threshold",
-    " ink=sum(1 for rgb in im.get_flattened_data() if dark(rgb))",
+    " ink=sum(1 for rgb in (im.get_flattened_data() if hasattr(im, 'get_flattened_data') else im.getdata()) if dark(rgb))",
     " top=sum(1 for y in range(band) for x in range(w) if dark(im.getpixel((x,y))))",
     " bottom=sum(1 for y in range(h-band,h) for x in range(w) if dark(im.getpixel((x,y))))",
     " left=sum(1 for x in range(band) for y in range(h) if dark(im.getpixel((x,y))))",

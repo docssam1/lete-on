@@ -33,7 +33,7 @@ const cases = [
     pools: [
       { total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] },
       { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] },
-      { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }
+      { total: 4000, agree: 75, oppose: 25, agreeReasons: [34, 30, 24, 12], opposeReasons: [40, 30, 20, 10] }
     ]
   },
   {

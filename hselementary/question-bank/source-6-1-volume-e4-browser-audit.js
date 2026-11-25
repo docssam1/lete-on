@@ -146,7 +146,7 @@ function renderAndInspectPages(file, prefix, count) {
     "from PIL import Image", "import glob,json,re,sys", "prefix=sys.argv[1]", "expected=int(sys.argv[2])",
     "files=glob.glob(prefix+'-*.png')", "files.sort(key=lambda value:int(re.search(r'-(\\d+)\\.png$',value).group(1)))", "rows=[]",
     "for page_no,image in enumerate(files,start=1):", " im=Image.open(image).convert('RGB')", " w,h=im.size", " band=4", " threshold=238", " dark=lambda rgb:min(rgb)<threshold",
-    " ink=sum(1 for rgb in im.get_flattened_data() if dark(rgb))",
+    " ink=sum(1 for rgb in (im.get_flattened_data() if hasattr(im, 'get_flattened_data') else im.getdata()) if dark(rgb))",
     " top=sum(1 for y in range(band) for x in range(w) if dark(im.getpixel((x,y))))", " bottom=sum(1 for y in range(h-band,h) for x in range(w) if dark(im.getpixel((x,y))))",
     " left=sum(1 for x in range(band) for y in range(h) if dark(im.getpixel((x,y))))", " right=sum(1 for x in range(w-band,w) for y in range(h) if dark(im.getpixel((x,y))))",
     " rows.append({'page':page_no,'ink':ink,'edges':{'top':top,'bottom':bottom,'left':left,'right':right}})",

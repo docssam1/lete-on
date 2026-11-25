@@ -4,6 +4,7 @@
 // 1번 문장의 돌리기 기호(그림 기호)는 글 속에 그릴 수 없어 「시계 방향으로 반의 반 바퀴씩」처럼 말로 쓰고, 기호는 그림에 그대로 두었다.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, box, cell, blockArrow, arrow, ringed, mark } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "G3", title: "정육면체와 각·넓이" };
@@ -50,19 +51,10 @@ function rightAt(c, p1, p2, s = 8) {
   const q1 = P(c.x + a.x * s, c.y + a.y * s), q2 = P(c.x + (a.x + b.x) * s, c.y + (a.y + b.y) * s), q3 = P(c.x + b.x * s, c.y + b.y * s);
   return `<polyline points="${f(q1.x)},${f(q1.y)} ${f(q2.x)},${f(q2.y)} ${f(q3.x)},${f(q3.y)}" fill="none" stroke="${INK}" stroke-width="1.1"/>`;
 }
-// 길이 표시: a~b 를 잇는 점선 곡선(바깥쪽 bulge 만큼 부풂)과 가운데 글자(흰 바탕) — 원문의 치수 곡선
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 흰 판으로 덮지 않음).
+// bulge 부호 = 휘는 쪽(+ = a→b 진행 방향의 (−dy, dx) 쪽), far = 더 띄울 만큼(전체 길이를 부분 길이보다 바깥에). boxed = 빈 답 칸 + ㎝.
 const DIM = "#9a9183";
-function dim(a, b, value, bulge = 14, { size = 11.5, boxed = false } = {}) {
-  const l = Math.hypot(b.x - a.x, b.y - a.y), nx = -(b.y - a.y) / l, ny = (b.x - a.x) / l, m = lerp(a, b, 0.5);
-  const c = P(m.x + nx * bulge * 2, m.y + ny * bulge * 2), top = P(m.x + nx * bulge, m.y + ny * bulge);
-  const curve = `<path d="M${f(a.x)} ${f(a.y)} Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}" fill="none" stroke="${DIM}" stroke-width="1" stroke-dasharray="3 3"/>`;
-  if (boxed) {
-    const s = 20;
-    return curve + box(f(top.x - s / 2 - 8), f(top.y - s / 2), s, s, { fill: "#fff", stroke: UT.box, width: 1.4, radius: 2 }) + text(f(top.x + 12), f(top.y), "㎝", { size, weight: 600 });
-  }
-  const w = String(value).length * size * 0.62 + 6;
-  return curve + `<rect x="${f(top.x - w / 2)}" y="${f(top.y - size * 0.6)}" width="${f(w)}" height="${f(size * 1.2)}" fill="#fff"/>` + small(top, value, size);
-}
+const dim = (a, b, value, bulge = 14, { boxed = false, far = 0 } = {}) => lenArc(a, b, value, { side: bulge < 0 ? -1 : 1, far, blank: boxed, unit: "㎝" });
 
 // ── 디지털 숫자: 일곱 막대(a 위 · b 오른쪽 위 · c 오른쪽 아래 · d 아래 · e 왼쪽 아래 · f 왼쪽 위 · g 가운데)
 const SEGS = { 0: "abcdef", 1: "bc", 2: "abged", 3: "abgcd", 4: "fgbc", 5: "afgcd", 6: "afgedc", 7: "abc", 8: "abcdefg", 9: "abcdfg" };
@@ -372,14 +364,14 @@ function q19() {
     + tag(6, 160, "(2)") + para([[85, 885], [318, 885], [795, 618], [557, 618]], P(-16, -60), { baseLabel: "5㎝", height: "9㎝", perpT: 0.66, boxedLeft: true }), 320);
 }
 function q20() {
-  const k = 0.34, o = P(-20, -12), Q = (x, y) => P(o.x + x * k, o.y + y * k);
+  const k = 0.34, o = P(-6, -12), Q = (x, y) => P(o.x + x * k, o.y + y * k);
   const st = { fill: UT.greenSoft, stroke: UT.green, width: 1.5 };
   const pieces = [
     [Q(135, 112), Q(370, 112), Q(370, 418), Q(227, 418)], [Q(453, 112), Q(663, 112), Q(755, 418), Q(453, 418)],
     [Q(249, 490), Q(370, 490), Q(370, 655), Q(298, 655)], [Q(453, 490), Q(777, 490), Q(826, 655), Q(453, 655)],
   ];
   const corner = Q(135, 655);
-  return svg(290, 226, "길을 낸 평행사변형 정원",
+  return svg(290, 240, "길을 낸 평행사변형 정원",
     pieces.map((p) => poly(p, st)).join("")
     + rightAt(Q(370, 418), Q(370, 112), Q(227, 418), 6) + rightAt(Q(453, 418), Q(453, 112), Q(755, 418), 6)
     + rightAt(Q(370, 490), Q(370, 655), Q(249, 490), 6) + rightAt(Q(453, 490), Q(453, 655), Q(777, 490), 6)

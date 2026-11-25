@@ -59,7 +59,7 @@ test("annual roadmap uses supplied 12-month stages and labels the Grade 9 bridge
   assert.equal(roadmap.getAnnualPlan(9).source, "inferred");
   assert.match(roadmap.getAnnualPlan(6).title, /^선택 심화/);
   assert.match(roadmap.getAnnualPlan(6).note, /학교 수학에서 이미 배운 단원.*별도의 선택 심화/);
-  assert.match(roadmap.getAnnualPlan(6).periods[0][2], /변수식, 거듭제곱·연산 순서/);
+  assert.match(roadmap.getAnnualPlan(6).periods[0][2], /문자를 사용한 식, 거듭제곱·연산 순서/);
   assert.match(roadmap.getAnnualPlan(6).periods[0][3], /지필드 개념 학습 10개.*공개 6\.EE\.A 단원 워크북 36문항/);
   assert.doesNotMatch(roadmap.getAnnualPlan(6).periods[0][3], /단원 워크북 10개/);
   assert.match(roadmap.getAnnualPlan(6).periods[1][3], /지필드 AMC 8 유형 연습 10문항.*MAA 공식/);
@@ -87,14 +87,14 @@ test("concept-flow examples connect supplied routes without learner placement", 
   assert.match(flows["parity-counting"].steps.join(" → "), /짝·홀수.*조건별.*경우의 수.*조합.*AIME/);
   assert.match(flows["sequence-number-theory"].steps.join(" → "), /수열.*닫힌식.*나머지.*합동식.*AIME/);
   assert.equal(flows["prealgebra-algebra1"].optional, true);
-  assert.equal(flows["prealgebra-algebra1"].title, "선택형 · 변수식에서 식 정리로");
+  assert.equal(flows["prealgebra-algebra1"].title, "문자와 식의 계산 · 선택 학습");
   assert.deepEqual(flows["prealgebra-algebra1"].steps, [
-    "문자를 사용해 대수식을 나타내고, 수를 대입해 식의 값 구하기",
-    "거듭제곱과 연산 순서 적용하기",
-    "문장으로 제시된 상황을 대수식으로 나타내기",
-    "연산의 성질을 이용해 동치인 식 만들기",
-    "분배법칙을 적용해 대수식 전개하기",
-    "동류항을 결합해 대수식 간단히 하기"
+    "문자를 사용한 식과 식의 값",
+    "거듭제곱과 혼합계산",
+    "문장을 식으로 나타내기",
+    "교환법칙·결합법칙·분배법칙",
+    "분배법칙을 이용한 식의 전개",
+    "동류항의 정리"
   ]);
   assert.equal(flows["prealgebra-algebra1"].note, "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.");
   assert.equal(Object.isFrozen(roadmap.conceptFlows), true);
@@ -220,7 +220,7 @@ test("Grade 7 plan keeps Algebra 1 acceleration separate from school Geometry, A
   const tracks = roadmap.getTracks(7);
   assert.match(plan.note, /Algebra 1은 가속 학습 예시.*학교 Geometry는 정규 진도에서 이어가고.*선택 경로/);
   assert.match(plan.note, /학생의 현재 수준이나 배정 과목을 판정하지 않아요/);
-  assert.match(plan.periods[0][2], /변수식·일차방정식·부등식.*등식의 성질/);
+  assert.match(plan.periods[0][2], /문자를 사용한 식·일차방정식·부등식.*등식의 성질/);
   assert.match(plan.periods[1][2], /학교 Geometry에서 각·삼각형·닮음·넓이와 부피/);
   assert.match(plan.periods[2][2], /대수·기하.*심화 문장제와 자료 해석.*Digital SAT Math/);
   assert.match(plan.periods[3][2], /AMC·SAT형 문제.*시간 연습.*개념·아이디어·계산/);

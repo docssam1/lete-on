@@ -4,7 +4,7 @@
 // 답은 모두 그림을 만든 수에서 계산한다(세는 문제는 하나씩 세어 본다 — 공식만 믿지 않는다).
 import { plainText } from "./course2-plain.js?v=20261122zi";
 
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261121a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldWidthStyle } from "./fold-visuals.js?v=20261123a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -89,7 +89,7 @@ function c2DigitalSymmetricCount({ difficulty = 2, mode = "mirror" }) {
   const row = digitalRow("0123456789", { gap: 40 });
   const move = mode === "half" ? "반 바퀴 돌려도" : "거울에 비추어도";
   return problem({
-    prompt: `디지털 숫자로 쓴 ${digits}자리 수 가운데 ${move} 처음과 같은 수로 보이는 수는 모두 몇 개인가요? (1은 가운데에 씁니다.)`,
+    prompt: `디지털 숫자로 쓴 ${digits}자리 수 가운데 ${move} 처음과 같은 수로 보이는 수는 모두 몇 개인가요? (숫자는 그림처럼 쓰고, 막대 두 개로 된 숫자는 칸 가운데에 씁니다.)`,
     subtype: "digital-symmetric", html: svg(row.w, row.h, row.body, "디지털 숫자 0부터 9까지"),
     answer: `${count}개`,
     solution: mode === "half"
@@ -806,7 +806,7 @@ export const COURSE2_G1_GUIDES = Object.freeze({
   "c2-symmetry-axis-count": "접어서 완전히 겹치는 선만 대칭축입니다. 도형마다 세어 더합니다.",
   "c2-circle-sector-angle": "원의 가운데를 한 바퀴 도는 각은 360°입니다.",
   "c2-triangle-angle": "삼각형의 세 각을 모으면 180°, 이등변삼각형은 두 밑각이 같습니다.",
-  "c2-regular-polygon-angle": "한 꼭짓점에서 대각선을 그어 삼각형으로 나누면 내각의 합 = 180 × (변의 수 − 2)입니다.",
+  "c2-regular-polygon-angle": "가운데 점에서 꼭짓점마다 선을 그어 같은 이등변삼각형으로 나눕니다. 꼭지각 = 360° ÷ 변의 수, 한 내각 = 밑각 두 개입니다.",
   "c2-joined-polygon-angle": "한 점을 도는 각 360°에서 두 정다각형의 한 내각을 뺍니다.",
   "c2-clock-hand-angle": "긴바늘은 1분에 6°, 짧은바늘은 1분에 0.5°씩 돕니다.",
   "c2-circle-radius-perimeter": "원의 가운데에서 원 위까지는 모두 반지름이라 길이가 같습니다.",

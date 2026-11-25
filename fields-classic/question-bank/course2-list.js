@@ -1,7 +1,7 @@
 // 2과정 권 목록(기하 G1~G5 · 대수 A) — 권마다 그림으로 따져 보기·직접 해 보기·권별 테스트를 모은 카드 HTML.
 // 2과정 첫 화면(course2.html)과 사고력 문제은행의 「2과정」 탭(similar.html?course=2, 원장 2026-11-15 「문제은행 안에 들어가면 1과정 2과정 3과정」)이 같이 쓴다.
-import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261115f";
-import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261115d";
+import { COURSE2_TESTS } from "./course2-test-originals/index.js?v=20261124d";
+import { COURSE3_TESTS } from "./course3-test-originals/index.js?v=20261124d";
 export const COURSE2_BOOKS = [
   { id: "g1", name: "G1", title: "돌리기와 뒤집기" },
   { id: "g2", name: "G2", title: "도형분할과 넓이" },
@@ -19,7 +19,7 @@ const LABS = {
   g1: [["3단원 · 360도와 정다각형", "angles", "각 떼어 모으기"], ["3단원 · 360도와 정다각형", "clock", "시계 바늘 각"], ["4단원 · 삼각형과 사각형", "dots", "점판 위 정사각형"]],
   g4: [["1단원 · 특수각과 도형의 복원", "compass", "컴퍼스로 작도"]],
 };
-const PROOF_TAG = "20261115g";
+const PROOF_TAG = "20261124j";
 const STUDY_BOOKS = new Set(["g1", "g2", "g3", "g4", "g5", "a1", "a2", "a3", "a4", "a5"]);   // source-data.js COURSE2_CURRICULUM에 본책이 있는 권
 const esc = (s) => String(s).replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]);
 const testLink = (id, course = 2) => ((course === 3 ? COURSE3_TESTS : COURSE2_TESTS)[id] ? `<a class="c2-test" href="./course2-test-paper.html?${course === 3 ? "course=3&" : ""}book=${id}">권별 테스트 풀기</a>` : `<span class="c2-test is-off">권별 테스트 준비 중</span>`);

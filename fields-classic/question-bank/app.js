@@ -1,24 +1,25 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261122zi";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261125a";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { GENERATORS } from "./generators.js?v=20261122zi";
+import { GENERATORS } from "./generators.js?v=20261125a";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
 import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
-import { book03Markup } from "./book03-renderers.js?v=20261101m";
-import { book04Markup } from "./book04-renderers.js?v=20261121a";
+import { book03Markup } from "./book03-renderers.js?v=20261124j";
+import { dimArc } from "./length-dim.js?v=20261124h";
+import { book04Markup } from "./book04-renderers.js?v=20261123a";
 import { book05Markup } from "./book05-renderers.js?v=20261122w";
-import { book06Markup } from "./book06-renderers.js?v=20261122w";
+import { book06Markup } from "./book06-renderers.js?v=20261124i";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
 import { book08Markup } from "./book08-renderers.js?v=20261122w";
 import { book09Markup } from "./book09-renderers.js?v=20261121c";
 import { book10Markup } from "./book10-renderers.js?v=20261101m";
-import { mock06Markup } from "./mock06-renderers.js?v=20261121a";
+import { mock06Markup } from "./mock06-renderers.js?v=20261123a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
 import { makeGeometryWorksheetProblem, geometryWorksheetMarkup } from "./geometry-worksheet-problem.js?v=20261101m";
-import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldNumberStrip, foldNumberPaperSvg, foldNumberPolygonSvg, foldCreaseSvg, foldWordStrip } from "./fold-visuals.js?v=20261121a";
+import { foldGeometryHelpers, foldArrowSvg, foldStepArrowSvg, paperFoldMarkup, foldDiagonalGridMarkup, foldTwoDiagonalGridMarkup, foldCutPiecesMarkup, foldWidthStyle, foldStageSvg, foldCaptionSvg, FOLD_CAPTION_SPACE, foldNumberStrip, foldNumberPaperSvg, foldNumberPolygonSvg, foldCreaseSvg, foldWordStrip } from "./fold-visuals.js?v=20261123a";
 
 // 문제·답·풀이 글의 「3/5」「2^3」을 화면·인쇄에서 수식으로 바꾼다(빗금 분수 금지, math-markup.js — 원장 2026-11-22 「정확한 수학 표현」).
 // 1과정·2과정 유형 모두. 이미 수식(<math>)인 곳과 「8 13 6 / 7 9 11」처럼 띄어 쓴 줄 나눔 빗금은 그대로 둔다.
@@ -56,7 +57,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261122zh");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261124j");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -2309,9 +2310,9 @@ function numberLineSixPointsMarkup(visual) {
   const arc = (from, to, value, side, height, className = "") => {
     const x1 = xs[from];
     const x2 = xs[to];
-    const controlY = side === "top" ? 78 - height : 78 + height;
-    const labelY = side === "top" ? controlY + 7 : controlY - 3;
-    return `<path class="distance-arc ${className}" d="M ${x1} 78 Q ${(x1 + x2) / 2} ${controlY} ${x2} 78"/><text class="distance-label ${className}" x="${(x1 + x2) / 2}" y="${labelY}">${value}</text>`;
+    // 길이 표시 = 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24)
+    const target = className === "target";
+    return dimArc(x1, 78, x2, 78, (side === "top" ? -1 : 1) * height / 2, String(value), target ? { size: 17, color: "#c58a19", labelColor: "#9a670b", width: 1.6 } : { size: 14 });
   };
   const hints = visual.hints.map((hint) => `<span>${hint.from}${hint.to} = ${hint.value}</span>`).join("");
   const targetArc = visual.target === "AF" ? arc("A", "F", "?", "top", 72, "target") : arc("E", "F", "?", "top", 30, "target");
@@ -3292,6 +3293,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book10") return `<div class="visual book10-visual">${book10Markup(visual)}</div>`;
   // 2과정(course2-g1-generators.js): 생성기가 그림(SVG)과 보기 목록을 html로 만든다
   if (visual.kind === "c2") return `<div class="visual c2-visual">${visual.html}</div>`;
+  if (visual.kind === "shape-matrix") return `<div class="visual shape-matrix-visual">${visual.html}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;

@@ -789,7 +789,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "전체를 두 부분으로만 나누거나 세 빈칸에 서로 다른 수를 쓰지 않았는지 확인합니다.",
     [book2Evidence("매트릭스와 주고받기", 1, [3])]
   ),
-  "shape-sum-table": sourceLesson(
+  "shape-matrix-2x2-set": sourceLesson(
     "concept:number:shape-sum-matrix-elimination",
     [
       beat("find-single-shape-line", "같은 도형만 있는 줄을 찾아요", "한 종류의 도형이 반복되어 값이 바로 정해지는 가로줄이나 세로줄부터 찾습니다."),
@@ -797,7 +797,17 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-row-column-sums", "가로와 세로 합을 검산해요", "구한 도형값으로 모든 가로 합과 세로 합이 표시된 수와 맞는지 확인합니다.")
     ],
     "같은 도형에 줄마다 다른 값을 주거나 가로 합만 확인하지 않았는지 살펴봅니다.",
-    [book2Evidence("매트릭스와 주고받기", 1, [4, 5])]
+    [book2Evidence("매트릭스와 주고받기", 1, [4])]
+  ),
+  "shape-matrix-3x3-pair": sourceLesson(
+    "concept:number:shape-sum-matrix-elimination",
+    [
+      beat("find-single-shape-line", "같은 도형만 있는 줄을 찾아요", "한 종류의 도형이 반복되어 값이 바로 정해지는 가로줄이나 세로줄부터 찾습니다."),
+      beat("substitute-shape-values", "찾은 값을 다른 줄에 넣어요", "알아낸 도형값을 다른 줄의 같은 도형 자리에 바꾸어 넣어 다음 도형값을 구합니다."),
+      beat("check-row-column-sums", "가로와 세로 합을 검산해요", "구한 도형값으로 모든 가로 합과 세로 합이 표시된 수와 맞는지 확인합니다.")
+    ],
+    "같은 도형에 줄마다 다른 값을 주거나 가로 합만 확인하지 않았는지 살펴봅니다.",
+    [book2Evidence("매트릭스와 주고받기", 1, [5])]
   ),
   "equalize-transfer": sourceLesson(
     "concept:number:transfer-equalization",

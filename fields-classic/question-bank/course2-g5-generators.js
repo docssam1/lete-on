@@ -1,6 +1,7 @@
 // 2과정 G5 「도형의 넓이와 비」 교재 유사문제 생성기. 약속은 G1~G4 생성기와 같다.
 // 문제는 모두 새로 지은 것이다. 답은 그림을 만든 수에서 계산한다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
+import { dimArc, dimOut, isLength } from "./length-dim.js?v=20261124h";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -35,7 +36,12 @@ function angleMark(v, a1, a2, r, label, { color = MARK, size = 14 } = {}) {
     + (label ? text(m.x, m.y, label, { size, color }) : "");
 }
 const tick = (a, b, n = 1) => { const m = mid(a, b), d = dirOf(a, b) + 90; return Array.from({ length: n }, (_, k) => { const c = at(m, (k - (n - 1) / 2) * 5, dirOf(a, b)); return line(at(c, 6, d), at(c, -6, d), { width: 1.8 }); }).join(""); };
-const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => { const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color }); };
+// 길이(「12cm」「?」)는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3), 비·이름은 변 옆 글자 그대로.
+// offset 쪽(변 진행 방향 왼쪽이 +)으로 휜다 — dimArc의 bend는 오른쪽이 +라 부호를 바꾼다
+const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => {
+  if (isLength(value)) return dimArc(a.x, a.y, b.x, b.y, -offset * 0.9, value, { size, labelColor: color === INK ? null : color });
+  const m = mid(a, b), p = at(m, offset, dirOf(a, b) + 90); return text(p.x, p.y, value, { size, color });
+};
 const name = (p, t, dx = 0, dy = 0) => text(p.x + dx, p.y + dy, t, { size: 14, weight: 700 });
 
 // ════ 1단원 정다각별과 나비각 · 삼각형의 합동 · 식을 이용한 각 ════
@@ -247,14 +253,16 @@ function c2ShadowHeight({ difficulty = 2 }) {
     const mult = randomInt(3, 12);
     const T = shadow * mult, H = stick * mult;
     const base = 190, sx = 300 / (T + shadow + 4), sy = Math.min(14, 150 / H);
-    const tower = P(40, base), top = P(40, base - H * sy), tip = P(40 + T * sx, base);
-    const st = P(40 + T * sx + 30, base), stTop = P(st.x, base - stick * sy * 3), stTip = P(st.x + shadow * sx * 3, base);
+    const X0 = 64, tower = P(X0, base), top = P(X0, base - H * sy), tip = P(X0 + T * sx, base);
+    const st = P(X0 + T * sx + 30, base), stTop = P(st.x, base - stick * sy * 3), stTip = P(st.x + shadow * sx * 3, base);
     let body = line(P(20, base), P(stTip.x + 20, base), { color: "#9aa39e", width: 1.4 });
     body += `<rect x="${f1(tower.x - 9)}" y="${f1(top.y)}" width="18" height="${f1(base - top.y)}" fill="${SOFT}" stroke="${INK}" stroke-width="2"/>` + line(top, tip, { color: "#e0a63c", dash: "5 4", width: 1.6 }) + line(tower, tip, { color: "#6b5b45", width: 5 });
     body += line(st, stTop, { width: 3 }) + line(stTop, stTip, { color: "#e0a63c", dash: "4 3", width: 1.4 }) + line(st, stTip, { color: "#6b5b45", width: 4 });
-    body += text(mid(tower, tip).x, base + 14, kind === "height" ? `${T}m` : "?", { size: 13, color: kind === "height" ? INK : MARK }) + text(tower.x - 16, (top.y + base) / 2, kind === "height" ? "?" : `${H}m`, { size: 13, anchor: "end", color: kind === "height" ? MARK : INK });
-    body += text(st.x - 8, (stTop.y + base) / 2, `${stick}m`, { size: 12, anchor: "end" }) + text(mid(st, stTip).x, base + 14, `${shadow}m`, { size: 12 });
-    const html = svg(stTip.x + 40, base + 30, body, "탑과 막대의 그림자");
+    // 길이는 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3): 높이는 왼쪽, 그림자는 땅 아래
+    body += dimArc(tower.x - 9, top.y, tower.x - 9.01, base, 14, kind === "height" ? "?" : `${H}m`, { labelColor: kind === "height" ? MARK : null })
+      + dimArc(tower.x, base, tip.x, base, 12, kind === "height" ? `${T}m` : "?", { labelColor: kind === "height" ? null : MARK });
+    body += dimArc(st.x, stTop.y, st.x - 0.01, base, 12, `${stick}m`, { size: 12 }) + dimArc(st.x, base, stTip.x, base, 12, `${shadow}m`, { size: 12 });
+    const html = svg(stTip.x + 40, base + 40, body, "탑과 막대의 그림자");
     if (kind === "height") return problem({
       prompt: `같은 시각에 길이 ${stick}m인 막대의 그림자는 ${shadow}m이고, 탑의 그림자는 ${T}m입니다. 탑의 높이는 몇 m인가요?`,
       subtype: "shadow", html, answer: `${H}m`,
@@ -271,14 +279,118 @@ function c2ShadowHeight({ difficulty = 2 }) {
   return null;
 }
 
-export const COURSE2_G5_GENERATORS = plainText({ c2CongruentTriangle, c2AngleEquation, c2EqualAreaShift, c2AreaRatioBase, c2SimilarScale, c2ShadowHeight });
+// ── 교재 활동과 맞춘 유형 셋(원장 2026-11-23 「원본 제대로 대조해서 만들어」 — 활동 내용과 다른 유형에 이어져 있던 것) ──
+// 비를 두 번 쓰기: 점 ㄹ이 변 ㄴㄷ을 m : n, 점 ㅁ이 선분 ㄱㄹ을 p : q로 나눌 때 삼각형 ㅁㄹㄷ의 넓이
+function c2AreaRatioTwice({ difficulty = 2 }) {
+  const [m, n] = sample([[1, 2], [2, 1], [1, 3], [3, 1], [2, 3], [3, 2]]);
+  const [p, q] = sample(difficulty <= 1 ? [[1, 1], [1, 2], [2, 1]] : [[1, 2], [2, 1], [1, 3], [3, 1], [2, 3], [3, 2]]);
+  const unit = randomInt(1, 4);
+  const S = (m + n) * (p + q) * unit;
+  const adc = (S / (m + n)) * n, edc = (adc / (p + q)) * q;
+  const reverse = difficulty >= 3 && sample([true, false]);
+  const A = P(120, 30), B = P(30, 190), C = P(310, 190), D = lerp(B, C, m / (m + n)), E = lerp(A, D, p / (p + q));
+  const body = poly([A, B, C], { fill: "#fff" }) + poly([E, D, C], { fill: YELLOW }) + line(A, D) + line(E, C)
+    + name(A, "ㄱ", 0, -14) + name(B, "ㄴ", -12, 8) + name(C, "ㄷ", 12, 8) + name(D, "ㄹ", 0, 16) + name(E, "ㅁ", -14, 0)
+    + lenLabel(B, D, `${m}`, { offset: -26, color: MARK }) + lenLabel(D, C, `${n}`, { offset: -26, color: MARK })
+    + lenLabel(A, E, `${p}`, { offset: 14, color: GREEN }) + lenLabel(E, D, `${q}`, { offset: 14, color: GREEN });
+  const html = svg(340, 232, body, "비를 두 번 써서 나눈 삼각형");
+  if (reverse) return problem({
+    prompt: `점 ㄹ은 변 ㄴㄷ을 ${m} : ${n}으로, 점 ㅁ은 선분 ㄱㄹ을 ${p} : ${q}로 나눕니다. 색칠한 삼각형 ㅁㄹㄷ의 넓이가 ${edc}㎠일 때, 삼각형 ㄱㄴㄷ의 넓이는 몇 ㎠인가요?`,
+    subtype: "area-ratio-twice", html, answer: `${S}㎠`,
+    solution: `거꾸로 갑니다. 삼각형 ㅁㄹㄷ과 ㄱㅁㄷ은 꼭짓점 ㄷ이 같아 넓이의 비가 ${q} : ${p}이므로 삼각형 ㄱㄹㄷ = ${edc} ÷ ${q} × ${p + q} = ${adc}㎠입니다. 삼각형 ㄱㄹㄷ과 ㄱㄴㄹ은 넓이의 비가 ${n} : ${m}이므로 전체 = ${adc} ÷ ${n} × ${m + n} = ${S}㎠입니다.`,
+    family: "area-ratio-twice-reverse", meta: { m, n, p, q }
+  });
+  return problem({
+    prompt: `삼각형 ㄱㄴㄷ의 넓이는 ${S}㎠입니다. 점 ㄹ은 변 ㄴㄷ을 ${m} : ${n}으로, 점 ㅁ은 선분 ㄱㄹ을 ${p} : ${q}로 나눕니다. 색칠한 삼각형 ㅁㄹㄷ의 넓이는 몇 ㎠인가요?`,
+    subtype: "area-ratio-twice", html, answer: `${edc}㎠`,
+    solution: `먼저 삼각형 ㄱㄹㄷ: 꼭짓점 ㄱ이 같아 높이가 같으므로 ${S} ÷ ${m + n} × ${n} = ${adc}㎠입니다. 다음 삼각형 ㅁㄹㄷ: 꼭짓점 ㄷ이 같고 밑변이 ㄱㄹ 위에 있으므로 ${adc} ÷ ${p + q} × ${q} = ${edc}㎠입니다. 비를 두 번 씁니다.`,
+    family: "area-ratio-twice", meta: { m, n, p, q }
+  });
+}
+// 넓이가 같으면 밑변과 높이는 거꾸로 된 비: 한 삼각형에서 두 밑변과 그 높이
+function c2HeightInverseRatio({ difficulty = 2 }) {
+  const kind = difficulty <= 1 ? "height" : sample(["height", "ratio-sum"]);
+  for (let tries = 0; tries < 60; tries += 1) {
+    const b1 = randomInt(6, 20), h1 = randomInt(4, 16), b2 = randomInt(6, 20);
+    if (b1 === b2 || (b1 * h1) % b2) continue;
+    const h2 = (b1 * h1) / b2;
+    if (h2 < 3 || h2 > 24) continue;
+    const A = P(120, 30), B = P(30, 190), C = P(300, 190);
+    const foot = P(A.x, 190), t = ((A.x - B.x) * (C.x - B.x) + (A.y - B.y) * (C.y - B.y)) / ((C.x - B.x) ** 2 + (C.y - B.y) ** 2);
+    const toAC = (() => { const u = ((B.x - A.x) * (C.x - A.x) + (B.y - A.y) * (C.y - A.y)) / ((C.x - A.x) ** 2 + (C.y - A.y) ** 2); return lerp(A, C, u); })();
+    void t;
+    let body = poly([A, B, C], { fill: "#fff" }) + line(A, foot, { color: GREEN, dash: "5 4" }) + line(B, toAC, { color: MARK, dash: "5 4" })
+      + name(A, "ㄱ", 0, -14) + name(B, "ㄴ", -12, 8) + name(C, "ㄷ", 12, 8);
+    if (kind === "height") {
+      body += lenLabel(B, C, `${b1}cm`, { offset: -18 }) + dimArc(A.x, A.y, foot.x, foot.y, -14, `${h1}cm`)
+        + lenLabel(A, C, `${b2}cm`, { offset: 16 }) + dimArc(B.x, B.y, toAC.x, toAC.y, -12, "?", { labelColor: MARK });
+      return problem({
+        prompt: `삼각형 ㄱㄴㄷ에서 변 ㄴㄷ이 ${b1}cm이고 그 높이가 ${h1}cm입니다. 변 ㄱㄷ이 ${b2}cm일 때, 변 ㄱㄷ을 밑변으로 하는 높이는 몇 cm인가요?`,
+        subtype: "height-inverse", html: svg(330, 220, body, "한 삼각형의 두 밑변과 높이"), answer: `${h2}cm`,
+        solution: `어느 변을 밑변으로 해도 같은 삼각형이라 넓이가 같습니다. ${b1} × ${h1} ÷ 2 = ${b1 * h1 / 2}㎠이므로 ${b2} × □ ÷ 2 = ${b1 * h1 / 2}, □ = ${h2}cm입니다. 밑변의 비 ${b1} : ${b2}와 높이의 비 ${h1} : ${h2}는 서로 거꾸로입니다.`,
+        family: "height-inverse", meta: { b1, h1, b2 }
+      });
+    }
+    const g = gcd(b1, b2), m = b1 / g, n = b2 / g, sum = h1 + h2;
+    if (m === n || m + n > 12) continue;
+    body += lenLabel(B, C, "밑변 ①", { offset: -18 }) + lenLabel(A, C, "밑변 ②", { offset: 16 });
+    return problem({
+      prompt: `삼각형 ㄱㄴㄷ에서 두 변 ①과 ②의 길이의 비는 ${m} : ${n}입니다. 변 ①을 밑변으로 하는 높이와 변 ②를 밑변으로 하는 높이의 합이 ${sum}cm일 때, 변 ①을 밑변으로 하는 높이는 몇 cm인가요?`,
+      subtype: "height-inverse", html: svg(330, 220, body, "한 삼각형의 두 밑변과 높이"), answer: `${h1}cm`,
+      solution: `넓이가 같으므로 높이의 비는 밑변의 비를 거꾸로 한 ${n} : ${m}입니다. 합 ${sum}cm를 ${m + n}칸으로 나누면 한 칸은 ${sum / (m + n)}cm, 변 ①의 높이는 ${n}칸 = ${h1}cm입니다.`,
+      family: "height-inverse-sum", meta: { m, n, sum }
+    });
+  }
+  return null;
+}
+// 피라미드 닮음(ㄹㅁ ∥ ㄴㄷ)과 모래시계 닮음(ㄱㄴ ∥ ㄷㄹ, 두 선분이 ㅇ에서 만남)
+function c2PyramidHourglass({ difficulty = 2 }) {
+  const kind = difficulty <= 1 ? "pyramid" : sample(["pyramid", "hourglass"]);
+  const [a, b] = sample(kind === "pyramid" ? [[2, 3], [1, 2], [3, 2], [2, 1], [3, 4], [2, 5]] : [[1, 2], [2, 3], [3, 4], [2, 5], [1, 3], [3, 5]]);   // 모래시계는 아래가 더 크게(이름이 겹치지 않게)
+  const unit = randomInt(2, 5), small = randomInt(2, 6) * a;
+  const ratioSmall = a, ratioBig = kind === "pyramid" ? a + b : b;
+  const big = (small / ratioSmall) * ratioBig;
+  const L1 = a * unit, L2 = b * unit;
+  if (kind === "pyramid") {
+    const A = P(170, 25), B = P(40, 200), C = P(310, 200), t = a / (a + b), D = lerp(A, B, t), E = lerp(A, C, t);
+    const body = poly([A, B, C], { fill: "#fff" }) + line(D, E, { width: 2.2 }) + poly([A, D, E], { fill: YELLOW })
+      + name(A, "ㄱ", 0, -14) + name(B, "ㄴ", -12, 8) + name(C, "ㄷ", 12, 8) + name(D, "ㄹ", -14, 0) + name(E, "ㅁ", 14, 0)
+      + dimOut(A, D, C, `${L1}cm`, { off: 16 }) + dimOut(D, B, C, `${L2}cm`, { off: 16 }) + dimArc(D.x, D.y, E.x, E.y, 12, `${small}cm`) + dimArc(B.x, B.y, C.x, C.y, 16, "?", { labelColor: MARK })
+      + text(mid(D, E).x + 40, mid(D, E).y - 2, "∥", { size: 13, color: GREEN }) + text(mid(B, C).x + 40, 200 - 2, "∥", { size: 13, color: GREEN });
+    return problem({
+      prompt: `선분 ㄹㅁ과 변 ㄴㄷ은 평행합니다. 선분 ㄱㄹ이 ${L1}cm, 선분 ㄹㄴ이 ${L2}cm, 선분 ㄹㅁ이 ${small}cm일 때, 변 ㄴㄷ은 몇 cm인가요?`,
+      subtype: "pyramid", html: svg(340, 230, body, "피라미드 닮음"), answer: `${big}cm`,
+      solution: `ㄹㅁ ∥ ㄴㄷ이라 동위각이 같아 삼각형 ㄱㄹㅁ과 ㄱㄴㄷ은 닮았습니다. 닮음비는 ㄱㄹ : ㄱㄴ = ${L1} : ${L1 + L2} = ${a} : ${a + b}입니다(ㄹㄴ이 아니라 ㄱㄴ 전체와 견줍니다). 그래서 ㄴㄷ = ${small} ÷ ${a} × ${a + b} = ${big}cm입니다.`,
+      family: "pyramid", meta: { a, b }
+    });
+  }
+  // 위 삼각형 ㅇㄱㄴ이 작고(닮음비 a), 아래 ㅇㄹㄷ이 크다(b) — ㄱ·ㄷ 왼쪽, ㄴ·ㄹ 오른쪽이 되게 두 선분 ㄱㄹ·ㄴㄷ이 ㅇ에서 엇갈린다
+  const O = P(190, 110), A = P(145, 40), B = P(225, 40);
+  const k = b / a, D = P(O.x + (O.x - A.x) * k, O.y + (O.y - A.y) * k), C = P(O.x + (O.x - B.x) * k, O.y + (O.y - B.y) * k);
+  const side = (p, q, value, out, color = INK) => { const m = mid(p, q), d = dirOf(p, q) + 90, c = at(m, 16, d), w = at(m, -16, d); const pick = Math.hypot(c.x - out.x, c.y - out.y) > Math.hypot(w.x - out.x, w.y - out.y) ? c : w; return text(pick.x, pick.y, value, { size: 13, color }); };
+  const body = poly([A, B, O], { fill: YELLOW }) + line(A, D) + line(B, C) + line(A, B, { width: 2.2 }) + line(C, D, { width: 2.2 })
+    + name(A, "ㄱ", -14, -4) + name(B, "ㄴ", 14, -4) + name(O, "ㅇ", 18, 0) + name(C, "ㄷ", -14, 6) + name(D, "ㄹ", 14, 6)
+    + dimOut(A, O, B, `${L1}cm`, { off: 15 }) + dimOut(O, D, C, `${L2}cm`, { off: 15 }) + dimArc(A.x, A.y, B.x, B.y, -12, `${small}cm`) + dimArc(C.x, C.y, D.x, D.y, 14, "?", { labelColor: MARK })
+    + text(mid(A, B).x + 34, A.y + 1, "∥", { size: 12, color: GREEN }) + text(mid(C, D).x + 34, C.y + 1, "∥", { size: 12, color: GREEN });
+  return problem({
+    prompt: `선분 ㄱㄴ과 선분 ㄷㄹ은 평행하고, 선분 ㄱㄹ과 선분 ㄴㄷ이 점 ㅇ에서 만납니다. 선분 ㄱㅇ이 ${L1}cm, 선분 ㅇㄹ이 ${L2}cm, 선분 ㄱㄴ이 ${small}cm일 때, 선분 ㄷㄹ은 몇 cm인가요?`,
+    subtype: "hourglass", html: svg(Math.max(340, D.x + 34), C.y + 32, body, "모래시계 닮음"), answer: `${big}cm`,
+    solution: `ㄱㄴ ∥ ㄷㄹ이라 엇각이 같고 ㅇ에서 맞꼭지각도 같아 삼각형 ㅇㄱㄴ과 ㅇㄹㄷ은 닮았습니다. 닮음비는 ㄱㅇ : ㅇㄹ = ${L1} : ${L2} = ${a} : ${b}이므로 ㄷㄹ = ${small} ÷ ${a} × ${b} = ${big}cm입니다.`,
+    family: "hourglass", meta: { a, b }
+  });
+}
+
+export const COURSE2_G5_GENERATORS = plainText({ c2CongruentTriangle, c2AngleEquation, c2EqualAreaShift, c2AreaRatioBase, c2SimilarScale, c2ShadowHeight, c2AreaRatioTwice, c2HeightInverseRatio, c2PyramidHourglass });
 export const COURSE2_G5_TYPE_ROWS = [
   ["c2-congruent-triangle", "geometry", "합동", "합동인 삼각형의 대응과 합동 조건", "c2CongruentTriangle"],
   ["c2-angle-equation", "geometry", "각", "식을 세워 각 구하기", "c2AngleEquation"],
   ["c2-equal-area-shift", "geometry", "넓이", "평행선과 등적변형", "c2EqualAreaShift"],
   ["c2-area-ratio-base", "geometry", "넓이와 비", "높이가 같은 삼각형의 넓이의 비", "c2AreaRatioBase"],
   ["c2-similar-scale", "geometry", "닮음", "닮은 도형의 길이·둘레·넓이", "c2SimilarScale"],
-  ["c2-shadow-height", "geometry", "닮음", "그림자로 높이 재기", "c2ShadowHeight"]
+  ["c2-shadow-height", "geometry", "닮음", "그림자로 높이 재기", "c2ShadowHeight"],
+  ["c2-area-ratio-twice", "geometry", "넓이와 비", "비를 두 번 써서 넓이 구하기", "c2AreaRatioTwice"],
+  ["c2-height-inverse-ratio", "geometry", "넓이와 비", "넓이가 같을 때 밑변과 높이의 거꾸로 비", "c2HeightInverseRatio"],
+  ["c2-pyramid-hourglass", "geometry", "닮음", "피라미드 닮음과 모래시계 닮음", "c2PyramidHourglass"]
 ];
 export const COURSE2_G5_GUIDES = Object.freeze({
   "c2-congruent-triangle": "대응하는 꼭짓점의 차례를 먼저 맞추고, 대응하는 변·각이 같다는 것을 씁니다.",
@@ -286,5 +398,8 @@ export const COURSE2_G5_GUIDES = Object.freeze({
   "c2-equal-area-shift": "꼭짓점을 밑변과 평행한 선을 따라 옮겨도 높이가 같아 넓이는 그대로입니다.",
   "c2-area-ratio-base": "꼭짓점이 같은 삼각형은 높이가 같아 넓이의 비 = 밑변의 비입니다.",
   "c2-similar-scale": "닮음비가 1 : k이면 길이·둘레는 k배, 넓이는 k × k배입니다.",
-  "c2-shadow-height": "같은 시각의 그림자는 높이에 비례합니다 — 닮은 직각삼각형을 찾습니다."
+  "c2-shadow-height": "같은 시각의 그림자는 높이에 비례합니다 — 닮은 직각삼각형을 찾습니다.",
+  "c2-area-ratio-twice": "높이가 같은 삼각형을 두 번 찾아 비를 차례로 씁니다 — 큰 삼각형에서 한 번, 그 안에서 또 한 번.",
+  "c2-height-inverse-ratio": "같은 삼각형은 어느 변을 밑변으로 해도 넓이가 같아, 밑변의 비와 높이의 비는 서로 거꾸로입니다.",
+  "c2-pyramid-hourglass": "평행선이 만드는 같은 각으로 닮은 삼각형을 찾고, 대응하는 변끼리 비를 맞춥니다(피라미드는 전체 변과 견줌)."
 });

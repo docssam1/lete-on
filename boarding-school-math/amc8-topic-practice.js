@@ -105,7 +105,7 @@
   function visibleItems() {
     return practiceItems.filter(function (item) {
       return (state.activeDomains.size === 0 || state.activeDomains.has(itemDomain(item)))
-        && (!hasPracticeConceptMatches || practiceConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
+        && (practiceConcepts.length === 0 || practiceConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); }));
     });
   }
   function renderFilters() {
@@ -214,7 +214,7 @@
     const conceptSummary = hasPracticeConceptMatches
       ? `${conceptText}. 연결된 지필드 창작 연습 ${matchedPracticeItems.length}문항을 먼저 모았어요.`
       : practiceConcepts.length
-        ? "직접 연결되는 창작 문항이 없어 표시한 영역의 지필드 연습을 보여 줍니다."
+        ? "이 개념과 직접 연결된 연습 문항은 아직 없습니다. 원본 해설을 먼저 확인하세요."
         : "표시한 영역을 지필드 창작 문항으로 연습합니다.";
     $("topic-source-summary").textContent = `${sourceYear} AMC 8 · ${mockWrongQuestions.length ? `지필드 모의고사 다시 보기: ${questionLabel(mockWrongQuestions)}` : sourceQuestions.length ? `원본 다시 보기: ${questionLabel(sourceQuestions)}` : "원본 시험 복습에서 이어진 연습"}. ${conceptSummary} 원문·정답·해설은 원본 제공처에서 확인해 주세요.`;
   }
@@ -226,7 +226,7 @@
       requestedConcepts.length ? `원본 풀이 개념: ${originalConceptNames}` : "",
       requestedMockConcepts.length ? `모의고사 복습 개념: ${mockConceptNames}` : ""
     ].filter(Boolean).join(". ");
-    const conceptCopy = hasPracticeConceptMatches ? `${conceptIntro}. 연결된 창작 연습 ${matchedPracticeItems.length}문항을 먼저 보여 줍니다. ` : practiceConcepts.length ? "직접 연결 문항이 없어 선택 영역 연습을 보여 줍니다. " : "";
+    const conceptCopy = hasPracticeConceptMatches ? `${conceptIntro}. 연결된 창작 연습 ${matchedPracticeItems.length}문항을 먼저 보여 줍니다. ` : practiceConcepts.length ? "이 개념과 직접 연결된 연습 문항은 아직 없습니다. 원본 해설을 먼저 확인하세요. " : "";
     const domainIntro = chosenNames.length ? `${chosenNames.join("·")} 영역의 창작 문제도 함께 살펴볼 수 있어요.` : "문제를 풀고 풀이에서 개념이 연결되는 지점을 확인해요.";
     $("topic-intro-copy").textContent = `${mockWrongQuestions.length ? `지필드 모의고사 오답·미응답: ${questionLabel(mockWrongQuestions)}. ` : ""}${sourceYear ? `${sourceYear} AMC 8 원본 복습에서 이어서. ` : ""}${conceptCopy}${domainIntro}`;
   }

@@ -1,5 +1,5 @@
 // 학부모 로그인·권한 없음 화면(홈과 차시가 같이 쓴다)
-import { login, logout, loginError } from "./access.js?v=20261117a";
+import { login, logout, loginError } from "./access.js?v=20261123a";
 
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[c]);
 
@@ -7,7 +7,7 @@ export function renderLogin(root, { onDone }) {
   root.className = "sm-gate";
   root.innerHTML = `
     <div class="hero" aria-hidden="true">🦒</div>
-    <h1>레이키즈 학습</h1>
+    <h1>유아 영재 학습 게임</h1>
     <p class="lead">학부모님이 아이 이름과 승인번호로 로그인해 주세요.</p>
     <form class="sm-card" novalidate>
       <p class="who">🔑 학부모 로그인</p>
@@ -38,7 +38,7 @@ export function renderNoPermission(root, me, { onDone }) {
   root.innerHTML = `
     <div class="hero" aria-hidden="true">🔒</div>
     <h1>아직 열리지 않았어요</h1>
-    <p class="lead"><b>${esc(me?.name)}</b> 계정에 레이키즈 학습이 아직 켜져 있지 않아요.<br>학원에 말씀해 주시면 열어 드려요.</p>
+    <p class="lead"><b>${esc(me?.name)}</b> 계정에 유아 영재 학습 게임이 아직 켜져 있지 않아요.<br>학원에 말씀해 주시면 열어 드려요.</p>
     <button class="sm-btn blue big" type="button">다른 계정으로 로그인</button>`;
   root.querySelector("button").addEventListener("click", async () => { await logout(); onDone(); });
 }

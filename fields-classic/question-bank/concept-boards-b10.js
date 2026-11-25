@@ -2,7 +2,7 @@
 // 판서의 곱셈·범위·연속수는 골든벨 10권 문항(14 × 3·23 × 7·47 × 50·21 × 67 …, 10~69·47~96·100~999 …,
 // 1~14·1~60·17~38 …, 1~13·19~21·27~33·45~55 …)과 겹치지 않게 골랐다.
 
-import { jo } from "./concept-board-kit.js?v=20261026b";
+import { jo } from "./concept-board-kit.js?v=20261124f";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });

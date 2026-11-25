@@ -75,7 +75,7 @@ test("course pathway is selected by course and links Grade 7 Algebra 1 to GFIELD
   assert.equal(await page.locator("#workbook-title").innerText(), "Algebra 1 단원 교재");
   assert.match(await page.locator("#workbook-status").innerText(), /5개 단원 · .*차시 · 연습 .*문항 · A4/);
   await page.goto(`${url}?grade=7#algebra1-course`, { waitUntil: "networkidle" });
-  assert.match(await page.locator("#algebra1-course").innerText(), /식의 구조와 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
+  assert.match(await page.locator("#algebra1-course").innerText(), /식의 계산과 방정식[\s\S]*지필드 원본[\s\S]*3\(2x − 1\) = 15/);
   assert.equal(await page.locator(".algebra1-unit-card").count(), 5);
   assert.equal(await page.locator(".algebra1-lesson-sequence").count(), 5);
   const unit1 = page.locator(".algebra1-unit-card").first();
@@ -142,8 +142,8 @@ test("Pre-Algebra route connects public materials and the original six-lesson ex
   }
   assert.equal(await page.locator(".course-bridge a").getAttribute("href"), "./algebra1-workbook.html");
   assert.deepEqual(await page.locator("#expressions-and-relationships .route-concepts li").allInnerTexts(), [
-    "변수식으로 나타내고 값 구하기", "거듭제곱과 연산 순서", "문장으로 제시된 상황을 대수식으로 나타내기",
-    "연산 성질로 동치식 만들기", "분배법칙으로 전개하고 묶기", "동류항을 결합해 식 정리하기"
+    "문자를 사용한 식과 식의 값", "거듭제곱과 혼합계산", "문장을 식으로 나타내기",
+    "교환법칙·결합법칙·분배법칙", "분배법칙과 공통인수", "동류항의 정리"
   ]);
   assert.equal(await page.locator('#expressions-and-relationships a[href="./prealgebra-workbook.html?edition=student"]').count(), 1);
   assert.equal(await page.locator('#expressions-and-relationships a[href="./prealgebra-workbook.html?edition=teacher"]').count(), 1);
@@ -678,7 +678,7 @@ test("Grade 7 path previews checkpoints without claiming a measured position", a
   const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await page.goto(`${url}?grade=7#grade-map`, { waitUntil: "networkidle" });
   assert.match(await page.locator("#annual-plan-note").innerText(), /Algebra 1은 가속 학습 예시.*학교 Geometry는 정규 진도/);
-  assert.match(await page.locator("#annual-plan-periods").innerText(), /변수식·일차방정식·부등식.*등식의 성질/);
+  assert.match(await page.locator("#annual-plan-periods").innerText(), /문자를 사용한 식·일차방정식·부등식.*등식의 성질/);
   assert.match(await page.locator("#annual-plan-periods").innerText(), /대수·기하.*심화 문장제와 자료 해석.*Digital SAT Math/);
   assert.equal(await page.locator(".boarding-intro").isHidden(), true);
   assert.equal(await page.locator(".grade-track").evaluate(function (node) { return node.open; }), false);
@@ -804,9 +804,9 @@ test("Grade 7 NS.A roadmap breaks the strand into four observable checks with re
   await page.getByRole("button", { name: /살펴볼 지점 1, 유리수/ }).click();
   assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-check-prompt").allInnerTexts(), [
     "덧셈·뺄셈: 수직선에서 이동과 거리를 나타내고, 빼기를 반대수 더하기로 설명할 수 있나요?",
-    "곱셈·나눗셈: 부호와 연산 성질을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?",
+    "곱셈·나눗셈: 부호와 계산법칙을 적용하고, 0이 아닌 수로 나누는 이유를 설명할 수 있나요?",
     "분수와 소수: 분수를 소수로 나타내고, 소수가 끝나는지 반복되는지 판별할 수 있나요?",
-    "문장제: 상황에 맞게 유리수 네 연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
+    "문장제: 상황에 맞게 유리수의 사칙연산을 골라 식을 세우고 답의 의미를 설명할 수 있나요?"
   ]);
   assert.deepEqual(await page.locator("#grade7-stage-questions .grade7-standard-code").allInnerTexts(), ["7.NS.A.1", "7.NS.A.2", "7.NS.A.2d", "7.NS.A.3"]);
   assert.equal(await page.locator("#grade7-stage-references a").count(), 1, "the standards source stays separate from the GFIELD-authored lesson material");
@@ -964,10 +964,10 @@ test("cross-grade concept flows render as examples on phone, tablet, and desktop
     assert.equal(await page.locator(".concept-flow").count(), 5);
     assert.equal(await page.locator(".concept-flow ol").count(), 5);
     assert.equal(await page.locator(".concept-flow ol li").count(), 26);
-    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("선택형 · 변수식에서 식 정리로"))');
+    const prealgebraFlow = page.locator('.concept-flow:has(h3:text("문자와 식의 계산 · 선택 학습"))');
     assert.equal(await page.locator(".concept-flow").first().getAttribute("aria-labelledby"), "prealgebra-algebra1-heading");
     assert.deepEqual(await page.locator(".concept-flow").nth(1).locator("li").allInnerTexts(), ["곱셈 구조", "분배법칙", "다항식 전개", "식 정리", "AMC 10 식 변형"]);
-    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["문자를 사용해 대수식을 나타내고, 수를 대입해 식의 값 구하기", "거듭제곱과 연산 순서 적용하기", "문장으로 제시된 상황을 대수식으로 나타내기", "연산의 성질을 이용해 동치인 식 만들기", "분배법칙을 적용해 대수식 전개하기", "동류항을 결합해 대수식 간단히 하기"]);
+    assert.deepEqual(await prealgebraFlow.locator("li").allInnerTexts(), ["문자를 사용한 식과 식의 값", "거듭제곱과 혼합계산", "문장을 식으로 나타내기", "교환법칙·결합법칙·분배법칙", "분배법칙을 이용한 식의 전개", "동류항의 정리"]);
     assert.equal(await prealgebraFlow.locator("ol").evaluate(function (node) { return getComputedStyle(node).gridTemplateColumns.split(" ").length; }), width <= 600 ? 1 : 6);
     const bridgeNote = prealgebraFlow.locator(".concept-flow-note");
     assert.equal(await bridgeNote.innerText(), "공유된 Prealgebra Unit 1의 개념 흐름을 참고한 예시예요. 학년 배치나 진단 결과가 아니에요.");

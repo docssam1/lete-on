@@ -60,8 +60,9 @@
     });
   }
   function renderItems() {
-    const visible = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); });
+    const visible = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (requestedConcepts.length === 0 || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); });
     list.replaceChildren();
+    if (!visible.length && requestedConcepts.length) { const empty = document.createElement("p"); empty.className = "practice-empty"; empty.textContent = "이 개념과 직접 연결된 연습 문항은 아직 없습니다. 원본 해설을 먼저 확인하세요."; list.append(empty); }
     document.getElementById("practice-count").textContent = `${visible.length}문항`;
     progress.textContent = `${visible.filter(function (item) { return answered.has(item.id); }).length} / ${visible.length}`;
     visible.forEach(function (item) {
@@ -142,7 +143,7 @@
     const conceptDescription = hasSourceConceptMatches
       ? `원본 풀이 개념 ${requestedConcepts.map(function (id) { return conceptLabels[id] || id; }).join("·")}과 연결된 GFIELD 창작 문항 ${sourceConceptItems.length}개를 먼저 모았어요.`
       : requestedConcepts.length
-        ? "원본 풀이 개념과 직접 연결된 연습 문항은 아직 없어, 표시한 영역의 GFIELD 창작 문항을 보여 줍니다."
+        ? "이 개념과 직접 연결된 연습 문항은 아직 없습니다. 원본 해설을 먼저 확인하세요."
         : "";
     const domainDescription = selected.length ? `${selected.join("·")} 영역의 GFIELD 창작 문항을 모았어요.` : "영역이 분류되지 않은 문항이 있어요. 아래에서 필요한 연습 영역을 골라 보세요.";
     description.textContent = `${mockDescription}${sourceDescription}${conceptDescription || domainDescription}`;
@@ -151,7 +152,7 @@
   }
   document.getElementById("reset-practice").addEventListener("click", function () {
     answered.clear();
-    const visibleCount = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (!hasSourceConceptMatches || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); }).length;
+    const visibleCount = bank.items.filter(function (item) { return (activeDomains.size === 0 || activeDomains.has(item.domain)) && (requestedConcepts.length === 0 || requestedConcepts.some(function (concept) { return (item.sourceConcepts || []).includes(concept); })); }).length;
     progress.textContent = `0 / ${visibleCount}`;
     renderItems();
   });

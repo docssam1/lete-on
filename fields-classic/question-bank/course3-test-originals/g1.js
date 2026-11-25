@@ -11,6 +11,7 @@
 // 선은 검정, 색칠한 부분은 연두, 길이를 나타내는 점선 호는 갈색 점선, 각 표시는 빨강.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, esc, text, svg, mark, ringed } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "../course2-test-originals/len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "G1", title: "합동과 닮음" };
@@ -103,18 +104,9 @@ function arrowMark(a, b, sz = 5) {
   const m = lerp(a, b, 0.5), u = unit(sub(b, a)), v = P(-u.y, u.x), tip = add(m, mul(u, sz * 0.8));
   return `<polygon points="${pts([tip, add(sub(m, mul(u, sz * 0.6)), mul(v, sz * 0.75)), sub(sub(m, mul(u, sz * 0.6)), mul(v, sz * 0.75))])}" fill="${INK}"/>`;
 }
-// 길이 표시: a→b 옆으로 볼록한 점선과 글자(side 1 = a→b 진행 방향의 왼쪽, 화면 기준)
-function brace(a, b, label, { side = 1, bend = 10, off = 12, size = 12, it = false } = {}) {
-  const l = len(sub(b, a)), nx = ((b.y - a.y) / l) * side, ny = (-(b.x - a.x) / l) * side;
-  const m = lerp(a, b, 0.5), c = P(m.x + nx * bend * 2, m.y + ny * bend * 2), tip = P(m.x + nx * (bend + off), m.y + ny * (bend + off));
-  return `<path d="M${f(a.x)} ${f(a.y)} Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`
-    + (it ? itLen(tip, label) : word(tip, label, size));
-}
-// 「x cm」처럼 기울인 글자 + 단위
-const itLen = (p, value) => {
-  const [v, u] = value.split(" ");
-  return halo(`<text x="${f(p.x)}" y="${f(p.y)}" text-anchor="middle" dominant-baseline="central" style="font-size:12px;font-weight:600;fill:${INK};text-anchor:middle;dominant-baseline:central"><tspan style="font-style:italic;font-family:'Times New Roman',serif;font-size:14px">${esc(v)}</tspan>${esc(u || "")}</text>`);
-};
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24).
+// side 1 = a→b 진행 방향의 (dy, −dx) 쪽(이 파일의 옛 약속 그대로). far = 더 띄울 만큼(전체 길이를 부분 길이보다 바깥에). it = 「x cm」 기울인 글자.
+const brace = (a, b, label, { side = 1, far = 0, it = false } = {}) => lenArc(a, b, label, { side: -side, far, varName: it });
 
 // ── 글로 쓰는 (1)(2) 물음(11·12번)
 const SERIF = "font-family:'FC Serif',serif;color:#191511;word-break:keep-all";
@@ -144,7 +136,7 @@ function q3() {
   const T = view([A, B, E, D], 300, 230, 26), [a, b, c, e, d] = [A, B, C, E, D].map(T);
   return svg(300, 230, "정삼각형 ABC와 변 BC의 연장선 위의 점 E로 그린 정삼각형 ADE",
     poly([a, b, c]) + seg(c, e) + poly([a, d, e]) + seg(c, d)
-    + brace(a, b, "6cm", { side: -1, bend: 6, off: 14 }) + brace(c, e, "10cm", { side: -1, bend: 7, off: 10 })
+    + brace(a, b, "6cm", { side: -1 }) + brace(c, e, "10cm", { side: -1 })
     + nameAt(a, "A", -4, -13) + nameAt(b, "B", -11, 6) + nameAt(c, "C", -2, 13) + nameAt(e, "E", 11, 6) + nameAt(d, "D", 0, -12), 280);
 }
 function q4() {
@@ -265,11 +257,12 @@ function q17() {
   // 원문 그림 모양 그대로(선분 BE·EG·GC 의 실제 길이는 답이라 눈금을 맞추지 않는다)
   const A = P(0, 9), B = P(0, 0), C = P(16, 0), D = P(16, 9), E = P(2.6, 0), F = P(6.2, 9), G = P(8.8, 0);
   const T = view([A, B, C, D], 290, 190, 28), [a, b, c, d, e, fp, g] = [A, B, C, D, E, F, G].map(T);
-  return svg(290, 190, "직사각형 ABCD를 평행한 두 선분 AE, FG로 나눈 ㉮, ㉯, ㉰",
-    poly([a, b, c, d]) + seg(a, e) + seg(fp, g) + brace(a, d, "30cm", { side: 1, bend: 7, off: 9 })
+  // 위 길이 표시(30cm)가 F 이름 위로 올라가도록 그림 전체를 14 내린다
+  return svg(290, 204, "직사각형 ABCD를 평행한 두 선분 AE, FG로 나눈 ㉮, ㉯, ㉰", `<g transform="translate(0 14)">`
+    + poly([a, b, c, d]) + seg(a, e) + seg(fp, g) + brace(a, d, "30cm", { side: 1, far: 10 })
     + ringMark(T(P(0.8, 2.2)), "㉮") + ringMark(T(P(4.6, 4.5)), "㉯") + ringMark(T(P(12, 4.5)), "㉰")
     + nameAt(a, "A", -10, -8) + nameAt(b, "B", -10, 10) + nameAt(c, "C", 10, 10) + nameAt(d, "D", 10, -8)
-    + nameAt(e, "E", 0, 13) + nameAt(g, "G", 0, 13) + nameAt(fp, "F", 0, -12), 280);
+    + nameAt(e, "E", 0, 13) + nameAt(g, "G", 0, 13) + nameAt(fp, "F", 0, -12) + "</g>", 280);
 }
 function q18() {
   const B = P(0, 0), C = P(14, 0), A = P(5, Math.sqrt(14 * 14 - 25)), D = P(13, A.y);   // 변 AB = 14cm
@@ -277,7 +270,7 @@ function q18() {
   const T = view([A, B, C, D], 250, 230, 30), [a, b, c, d, e] = [A, B, C, D, E].map(T);
   return svg(250, 230, "사다리꼴 ABCD와 넓이를 이등분하는 선분 EC",
     poly([a, b, c, d]) + seg(e, c)
-    + brace(a, d, "8cm", { side: 1, bend: 6, off: 9 }) + brace(b, c, "14cm", { side: -1, bend: 7, off: 10 }) + brace(b, a, "14cm", { side: 1, bend: 9, off: 16 })
+    + brace(a, d, "8cm", { side: 1 }) + brace(b, c, "14cm", { side: -1 }) + brace(b, a, "14cm", { side: 1 })
     + nameAt(a, "A", -9, -9) + nameAt(b, "B", -10, 8) + nameAt(c, "C", 10, 8) + nameAt(d, "D", 9, -9) + nameAt(e, "E", 10, -3), 240);
 }
 function q19() {
@@ -288,9 +281,9 @@ function q19() {
   return svg(290, 190, "서로 평행한 선분 AB, EF, DC",
     seg(b, c) + seg(a, b) + seg(e, fp) + seg(d, c) + seg(a, c) + seg(b, d)
     + arrowMark(b, a) + arrowMark(fp, e) + arrowMark(c, d)
-    + brace(b, a, "10cm", { side: 1, bend: 6, off: 16 }) + brace(c, d, "15cm", { side: -1, bend: 6, off: 16 })
-    + brace(b, fp, "6cm", { side: -1, bend: 6, off: 9 }) + brace(fp, c, "x cm", { side: -1, bend: 6, off: 9, it: true })
-    + brace(fp, e, "y cm", { side: -1, bend: 5, off: 14, it: true })
+    + brace(b, a, "10cm", { side: 1 }) + brace(c, d, "15cm", { side: -1 })
+    + brace(b, fp, "6cm", { side: -1 }) + brace(fp, c, "x cm", { side: -1, it: true })
+    + brace(fp, e, "y cm", { side: -1, it: true })
     + nameAt(a, "A", -2, -12) + nameAt(b, "B", -11, 2) + nameAt(c, "C", 10, 6) + nameAt(d, "D", 2, -12) + nameAt(e, "E", 0, -12) + nameAt(fp, "F", 0, 13), 280);
 }
 function q20() {
@@ -305,15 +298,15 @@ function q20() {
     text(14, 14, "(1)", { size: 13, weight: 600 })
     + poly([a1, b1, c1]) + seg(d1, e1)
     + angle(c1, a1, b1, 12) + angle(e1, a1, d1, 12)
-    + brace(a1, c1, "12cm", { side: 1, bend: 6, off: 12 }) + brace(c1, b1, "10cm", { side: 1, bend: 6, off: 14 })
-    + brace(e1, b1, "6cm", { side: 1, bend: 3, off: 9 }) + brace(a1, b1, "14cm", { side: -1, bend: 10, off: 14 })
-    + itLen(add(lerp(d1, e1, 0.5), P(18, -2)), "x cm")
+    + brace(a1, c1, "12cm", { side: 1 }) + brace(c1, b1, "10cm", { side: 1 })
+    + brace(e1, b1, "6cm", { side: 1 }) + brace(a1, b1, "14cm", { side: -1, far: 12 })
+    + brace(d1, e1, "x cm", { side: -1, it: true })
     + nameAt(a1, "A", -11, 2) + nameAt(b1, "B", 11, 2) + nameAt(c1, "C", 2, -12) + nameAt(d1, "D", -10, -6) + nameAt(e1, "E", -9, 10)
     + text(14, 174, "(2)", { size: 13, weight: 600 })
     + poly([a2, b2, c2]) + seg(a2, d2)
-    + brace(b2, a2, "6cm", { side: 1, bend: 6, off: 12 }) + brace(a2, c2, "9cm", { side: 1, bend: 7, off: 12 })
-    + brace(b2, d2, "3cm", { side: -1, bend: 5, off: 9 }) + brace(d2, c2, "9cm", { side: -1, bend: 6, off: 9 })
-    + itLen(add(lerp(a2, d2, 0.5), P(14, -4)), "x cm")
+    + brace(b2, a2, "6cm", { side: 1 }) + brace(a2, c2, "9cm", { side: 1 })
+    + brace(b2, d2, "3cm", { side: -1 }) + brace(d2, c2, "9cm", { side: -1 })
+    + brace(a2, d2, "x cm", { side: 1, it: true })
     + nameAt(a2, "A", 0, -12) + nameAt(b2, "B", -11, 2) + nameAt(c2, "C", 11, 2) + nameAt(d2, "D", -2, 13), 290);
 }
 
@@ -321,11 +314,12 @@ function q20() {
 function q21() {
   const A = P(0, 8), B = P(0, 0), C = P(10, 0), D = P(10, 6), M = P(5, 0);
   const Pp = meet(A, C, M, D);
-  const T = view([A, B, C, D], 260, 210, 32), [a, b, c, d, m, p] = [A, B, C, D, M, Pp].map(T);
-  return svg(260, 210, "사다리꼴 ABCD와 변 BC의 중점 M, 색칠한 삼각형 MPC",
+  // 아래 10cm 길이 표시가 M 이름 아래로 내려가도록 그림 높이를 늘리고 도형을 조금 위로
+  const T = view([A, B, C, D], 260, 210, 32), [a, b, c, d, m, p] = [A, B, C, D, M, Pp].map((q) => { const r = T(q); return P(r.x, r.y - 6); });
+  return svg(260, 222, "사다리꼴 ABCD와 변 BC의 중점 M, 색칠한 삼각형 MPC",
     shade([m, p, c]) + poly([a, b, c, d]) + seg(a, c) + seg(m, d)
     + right(b, a, c) + right(c, b, d) + ticks(b, m, 2) + ticks(m, c, 2)
-    + brace(a, b, "8cm", { side: -1, bend: 7, off: 14 }) + brace(c, d, "6cm", { side: -1, bend: 7, off: 14 }) + brace(b, c, "10cm", { side: -1, bend: 12, off: 16 })
+    + brace(a, b, "8cm", { side: -1 }) + brace(c, d, "6cm", { side: -1 }) + brace(b, c, "10cm", { side: -1, far: 16 })
     + nameAt(a, "A", 0, -12) + nameAt(b, "B", -11, 4) + nameAt(c, "C", 11, 6) + nameAt(d, "D", 2, -12) + nameAt(m, "M", 0, 13) + nameAt(p, "P", 0, -12), 250);
 }
 function q22() {
@@ -335,7 +329,7 @@ function q22() {
   return svg(240, 230, "사다리꼴 ABCD와 두 대각선의 교점 O를 지나는 선분 EF",
     poly([a, b, c, d]) + seg(a, c) + seg(b, d) + seg(e, fp)
     + arrowMark(d, a) + arrowMark(fp, e) + arrowMark(c, b)
-    + brace(a, d, "10cm", { side: 1, bend: 6, off: 9 }) + brace(b, c, "15cm", { side: -1, bend: 7, off: 9 })
+    + brace(a, d, "10cm", { side: 1 }) + brace(b, c, "15cm", { side: -1 })
     + nameAt(a, "A", -9, -8) + nameAt(b, "B", -11, 4) + nameAt(c, "C", 11, 4) + nameAt(d, "D", 9, -8)
     + nameAt(e, "E", -11, 0) + nameAt(fp, "F", 11, 0) + nameAt(o, "O", 0, 13), 230);
 }

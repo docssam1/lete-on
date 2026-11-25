@@ -1,4 +1,4 @@
-import { foldWordStrip } from "./fold-visuals.js?v=20261121a";
+import { foldWordStrip } from "./fold-visuals.js?v=20261123a";
 const SHAPE_GLYPHS = Object.freeze({
   circle: "●",
   triangle: "▲",

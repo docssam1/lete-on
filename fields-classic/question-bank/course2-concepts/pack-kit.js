@@ -114,6 +114,7 @@ export function digital(d, x, y, { w = 30, h = 54, color = INK, width = 5, mirro
   const parts = { a: [4, 0, w - 4, 0], b: [w - 2, 3, w - 2, h / 2 - 2], c: [w - 2, h / 2 + 2, w - 2, h - 3], d: [4, h, w - 4, h], e: [2, h / 2 + 2, 2, h - 3], f: [2, 3, 2, h / 2 - 2], g: [4, h / 2, w - 4, h / 2] };
   return [...(SEG[d] || "")].map((k) => {
     let [x1, y1, x2, y2] = parts[k];
+    if (String(d) === "1") { x1 = w / 2; x2 = w / 2; }   // 1은 칸 가운데에 선다(교재 약속)
     if (mirror) { x1 = w - x1; x2 = w - x2; }
     return line(P(x + x1, y + y1), P(x + x2, y + y2), { color, width });
   }).join("");

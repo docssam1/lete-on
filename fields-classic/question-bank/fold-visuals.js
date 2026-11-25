@@ -366,7 +366,8 @@ const reflect = (line, p) => {
   const fy = line.a.y + t * dy;
   return { x: 2 * fx - p.x, y: 2 * fy - p.y };
 };
-export function foldWordStrip(words, { final = () => "", finalExtra = "", label = "", cls = "fold-pieces-svg" } = {}) {
+// after: 다 접은 장면 뒤에 회색 화살표 + 한 장면 더(펼친 모양 등) — after(x, top, size)가 그림을, afterCaption이 장면 이름을(2과정 개념 꾸러미, 원장 2026-11-23 「접는 과정을 보여 주던지 화살표로」)
+export function foldWordStrip(words, { final = () => "", finalExtra = "", label = "", cls = "fold-pieces-svg", after = null, afterCaption = "" } = {}) {
   const { clip } = foldGeometryHelpers();
   const size = 100;
   const top = 6;
@@ -401,5 +402,11 @@ export function foldWordStrip(words, { final = () => "", finalExtra = "", label 
   });
   parts += foldStageSvg(poly, { shift, top, size }) + final(shift, top, size, poly, bboxOf(poly)) + foldCaptionSvg(shift + size / 2, top + size + 22, words.length, finalExtra);
   shift += size + 12;
+  if (after) {
+    parts += foldStepArrowSvg(shift, top + size / 2);
+    shift += gap;
+    parts += after(shift, top, size) + `<text x="${(shift + size / 2).toFixed(1)}" y="${(top + size + 22).toFixed(1)}" font-size="13" font-weight="800" text-anchor="middle" fill="#7a4a44" font-family="'Noto Sans KR',sans-serif">${afterCaption}</text>`;
+    shift += size + 12;
+  }
   return `<svg class="${cls}" ${foldWidthStyle(shift + 6, size)} viewBox="0 0 ${shift + 6} ${size + 16 + FOLD_CAPTION_SPACE}" role="img" aria-label="${label}">${parts}</svg>`;
 }

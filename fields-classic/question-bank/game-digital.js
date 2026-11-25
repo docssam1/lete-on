@@ -8,7 +8,7 @@
 //    다 옮긴 뒤 「확인」. 맞으면 만든 숫자를 읽어 쓴다. 숫자판은 똑바로 설 숫자를 먼저 고르고, 판을 돌려 확인한 뒤 합을 쓴다.
 //  · 틀리면 실수의 종류를 말하고(위아래·좌우를 바꿈, 자리 순서, 누운 방향), 두 번 틀리면 「풀이 보기」.
 import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261119a";
-import { jo } from "./concept-board-kit.js?v=20261026b";
+import { jo } from "./concept-board-kit.js?v=20261124f";
 
 const { transformDigit, transformDisplay } = BOOK01_INTERNALS;
 export const DIGIT_SEGMENTS = Object.freeze({ 0: "abcdef", 1: "bc", 2: "abdeg", 3: "abcdg", 4: "bcfg", 5: "acdfg", 6: "acdefg", 7: "abc", 8: "abcdefg", 9: "abcdfg" });

@@ -4,6 +4,7 @@
 // 단원: 1~6번 특수각과 도형의 복원 · 7~12번 평행선과 색종이 접기 · 13~19번 평면도형의 넓이 · 20~25번 평면도형의 둘레.
 // 정답은 여기 두지 않는다(비공개 자리에만). 그림은 우리 색표(워밍업 그림 색), 글자는 검정.
 import { UT, text, svg, line, mark } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "G4", title: "도형의 복원과 측정" };
@@ -58,11 +59,8 @@ function ticks(a, b, n = 1) {
     return seg(P(c.x - nx * 5, c.y - ny * 5), P(c.x + nx * 5, c.y + ny * 5), { stroke: UT.red, width: 1.6 });
   }).join("");
 }
-// 길이 글자를 선분 옆에(바깥쪽 off 만큼)
-function along(a, b, value, off = 12, size = 12) {
-  const m = lerp(a, b, 0.5), l = Math.hypot(b.x - a.x, b.y - a.y);
-  return small(P(m.x + (-(b.y - a.y) / l) * off, m.y + ((b.x - a.x) / l) * off), value, size);
-}
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3). side 1 = a→b 진행 방향의 (−dy, dx) 쪽.
+const along = (a, b, value, side = 1, opts = {}) => lenArc(a, b, value, { side, unit: "㎝", ...opts });
 const tint = { yellow: UT.yellowSoft, green: UT.greenSoft, purple: UT.purpleSoft, orange: UT.orangeSoft, red: UT.redSoft };
 
 // ── 1단원 특수각과 도형의 복원
@@ -95,8 +93,8 @@ function q4() {
   const B = P(20, 176), C = P(244, 176), A = P(20 + 168, 176 - 97), D = P(188, 176);
   return svg(260, 200, "직각삼각형과 수선",
     poly([A, B, C], { fill: tint.yellow }) + seg(A, D, { dash: "5 4" }) + rightAt(A, B, C, 10) + rightAt(D, A, C, 9)
-    + arcAt(B, C, A, 26, "30°", { lr: 42 }) + along(D, C, "4㎝", -12)
-    + name(A, "A", 0, -12) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", 0, 14), 260);
+    + arcAt(B, C, A, 26, "30°", { lr: 42 }) + along(D, C, "4㎝")
+    + name(A, "A", 0, -12) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", -8, 14), 260);
 }
 function q5() {
   const O = P(120, 116), r = 84, h = 42, w = Math.sqrt(r * r - h * h), A = P(120 - w, 116 - h), B = P(120 + w, 116 - h);
@@ -167,17 +165,18 @@ function q12() {
 
 // ── 3단원 평면도형의 넓이
 function q13() {
-  const O = P(140, 96), A = P(40, 96), C = P(240, 96), B = at(O, 70, 125), D = at(O, 70, -55);
+  // 대각선 AC 10㎝ · BD 7㎝(그림 길이 200 : 140). 두 길이 표시가 다른 대각선 위에 앉지 않게 만나는 점을 가운데에서 비켜 둔다.
+  const O = P(115, 96), A = P(40, 96), C = P(240, 96), B = at(O, 52, 120), D = at(O, 88, -60);
   return svg(280, 192, "두 대각선으로 만든 사각형",
     poly([A, B, C, D], { fill: tint.yellow, stroke: UT.soft, dash: "5 4" }) + seg(A, C, { width: 2.2 }) + seg(B, D, { width: 2.2 })
-    + small(P(196, 110), "10㎝") + along(B, O, "7㎝", -14)
+    + along(A, C, "10㎝", -1) + along(B, D, "7㎝", 1)
     + name(A, "A", -10, 0) + name(B, "B", -6, -9) + name(C, "C", 10, 0) + name(D, "D", 6, 10), 280);
 }
 function q14() {
   const s = 62, A = P(20, 30), B = P(20, 30 + s), C = P(20 + 4 * s, 30 + s), D = P(20 + 4 * s, 30);
   const sq = Array.from({ length: 4 }, (_, i) => poly([P(20 + i * s, 30), P(20 + i * s, 30 + s), P(20 + (i + 1) * s, 30 + s), P(20 + (i + 1) * s, 30)], { fill: tint.green })).join("");
   return svg(290, 120, "정사각형 4개를 이어 붙인 직사각형",
-    sq + seg(B, D, { stroke: UT.red, width: 2 }) + small(P(150, 52), "17㎝", 12.5, UT.red)
+    sq + seg(B, D, { stroke: UT.red, width: 2 }) + along(B, D, "17㎝", -1, { halo: true })
     + name(A, "A", -9, -6) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", 10, -6), 290);
 }
 function q15() {
@@ -186,37 +185,37 @@ function q15() {
   const y1 = 96, y2 = 120;
   const road1 = [P(xAt(y1, true), y1), P(xAt(y1, false), y1), P(xAt(y2, false), y2), P(xAt(y2, true), y2)];
   const road2 = [P(140, 180), P(156, 180), P(206, 36), P(190, 36)];
-  return svg(330, 206, "길이 난 평행사변형 정원",
+  return svg(340, 214, "길이 난 평행사변형 정원",
     poly([BL, BR, TR, TL], { fill: tint.green, stroke: UT.green }) + poly(road1, { fill: "#efe6d2", stroke: "none" }) + poly(road2, { fill: "#efe6d2", stroke: "none" })
-    + poly([BL, BR, TR, TL], { stroke: UT.green }) + small(P(120, 196), "30m") + seg(P(300, 36), P(300, 180), { dash: "4 4" }) + small(P(316, 112), "18m")
-    + small(P(242, 108), "3m") + small(P(198, 26), "2m"), 330);
+    + poly([BL, BR, TR, TL], { stroke: UT.green }) + along(BL, BR, "30m") + seg(P(300, 36), P(300, 180), { dash: "4 4" }) + along(P(300, 180), P(300, 36), "18m")
+    + along(P(242, y1), P(242, y2), "3m", -1) + along(P(206, 36), P(190, 36), "2m"), 330);
 }
 function q16() {
   const k = 8, B = P(30, 180), C = P(30 + 30 * k, 180), A = P(30 + 15 * k, 180 - 20 * k), D = P(A.x, 180);
   const t = ((B.x - A.x) * (C.x - A.x) + (B.y - A.y) * (C.y - A.y)) / ((C.x - A.x) ** 2 + (C.y - A.y) ** 2), E = lerp(A, C, t);
   return svg(300, 204, "삼각형과 두 높이",
     poly([A, B, C], { fill: tint.yellow }) + seg(A, D, { dash: "5 4" }) + seg(B, E, { dash: "5 4" }) + rightAt(D, A, C, 8) + rightAt(E, B, C, 8)
-    + small(P(A.x + 20, 150), "20㎝") + small(P(lerp(B, E, 0.4).x - 8, lerp(B, E, 0.4).y - 12), "24㎝", 12)
+    + along(A, D, "20㎝", -1) + along(B, E, "24㎝", 1)
     + name(A, "A", 0, -11) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", 0, 14) + name(E, "E", 10, -6), 300);
 }
 function q17() {
   const A = P(90, 30), D = P(90 + 7 * 18, 30), B = P(30, 150), C = P(270, 150);
   return svg(300, 180, "사다리꼴",
     poly([A, B, C, D], { fill: tint.purple, stroke: UT.purple }) + seg(A, P(90, 150), { dash: "5 4" }) + rightAt(P(90, 150), A, C, 8)
-    + small(P(153, 20), "7㎝") + small(P(76, 92), "6㎝") + small(P(150, 168), "□㎝"), 300);
+    + along(D, A, "7㎝") + along(A, P(90, 150), "6㎝") + along(B, C, "", 1, { blank: true }), 300);
 }
 function q18() {
   const A = P(20, 20), B = P(20, 170), C = P(260, 170), D = P(260, 20), E = P(128, 20);
-  return svg(290, 196, "직사각형과 색칠한 부분",
+  return svg(300, 196, "직사각형과 색칠한 부분",
     poly([A, B, C, D], { fill: "#fff" }) + poly([E, B, C, D], { fill: tint.orange, stroke: UT.orange }) + poly([A, B, C, D])
-    + small(P(140, 186), "16㎝") + small(P(276, 95), "10㎝")
+    + along(B, C, "16㎝") + along(C, D, "10㎝")
     + name(A, "A", -9, -6) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", 10, -6) + name(E, "E", 0, -9), 290);
 }
 function q19() {
   const A = P(20, 20), B = P(20, 200), C = P(200, 200), D = P(200, 20), Pp = P(200, 150);
   return svg(230, 224, "정사각형을 나눈 그림",
     poly([A, B, C, Pp], { fill: tint.green }) + poly([A, Pp, D], { fill: tint.yellow }) + poly([A, B, C, D])
-    + text(165, 62, "㉮", { size: 15 }) + text(90, 140, "㉯", { size: 15 }) + small(P(110, 216), "12㎝")
+    + text(165, 62, "㉮", { size: 15 }) + text(90, 140, "㉯", { size: 15 }) + along(B, C, "12㎝")
     + name(A, "A", -9, -6) + name(B, "B", -10, 6) + name(C, "C", 10, 6) + name(D, "D", 10, -6) + name(Pp, "P", 12, 0), 230);
 }
 
@@ -227,13 +226,13 @@ function q21() {
     poly([P(x0, y0), P(x0 + W, y0), P(x0 + W, y0 + H), P(x0, y0 + H)], { fill: tint.yellow })
     + xs.map((x) => seg(P(x0 + x, y0), P(x0 + x, y0 + H), { dash: "5 4", stroke: INK, width: 1.2 })).join("")
     + ys.map((y) => seg(P(x0, y0 + y), P(x0 + W, y0 + y), { dash: "5 4", stroke: INK, width: 1.2 })).join("")
-    + small(P(140, 228), "15㎝") + small(P(286, 116), "12㎝"), 300);
+    + along(P(x0, y0 + H), P(x0 + W, y0 + H), "15㎝") + along(P(x0 + W, y0 + H), P(x0 + W, y0), "12㎝"), 300);
 }
 function q22() {
   const pts = [P(20, 20), P(110, 20), P(110, 65), P(180, 65), P(180, 110), P(272, 110), P(272, 200), P(140, 200), P(140, 146), P(90, 146), P(90, 200), P(20, 200)].map((p) => P(p.x + 22, p.y));
   return svg(310, 236, "직각으로 꺾인 도형",
-    poly(pts, { fill: tint.green, stroke: UT.green }) + seg(P(42, 220), P(294, 220), { width: 1 }) + small(P(168, 230), "14㎝")
-    + small(P(18, 110), "10㎝") + small(P(137, 172), "3㎝") + seg(P(137, 146), P(137, 162), { dash: "2 3", width: 1 }), 310);
+    poly(pts, { fill: tint.green, stroke: UT.green }) + along(P(42, 200), P(294, 200), "14㎝")
+    + along(P(42, 20), P(42, 200), "10㎝") + along(P(162, 146), P(162, 200), "3㎝"), 310);
 }
 function q23() {
   const k = 14, a = 6 * k, b = 9 * k, c = 4 * k, d = 9 * k, x0 = 20, y0 = 16;
@@ -253,7 +252,7 @@ function q25() {
   const sq = offs.map((o, i) => poly([o, P(o.x + s, o.y), P(o.x + s, o.y + s), P(o.x, o.y + s)], { fill: fills[i] })).join("");
   const core = poly([P(74, 83), P(155, 83), P(155, 155), P(74, 155)], { fill: "rgba(243,154,30,.35)", stroke: UT.orange, width: 1.6 });
   return svg(250, 252, "정사각형 3장을 겹쳐 놓은 그림",
-    sq + core + small(P(87, 12), "15㎝") + small(P(114, 168), "9㎝") + small(P(168, 120), "8㎝"), 250);
+    sq + core + along(P(155, 20), P(20, 20), "15㎝") + along(P(74, 155), P(155, 155), "9㎝") + along(P(155, 155), P(155, 83), "8㎝"), 250);
 }
 
 const Q = (number, prompt, figure, answer = { label: "답" }) => ({ number, prompt, figure, answer });

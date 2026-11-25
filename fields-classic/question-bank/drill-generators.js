@@ -1,7 +1,7 @@
 // 연습 공방 전용 유형 — 문제은행에 숫자로 답하는 유형이 없는 차시만 여기서 만든다.
 // 골든벨 원본 문항·정답은 쓰지 않는다. 차시 개념(골든벨 representativeConcept)의 풀이 그대로 수만 새로 뽑는다.
 // 꼴은 문제은행 생성기와 같다: ({ difficulty }) → { prompt, visual, answer, solution } | null
-import { jo } from "./concept-board-kit.js?v=20261026b";
+import { jo } from "./concept-board-kit.js?v=20261124f";
 
 const randomInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 

@@ -7,6 +7,13 @@ const { chromium } = require("playwright");
 global.window = {};
 require("./curriculum.js");
 require("./generators.js");
+// 2026-11-24: 11-22 공개 등록으로 이 단원의 잠금 유형이 원문 생성기(orig51…)로 공개되었다(잠금 0).
+// 브라우저와 같은 상태(공개 여부·생성기·바뀐 유형 이름)를 보도록 공개 등록 파일과 원문 생성기를 함께 읽는다.
+require("./source-lower-release-20261122-registry.js");
+require("./source-lower-release-20261122.js");
+require("./source-lock-reasons-20261122.js");
+require("./source-5-1-a-original.js");
+const releaseKey = type => window.HSE_LOWER_RELEASE_20261122?.[type.id]?.key;
 
 const api = window.HSE_GENERATORS;
 const unit = window.HSE_CURRICULUM.semesters.find(item => item.id === "5-1")?.units.find(item => item.id === "5-1-u3");
@@ -21,6 +28,14 @@ const failures = [];
 let screenshots = 0;
 let pdfs = 0;
 const fail = message => failures.push(message);
+
+// 2026-11-24: 쉬움 '풀이 도움:'·어려움 '다시 확인하세요.'는 생성기의 난이도 계약이다. 학생 화면에서는 problem-hint-policy.js(11-23/24)가
+// 원문에 없는 안내로 지우므로, 이 감사의 문항 화면은 정책을 끄고 생성기 계약을 본다(HSE_KEEP_HINT_POLICY=1이면 정책을 켜고 이 두 문구 검사만 건너뜀).
+const keepHintPolicy = process.env.HSE_KEEP_HINT_POLICY === "1";
+async function disableHintPolicy(page) {
+  if (keepHintPolicy) return;
+  await page.route(/\/problem-hint-policy\.js(?:\?|$)/, route => route.fulfill({ status: 200, contentType: "application/javascript; charset=utf-8", body: "/* problem hint policy disabled for the generator contract audit */" }));
+}
 
 function broken(state) {
   return state.empty || state.overflow || /undefined|null|NaN|Infinity|\$\{/.test(state.text);
@@ -61,13 +76,16 @@ async function inspectCatalog(browser, viewport, label) {
 async function inspectView(page, selector) {
   return page.evaluate(selected => {
     const nodes = [...document.querySelectorAll(selected)];
-    const prompts = nodes.map(node => node.querySelector(".question-prompt")?.innerText.trim()).filter(Boolean);
+// 2026-11-24: 공개 등록 원문 생성기(예: 기호 계산판)는 문항마다 문장은 같고 그림 기호(SVG)만 다르다. 반복 판정에 그림 내용도 넣는다.
+    const promptKey = node => { const prompt = node.querySelector(".question-prompt"); return prompt ? `${prompt.innerText.trim()}|${[...prompt.querySelectorAll("svg")].map(svg => svg.innerHTML).join("|")}` : ""; };
+    const prompts = nodes.map(promptKey).filter(Boolean);
     return {
       text: document.body.innerText,
       empty: nodes.length === 0 || nodes.some(node => !node.innerText.trim()),
       overflow: document.documentElement.scrollWidth > innerWidth + 1 || nodes.some(node => node.scrollWidth > node.clientWidth + 1),
       prompts,
-      tags: nodes.map(node => node.querySelector("[data-correspondence-e1-kind]")?.getAttribute("data-result-contract") || "")
+      tags: nodes.map(node => node.querySelector("[data-correspondence-e1-kind]")?.getAttribute("data-result-contract") || ""),
+      sourceIds: nodes.map(node => node.querySelector("[data-source-item-id]")?.getAttribute("data-source-item-id") || "")
     };
   }, selector);
 }
@@ -76,15 +94,20 @@ async function inspectType(browser, type, viewport, viewportLabel, level) {
   const page = await browser.newPage({ viewport });
   const key = `${type.sourceItemId}-${viewportLabel}-${level}`;
   page.on("pageerror", error => fail(`${key}: ${error.message}`));
+  await disableHintPolicy(page);
   await page.goto(`${baseUrl}?type=${type.id}&review=1&difficulty=${level}`, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
   let state = await inspectView(page, "#problemView .question-item");
   if (broken(state) || new Set(state.prompts).size !== state.prompts.length) fail(`${key}: 문제 화면이 비었거나 넘치거나 반복됩니다.`);
   if (type.variant === 9 && state.prompts.some(prompt => !/암호\s+[A-N0-9]+를 한글로/.test(prompt))) fail(`${key}: 한글 암호가 원문의 영문자·숫자 표로 선명하게 표시되지 않습니다.`);
-  if (state.tags.some(contract => contract !== "single-value")) fail(`${key}: 단일 정답 태그가 없습니다.`);
-  if (level === -1 && !state.text.includes("풀이 도움:")) fail(`${key}: 쉬움 안내가 보이지 않습니다.`);
-  if (level === 0 && (state.text.includes("풀이 도움:") || state.text.includes("다시 확인하세요."))) fail(`${key}: 같게 문항에 난이도 안내가 섞였습니다.`);
-  if (level === 1 && !state.text.includes("다시 확인하세요.")) fail(`${key}: 어려움 안내가 보이지 않습니다.`);
+  // 2026-11-24: 공개 등록 원문 생성기(orig51…)로 옮겨진 유형은 correspondenceE1의 숨은 태그·난이도 문구가 없다.
+  // 이 유형은 세 문항이 원문 묶음(data-source-item-id)으로 나오는지와 화면 공통 검사만 한다.
+  const released = Boolean(releaseKey(type));
+  if (released && state.sourceIds.some(id => id !== type.sourceItemId)) fail(`${key}: 원문 생성기 문항의 원문 묶음 표지가 다릅니다.`);
+  if (!released && state.tags.some(contract => contract !== "single-value")) fail(`${key}: 단일 정답 태그가 없습니다.`);
+  if (!released && !keepHintPolicy && level === -1 && !state.text.includes("풀이 도움:")) fail(`${key}: 쉬움 안내가 보이지 않습니다.`);
+  if (!released && level === 0 && (state.text.includes("풀이 도움:") || state.text.includes("다시 확인하세요."))) fail(`${key}: 같게 문항에 난이도 안내가 섞였습니다.`);
+  if (!released && !keepHintPolicy && level === 1 && !state.text.includes("다시 확인하세요.")) fail(`${key}: 어려움 안내가 보이지 않습니다.`);
   await page.screenshot({ path: path.join(outputDir, `${key}-problem.png`), fullPage: true });
   screenshots += 1;
   if (viewportLabel === "desktop") {
@@ -114,9 +137,9 @@ async function inspectType(browser, type, viewport, viewportLabel, level) {
 
 (async () => {
   fs.mkdirSync(outputDir, { recursive: true });
-  if (types.length !== 41 || ready.length !== 7 || locked.length !== 4) fail(`E1 구성은 전체 41·공개 7·잠금 4여야 합니다: ${types.length}/${ready.length}/${locked.length}`);
-  if (unitReady.length !== 15 || unitLocked.length !== 26) fail(`U3 전체 상태는 공개 15·잠금 26이어야 합니다: ${unitReady.length}/${unitLocked.length}`);
-  for (const type of ready) if (api.generatorKey(type) !== "correspondenceE1") fail(`${type.sourceItemId}: 공개 생성기 연결이 다릅니다.`);
+  if (types.length !== 41 || ready.length !== 11 || locked.length !== 0) fail(`E1 구성은 전체 41·공개 11·잠금 0이어야 합니다: ${types.length}/${ready.length}/${locked.length}`);
+  if (unitReady.length !== 41 || unitLocked.length !== 0) fail(`U3 전체 상태는 공개 41·잠금 0이어야 합니다: ${unitReady.length}/${unitLocked.length}`);
+  for (const type of ready) if (api.generatorKey(type) !== (releaseKey(type) || "correspondenceE1")) fail(`${type.sourceItemId}: 공개 생성기 연결이 다릅니다.`);
   for (const type of locked) if (api.generatorKey(type)) fail(`${type.sourceItemId}: 잠금 유형에 생성기가 연결되어 있습니다.`);
   const browser = await chromium.launch({ headless: true, executablePath: process.env.HSE_CHROMIUM_EXECUTABLE || undefined });
   await inspectCatalog(browser, { width: 1280, height: 900 }, "desktop");
@@ -126,9 +149,9 @@ async function inspectType(browser, type, viewport, viewportLabel, level) {
     await inspectType(browser, type, { width: 390, height: 844 }, "mobile", level);
   }
   await browser.close();
-  if (screenshots !== 86 || pdfs !== 42) fail(`검수 산출물 수가 다릅니다: 화면 ${screenshots}, A4 ${pdfs}`);
+  if (screenshots !== 134 || pdfs !== 66) fail(`검수 산출물 수가 다릅니다: 화면 ${screenshots}, A4 ${pdfs}`);
   if (failures.length) throw new Error(failures.join("\n"));
-  console.log(`5-1 규칙과 대응 개념탐구 1 브라우저 감사 통과: 공개 7/잠금 4 · PC·모바일 ${screenshots}화면 · A4 ${pdfs}파일 · ${outputDir}`);
+  console.log(`5-1 규칙과 대응 개념탐구 1 브라우저 감사 통과: 공개 11/잠금 0 · PC·모바일 ${screenshots}화면 · A4 ${pdfs}파일 · ${outputDir}`);
 })().catch(error => {
   console.error(`5-1 규칙과 대응 개념탐구 1 브라우저 감사 실패: ${error.stack || error}`);
   process.exit(1);

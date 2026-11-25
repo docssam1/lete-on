@@ -1691,6 +1691,8 @@ body.as-embed{background:#fff}
 .as-embed .student-check-message:empty{display:none}
 .as-embed .test-panel{border:1.5px solid var(--we2d5bc,#e2d5bc);border-radius:20px;background:var(--wfbf6ea,#fbf6ea);box-shadow:none}
 .as-embed .test-grade{border-radius:14px;background:#1f6b4a;box-shadow:0 5px 0 #154f36}
+/* 덱 안 채점 장(문제 없이 채점 칸만): 칸 가운데에(원장 2026-11-23 「다 위로 정렬이 되었어」 — 칸 위에 붙고 아래가 통째로 비었다) */
+body.as-embed.oneup-panel #worksheetSection>.test-panel{margin-block:auto}
 /* 개념은 앞 장(판서)에서 배웠으니 작은 개념 상자·유형 경로·단계 띠는 빼고 문제를 크게(원장 2026-11-01 「잘 안 보여」) */
 .as-embed .textbook-concept-tutorial,.as-embed .question-top,.as-embed .question-concept,.as-embed .study-stage-banner,.as-embed .concept-guide{display:none!important}
 /* 문제 번호 줄: 덱 안에서는 번호만(넘기기는 덱 아래 「다음 문제 →」 하나 — 원장 「다음 버튼이 2개라 불편해」) */
@@ -1804,6 +1806,10 @@ body.as-embed.in-class{--emb:#243184;--emb-deep:#141b5d;--emb-soft:#eaf3ff;--emb
 
 /* 2과정 그림(course2-g1-generators.js) — 색은 SVG 안에 종이색으로 그려 둔다 */
 .visual.c2-visual{display:flex;justify-content:center;align-items:center}
+.visual.shape-matrix-visual{display:flex;justify-content:center;align-items:center}
+.shape-matrix-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:14px 26px}
+.shape-matrix-row.is-set{display:grid;grid-template-columns:repeat(2,auto);justify-content:center}
+.shape-matrix-row .shape-matrix-svg{flex:none}
 .c2-visual .c2-fig{max-width:100%;height:auto}
 .c2-visual .c2-choices{font-size:1.02em;line-height:1.7;text-align:left}
 .c2-visual .c2-choices b{margin-right:.35em}

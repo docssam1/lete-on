@@ -114,6 +114,14 @@ async function inspectView(page, selector, hiddenSelector) {
   }, [selector, hiddenSelector]);
 }
 
+// 2026-11-24: 쉬움 '풀이 도움:'·어려움 '구한 값을 처음 조건에 …'는 생성기의 난이도 계약이다. 학생 화면에서는 problem-hint-policy.js(11-23/24)가
+// 원문에 없는 안내로 지우므로, 이 감사의 문항 화면은 정책을 끄고 생성기 계약을 본다(HSE_KEEP_HINT_POLICY=1이면 정책을 켜고 이 두 문구 검사만 건너뜀).
+const keepHintPolicy = process.env.HSE_KEEP_HINT_POLICY === "1";
+async function disableHintPolicy(page) {
+  if (keepHintPolicy) return;
+  await page.route(/\/problem-hint-policy\.js(?:\?|$)/, route => route.fulfill({ status: 200, contentType: "application/javascript; charset=utf-8", body: "/* problem hint policy disabled for the generator contract audit */" }));
+}
+
 function invalidView(state) {
   return state.empty || state.overflow || state.clippedText || state.overlap || brokenText(state.text);
 }
@@ -122,6 +130,7 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   const page = await browser.newPage({ viewport });
   const key = `${type.sourceItemId}-variant-${type.variant}-${viewportLabel}-${difficulty}`;
   page.on("pageerror", error => fail(`${key}: ${error.message}`));
+  await disableHintPolicy(page);
   await page.goto(`${baseUrl}?type=${type.id}&review=1&difficulty=${difficulty}`, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
 
@@ -129,9 +138,9 @@ async function inspectType(browser, type, viewport, viewportLabel, difficulty) {
   let state = await inspectView(page, "#problemView .question-item", "#solutionView");
   if (invalidView(state) || !state.hiddenViewHidden || new Set(state.prompts).size !== state.prompts.length) fail(`${key}: 문제 화면이 비었거나, 텍스트가 잘리거나, 가로로 넘치거나, 겹치거나, 답안과 분리되지 않았습니다.`);
   if (state.tags.some(contract => contract !== expectedContract)) fail(`${key}: 문제의 ${expectedContract} 답 계약 태그가 없습니다.`);
-  if (difficulty === -1 && !state.text.includes("풀이 도움:")) fail(`${key}: 쉬움 시각 문구가 보이지 않습니다.`);
+  if (!keepHintPolicy && difficulty === -1 && !state.text.includes("풀이 도움:")) fail(`${key}: 쉬움 시각 문구가 보이지 않습니다.`);
   if (difficulty === 0 && (state.text.includes("풀이 도움:") || state.text.includes("구한 값을 처음 조건에"))) fail(`${key}: 기준 문제에 난이도 시각 문구가 섞였습니다.`);
-  if (difficulty === 1 && !state.text.includes("구한 값을 처음 조건에")) fail(`${key}: 어려움 시각 문구가 보이지 않습니다.`);
+  if (!keepHintPolicy && difficulty === 1 && !state.text.includes("구한 값을 처음 조건에")) fail(`${key}: 어려움 시각 문구가 보이지 않습니다.`);
   await page.screenshot({ path: path.join(outputDir, `${key}-problem.png`), fullPage: true });
   screenshots += 1;
 

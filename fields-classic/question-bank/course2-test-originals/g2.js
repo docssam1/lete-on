@@ -3,6 +3,7 @@
 // 글·수·배치는 원문 그대로, 그림은 우리 색표(워밍업 그림 색)로 다시 그렸다. 원문 그림이 눈금에 맞지 않던 것(13·14번 사분원)은
 // 문제의 수에 맞춰 바르게 그렸다. 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, mark } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "G2", title: "도형분할과 넓이" };
@@ -38,16 +39,8 @@ function angleArc(c, p1, p2, r, { color = UT.red, width = 1.4 } = {}) {
   const s = at(c, r, a1), e = at(c, r, a1 + span);
   return { path: `<path d="M${f(s.x)} ${f(s.y)} A${r} ${r} 0 0 0 ${f(e.x)} ${f(e.y)}" fill="none" stroke="${color}" stroke-width="${width}"/>`, mid: a1 + span / 2 };
 }
-// 길이 표시: a→b 옆으로 볼록한 점선과 글자(side 1 = a→b 진행 방향의 왼쪽)
-function brace(a, b, label, { side = 1, bend = 12, off = 13, size = 12, italic = false } = {}) {
-  const l = Math.hypot(b.x - a.x, b.y - a.y), nx = (-(b.y - a.y) / l) * side, ny = ((b.x - a.x) / l) * side;
-  const m = lerp(a, b, 0.5), c = P(m.x + nx * bend * 2, m.y + ny * bend * 2), tip = P(m.x + nx * (bend + off), m.y + ny * (bend + off));
-  const curve = `<path d="M${f(a.x)} ${f(a.y)} Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}" fill="none" stroke="${UT.line}" stroke-width="1.1" stroke-dasharray="3 3"/>`;
-  const word = italic
-    ? `<text x="${f(tip.x)}" y="${f(tip.y)}" text-anchor="middle" dominant-baseline="central" style="font-size:${size + 2}px;font-weight:600;font-style:italic;font-family:'Times New Roman',serif;fill:${INK};text-anchor:middle;dominant-baseline:central">${label}</text>`
-    : small(tip, label, size);
-  return curve + word;
-}
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3). side 1 = (−dy, dx) 쪽.
+const brace = (a, b, label, { side = 1, far = 0, italic = false, blank = false } = {}) => lenArc(a, b, label, { side, far, varName: italic, blank });
 
 // ── 1~4번
 function q1() {
@@ -103,10 +96,9 @@ function q6() {
   const k = 9, x0 = 58, y0 = 10, H = 15 * k, big = 15 * k, w = 12 * k, sq = 3 * k;
   let out = rect(x0, y0, big, H, G) + rect(x0 + big, y0, w, H, G);
   for (let i = 0; i < 4; i += 1) out += rect(x0 + big + i * sq, y0, sq, sq, G);
-  const W = big + w, bx = x0 + W / 2 - 20, by = y0 + H + 34;
-  out += brace(P(x0, y0), P(x0, y0 + H), "15cm", { bend: 9, off: 22 })
-    + brace(P(x0, y0 + H), P(x0 + W, y0 + H), "", { bend: 9, off: 0 })
-    + `<rect x="${f(bx)}" y="${f(by)}" width="40" height="24" rx="3" fill="#fff" stroke="${UT.box}" stroke-width="1.6"/>` + small(P(bx + 56, by + 12), "cm", 13);
+  const W = big + w;
+  out += brace(P(x0, y0), P(x0, y0 + H), "15cm")
+    + brace(P(x0, y0 + H), P(x0 + W, y0 + H), "", { blank: true });
   return svg(320, 206, "정사각형으로 나눈 직사각형", out, 310);
 }
 function q7() {
@@ -114,8 +106,8 @@ function q7() {
   const out = rect(x0, y0, 9 * k, 9 * k, G) + rect(x0 + 9 * k, y0, 7 * k, 7 * k, G) + rect(x0 + 9 * k, y0 + 7 * k, 2 * k, 2 * k, G)
     + rect(x0 + 11 * k, y0 + 7 * k, 5 * k, 2 * k, SHADE)
     + mark(x0 + 4.5 * k, y0 + 4.5 * k, "가", { r: 10, size: 12 }) + mark(x0 + 12.5 * k, y0 + 3.5 * k, "나", { r: 10, size: 12 }) + mark(x0 + 10 * k, y0 + 8 * k, "다", { r: 9, size: 11 })
-    + brace(P(x0 + 16 * k, y0), P(x0, y0), "16cm", { bend: 9, off: 12, size: 13 })
-    + brace(P(x0, y0), P(x0, y0 + 9 * k), "9cm", { bend: 9, off: 20, size: 13 });
+    + brace(P(x0 + 16 * k, y0), P(x0, y0), "16cm")
+    + brace(P(x0, y0), P(x0, y0 + 9 * k), "9cm");
   return svg(320, 188, "정사각형 ㉮, ㉯, ㉰와 색칠된 직사각형", out, 310);
 }
 function q8() {
@@ -163,7 +155,7 @@ function q13() {
   return svg(310, 200, "직사각형의 꼭짓점을 중심으로 그린 네 사분원",
     shaded + arc(P(x0 + 5 * k, y0), 5 * k, P(x0, y0 + 5 * k), 1) + arc(P(x0, y0 + 5 * k), 13 * k, P(x0 + 13 * k, BL.y), 1)
     + arc(P(x0 + 5 * k, y0), 18 * k, BR, 0) + rect(TL.x, TL.y, W, H, { stroke: UT.green, width: 1.8 })
-    + brace(TL, P(x0, y0 + 5 * k), "5cm", { bend: 8, off: 18 }) + brace(P(x0, y0 + 5 * k), BL, "13cm", { bend: 9, off: 20 }), 300);
+    + brace(TL, P(x0, y0 + 5 * k), "5cm") + brace(P(x0, y0 + 5 * k), BL, "13cm"), 300);
 }
 function q14() {
   const k = 6.6, B = P(78, 206), C = P(78 + 22 * k, 206), A = P(78 + 11 * k, 206 - Math.sqrt(29 * 29 - 11 * 11) * k);
@@ -174,7 +166,7 @@ function q14() {
   const sector = `<path d="M${f(B.x)} ${f(B.y)} L${f(q6.x)} ${f(q6.y)} A${f(6 * k)} ${f(6 * k)} 0 0 0 ${f(p6.x)} ${f(p6.y)} Z" fill="${UT.greenSoft}" stroke="${UT.green}" stroke-width="1.6"/>`;
   return svg(290, 228, "이등변삼각형 ABC와 세 원의 일부",
     sector + arcA + arcC + poly([A, B, C], G)
-    + brace(A, onAB(13), "13cm", { bend: 9, off: 20 }) + brace(onAB(13), onAB(23), "10cm", { bend: 9, off: 20 }) + brace(onAB(23), B, "a", { bend: 6, off: 12, italic: true })
+    + brace(A, onAB(13), "13cm") + brace(onAB(13), onAB(23), "10cm") + brace(onAB(23), B, "a", { italic: true })
     + name(P(A.x, A.y - 12), "A") + name(P(B.x - 12, B.y + 6), "B") + name(P(C.x + 12, C.y + 6), "C"), 270);
 }
 function q15() {
@@ -191,7 +183,7 @@ function q17() {
   const L1 = lerp(T, BL, 6 / 30), L2 = lerp(T, BL, 19 / 30), B1 = lerp(BL, BR, 11 / 30), B2 = lerp(BL, BR, 15 / 30), R1 = lerp(BR, T, 15 / 30), R2 = lerp(BR, T, 24 / 30);
   return svg(300, 252, "정삼각형에서 세 작은 정삼각형을 잘라 낸 육각형",
     poly([T, BL, BR], { stroke: UT.line, width: 1.1, dash: "4 3" }) + poly([L1, L2, B1, B2, R1, R2], { fill: UT.greenSoft, stroke: UT.green, width: 1.8 })
-    + brace(L1, L2, "13cm", { bend: 10, off: 18 }) + brace(R1, R2, "9cm", { bend: 9, off: 16 }) + brace(B1, B2, "4cm", { bend: 7, off: 12 }), 290);
+    + brace(L1, L2, "13cm") + brace(R1, R2, "9cm") + brace(B1, B2, "4cm"), 290);
 }
 function q18() {
   const c = P(110, 110), r = 100, s = r / 6;

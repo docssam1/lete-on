@@ -2,7 +2,7 @@
 // 판서의 날짜·시각은 골든벨 7권 문항(9/1 일, 3/1 월, 1/1 수, 5/11 금, 1/29 수, 4/17 목 …, 11시 10분·9시 20분·5시 45분 등)과
 // 겹치지 않게 골랐다.
 
-import { jo } from "./concept-board-kit.js?v=20261026b";
+import { jo, dimArc } from "./concept-board-kit.js?v=20261124f";
 
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
 const title = (text) => ({ kind: "text", x: 60, y: 80, text, size: 54 });
@@ -282,7 +282,8 @@ export const BOARDS_B07 = {
   ,"book-07/distance-line-source": (() => {
     const pos = { 가: 0, 나: 6, 다: 15, 라: 22 }, U = 20, X0 = 100, Y = 330, X = (k) => X0 + pos[k] * U;
     const AC = pos.다 - pos.가, BD = pos.라 - pos.나, BC = pos.다 - pos.나, AD = pos.라 - pos.가;
-    const span = (a, b, y, label, color) => [{ kind: "line", x1: X(a), y1: y, x2: X(b), y2: y, color, width: 3 }, { kind: "line", x1: X(a), y1: y - 8, x2: X(a), y2: y + 8, color, width: 3 }, { kind: "line", x1: X(b), y1: y - 8, x2: X(b), y2: y + 8, color, width: 3 }, T((X(a) + X(b)) / 2, y - 12, label, color, 24, "center")];
+    // 두 곳 사이 거리 = 줄 위 두 점을 잇는 바깥 곡선 점선(bend − 위 · + 아래). 걸쳐 겹치는 두 거리는 서로 다른 쪽에 두어 곡선이 엇갈리지 않게
+    const span = (a, b, bend, label, color) => dimArc(X(a), Y, X(b), Y, bend, label, { color, size: 24 });
     const CHK = { ac: 10, bd: 13, ad: 18 }, chk = CHK.ac + CHK.bd - CHK.ad;
     return {
       title: "수직선 위의 거리",
@@ -293,11 +294,11 @@ export const BOARDS_B07 = {
         { say: "한 줄 위에 가, 나, 다, 라를 차례로 찍어요.",
           items: [{ kind: "line", x1: X0 - 30, y1: Y, x2: X("라") + 30, y2: Y, color: "ink", width: 3 }, ...Object.keys(pos).flatMap((k) => [{ kind: "shape", type: "circle", cx: X(k), cy: Y, r: 7, color: "ink", fill: "ink", quick: true }, T(X(k), Y + 40, k, "ink", 30, "center")])] },
         { say: `가에서 다까지는 ${AC}센티미터예요.`,
-          items: span("가", "다", Y - 110, `${AC}`, "blue") },
+          items: span("가", "다", -80, `${AC}`, "blue") },
         { say: `나에서 라까지는 ${BD}센티미터예요.`,
-          items: span("나", "라", Y - 60, `${BD}`, "green") },
+          items: span("나", "라", 60, `${BD}`, "green") },
         { say: `가에서 라까지 전체는 ${AD}센티미터예요. 나에서 다 사이는 얼마일까요?`,
-          items: [...span("가", "라", Y + 80, `${AD}`, "gray")] },
+          items: [...span("가", "라", -150, `${AD}`, "gray")] },
         { say: `가다와 나라를 더하면 ${AC} 더하기 ${BD}, ${AC + BD}. 그런데 나에서 다 사이는 두 거리에 모두 들어 있어서 두 번 더해졌어요.`,
           items: [{ kind: "fill", x: X("나"), y: Y - 6, w: X("다") - X("나"), h: 12, fill: "#f6dcd3" }, T(620, 430, `${AC} + ${BD} = ${AC + BD}`, "blue", 28)] },
         { say: `그래서 더한 값이 전체보다 겹친 만큼 커요. ${AC + BD} 빼기 ${jo(AD, "는")} ${BC}. 나와 다 사이는 ${BC}센티미터예요.`,

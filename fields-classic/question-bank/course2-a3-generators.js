@@ -112,6 +112,19 @@ function c2ArithSequence({ difficulty = 2 }) {
 
 // 4. 묶음으로 늘어놓은 분수 — 1/1, 1/2, 2/2, 1/3, 2/3, 3/3, …
 function c2FractionSequence({ difficulty = 2 }) {
+  // 교재 활동 3: 분자와 분모가 각각 같은 수씩 커지는(등차수열) 분수 — 분자·분모를 따로 본다
+  if (sample(["arith", "group"]) === "arith") {
+    const p0 = randomInt(1, 6), dp = randomInt(1, 4), q0 = p0 + randomInt(1, 6), dq = randomInt(dp, dp + 4);
+    const k = randomInt(difficulty <= 1 ? 10 : 20, difficulty <= 1 ? 20 : difficulty === 2 ? 50 : 120);
+    const at = (n) => [p0 + dp * (n - 1), q0 + dq * (n - 1)];
+    const shown = [1, 2, 3, 4].map((n) => at(n).join("/")).join(", ") + ", …";
+    const [p, q] = at(k);
+    return problem({
+      prompt: `분수를 규칙에 따라 늘어놓았습니다. ${shown} ${k}번째 분수는 무엇인가요?`, subtype: "frac-seq", html: board([shown]), answer: `${p}/${q}`,
+      solution: `분자는 ${p0}부터 ${dp}씩, 분모는 ${q0}부터 ${dq}씩 커집니다. ${k}번째 분자는 ${p0} + ${dp} × ${k - 1} = ${p}, 분모는 ${q0} + ${dq} × ${k - 1} = ${q}이므로 ${p}/${q}입니다.`,
+      family: "c2-frac-seq", meta: { style: "arith", k, p0, dp, q0, dq }
+    });
+  }
   const style = sample(["up", "updown"]);
   const term = (k) => { // k번째(1부터)
     let g = 1; while (k > g) { k -= g; g += 1; }
@@ -263,7 +276,7 @@ export const COURSE2_A3_TYPE_ROWS = [
   ["c2-repeating-decimal", "pattern", "카프리카수", "분수를 소수로 — 되풀이되는 마디의 □번째 숫자", "c2RepeatingDecimal"],
   ["c2-power-last-digit", "pattern", "카프리카수", "거듭제곱의 일의 자리", "c2PowerLastDigit"],
   ["c2-arith-sequence", "pattern", "등차수열", "같은 수씩 변하는 수열의 □번째 수·몇 번째 수", "c2ArithSequence"],
-  ["c2-fraction-sequence", "pattern", "묶음수열", "묶음으로 늘어놓은 분수", "c2FractionSequence"],
+  ["c2-fraction-sequence", "pattern", "분수 수열", "규칙대로 늘어놓은 분수 — 분자·분모 따로 · 묶음", "c2FractionSequence"],
   ["c2-group-rows", "pattern", "묶음수열", "줄마다 늘려 쓴 수의 □번째 줄 □번째 수", "c2GroupRows"],
   ["c2-gauss-sum", "pattern", "등차수열", "가우스의 덧셈 — 짝 지어 더하기", "c2GaussSum"],
   ["c2-figurate-number", "pattern", "삼각수", "삼각수·오각수·육각수의 점 개수", "c2FigurateNumber"],
@@ -274,7 +287,7 @@ export const COURSE2_A3_GUIDES = Object.freeze({
   "c2-repeating-decimal": "나누어 되풀이되는 마디를 찾고, 자리 번호를 마디 길이로 나눈 나머지를 봅니다.",
   "c2-power-last-digit": "일의 자리만 곱해 가면 마디가 생깁니다. 지수를 마디 길이로 나눈 나머지를 봅니다.",
   "c2-arith-sequence": "□번째 수 = 첫 번째 수 + 차 × (□ − 1) — 변한 횟수는 번째보다 하나 적습니다.",
-  "c2-fraction-sequence": "묶음마다 몇 개인지 세고, 앞 묶음까지의 개수(1 + 2 + …)로 자리를 찾습니다.",
+  "c2-fraction-sequence": "분자와 분모를 따로 봅니다 — 각각 같은 수씩 커지면 □번째 분자·분모를 따로 구하고, 묶음으로 되풀이되면 앞 묶음까지의 개수(1 + 2 + …)로 자리를 찾습니다.",
   "c2-group-rows": "앞 줄까지 쓴 수의 개수를 먼저 구하면 그 줄의 수가 바로 나옵니다.",
   "c2-gauss-sum": "거꾸로 한 줄을 더 써서 짝 지으면 합이 모두 같습니다 — (첫 수 + 끝 수) × 개수 ÷ 2.",
   "c2-figurate-number": "늘어나는 점의 개수가 어떻게 변하는지 표로 적어 이어 더합니다.",

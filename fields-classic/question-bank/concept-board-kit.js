@@ -67,6 +67,38 @@ export function crypt(right, top, rows, sum, cell = 84) {
   };
 }
 
+// 길이 표시 = 바깥 곡선 점선 + 끊은 자리에 숫자(원장 2026-11-24 「도형의 변의 길이를 점선 호를 사용하여 길이를 써야지 기준이잖아」,
+// 스킬 gfield-textbook-design 4-3). 그림은 length-dim.js dimArc와 같고, 판서 그림 목록(점선 path 두 조각 + text)으로 돌려준다.
+//   dimArc(x1, y1, x2, y2, bend, label, { color, size, gap, width, dash })
+//   bend: 곡선 꼭대기가 두 끝을 이은 선에서 떨어진 거리. 부호는 (x1,y1)→(x2,y2) 진행 방향의 오른쪽(+)·왼쪽(−)
+//         — 왼쪽에서 오른쪽으로 그은 가로선이면 + 가 아래, − 가 위. 도형 바깥쪽으로 둔다.
+//   점선은 글자 자리에서 실제로 끊는다(흰 판으로 덮지 않는다). 글자 폭이 구간의 60%를 넘으면 점선을 통째로 두고 글자를 곡선 꼭대기 바로 바깥에.
+const f1 = (v) => Math.round(v * 10) / 10;
+const dimTextW = (text, size) => [...String(text)].reduce((w, ch) => w + (/[0-9.]/.test(ch) ? 0.55 : /[a-z]/i.test(ch) ? 0.55 : /\s/.test(ch) ? 0.3 : /[?=+−\-]/.test(ch) ? 0.6 : 0.95) * size, 0);
+export function dimArc(x1, y1, x2, y2, bend, label = "", { color = "ink", size = 26, gap = 6, width = 2, dash = "5 6" } = {}) {
+  const len = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / len, ny = (x2 - x1) / len;
+  const has = label !== "" && label != null;
+  const w = has ? dimTextW(label, size) : 0, h = size * 0.9;
+  const outside = has && (w + gap * 2) > len * 0.6, sgn = Math.sign(bend) || 1;
+  // 끊은 자리의 글자가 변에 닿지 않을 만큼은 띄운다(세로 변의 「6cm」처럼 글자 폭이 변 쪽으로 놓일 때)
+  if (has && !outside) bend = sgn * Math.max(Math.abs(bend), Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2 + 6);
+  const cx = (x1 + x2) / 2 + nx * bend * 2, cy = (y1 + y2) / 2 + ny * bend * 2;
+  const at = (t) => [(1 - t) ** 2 * x1 + 2 * (1 - t) * t * cx + t * t * x2, (1 - t) ** 2 * y1 + 2 * (1 - t) * t * cy + t * t * y2];
+  const [mx0, my0] = at(0.5);
+  const reach = Math.abs(nx) * w / 2 + Math.abs(ny) * h / 2 + 4;
+  const ax = outside ? mx0 + nx * sgn * reach : mx0, ay = outside ? my0 + ny * sgn * reach : my0;
+  const inside = (t) => { const [px, py] = at(t); return Math.abs(px - ax) <= w / 2 + gap && Math.abs(py - ay) <= h / 2 + gap; };
+  let t0 = 0.5, t1 = 0.5;
+  if (has && !outside) { while (t0 > 0 && inside(t0 - 0.002)) t0 -= 0.002; while (t1 < 1 && inside(t1 + 0.002)) t1 += 0.002; }
+  const piece = (ta, tb) => {
+    const [sx, sy] = at(ta), [ex, ey] = at(tb);
+    const qx = x1 * (1 - ta) * (1 - tb) + cx * ((1 - ta) * tb + ta * (1 - tb)) + x2 * ta * tb, qy = y1 * (1 - ta) * (1 - tb) + cy * ((1 - ta) * tb + ta * (1 - tb)) + y2 * ta * tb;
+    return { kind: "path", d: `M ${f1(sx)} ${f1(sy)} Q ${f1(qx)} ${f1(qy)} ${f1(ex)} ${f1(ey)}`, stroke: color, width, dash, quick: true };
+  };
+  return [...(has && !outside ? [piece(0, t0), piece(t1, 1)] : [piece(0, 1)]),
+    ...(has ? [kitText(f1(ax), f1(ay + size * 0.36), String(label), color, size, "center")] : [])];
+}
+
 // 신발끈 공식(3권·9권): 꼭짓점 목록(모눈 칸 단위)의 넓이 — 판서의 답을 그림에서 직접 계산해 맞춘다
 export const polyArea = (pts) => Math.abs(pts.reduce((a, [x1, y1], i) => { const [x2, y2] = pts[(i + 1) % pts.length]; return a + x1 * y2 - x2 * y1; }, 0)) / 2;
 

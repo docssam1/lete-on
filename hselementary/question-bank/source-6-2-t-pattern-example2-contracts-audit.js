@@ -23,7 +23,8 @@ const hashes = {
   report: "8140B3E7AC8200C9F7D15BE163A293AB7272F0C18AF088955A73ACCDAAD541E1",
   crop: "FFDD0604850EE125343A37D7879B7BEFD94128BE455A94BE84619E003D2D2ED0"
 };
-const hash = file => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex").toUpperCase();
+// 2026-11-25: Windows에서 git이 줄바꿈을 CRLF로 바꿔 받아도 같은 해시가 나오도록, 저장소 안 글자 파일만 줄바꿈을 LF로 맞춘 뒤 해시한다(증거 폴더 파일은 원래 바이트 그대로)(2026-11-25 Windows 실행에서 이 차이로만 실패).
+const hash = file => { const bytes = fs.readFileSync(file); const inRepo = path.resolve(file).toLowerCase().startsWith(path.resolve(__dirname).toLowerCase()); const normalized = inRepo && /\.(m?js|json|html|css|md|txt|py|xml)$/i.test(file) ? Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"), "utf8") : bytes; return crypto.createHash("sha256").update(normalized).digest("hex").toUpperCase(); };
 assert.equal(hash(modelPath), hashes.model); assert.equal(hash(reportPath), hashes.report); assert.equal(hash(cropPath), hashes.crop);
 const report = fs.readFileSync(reportPath, "utf8"), sectionStart = report.indexOf("## 4. 예제 2-2: T자 세 갈래 계단");
 assert(sectionStart >= 0);

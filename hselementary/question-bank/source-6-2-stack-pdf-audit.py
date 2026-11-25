@@ -7,7 +7,8 @@ import sys
 import pymupdf
 
 root = Path(sys.argv[1])
-assert re.match(r"^[EG]:[\\/]", str(root)), "Evidence must stay on E:/G:."
+# 2026-11-24: Mac에서도 브라우저 감사 결과 폴더로 실행할 수 있게 절대 경로 폴더를 받는다(예전: E:/G: 전용).
+assert root.is_absolute() and root.is_dir(), "Evidence must be an absolute folder"
 repository = Path(__file__).parent
 browser = json.loads((root / "stack-browser-result.json").read_text(encoding="utf-8"))
 assert browser["states"] == 18

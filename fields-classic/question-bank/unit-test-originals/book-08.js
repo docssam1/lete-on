@@ -1,7 +1,7 @@
 // 8권 권별 테스트 원문(다시 짠 것) — 원장 2026-10-28 「권별 테스트 원문은 폼을 바꾸자 · 글씨체와 색도 · 우리쪽에 맞추자」.
 // 문장·수·이름·배치는 원문 그대로, 그림은 우리 색표(.claude/skills/golden-bell-figure-style)로 새로 그린다.
 // 정답은 여기에 두지 않는다(비공개 DB). visual 의 values 는 답안지 그림용으로만 쓰이며 이 파일의 문항에는 없다.
-import { UT, text, svg, box, line, conditionsBox } from "./kit.js?v=20261028ze";
+import { UT, text, svg, box, line, conditionsBox } from "./kit.js?v=20261124g";
 
 // 모양 색(색표): ● 빨강 · ▲ 초록 · ■ 파랑 · ◆ 보라 · ★ 노랑 · ♡ 분홍 · 오각형 주황 · 십자 노랑(평행사변형 줄과 같은 노랑)
 const SHAPE = Object.freeze({

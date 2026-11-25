@@ -2,7 +2,7 @@
 // 판서의 수와 그림은 골든벨 3권 문항(온칸·반칸 도형들, 6×20+6·6×28+6+6…, 원 3·4·6·8·9·12조각, 모눈 2×2~5×5 등)과
 // 겹치지 않게 골랐다. 겹치면 공개 판서가 비공개 정답을 보여 주게 된다.
 
-import { jo, crypt, polyArea } from "./concept-board-kit.js?v=20261026b";
+import { jo, crypt, polyArea, dimArc } from "./concept-board-kit.js?v=20261124f";
 
 const KO = { 1: "한", 2: "두", 3: "세", 4: "네", 5: "다섯", 6: "여섯", 7: "일곱", 8: "여덟", 9: "아홉", 10: "열", 11: "열한", 12: "열두" };
 const T = (x, y, text, color = "ink", size = 30, align) => ({ kind: "text", x, y, text, size, color, align });
@@ -224,7 +224,8 @@ export const BOARDS_B03 = {
   ,"book-03/overlapping-distance": (() => {
     const AB = 8, BC = 7, CD = 11, AD = AB + BC + CD, AC = AB + BC, BD = BC + CD;
     const U = 18, X0 = 130, Y = 330, pos = { A: X0, B: X0 + AB * U, C: X0 + (AB + BC) * U, D: X0 + AD * U };
-    const span = (a, b, y, label, color) => [{ kind: "line", x1: pos[a], y1: y, x2: pos[b], y2: y, color, width: 3 }, { kind: "line", x1: pos[a], y1: y - 8, x2: pos[a], y2: y + 8, color, width: 3 }, { kind: "line", x1: pos[b], y1: y - 8, x2: pos[b], y2: y + 8, color, width: 3 }, T((pos[a] + pos[b]) / 2, y - 12, label, color, 24, "center")];
+    // 두 점 사이 거리 = 줄 위 두 점을 잇는 바깥 곡선 점선(bend − 위 · + 아래), 전체와 부분은 곡선 높이를 달리한다
+    const span = (a, b, bend, label, color) => dimArc(pos[a], Y, pos[b], Y, bend, label, { color, size: 24 });
     const RX = 640;
     const CHK = { AC: 14, BD: 16, BC: 5 }, chkAD = CHK.AC + CHK.BD - CHK.BC;
     return {
@@ -236,11 +237,11 @@ export const BOARDS_B03 = {
         { say: "한 줄 위에 A, B, C, D를 차례로 찍어요.",
           items: [{ kind: "line", x1: pos.A - 30, y1: Y, x2: pos.D + 30, y2: Y, color: "ink", width: 3 }, ...["A", "B", "C", "D"].flatMap((k) => [{ kind: "shape", type: "circle", cx: pos[k], cy: Y, r: 7, color: "ink", fill: "ink", quick: true }, T(pos[k], Y + 40, k, "ink", 30, "center")])] },
         { say: `A부터 D까지 전체 거리는 ${AD}센티미터예요.`,
-          items: span("A", "D", Y - 150, `AD = ${AD}`, "gray") },
+          items: span("A", "D", -170, `AD = ${AD}`, "gray") },
         { say: `A부터 C까지는 ${AC}센티미터.`,
-          items: span("A", "C", Y - 100, `AC = ${AC}`, "blue") },
+          items: span("A", "C", -85, `AC = ${AC}`, "blue") },
         { say: `B부터 D까지는 ${BD}센티미터. 이 거리는 줄 아래에 표시해요.`,
-          items: span("B", "D", Y + 90, `BD = ${BD}`, "green") },
+          items: span("B", "D", 75, `BD = ${BD}`, "green") },
         { say: "AC와 BD를 같이 보면, 둘 다 B와 C 사이를 지나요. 겹친 부분이 BC예요.",
           items: [{ kind: "fill", x: pos.B, y: Y - 6, w: pos.C - pos.B, h: 12, fill: "#f6dcd3" }, T((pos.B + pos.C) / 2, Y - 18, "겹친 BC", "red", 24, "center")] },
         { say: `AC와 BD를 더하면, 겹친 BC를 두 번 센 셈이에요. ${AC} 더하기 ${jo(BD, "은")} ${AC + BD}. 전체 AD ${AD}보다 BC만큼 더 커요.`,

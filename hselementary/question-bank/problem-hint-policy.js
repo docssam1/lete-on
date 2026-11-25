@@ -5,6 +5,9 @@
 // - 6학년 문제 아래의 조건 정리 상자(…-board)는 안의 수·기호가 모두 문제 문장이나 그림에 이미 있을 때만 지웁니다.
 //   문제의 식·자료를 처음 보여 주는 상자는 남기고 그 안의 안내 문장만 지웁니다.
 // - 유형별로 확인한 힌트 문장(쉬움 난이도의 부분 답, 풀이 방법 안내 등)을 지웁니다(HINT_SENTENCES).
+// - 2026-11-24: 쉬움 난이도의 풀이 안내 문단(p.question-step[data-step-evidence^=guided])을 지우고, 그림·상자 바로 뒤에 붙은
+//   '먼저 …세요.' 문장도 지우도록 문단 경계를 넣었습니다. 쉼표·마침표만 든 요소는 지우지 않습니다.
+//   어려움 난이도의 확인·설명 요구 문단(independent-reasoning)도 지웁니다(사용자 결정 "모두 지움").
 // 정답·풀이 쪽 설명은 그대로 둡니다(사용자: "답 풀이에 있는 설명은 상관 없어").
 (function (root) {
   "use strict";
@@ -123,7 +126,8 @@
   "${target}의 배수 중 최대공약수 조건을 만족하는 수를 빠짐없이 찾아 더하세요."
  ],
  "5-1-u2-t2-2": [
-  "한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요."
+  "한 수의 약수를 쓴 뒤 다른 수에도 나누어떨어지는지 확인하세요.",
+  "최대공약수를 먼저 구하면 공약수를 빠뜨리지 않을 수 있습니다."
  ],
  "5-1-u2-t2-3": [
   "먼저 두 곱셈을 계산하세요.",
@@ -671,6 +675,14 @@
  "6-2-u1-e3-mission-2": [
   "분모에 있는 분수의 합부터 계산하세요."
  ],
+ "6-2-u2-e1-example-2": [
+  "㉠과 ㉡을 각각 구한 뒤 비교하세요.",
+  "㉠과 ㉡을 직접 구하지 않고 두 나눗셈을 비교해 보세요."
+ ],
+ "6-2-u2-e1-example-3": [
+  "나×나의 값을 먼저 찾아보세요.",
+  "가와 다의 값을 각각 구하지 않고 풀어 보세요."
+ ],
  "6-2-u2-e1-example-4": [
   "소수 부분은 0 이상 1 미만입니다."
  ],
@@ -730,8 +742,7 @@
  ],
  "6-2-u3-e1-mission-3": [
   "위 그림의 ㉠칸에는 쌓기나무 3개가 쌓여 있습니다.",
-  "□에 알맞은 높이를 먼저 구하세요.",
-  "앞에서 본 두 세로줄에 색칠할 칸 수의 합은 5칸입니다."
+  "□에 알맞은 높이를 먼저 구하세요."
  ],
  "6-2-u3-e1-mission-4": [
   "아래쪽 □에 들어갈 수는 1입니다."
@@ -777,15 +788,24 @@
  "svg":0}],"6-1-u5-t3":[{"labels":[1],"levels":[-1],"svg":0},{"levels":[-1],"replace":{"4":"소설책"},
  "svg":0},{"labels":[1],"levels":[0],"svg":0},{"levels":[0],"replace":{"4":"소설책"},
  "svg":0},{"labels":[1],"levels":[1],"svg":0},{"levels":[1],"replace":{"4":"소설책"},
- "svg":0}],"6-1-u6-e2-example-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-example-2":[{"labels":[4],"levels":[-1],"svg":0}],"6-1-u6-e2-exploration":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e2-mission-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-mission-5":[{"labels":[2,5,8],"levels":[-1],"svg":0}],"6-1-u6-e3-example-4":[{"labels":[1,2,3,4,5,6],"levels":[-1],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[0],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[1],"svg":0}],"6-1-u6-e3-exploration":[{"labels":[1,2],"levels":[-1],"svg":0},{"labels":[1,2],"levels":[0],"svg":0},{"labels":[1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-2":[{"labels":[0,1,2],"levels":[-1],"svg":0},{"labels":[0,1,2],"levels":[0],"svg":0},{"labels":[0,1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-3":[{"labels":[6,8],"levels":[-1],"svg":0},{"labels":[6,8],"levels":[0],"svg":0},{"labels":[6,8],"levels":[1],"svg":0}],"6-1-u6-e3-mission-4":[{"labels":[0,1],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[0],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e3-mission-5":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e3-mission-6":[{"labels":[6,7],"levels":[-1],"svg":0},{"labels":[6,7],"levels":[0],"svg":0},{"labels":[6,7],"levels":[1],"svg":0}],"6-1-u6-e4-example-1":[{"labels":[0,5],"levels":[-1],"svg":0},{"labels":[0,5],"levels":[0],"svg":0},{"labels":[0,5],"levels":[1],"svg":0}],"6-1-u6-e4-example-2":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e4-example-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-example-4":[{"labels":[5],"levels":[-1],"svg":0},{"labels":[5],"levels":[0],"svg":0},{"labels":[5],"levels":[1],"svg":0}],"6-1-u6-e4-exploration-1":[{"labels":[10],"levels":[-1],"svg":0},{"labels":[10],"levels":[0],"svg":0},{"labels":[10],"levels":[1],"svg":0}],"6-1-u6-e4-mission-2":[{"labels":[0,4],"levels":[-1],"svg":0},{"labels":[0,4],"levels":[0],"svg":0},{"labels":[0,4],"levels":[1],"svg":0}],"6-1-u6-e4-mission-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-mission-5":[{"labels":[3],"levels":[-1],"svg":0},{"labels":[3],"levels":[0],"svg":0},{"labels":[3],"levels":[1],"svg":0}],"6-2-u1-e2-mission-6":[{"levels":[-1,0,1],"textPattern":"^(?:땅과 같은 수의 나무|나무 사이 간격 \\?m)$"}],"6-2-u3-e1-mission-2":[{"levels":[-1],"textPattern":"^\\d+$"}]};
+ "svg":0}],"6-1-u6-e2-example-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-example-2":[{"labels":[4],"levels":[-1],"svg":0}],"6-1-u6-e2-exploration":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e2-mission-1":[{"levels":[-1,0,1],"svg":"source61-volume-e2-diagram"}],"6-1-u6-e2-mission-5":[{"labels":[2,5,8],"levels":[-1],"svg":0}],"6-1-u6-e3-example-4":[{"labels":[1,2,3,4,5,6],"levels":[-1],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[0],"svg":0},{"labels":[1,2,3,4,5,6],"levels":[1],"svg":0}],"6-1-u6-e3-exploration":[{"labels":[1,2],"levels":[-1],"svg":0},{"labels":[1,2],"levels":[0],"svg":0},{"labels":[1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-2":[{"labels":[0,1,2],"levels":[-1],"svg":0},{"labels":[0,1,2],"levels":[0],"svg":0},{"labels":[0,1,2],"levels":[1],"svg":0}],"6-1-u6-e3-mission-3":[{"labels":[6,8],"levels":[-1],"svg":0},{"labels":[6,8],"levels":[0],"svg":0},{"labels":[6,8],"levels":[1],"svg":0}],"6-1-u6-e3-mission-4":[{"labels":[0,1],"levels":[-1],"svg":0},{"labels":[0,1],"levels":[0],"svg":0},{"labels":[0,1],"levels":[1],"svg":0}],"6-1-u6-e3-mission-5":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e3-mission-6":[{"labels":[6,7],"levels":[-1],"svg":0},{"labels":[6,7],"levels":[0],"svg":0},{"labels":[6,7],"levels":[1],"svg":0}],"6-1-u6-e4-example-1":[{"labels":[0,5],"levels":[-1],"svg":0},{"labels":[0,5],"levels":[0],"svg":0},{"labels":[0,5],"levels":[1],"svg":0}],"6-1-u6-e4-example-2":[{"labels":[4],"levels":[-1],"svg":0},{"labels":[4],"levels":[0],"svg":0},{"labels":[4],"levels":[1],"svg":0}],"6-1-u6-e4-example-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-example-4":[{"labels":[5],"levels":[-1],"svg":0},{"labels":[5],"levels":[0],"svg":0},{"labels":[5],"levels":[1],"svg":0}],"6-1-u6-e4-exploration-1":[{"labels":[10],"levels":[-1],"svg":0},{"labels":[10],"levels":[0],"svg":0},{"labels":[10],"levels":[1],"svg":0}],"6-1-u6-e4-mission-2":[{"labels":[0,4],"levels":[-1],"svg":0},{"labels":[0,4],"levels":[0],"svg":0},{"labels":[0,4],"levels":[1],"svg":0}],"6-1-u6-e4-mission-3":[{"labels":[6],"levels":[-1],"svg":0},{"labels":[6],"levels":[0],"svg":0},{"labels":[6],"levels":[1],"svg":0}],"6-1-u6-e4-mission-5":[{"labels":[3],"levels":[-1],"svg":0},{"labels":[3],"levels":[0],"svg":0},{"labels":[3],"levels":[1],"svg":0}],"6-2-u1-e2-mission-6":[{"levels":[-1,0,1],"textPattern":"^(?:땅과 같은 수의 나무|나무 사이 간격 \\?m)$"}],"6-2-u3-e1-mission-2":[{"levels":[-1],"textPattern":"^\\d+$"}],"6-2-u3-e1-example-4":[{"levels":[-1],"textPattern":"^㉠$"}],"6-2-u3-e1-mission-3":[{"levels":[-1],"textPattern":"^㉠$"}]};
 
   // 문제 문장에 자료가 모두 있는데도 남아 있던 조건 정리 상자(파생값·풀이식이 들어 있어 자동 판정을 통과하지 못한 것). 2026-11-23 문제 문장과 하나씩 대조.
   const BOARD_DROP = new Set(["6-1-u2-e4-mission-4","6-1-u3-e2-example-1","6-1-u3-e2-mission-3","6-1-u4-e5-mission-5","6-1-u2-e3-mission-5","6-1-u1-e2-example-2", "6-1-u1-e2-mission-3", "6-1-u1-e2-mission-5", "6-1-u2-e1-mission-5", "6-1-u2-e2-example-2-3", "6-1-u2-e2-mission-5", "6-1-u3-e1-example-3", "6-1-u3-e1-example-4", "6-1-u3-e1-mission-5", "6-1-u3-e3-mission-4", "6-1-u3-e4-mission-1", "6-1-u4-e1-mission-4", "6-1-u4-e2-example-2-4", "6-1-u4-e2-mission-6", "6-1-u4-e3-example-3-3", "6-1-u4-e3-mission-2", "6-1-u4-e3-mission-5", "6-1-u4-e4-example-4-1", "6-1-u4-e4-mission-1", "6-1-u4-e5-example-5-1", "6-1-u4-e5-example-5-2", "6-1-u4-e5-example-5-4", "6-1-u4-e5-mission-1", "6-1-u4-e5-mission-2", "6-1-u4-e5-mission-3", "6-1-u4-e5-mission-4", "6-1-u4-e6-exploration-6-1", "6-2-u1-e2-example-4", "6-2-u1-e2-mission-4", "6-2-u1-e2-mission-6", "6-2-u1-e3-example-2", "6-2-u1-e3-example-3", "6-2-u1-e3-mission-3", "6-2-u1-e3-mission-4", "6-2-u1-e3-mission-6", "6-2-u1-e5-example-1"]);
 
   const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // 2026-11-25: "1cm, 2cm"처럼 단위가 붙은 숫자를 쉼표로 이은 목록은 개수와 관계없이 맞춘다(변형 문항은 목록 길이가 다를 수 있다).
+  const LIST_TOKEN = "\u0001";
   function sentencePattern(sentence) {
-    const parts = String(sentence).replace(/\s+/g, " ").trim().split(/(\d[\d,./]*)/);
-    return parts.map((part, index) => index % 2 ? "\\d[\\d\\s,./]*" : escape(part).replace(/ /g, "\\s*")).join("\\s*");
+    const units = [];
+    const normalized = String(sentence).replace(/\s+/g, " ").trim().replace(/\d[\d./]*([가-힣A-Za-z²³]+)(?:, ?\d[\d./]*\1)+/g, (match, unit) => { units.push(unit); return LIST_TOKEN; });
+    const parts = normalized.split(/(\d[\d,./]*|\u0001)/);
+    let listIndex = 0;
+    return parts.map((part, index) => {
+      if (index % 2 === 0) return escape(part).replace(/ /g, "\\s*");
+      if (part === LIST_TOKEN) { const unit = escape(units[listIndex++]); return `(?<![\\d,./])\\d[\\d./]*${unit}(?:\\s*,\\s*\\d[\\d./]*${unit})*`; }
+      return "(?<![\\d,./])\\d[\\d,./]*";
+    }).join("\\s*");
   }
   const compiled = new Map();
   function patternsFor(id) {
@@ -812,12 +832,25 @@
   }
 
   // 여러 글자 노드(분수 span 등)에 걸친 문장도 지우도록, 글자를 이어 붙인 뒤 위치를 되짚어 지웁니다.
+  const BLOCK_TAGS = /^(P|DIV|LI|UL|OL|TABLE|TR|TD|TH|SECTION|ARTICLE|FIGURE|FIGCAPTION|H[1-6]|BR|DL|DT|DD)$/;
+  function blockOf(node, scope) {
+    for (let el = node.parentElement; el; el = el.parentElement) if (BLOCK_TAGS.test(el.tagName)) return el;
+    return scope;
+  }
   function removeMatches(scope, regex) {
     let removed = 0;
     for (let guard = 0; guard < 20; guard += 1) {
       const nodes = visibleTextNodes(scope);
       let flat = "";
-      const spans = nodes.map(node => { const start = flat.length; flat += node.data; return { node, start, end: flat.length }; });
+      let previousBlock = null;
+      // 2026-11-24: 서로 다른 문단·상자(블록)의 글자 사이에 줄바꿈 경계를 넣는다. 상자 끝의 수 뒤에 바로 붙은
+      // '먼저 …세요.' 문장도 문장 첫머리로 알아보도록 하기 위함이다(경계 글자는 어느 글자 조각에도 속하지 않는다).
+      const spans = nodes.map(node => {
+        const block = blockOf(node, scope);
+        if (previousBlock && block !== previousBlock) flat += "\n";
+        previousBlock = block;
+        const start = flat.length; flat += node.data; return { node, start, end: flat.length };
+      });
       const match = regex.exec(flat);
       if (!match || !match[0].trim()) break;
       const from = match.index, to = match.index + match[0].length;
@@ -831,10 +864,13 @@
     return removed;
   }
 
-  function dropEmpty(scope) {
-    for (const el of [...scope.querySelectorAll("p,span,div,li,small,strong,b,em")].reverse()) {
+  const DROP_TAGS = "p,span,div,li,small,strong,b,em";
+  function dropEmpty(scope, hadText) {
+    for (const el of [...scope.querySelectorAll(DROP_TAGS)].reverse()) {
       if (el.hidden || el.querySelector("svg,img,canvas,input,table,[hidden]")) continue;
-      if (!el.textContent.replace(/[\s.,]/g, "")) el.remove();
+      // 2026-11-24: 정책이 글자를 지워 비게 된 요소만 지운다. 처음부터 글자가 없던 요소(그림 자료·검산 자료를 담은 data-* 요소 등)와
+      // 쉼표·마침표만 든 요소(분수 사이 구분 쉼표, 소수점 등)는 내용이므로 남긴다.
+      if (hadText.has(el) && !el.textContent.trim()) el.remove();
     }
   }
 
@@ -891,18 +927,23 @@
     const template = document.createElement("template");
     template.innerHTML = prompt;
     const scope = template.content;
+    const hadText = new WeakSet([...scope.querySelectorAll(DROP_TAGS)].filter(el => el.textContent.trim()));
     let changed = applyDiagramRules(scope, typeId, difficulty);
     for (const el of scope.querySelectorAll("[class]")) {
       if ([...el.classList].some(name => /-hint$/.test(name))) { el.remove(); changed += 1; }
     }
+    // 2026-11-24: 쉬움 난이도에 붙는 풀이 안내 문단(<p class="question-step" data-step-evidence="guided|guided-order">).
+    for (const el of scope.querySelectorAll('p.question-step[data-step-evidence^="guided"]')) { el.remove(); changed += 1; }
+    // 2026-11-24 사용자 결정("모두 지움"): 어려움 난이도의 확인·설명 요구 문단(data-step-evidence="independent-reasoning")도 원문에 없으므로 지운다.
+    for (const el of scope.querySelectorAll('.question-step[data-step-evidence="independent-reasoning"]')) { el.remove(); changed += 1; }
     // 빈칸으로 풀이 틀을 미리 짜 주는 표(각기둥 면·모서리·꼭짓점 표 등)와 문제 수치를 되풀이한 관계 상자.
     for (const el of scope.querySelectorAll(".source61-structure-table, .source62-overlap-relation")) { el.remove(); changed += 1; }
     // '도움말:' 같은 이름표가 붙은 문장은 문장 끝(마침표)까지 지웁니다.
-    changed += removeMatches(scope, new RegExp(`\\s*${LABEL.source}(?:[^.?!]|\\.(?=\\d))*[.?!]?`));
+    changed += removeMatches(scope, new RegExp(`\\s*${LABEL.source}(?:[^.?!]|(?<=\\d)\\.(?=\\d))*[.?!]?`));
     // 문장 첫머리의 '먼저 …하세요.' 안내 문장.
-    changed += removeMatches(scope, /(?:^|(?<=[.?!]\s*))\s*먼저\s(?:[^.?!]|\.(?=\d))*?세요\./);
+    changed += removeMatches(scope, /(?:^|(?<=[.?!\n]\s*))[ \t]*먼저\s(?:[^.?!\n]|(?<=\d)\.(?=\d))*?세요\./);
     // 답을 구한 뒤 다시 확인하라는 어려움 난이도의 확인 안내.
-    changed += removeMatches(scope, /(?:^|(?<=[.?!]\s*))\s*(?:답을 구한 뒤|구한 값을 처음 조건에|구한 관계식이)(?:[^.?!]|\.(?=\d))*?세요\./);
+    changed += removeMatches(scope, /(?:^|(?<=[.?!\n]\s*))[ \t]*(?:답을 구한 뒤|구한 값을 처음 조건에|구한 관계식이)(?:[^.?!\n]|(?<=\d)\.(?=\d))*?세요\./);
     for (const pattern of patternsFor(typeId)) changed += removeMatches(scope, pattern);
     // 그림(SVG) 안에 글자로 적힌 힌트·중간 결과 이름표도 지웁니다.
     const patterns = patternsFor(typeId);
@@ -921,7 +962,7 @@
       else parent.insertBefore(board, next);
     }
     if (!changed) return prompt;
-    dropEmpty(scope);
+    dropEmpty(scope, hadText);
     const holder = document.createElement("div");
     holder.append(scope);
     return holder.innerHTML;

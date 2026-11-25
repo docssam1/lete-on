@@ -2,7 +2,7 @@
 // 문항 글·수·이름·그림 배치는 원문 시험지 그대로, 그림은 워밍업 그림 색표로 새로 그린다(옛 청록·하늘색 금지, 글자 검정).
 // 정답은 두지 않는다 — 원문 풀기 화면은 「답안 확인」을 누를 때만 비공개 DB에서 받아 온다.
 // visual.values 는 비공개 답안 그림(빈칸을 채운 모양)을 그릴 때만 들어온다. 공개 문항 데이터에는 넣지 않는다.
-import { UT, esc, text } from "./kit.js?v=20261028ze";
+import { UT, esc, text, dim } from "./kit.js?v=20261124g";
 
 // 모양 색(워밍업 색표): 직사각형·정사각형 ■ 파랑 · 마름모 ◆ 보라 · 정삼각형 ▲ 초록 · ● 빨강 · ★ 노랑 · 십자 분홍(새 모양)
 const SHAPE = Object.freeze({
@@ -25,9 +25,6 @@ const n = (value) => Number(value.toFixed(1));
 // 그림 틀: 원문처럼 문제 바로 아래(위쪽)에 붙인다
 const frame = (width, height, label, body, maxWidth = width) =>
   `<svg class="b6-ut-svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}" role="img" aria-label="${esc(label)}" style="display:block;align-self:start;width:100%;max-width:${maxWidth}px;height:auto;margin:0 auto">${body}</svg>`;
-// 흰 테두리를 두른 글자(점선 위에 얹는 길이 글자)
-const halo = (x, y, value, { size = 16, anchor = "middle", weight = 600, fill = UT.ink } = {}) =>
-  `<text x="${n(x)}" y="${n(y)}" text-anchor="${anchor}" dominant-baseline="central" style="font-size:${size}px;font-weight:${weight};fill:${fill};text-anchor:${anchor};dominant-baseline:central;letter-spacing:0;paint-order:stroke;stroke:#fff;stroke-width:6px;stroke-linejoin:round">${esc(value)}</text>`;
 const label = (x, y, value, options = {}) => text(n(x), n(y), value, { weight: 600, ...options });
 const poly = (points, { stroke = UT.ink, fill = "none", width = 1.8, dash = "" } = {}) =>
   `<polygon points="${points.map(([x, y]) => `${n(x)},${n(y)}`).join(" ")}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" stroke-linejoin="round"${dash ? ` stroke-dasharray="${dash}"` : ""}/>`;
@@ -49,15 +46,12 @@ function arc(x1, y1, x2, y2, bulge) {
   const control = [(x1 + x2) / 2 + nx * bulge * 2, (y1 + y2) / 2 + ny * bulge * 2];
   return { apex, path: `<path d="M${n(x1)} ${n(y1)}Q${n(control[0])} ${n(control[1])} ${n(x2)} ${n(y2)}" fill="none" stroke="${UT.line}" stroke-width="1.3" stroke-dasharray="4 3"/>` };
 }
-const dimension = (x1, y1, x2, y2, bulge, value, size = 16) => {
-  const { apex, path } = arc(x1, y1, x2, y2, bulge);
-  return path + (value == null ? "" : halo(apex[0], apex[1], value, { size }));
-};
-// 점선 위에 빈 상자 + 「cm」
-const dimensionBox = (x1, y1, x2, y2, bulge, value, { w = 44, h = 32, size = 18 } = {}) => {
-  const { apex, path } = arc(x1, y1, x2, y2, bulge);
-  return `${path}${answerBox(apex[0] - w / 2, apex[1] - h / 2, w, h, value)}${label(apex[0] + w / 2 + 4, apex[1] + 1, "cm", { size, anchor: "start" })}`;
-};
+// 변의 길이 = 바깥 곡선 점선 + 끊은 자리 글자(보통 굵기 명조) — 스킬 gfield-textbook-design 4-3, 도구는 kit.js dim.
+// bulge 는 예전 arc 와 같은 쪽(진행 방향의 왼쪽이 +) — dim 은 오른쪽이 + 라 부호를 바꿔 넘긴다.
+const dimension = (x1, y1, x2, y2, bulge, value, size = 16) => dim(x1, y1, x2, y2, -bulge, value ?? "", { size });
+// 점선의 끊은 자리에 빈 답 칸 + 「cm」(짧은 구간은 곡선 꼭대기 바깥). 답 칸은 이 시험지의 보라 칸 — 답안 그림이면 그 안에 값.
+const dimensionBox = (x1, y1, x2, y2, bulge, value, { w = 44, h = 32, size = 18 } = {}) =>
+  dim(x1, y1, x2, y2, -bulge, "", { blank: true, unit: "cm", size, boxW: w, boxH: h, box: (bx, by, bw, bh) => answerBox(bx, by, bw, bh, value) });
 
 // ── 그림마다 ─────────────────────────────────────────────
 // 1. 수직선 두 개 — 양 끝 ㉠·㉡, 가운데 빈 상자
@@ -200,7 +194,7 @@ function rectRhombus(visual) {
   const inner = poly([[223, 40], [370, 130], [370, 300], [223, 210]], SHAPE.rhombus)
     + rect(88, 40, 135, 170, SHAPE.rect)
     + dimension(88, 40, 223, 40, 18, "7cm", 21)
-    + dimensionBox(223, 40, 370, 130, 22, visual.values?.[0], { w: 44, h: 32, size: 21 })
+    + dimensionBox(223, 40, 370, 130, 40, visual.values?.[0], { w: 44, h: 32, size: 21 })
     + label(155, 106, "직사각형", { size: 21 }) + label(155, 146, "둘레 : 36cm", { size: 19 })
     + label(300, 196, "마름모", { size: 21 });
   return frame(420, 318, "직사각형에 마름모를 붙인 도형", g(-30, 6, inner), 360);
@@ -216,8 +210,8 @@ function rectTriangleSquare(visual) {
   const inner = rect(28, 72, 217, 145, SHAPE.rect)
     + poly([top, bottom, apex], SHAPE.triangle)
     + poly([bottom, apex, s3, s4], SHAPE.rect)
-    + dimensionBox(28, 72, 245, 72, 22, visual.values?.[0], { w: 50, h: 38, size: 22 })
-    + dimension(s4[0], s4[1], s3[0], s3[1], -16, "6cm", 22)
+    + dimensionBox(28, 72, 245, 72, 28, visual.values?.[0], { w: 50, h: 38, size: 22 })
+    + dimension(s4[0], s4[1], s3[0], s3[1], -28, "6cm", 22)
     + label(136, 146, "직사각형", { size: 23 }) + label((245 + 245 + apex[0]) / 3 + 6, 146, "정삼각형", { size: 18 })
     + label((bottom[0] + s3[0]) / 2, (bottom[1] + s3[1]) / 2, "정사각형", { size: 22 });
   return frame(470, 372, "직사각형, 정삼각형, 정사각형을 이어 붙인 도형", `<g transform="translate(4 -6)">${inner}</g>`, 400);
@@ -228,7 +222,7 @@ function threeSquares() {
   const sq = { stroke: UT.blue, fill: "#fff" };
   const body = rect(62, 50, 238, 238, sq) + rect(300, 50, 190, 190, sq) + rect(300, 240, 47, 48, sq)
     + rect(347, 240, 143, 48, { stroke: UT.blue, fill: SHADED })
-    + dimension(62, 50, 490, 50, 26, "11cm", 24) + dimension(62, 288, 62, 50, 26, "6cm", 24)
+    + dimension(62, 50, 490, 50, 26, "11cm", 24) + dimension(62, 288, 62, 50, 32, "6cm", 24)
     + circled(181, 172, "가", 14, 17) + circled(395, 147, "나", 14, 17) + circled(323.5, 264, "다", 14, 17);
   return frame(500, 296, "정사각형 ㉮, ㉯, ㉰와 색칠된 직사각형", body, 400);
 }
@@ -237,8 +231,8 @@ function threeSquares() {
 function bentShape() {
   const pts = [[65, 30], [175, 30], [175, 85], [340, 85], [340, 195], [285, 195], [285, 248], [120, 248], [120, 140], [65, 140]];
   const body = poly(pts, SHAPE.rect)
-    + dimension(65, 30, 175, 30, 16, "3cm", 19) + dimension(65, 140, 65, 30, 22, "3cm", 19)
-    + dimension(175, 85, 340, 85, 18, "5cm", 19) + dimension(120, 248, 120, 140, 22, "3cm", 19);
+    + dimension(65, 30, 175, 30, 16, "3cm", 19) + dimension(65, 140, 65, 30, 28, "3cm", 19)
+    + dimension(175, 85, 340, 85, 18, "5cm", 19) + dimension(120, 248, 120, 140, 28, "3cm", 19);
   return frame(360, 262, "직각으로 꺾인 도형", `<g transform="translate(0 4)">${body}</g>`, 320);
 }
 
@@ -342,12 +336,7 @@ function foldCut(visual) {
   const scissors = (x, y) => `<g transform="translate(${x} ${y})" stroke="${UT.ink}" stroke-width="1.8" stroke-linecap="round" fill="none"><path d="M-5 -13L4 5M5 -13L-4 5"/><circle cx="-5.5" cy="9" r="4" stroke="${UT.red}"/><circle cx="5.5" cy="9" r="4" stroke="${UT.red}"/></g>`;
   // 첫 그림: 처음 직사각형
   let body = rect(70, 49, 119, 89, paper);
-  {
-    const top = arc(70, 49, 189, 49, 14);
-    body += top.path + answerBox(top.apex[0] - 19, top.apex[1] - 16, 38, 30, v.width) + label(top.apex[0] + 22, top.apex[1] + 1, "cm", { size: 19, anchor: "start" });
-    const left = arc(70, 138, 70, 49, 14);
-    body += left.path + answerBox(4, 78, 38, 30, v.height) + label(44, 93, "cm", { size: 19, anchor: "start" });
-  }
+  body += dimensionBox(70, 49, 189, 49, 8, v.width, { w: 36, h: 30, size: 18 }) + dimensionBox(70, 138, 70, 49, 10, v.height, { w: 36, h: 30, size: 18 });
   body += label(88, 172, "둘레 :", { size: 18 }) + answerBox(118, 156, 44, 32, v.perimeter, { radius: 7 }) + label(165, 172, "cm", { size: 18, anchor: "start" });
   body += blockArrow(205, 93);
   // 둘째 그림: 대각선으로 접은 모양(점선 = 접기 전 자리), 오른쪽 2cm 띠를 자른다
@@ -355,16 +344,14 @@ function foldCut(visual) {
   body += rect(330, 49, 30, 89, paper);
   body += poly([[241, 138], [330, 49], [330, 138]], { stroke: UT.paperLine, fill: UT.yellow, width: 1.8 });
   body += `<path d="M270 87C282 76 300 82 302 101" fill="none" stroke="${UT.arrow}" stroke-width="1.8"/><path d="M296 98L302 108L307 97" fill="none" stroke="${UT.arrow}" stroke-width="1.8" stroke-linejoin="round"/>`;
-  body += label(348, 34, "2cm", { size: 19 }) + scissors(330, 156);
+  body += dimension(330, 49, 360, 49, 6, "2cm", 19) + scissors(330, 156);
   body += blockArrow(376, 93);
   // 셋째 그림: 펼친 정사각형
   body += rect(413, 49, 89, 89, paper) + seg(413, 138, 502, 49, { stroke: UT.crease, width: 1.2, dash: "4 3" });
-  {
-    const top = arc(413, 49, 502, 49, 14);
-    body += top.path + answerBox(top.apex[0] - 19, top.apex[1] - 16, 38, 30, v.side) + label(top.apex[0] + 22, top.apex[1] + 1, "cm", { size: 19, anchor: "start" });
-  }
+  body += dimensionBox(413, 49, 502, 49, 8, v.side, { w: 36, h: 30, size: 18 });
   body += label(457, 168, "둘레 : 36cm", { size: 18 });
-  return frame(530, 196, "직사각형 색종이를 접어 자르고 펼친 과정", body, 480);
+  // 왼쪽 변의 빈 칸 + 「cm」이 곡선 바깥(왼쪽)에 들어가도록 그림 전체를 오른쪽으로 14 옮기고 틀을 그만큼 넓힌다
+  return frame(544, 196, "직사각형 색종이를 접어 자르고 펼친 과정", `<g transform="translate(14 0)">${body}</g>`, 480);
 }
 
 // 24. 1,2,3,…,9,10,11,12,…, □

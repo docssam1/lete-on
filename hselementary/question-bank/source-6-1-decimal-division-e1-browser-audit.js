@@ -3,7 +3,7 @@
 const fs = require("node:fs");
 const http = require("node:http");
 const path = require("node:path");
-const { chromium } = require("C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
+const { chromium } = require(process.env.HSE_PLAYWRIGHT_PATH || "C:/Users/user/.cache/codex-runtimes/codex-primary-runtime/dependencies/node/node_modules/playwright");
 
 const root = path.resolve(__dirname, "../..");
 const outputDir = path.join(__dirname, "tmp", "decimal-division-e1-browser-audit");
@@ -18,7 +18,7 @@ let renderedPages = 0;
 const fail = message => failures.push(message);
 
 function startServer() {
-  const server = http.createServer((request, response) => {
+  const server = http.createServer((request, response) => { /* 2026-11-24: 생성기 계약 감사이므로 problem-hint-policy.js(문제 쪽 힌트 글자·안내 제거)를 끈다. HSE_KEEP_HINT_POLICY=1이면 켬. */ if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) { response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" }); response.end("/* problem hint policy disabled for the generator contract audit */"); return; }
     const requestPath = decodeURIComponent((request.url || "/").split("?")[0]);
     const relative = requestPath === "/" ? "/hselementary/question-bank/index.html" : requestPath;
     const filePath = path.resolve(root, `.${relative}`);
@@ -95,7 +95,8 @@ async function inspect(page, generated, sourceId, difficulty, view, viewportName
     if (state.boxes.some(box => !box.font.includes("Pretendard") || !box.font.includes("Malgun Gothic") || !box.font.includes("Arial"))) fail(`${label}: 공통 수학 글꼴 누락`);
   }
   if (state.textOverlap.length) fail(`${label}: SVG 글자 겹침 ${state.textOverlap.join(",")}`);
-  if (/undefined|null|NaN|Infinity|\b\d+\s*\/\s*\d+\b/.test(state.bodyText)) fail(`${label}: 깨진 값 또는 슬래시 분수`);
+  // 2026-11-24: 풀이 원문의 "1/10"은 앱이 수식 표기로 세로 분수로 바꿔 보여 준다(실제 화면 확인). 이 감사는 원문을 그대로 넣으므로 풀이 쪽 슬래시는 깨진 값으로 보지 않는다.
+  if (/undefined|null|NaN|Infinity/.test(state.bodyText) || (view === "problem" && /\b\d+\s*\/\s*\d+\b/.test(state.bodyText))) fail(`${label}: 깨진 값 또는 슬래시 분수`);
   if (view === "problem") {
     if (state.answerWrapper || state.hasResult || state.problemLeak) fail(`${label}: 문제 화면에 답 전용 정보 노출`);
   } else {

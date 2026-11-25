@@ -1,7 +1,7 @@
 // 2권 권별 테스트 원문 그림(다시 그린 것) — 원문 스캔의 하늘색·청록 그림과 그림 조각 대신 우리 색표로 새로 그린다.
 // 수·배치·방향은 원문 그대로. 모양 색은 워밍업 그림 색표(.claude/skills/golden-bell-figure-style):
 // ○빨강 □파랑 △초록 ◇보라 ☆노랑 ♡분홍, 십자는 주황. 바둑돌·검은 삼각형처럼 색이 문제 내용인 곳은 검정·흰색 그대로.
-import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261028ze";
+import { UT, esc, text, svg, box, line, cardsRow } from "./kit.js?v=20261124g";
 
 const n = (value) => Number(value.toFixed(2));
 const STAR_LINE = "#d9a400";

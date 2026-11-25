@@ -122,7 +122,7 @@ async function collectUnitState(page, semester, unitId) {
     const sourceGroups = [...document.querySelectorAll("#typeList .tree-subunit")]
       .filter(group => /^개념탐구 \d+ 원문 유형$/.test(group.querySelector(".tree-subunit-head strong")?.textContent.trim() || ""));
     const legacyGroup = [...document.querySelectorAll("#typeList .tree-subunit")]
-      .find(group => group.querySelector(".tree-subunit-head strong")?.textContent.trim() === "기존 생성 문제");
+      .find(group => ["기존 생성 문제", "창작 연습 (원본 외 문제)"].includes(group.querySelector(".tree-subunit-head strong")?.textContent.trim()));
     const legacyInputs = legacyGroup ? [...legacyGroup.querySelectorAll("input[data-type-id]")] : [];
     const sourceState = sourceRows.map(row => {
       const input = row.querySelector("input[data-type-id]");

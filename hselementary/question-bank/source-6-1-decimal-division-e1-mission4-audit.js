@@ -13,8 +13,8 @@ const sourceItemId = "6-1-u3-e1-mission-4";
 const generatorKey = "sourceGrade6DecimalDivisionE1Mission4";
 const expectedPools = [
   [8, 58.8, 7.35, 56, 28, 24, 40, 40],
-  [8, 51.6, 6.45, 48, 36, 32, 40, 40],
-  [6, 52.5, 8.75, 48, 45, 42, 30, 30]
+  [8, 37.2, 4.65, 32, 52, 48, 40, 40],
+  [6, 55.5, 9.25, 54, 15, 12, 30, 30]
 ];
 const failures = [];
 let checked = 0;
@@ -42,7 +42,19 @@ const independentFacts = ([divisor, dividend]) => {
   for (let hundredths = 1; hundredths <= 999; hundredths += 1) {
     if (divisor * hundredths === Math.round(dividend * 100)) candidates.push((hundredths / 100).toFixed(2));
   }
-  return { quotient: (quotientHundredths / 100).toFixed(2), product1, secondPartial, product2, thirdPartial, product3, remainder3, candidates };
+  // 2026-11-24: 가린 세로셈(보이는 것: 나누는 수, 첫째 곱의 십의 자리, 첫째 나머지, 나누어지는 수의 소수 첫째 자리)을
+  // 만족하는 몫을 모두 세어 퍼즐 자체의 답이 하나인지 확인한다.
+  const puzzleAnswers = [];
+  for (let q0 = 1; q0 <= 9; q0 += 1) {
+    const p1 = divisor * q0;
+    const firstAlt = p1 + remainder1;
+    if (p1 < 10 || Math.floor(p1 / 10) !== Math.floor(product1 / 10) || firstAlt < 10 || firstAlt > 99) continue;
+    const second = remainder1 * 10 + dividendDigits[2];
+    const q1 = Math.floor(second / divisor), r2 = second - divisor * q1;
+    if (q1 > 9 || (r2 * 10) % divisor !== 0 || (r2 * 10) / divisor > 9) continue;
+    puzzleAnswers.push((q0 + q1 / 10 + (r2 * 10 / divisor) / 100).toFixed(2));
+  }
+  return { quotient: (quotientHundredths / 100).toFixed(2), product1, secondPartial, product2, thirdPartial, product3, remainder3, candidates, puzzleAnswers };
 };
 
 if (!api?.names?.includes(generatorKey)) fail("Mission 4 전용 생성기가 등록되지 않았습니다.");
@@ -67,7 +79,7 @@ for (const difficulty of [-1, 0, 1]) {
     seenPools.add(poolIndex);
     if (!expected || !sameValues(values, expected)) fail(`${label}: 검산 자료와 고정 문항 자료가 다릅니다.`);
     const facts = independentFacts(values);
-    if (facts.quotient !== String(generated?.answer) || facts.remainder3 !== 0 || facts.candidates.length !== 1 || facts.candidates[0] !== facts.quotient) fail(`${label}: 독립 계산 또는 단일 정답 검사가 실패했습니다.`);
+    if (facts.quotient !== String(generated?.answer) || facts.remainder3 !== 0 || facts.candidates.length !== 1 || facts.candidates[0] !== facts.quotient || facts.puzzleAnswers.length !== 1 || facts.puzzleAnswers[0] !== facts.quotient) fail(`${label}: 독립 계산 또는 단일 정답 검사가 실패했습니다.`);
     if (!sameValues([facts.product1, facts.secondPartial, facts.product2, facts.thirdPartial, facts.product3], expected?.slice(3) || [])) fail(`${label}: 세로셈 단계가 독립 계산과 다릅니다.`);
     if (generated?.generator !== generatorKey || generated?.sourceItemId !== sourceItemId || generated?.generationMode !== "fixed-verified-pool" || generated?.verifiedVariantCount !== 3) fail(`${label}: 생성기 공개 계약이 다릅니다.`);
     if (attr(generated.prompt, "data-source61-division-phase") !== "problem" || attr(generated.answerVisual, "data-source61-division-phase") !== "answer" || attr(generated.prompt, "data-pool") !== attr(generated.answerVisual, "data-pool")) fail(`${label}: 문제와 답의 세로셈 자료가 다릅니다.`);

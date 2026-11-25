@@ -2706,7 +2706,7 @@
       const y = (points[first][1] + points[second][1]) / 2;
       return `<line class="equal-mark" x1="${(x - 4).toFixed(1)}" y1="${(y - 3).toFixed(1)}" x2="${(x + 4).toFixed(1)}" y2="${(y + 3).toFixed(1)}"/>`;
     };
-    return `<svg class="geometry-diagram equilateral-three-equal-source" viewBox="0 0 240 170" aria-label="같은 길이의 선분 세 개가 이어진 각도 도형"><polyline points="${point("a")} ${point("b")} ${point("c")} ${point("d")} ${point("a")}"/><line x1="${mx(points.a[0]).toFixed(1)}" y1="${points.a[1]}" x2="${mx(points.c[0]).toFixed(1)}" y2="${points.c[1]}"/>${tick("a", "b")}${tick("b", "c")}${tick("c", "d")}${label("a", "ㄱ", -12, 16)}${label("b", "ㄴ", -16, 2)}${label("c", "ㄷ", 10, -7)}${label("d", "ㄹ", 11, 5)}<text class="source-angle-label" x="${mx(86)}" y="91">150°</text><text class="source-angle-label" x="${mx(128)}" y="72">60°</text><text class="source-unknown-label" x="${mx(77)}" y="129">?</text></svg>`;
+    return `<svg class="geometry-diagram equilateral-three-equal-source" viewBox="0 0 240 170" aria-label="같은 길이의 선분 세 개가 이어진 각도 도형"><polyline points="${point("a")} ${point("b")} ${point("c")} ${point("d")} ${point("a")}"/><line x1="${mx(points.a[0]).toFixed(1)}" y1="${points.a[1]}" x2="${mx(points.c[0]).toFixed(1)}" y2="${points.c[1]}"/>${tick("a", "b")}${tick("b", "c")}${tick("c", "d")}${label("a", "ㄱ", -12, 16)}${label("b", "ㄴ", -22, -4)}${label("c", "ㄷ", 10, -7)}${label("d", "ㄹ", 11, 5)}<text class="source-angle-label" x="${mx(88)}" y="93">150°</text><text class="source-angle-label" x="${mx(128)}" y="72">60°</text><text class="source-unknown-label" x="${mx(77)}" y="129">?</text></svg>`;
   };
   const equilateralEqualRightAngleSvg = ({ equalSide, vertical, mirrored }) => {
     const mx = value => mirrored ? 240 - value : value;
@@ -16896,10 +16896,15 @@
         const remainingNumerator = totalNumerator - removed * appleNumerator;
         return result(`무게가 각각 같은 사과 ${appleCount}개와 복숭아 ${peachCount}개가 든 바구니의 무게는 ${mixedFraction(totalNumerator, denominator)}kg입니다. 사과 ${removed}개를 꺼낸 뒤에는 ${mixedFraction(remainingNumerator, denominator)}kg이었습니다. 빈 바구니가 ${mixedFraction(basketNumerator, denominator)}kg일 때 복숭아 한 개의 무게를 구하세요.${fractionDivisionEvidence("fruit-basket", [denominator, appleCount, peachCount, removed, appleNumerator, peachNumerator, basketNumerator, totalNumerator, remainingNumerator])}`, mixedFraction(peachNumerator, denominator), `꺼낸 사과의 무게 차를 사과 ${removed}개로 나누면 사과 한 개는 ${mixedFraction(appleNumerator, denominator)}kg입니다. 남은 전체에서 바구니와 사과 무게를 빼고 복숭아 ${peachCount}개로 나누면 복숭아 한 개는 ${mixedFraction(peachNumerator, denominator)}kg입니다.`);
       }
+      // 가 혼자 a일, 나 혼자 b일, 함께 T일에 대해 남은 일을 가가 끝내는 날수가 자연수인 세트(첫 세트가 예전 문항)
+      const [baseFirst, baseSecond, baseTogether] = pick(rng, [[14, 21, 6], [10, 15, 3], [12, 20, 5]]);
       const scale = int(rng, 1, 2 + level);
-      const firstDays = 14 * scale, secondDays = 21 * scale, togetherDays = 6 * scale;
-      const doneNumerator = 5, doneDenominator = 7;
-      return result(`어떤 일을 가와 나가 함께 ${togetherDays}일 동안 하여 전체의 ${doneNumerator}/${doneDenominator}를 마쳤습니다. 남은 일을 가가 혼자 ${4 * scale}일 동안 하여 끝냈습니다. 두 사람의 일하는 양이 날마다 일정할 때, 나가 처음부터 혼자 이 일을 하면 며칠 걸리는지 구하세요.${fractionDivisionEvidence("work-rate", [togetherDays, doneNumerator, doneDenominator, 4 * scale, firstDays, secondDays])}`, secondDays, `가는 하루에 (2/${doneDenominator})÷${4 * scale}=1/${firstDays}을 합니다. 두 사람이 함께 하루에 (${doneNumerator}/${doneDenominator})÷${togetherDays}=5/${42 * scale}를 하므로 나는 하루에 1/${secondDays}을 합니다. 따라서 ${secondDays}일 걸립니다.`);
+      const firstDays = baseFirst * scale, secondDays = baseSecond * scale, togetherDays = baseTogether * scale;
+      const doneWhole = togetherDays * (firstDays + secondDays), doneBase = firstDays * secondDays, doneDivisor = gcd(doneWhole, doneBase);
+      const doneNumerator = doneWhole / doneDivisor, doneDenominator = doneBase / doneDivisor;
+      const aloneDays = firstDays * (doneDenominator - doneNumerator) / doneDenominator;
+      const togetherRate = fraction(doneNumerator, doneDenominator * togetherDays);
+      return result(`어떤 일을 가와 나가 함께 ${togetherDays}일 동안 하여 전체의 ${doneNumerator}/${doneDenominator}를 마쳤습니다. 남은 일을 가가 혼자 ${aloneDays}일 동안 하여 끝냈습니다. 두 사람의 일하는 양이 날마다 일정할 때, 나가 처음부터 혼자 이 일을 하면 며칠 걸리는지 구하세요.${fractionDivisionEvidence("work-rate", [togetherDays, doneNumerator, doneDenominator, aloneDays, firstDays, secondDays])}`, secondDays, `가가 하루에 하는 일은 (${doneDenominator - doneNumerator}/${doneDenominator})÷${aloneDays}=1/${firstDays}입니다. 두 사람이 함께 하루에 하는 일은 (${doneNumerator}/${doneDenominator})÷${togetherDays}=${togetherRate}이므로 나가 하루에 하는 일은 ${togetherRate}-1/${firstDays}=1/${secondDays}입니다. 따라서 ${secondDays}일 걸립니다.`);
     },
     fractionDivisionEquationAdvanced({ rng, level, variant = 0 }) {
       const kind = variant % 6;
@@ -16929,8 +16934,11 @@
       }
       if (kind === 3) {
         const denominator = pick(rng, [17, 19, 23, 29].slice(0, 2 + level));
-        const values = [3, 1, 6];
-        return result(`세 기약분수 가, 나, 다가 있습니다. 가는 나의 3배이고 다는 가의 2배입니다. 세 분수의 합이 ${fraction(10, denominator)}일 때 가, 나, 다를 차례로 구하세요.${fractionDivisionEvidence("three-fraction-ratio", [denominator, ...values])}`, `${fraction(3, denominator)}, ${fraction(1, denominator)}, ${fraction(6, denominator)}`, `나를 1몫으로 보면 가는 3몫, 다는 6몫으로 모두 10몫입니다. 한 몫은 1/${denominator}이므로 가=${fraction(3, denominator)}, 나=${fraction(1, denominator)}, 다=${fraction(6, denominator)}입니다.`);
+        // 가=나의 times배, 다=가의 again배(첫 쌍이 예전 문항). 분모가 몫의 합보다 큰 소수라 세 분수 모두 기약분수다.
+        const [times, again] = pick(rng, [[3, 2], [2, 3], [2, 2]]);
+        const values = [times, 1, times * again];
+        const parts = values[0] + values[1] + values[2];
+        return result(`세 기약분수 가, 나, 다가 있습니다. 가는 나의 ${times}배이고 다는 가의 ${again}배입니다. 세 분수의 합이 ${fraction(parts, denominator)}일 때 가, 나, 다를 차례로 구하세요.${fractionDivisionEvidence("three-fraction-ratio", [denominator, ...values])}`, `${fraction(values[0], denominator)}, ${fraction(values[1], denominator)}, ${fraction(values[2], denominator)}`, `나를 1몫으로 보면 가는 ${values[0]}몫, 다는 ${values[2]}몫으로 모두 ${parts}몫입니다. 한 몫은 1/${denominator}이므로 가=${fraction(values[0], denominator)}, 나=${fraction(values[1], denominator)}, 다=${fraction(values[2], denominator)}입니다.`);
       }
       if (kind === 4) {
         const denominator = 8;
@@ -17448,10 +17456,17 @@
       }
       if (kind === 2) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = [[maxHeight, 1], [1, maxHeight]];
+        // 그림(위·앞·오른쪽)이 서로 다른 표본만 둔다. 첫 표본이 예전 문항이고, 0은 위에서 보아 빈 칸이다.
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[0, 2, 1], [2, 1, 2]], [[2, 1, 1], [1, 1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 0], [1, 3]]],
+          [[[3, 1], [1, 3]], [[0, 3, 1], [3, 1, 3]], [[0, 2, 3], [3, 1, 1]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
-        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고, 각 칸에는 ${maxHeight}개 이하를 쌓았습니다. 이 세 그림을 모두 만족하는 쌓기 방법은 몇 가지입니까? 각 칸에 쌓은 개수가 하나라도 다르면 다른 방법으로 셉니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-candidate-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 본 네 칸에는 각각 1개 이상 ${maxHeight}개 이하를 놓고, 각 행과 열의 최고 높이가 앞·오른쪽 그림과 같도록 전부 확인하면 ${candidates.length}가지입니다.`);
+        const topCount = projections.top.reduce((sum, value) => sum + value, 0);
+        const topCountWord = { 3: "세", 4: "네", 5: "다섯", 6: "여섯" }[topCount] || topCount;
+        return result(`위·앞·오른쪽에서 본 그림이 다음과 같고, 각 칸에는 ${maxHeight}개 이하를 쌓았습니다. 이 세 그림을 모두 만족하는 쌓기 방법은 몇 가지입니까? 각 칸에 쌓은 개수가 하나라도 다르면 다른 방법으로 셉니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-candidate-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 본 ${topCountWord} 칸에는 각각 1개 이상 ${maxHeight}개 이하를 놓고, 각 행과 열의 최고 높이가 앞·오른쪽 그림과 같도록 전부 확인하면 ${candidates.length}가지입니다.`);
       }
       if (kind === 3) {
         const cells = cellsFromHeights(heights);
@@ -17483,7 +17498,12 @@
       }
       if (kind === 1) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = [[maxHeight, 1], [1, maxHeight]];
+        // 그림이 서로 다른 표본(첫 표본이 예전 문항, 0은 위에서 보아 빈 칸)
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[2, 1, 1], [1, 1, 2]], [[2, 0], [1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 3], [1, 2]]],
+          [[[3, 1], [1, 3]], [[0, 3, 1], [3, 1, 3]], [[3, 2, 1], [1, 1, 3]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
         const totals = candidates.map(map => map.flat().reduce((sum, value) => sum + value, 0));
@@ -17491,7 +17511,7 @@
         return result(`위·앞·오른쪽에서 본 그림이 다음과 같고 한 칸에는 ${maxHeight}개 이하를 쌓았습니다. 가능한 쌓기나무 수의 최솟값과 최댓값을 차례로 쓰세요.${projectionViewsSvg({ heights: sample })}${spaceEvidence("projection-min-max", [maxHeight, minimum, maximum, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, `${minimum}, ${maximum}`, `세 그림을 만족하는 높이표 ${candidates.length}가지를 전부 확인하면 전체 개수의 최솟값은 ${minimum}개, 최댓값은 ${maximum}개입니다. 정답은 ${minimum}, ${maximum}입니다.`);
       }
       if (kind === 2) {
-        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const size = pick(rng, level === 2 ? [5, 7, 9] : [3, 5, 7]);
         const directions = level === 2 ? ["x", "y", "z"] : level === 1 ? ["x", "y"] : ["y"];
         const cells = centeredTunnelCells({ size, hole: 1, directions });
         const surface = voxelSurface(cells);
@@ -17499,14 +17519,24 @@
       }
       if (kind === 3) {
         const maxHeight = 2 + (level > 0 ? 1 : 0);
-        const sample = level === 2 ? [[maxHeight, 1, maxHeight], [1, maxHeight, 1]] : [[maxHeight, 1], [1, maxHeight]];
+        // 그림이 서로 다른 표본(첫 표본이 예전 문항, 0은 위에서 보아 빈 칸)
+        const sample = pick(rng, [
+          [[[2, 1], [1, 2]], [[0, 2, 1], [2, 1, 2]], [[2, 0], [1, 2]]],
+          [[[3, 1], [1, 3]], [[3, 2], [2, 1]], [[3, 0], [1, 3]]],
+          [[[3, 1, 3], [1, 3, 1]], [[0, 3, 1], [3, 1, 3]], [[3, 1, 2], [2, 1, 3]]]
+        ][level]);
         const projections = stackProjections(sample);
         const candidates = enumerateHeightMaps({ ...projections, maxHeight });
         return result(`다음 위·앞·오른쪽 그림과 같은 쌓기를 만들려고 합니다. 한 칸에는 ${maxHeight}개 이하를 쌓을 때 가능한 방법은 몇 가지입니까? 회전한 모양도 바닥 칸의 위치가 다르면 다른 방법입니다.${projectionViewsSvg({ heights: sample })}${spaceEvidence("stack-method-count", [maxHeight, candidates.length], `data-top="${projections.top.join(".")}" data-front="${projections.front.join(".")}" data-right="${projections.right.join(".")}"`)}`, candidates.length, `위에서 보이는 칸을 1부터 ${maxHeight}까지 채우고 앞·오른쪽의 최고 높이를 모두 대조하면 ${candidates.length}가지입니다.`);
       }
       if (kind === 4) {
-        const size = 3 + level;
-        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, size - Math.max(x, y))));
+        // [행 수, 열 수, 가장 높은 칸] 계단 모양(첫 모양이 예전 문항)
+        const [rows, columns, peak] = pick(rng, [
+          [[3, 3, 3], [3, 3, 4], [3, 4, 4]],
+          [[4, 4, 4], [3, 4, 5], [4, 4, 5]],
+          [[5, 5, 5], [4, 5, 6], [4, 4, 6]]
+        ][level]);
+        const heights = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => Math.max(1, peak - Math.max(x, y))));
         const cells = cellsFromHeights(heights);
         const answer = internalCubeCount(cells);
         return result(`계단 모양의 높이표대로 쌓았습니다. 위·아래·앞·뒤·왼쪽·오른쪽 여섯 면이 모두 다른 쌓기나무와 맞닿아 있는 쌓기나무는 몇 개입니까? 바닥에 닿은 면은 맞닿은 면으로 보지 않습니다.${heightMapTable({ title: "계단 모양 높이표", heights })}${isometricStackSvg(heights)}${spaceEvidence("hidden-interior-count", [answer], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, answer, `각 쌓기나무의 위·아래·앞·뒤·왼쪽·오른쪽 여섯 이웃을 확인합니다. 여섯 면이 모두 다른 쌓기나무와 맞닿은 조각은 ${answer}개입니다.`);
@@ -17534,8 +17564,9 @@
         return result(`높이표대로 쌓은 뒤 바닥에 닿은 면을 포함하여 바깥에 드러난 모든 면을 색칠했습니다. 색칠된 면이 정확히 ${selected.faces}개인 쌓기나무는 몇 개입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-histogram", [selected.faces, selected.count], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, selected.count, `각 조각의 여섯 이웃 칸을 조사해 비어 있는 방향을 색칠된 면으로 셉니다. 정확히 ${selected.faces}면이 색칠된 조각은 ${selected.count}개입니다.`);
       }
       if (kind === 2) {
-        const size = 3 + level;
-        const heights = Array.from({ length: size }, (_, y) => Array.from({ length: size }, (_, x) => Math.max(1, Math.ceil(size / 2 - Math.max(Math.abs(x - (size - 1) / 2), Math.abs(y - (size - 1) / 2))))));
+        // 보통 난이도는 4×4 하나로는 고를 면 수가 둘뿐이라 4×5 모양을 더한다. 바깥에서 한 칸 들어갈 때마다 한 층씩 높아진다.
+        const [rows, columns] = level === 1 ? pick(rng, [[4, 4], [4, 5]]) : [3 + level, 3 + level];
+        const heights = Array.from({ length: rows }, (_, y) => Array.from({ length: columns }, (_, x) => 1 + Math.min(x, y, columns - 1 - x, rows - 1 - y)));
         const cells = cellsFromHeights(heights);
         const histogram = paintedFaceHistogram(cells);
         const choices = histogram.map((count, faces) => ({ count, faces })).filter(item => item.faces >= 2 && item.faces <= 5 && item.count > 0);
@@ -17544,7 +17575,12 @@
       }
       if (kind === 3) {
         const side = 2 + level;
-        const heights = [[2 + level, 1, 2], [1, 3, 1], [2, 1, 2 + level]];
+        // 첫 높이표가 예전 문항
+        const heights = pick(rng, [
+          [[2 + level, 1, 2], [1, 3, 1], [2, 1, 2 + level]],
+          [[1, 2 + level, 1], [2, 3, 2], [1, 2 + level, 1]],
+          [[2 + level, 2, 1], [2, 3, 1], [1, 1, 2 + level]]
+        ]);
         const surface = voxelSurface(cellsFromHeights(heights));
         const answer = surface * side * side;
         return result(`한 모서리 ${side}cm인 정육면체를 높이표대로 쌓고 바닥에 닿은 면을 포함한 바깥 면을 모두 색칠했습니다. 색칠한 넓이는 모두 몇 cm²입니까?${heightMapTable({ title: "바닥 칸별 높이", heights })}${isometricStackSvg(heights)}${spaceEvidence("painted-height-area", [side, surface], `data-heights="${heights.map(row => row.join(".")).join(";")}"`)}`, `${answer}cm²`, `드러난 면은 ${surface}개이고 한 면의 넓이는 ${side}×${side}=${side * side}cm²입니다. 따라서 ${surface}×${side * side}=${answer}cm²입니다.`);
@@ -17570,7 +17606,7 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기(작은 정육면체 한 모서리 1cm)의 바닥에서 ${layer}번째 층 정육면체의 중심을 모두 지나는 수평 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a, b, c, labels: ["수평 절단면", "", ""] })}${spaceEvidence("single-layer-cut", [a, b, c, layer])}`, answer, `한 층에는 가로 ${a}개, 세로 ${b}개가 있으므로 절단면이 지나는 조각은 ${a}×${b}=${answer}개입니다.`);
       }
       if (kind === 1) {
-        const size = pick(rng, level === 0 ? [5] : [5, 7]);
+        const size = pick(rng, level === 0 ? [3, 5, 7] : [5, 7, 9]);
         const answer = 3 * size * size - 3 * size + 1;
         return result(`한 모서리에 작은 정육면체가 ${size}개인 큰 정육면체(작은 정육면체 한 모서리 1cm)에서 서로 수직인 세 중앙 절단면이 작은 정육면체의 중심을 지나게 했습니다. 세 절단면 중 하나 이상이 지나는 작은 정육면체는 몇 개입니까?${cuboidSvg({ a: size, b: size, c: size, labels: ["중앙 절단", "중앙 절단", "중앙 절단"] })}${spaceEvidence("triple-center-cut", [size])}`, answer, `각 절단면은 ${size * size}개를 지납니다. 두 절단면이 함께 지나는 줄은 3개이고 한 줄에 ${size}개씩이므로 3×${size}개를 빼고, 세 절단면이 모두 지나는 중앙 한 조각은 다시 더합니다. 3×${size * size}-3×${size}+1=${answer}개입니다.`);
       }
@@ -17581,18 +17617,37 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체 쌓기(작은 정육면체 한 모서리 1cm)에서 세로 ${b}칸, 높이 ${c}칸으로 이루어진 층 중 서로 다른 ${cuts}개 층의 정육면체 중심을 지나는 평행한 절단면을 만들었습니다. 절단면이 지나는 작은 정육면체는 모두 몇 개입니까?${cuboidSvg({ a, b, c, labels: [`평행 절단 ${cuts}개`, "", ""] })}${spaceEvidence("parallel-layer-cuts", [a, b, c, cuts])}`, answer, `절단면 하나는 세로 ${b}×높이 ${c}=${b * c}개를 지나고 서로 다른 층이라 겹치지 않습니다. ${cuts}×${b * c}=${answer}개입니다.`);
       }
       if (kind === 3) {
+        // 난이도마다 바닥 한 층 모양 셋(첫 모양이 예전 문항, 예전 풀이 글은 그대로 둔다). 모두 거울 대칭인 모양이라
+        // 아래에 붙인 모양은 뒤집으면 위에 올린 모양과 같아진다(답 = 바닥에 붙인 모양 + 위에 올린 새 모양).
+        const flat = cells => cells.map(([x, y]) => [x, y, 0]);
         const bases = [
-          [[0, 0, 0], [1, 0, 0], [2, 0, 0]],
-          [[0, 0, 0], [1, 0, 0], [0, 1, 0]],
-          [[0, 0, 0], [1, 0, 0], [2, 0, 0], [1, 1, 0]]
-        ];
-        const base = bases[level];
-        const answer = addedCubeShapeCount(base);
-        const explanation = [
-          `바닥에 붙이면 일자 모양, ㄴ자 모양, ㅗ자 모양이 되고, 위에 올린 모양도 돌려 보면 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.`,
-          `바닥에 붙여 만든 서로 다른 모양은 4가지입니다. 위에 올리는 자리는 꺾인 곳 위와 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 3가지이고, 모두 4+3=${answer}가지입니다.`,
-          `바닥에 붙여 만든 서로 다른 모양은 5가지입니다. 위에 올리는 자리는 가운데 위, 튀어나온 칸 위, 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 4가지이고, 모두 5+4=${answer}가지입니다.`
+          [
+            { cells: flat([[0, 0], [1, 0], [2, 0]]), explanation: answer => `바닥에 붙이면 일자 모양, ㄴ자 모양, ㅗ자 모양이 되고, 위에 올린 모양도 돌려 보면 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0]]) },
+            { cells: flat([[0, 0], [1, 0], [0, 1], [1, 1]]) }
+          ],
+          [
+            { cells: flat([[0, 0], [1, 0], [0, 1]]), explanation: answer => `바닥에 붙여 만든 서로 다른 모양은 4가지입니다. 위에 올리는 자리는 꺾인 곳 위와 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 3가지이고, 모두 4+3=${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0], [2, 0], [3, 0]]) },
+            { cells: flat([[1, 0], [0, 1], [1, 1], [2, 1], [1, 2]]) }
+          ],
+          [
+            { cells: flat([[0, 0], [1, 0], [2, 0], [1, 1]]), explanation: answer => `바닥에 붙여 만든 서로 다른 모양은 5가지입니다. 위에 올리는 자리는 가운데 위, 튀어나온 칸 위, 양 끝 위인데, 양 끝 위에 올린 두 모양은 서로 거울에 비친 모양이라 돌려도 겹쳐지지 않습니다. 그래서 위에 올린 모양은 4가지이고, 모두 5+4=${answer}가지입니다.` },
+            { cells: flat([[0, 0], [1, 0], [2, 0], [0, 1], [2, 1]]) },
+            { cells: flat([[0, 0], [0, 1], [1, 1], [1, 2], [2, 2]]) }
+          ]
         ][level];
+        const chosen = pick(rng, bases);
+        const base = chosen.cells;
+        const answer = addedCubeShapeCount(base);
+        const occupied = new Set(base.map(cell => cell.join(",")));
+        const shapesOn = layer => new Set(base.flatMap(([x, y]) => (layer === 0 ? [[1, 0], [-1, 0], [0, 1], [0, -1]] : [[0, 0]]).map(([dx, dy]) => [x + dx, y + dy, layer]))
+          .filter(cell => !occupied.has(cell.join(","))).map(cell => canonicalPolycube([...base, cell])));
+        const floorShapes = shapesOn(0);
+        const raisedNew = [...shapesOn(1)].filter(key => !floorShapes.has(key)).length;
+        const explanation = chosen.explanation ? chosen.explanation(answer) : raisedNew
+          ? `바닥에 붙여 만든 서로 다른 모양은 ${floorShapes.size}가지입니다. 위에 올린 모양 중 바닥에 붙여 만든 모양과 다른 것은 ${raisedNew}가지입니다. 돌려도 겹쳐지지 않는 거울 모양은 다른 모양으로 셉니다. 모두 ${floorShapes.size}+${raisedNew}=${answer}가지입니다.`
+          : `바닥에 붙여 만든 서로 다른 모양은 ${floorShapes.size}가지이고, 위에 올린 모양은 돌려 보면 모두 이 중 하나와 같습니다. 따라서 ${answer}가지입니다.`;
         return result(`그림은 쌓기나무를 바닥에 한 층으로 놓은 모양이고, 보이지 않는 쌓기나무는 없습니다. 이 모양에 쌓기나무 한 개를 면끼리 꼭 맞게 붙여 새로운 모양을 만듭니다. 돌리거나 뒤집었을 때 같은 모양은 한 가지로 셀 때 서로 다른 모양은 몇 가지입니까?${polycubeSvg(base)}${spaceEvidence("add-one-polycube", [level, answer], `data-base-cells="${base.map(cell => cell.join(".")).join(";")}"`)}`, answer, explanation);
       }
       if (kind === 4) {
@@ -17603,7 +17658,8 @@
         return result(`가로 ${a}칸, 세로 ${b}칸, 높이 ${c}칸인 직육면체(작은 정육면체 한 모서리 1cm)에서 맨 아래층 왼쪽 앞 칸을 파란색으로 하고, 면끼리 맞닿은 두 칸은 항상 색이 다르도록 파란색과 흰색을 번갈아 정했습니다. 파란색 조각을 모두 빼면 몇 개가 남습니까?${cuboidSvg({ a, b, c, labels: ["교차 색 규칙", "", ""] })}${spaceEvidence("parity-removal", [a, b, c, removed])}`, answer, `파란색과 흰색이 번갈아 놓이므로 층마다 파란색 칸을 세어 더하면 파란색은 ${removed}개입니다. ${a * b * c}-${removed}=${answer}개가 남습니다.`);
       }
       const heights = [[2 + level, 3, 1], [1, 2 + level, 2], [2, 1, 3]];
-      const removals = [[0, 1], [2, 2]].slice(0, 1 + (level > 0 ? 1 : 0));
+      // 뺄 칸(행, 열 0부터): 쉬움은 한 칸, 보통·어려움은 두 칸. 첫 묶음이 예전 문항
+      const removals = pick(rng, level === 0 ? [[[0, 1]], [[2, 2]], [[1, 1]]] : [[[0, 1], [2, 2]], [[0, 0], [1, 2]], [[1, 1], [2, 0]]]);
       const changed = heights.map(row => [...row]);
       removals.forEach(([y, x]) => { changed[y][x] -= 1; });
       const front = stackProjections(changed).front.reduce((sum, value) => sum + value, 0);
@@ -20570,9 +20626,9 @@
       }
       if (variant === 2) {
         const raw = choose([
-          [[[3, 5], [11, 4], [14, 3], [5, 6]], [[4, 7], [17, 6], [13, 4], [7, 10]]],
-          [[[7, 12], [31, 8], [29, 6], [11, 15]], [[9, 14], [43, 10], [37, 8], [13, 18]]],
-          [[[17, 24], [91, 16], [83, 15], [29, 36]], [[19, 28], [121, 18], [109, 20], [31, 42]]]
+          [[[3, 5], [11, 4], [14, 3], [5, 6]], [[4, 7], [17, 6], [13, 4], [7, 10]], [[5, 8], [13, 6], [11, 4], [3, 10]]],
+          [[[7, 12], [31, 8], [29, 6], [11, 15]], [[9, 14], [43, 10], [37, 8], [13, 18]], [[11, 16], [29, 10], [41, 12], [7, 9]]],
+          [[[17, 24], [91, 16], [83, 15], [29, 36]], [[19, 28], [121, 18], [109, 20], [31, 42]], [[23, 30], [107, 20], [97, 18], [37, 48]]]
         ]);
         const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
         const total = addAll(values);
@@ -20580,9 +20636,9 @@
       }
       if (variant === 3) {
         const [firstDenominator, secondDenominator, firstA, firstB, secondA, secondB, firstWhole, secondWhole] = choose([
-          [[11, 13, 5, 7, 5, 8, 2, 3], [9, 14, 4, 5, 7, 9, 3, 4]],
-          [[17, 19, 7, 11, 9, 13, 5, 7], [21, 25, 8, 13, 11, 17, 6, 9]],
-          [[29, 31, 13, 19, 17, 23, 12, 15], [35, 41, 16, 27, 21, 32, 18, 24]]
+          [[11, 13, 5, 7, 5, 8, 2, 3], [9, 14, 4, 5, 7, 9, 3, 4], [13, 15, 6, 9, 4, 7, 2, 5]],
+          [[17, 19, 7, 11, 9, 13, 5, 7], [21, 25, 8, 13, 11, 17, 6, 9], [23, 27, 9, 14, 10, 16, 4, 8]],
+          [[29, 31, 13, 19, 17, 23, 12, 15], [35, 41, 16, 27, 21, 32, 18, 24], [37, 43, 15, 22, 19, 29, 14, 21]]
         ]);
         const values = [
           rationalValue(firstA, firstDenominator), rationalValue(firstWhole * secondDenominator + secondA, secondDenominator),
@@ -20666,9 +20722,9 @@
       }
       if (variant === 10) {
         const raw = choose([
-          [[[3, 5], [2, 9], [5, 12]], [[5, 8], [3, 10], [7, 15]]],
-          [[[7, 12], [5, 18], [11, 20]], [[9, 14], [8, 21], [13, 24]]],
-          [[[17, 28], [13, 36], [19, 45]], [[23, 40], [29, 54], [31, 60]]]
+          [[[3, 5], [2, 9], [5, 12]], [[5, 8], [3, 10], [7, 15]], [[4, 7], [1, 6], [3, 8]]],
+          [[[7, 12], [5, 18], [11, 20]], [[9, 14], [8, 21], [13, 24]], [[5, 12], [7, 16], [9, 20]]],
+          [[[17, 28], [13, 36], [19, 45]], [[23, 40], [29, 54], [31, 60]], [[29, 36], [17, 42], [25, 56]]]
         ]);
         const values = raw.map(([numerator, denominator]) => rationalValue(numerator, denominator));
         const total = addAll(values);
@@ -20703,20 +20759,32 @@
         return result(`${mixedFractionMarkup(firstWhole * firstDenominator + firstNumerator, firstDenominator)} + ${symbolicMixed} &lt; □ &lt; ${upper}에서 □에 들어갈 수 있는 자연수가 ${count}개일 때, 둘째 대분수의 자연수 부분 ㉠을 구하세요.${tag("mixed-sum-natural-count", [firstWhole, firstNumerator, firstDenominator, secondNumerator, secondDenominator, upper, count, answerWhole])}`, answerWhole, `㉠=${answerWhole}일 때 왼쪽 두 대분수의 합은 ${markup(lowerAtAnswer)}입니다. 이 수보다 크고 ${upper}보다 작은 자연수는 ${firstNatural}부터 ${upper - 1}까지 ${count}개이며, ㉠은 ${answerWhole} 하나입니다.`);
       }
       if (variant === 13) {
+        // 2026-11-24: 원문(합이 가장 작을 때)과 같은 조건으로 "합이 가장 클 때", "차가 가장 클 때"를 더해 서로 다른 문항 3개를 만든다.
+        // 답은 2, 3, 5, 7을 네 자리에 놓는 모든 경우(두 수 모두 진분수)를 직접 계산해 고른다.
         const primes = [2, 3, 5, 7];
-        const candidates = [];
+        const mode = level === 1 ? pick(rng, ["min-sum", "min-sum", "max-sum", "max-difference"]) : pick(rng, ["min-sum", "max-sum", "max-difference"]);
+        const cases = [];
         const visit = (picked, rest) => {
           if (!rest.length) {
             if (picked[0] >= picked[1] || picked[2] >= picked[3]) return;
-            candidates.push(rationalOperation(rationalValue(picked[0], picked[1]), rationalValue(picked[2], picked[3]), "+"));
+            const left = rationalValue(picked[0], picked[1]), right = rationalValue(picked[2], picked[3]);
+            const bigger = left.numerator * right.denominator >= right.numerator * left.denominator;
+            cases.push({ picked, sum: rationalOperation(left, right, "+"), difference: bigger ? rationalOperation(left, right, "-") : rationalOperation(right, left, "-") });
             return;
           }
           rest.forEach((value, index) => visit([...picked, value], [...rest.slice(0, index), ...rest.slice(index + 1)]));
         };
         visit([], primes);
-        candidates.sort((left, right) => left.numerator * right.denominator - right.numerator * left.denominator);
-        const answer = candidates[0];
-        return result(`㉠, ㉡, ㉢, ㉣은 서로 다른 한 자리 수이고, 각 수의 약수는 2개입니다. 두 진분수 ${symbolicFractionMarkup("㉠", "㉡")}과 ${symbolicFractionMarkup("㉢", "㉣")}의 합이 가장 작을 때 그 값을 구하세요.${tag("four-prime-digit-min-sum", primes, "minimum")}`, display(answer), `조건을 만족하는 네 수는 2, 3, 5, 7입니다. 가능한 배치를 모두 확인하면 가장 작은 합은 ${fractionMarkup(2, 5)}+${fractionMarkup(3, 7)}=${markup(answer)}입니다.`);
+        const compare = (left, right) => left.numerator * right.denominator - right.numerator * left.denominator;
+        const key = mode === "max-difference" ? "difference" : "sum";
+        cases.sort((left, right) => compare(left[key], right[key]));
+        const best = mode === "min-sum" ? cases[0] : cases[cases.length - 1];
+        const answer = best[key];
+        const ask = mode === "min-sum" ? "합이 가장 작을 때 그 값을" : mode === "max-sum" ? "합이 가장 클 때 그 값을" : "차가 가장 클 때 그 차를";
+        const [a, b, c, d] = best.picked;
+        const shown = mode === "max-difference" && compare(rationalValue(a, b), rationalValue(c, d)) < 0 ? [c, d, a, b] : [a, b, c, d];
+        const sign = mode === "max-difference" ? "-" : "+";
+        return result(`㉠, ㉡, ㉢, ㉣은 서로 다른 한 자리 수이고, 각 수의 약수는 2개입니다. 두 진분수 ${symbolicFractionMarkup("㉠", "㉡")}과 ${symbolicFractionMarkup("㉢", "㉣")}의 ${ask} 구하세요.${tag(mode === "min-sum" ? "four-prime-digit-min-sum" : `four-prime-digit-${mode}`, primes, mode === "min-sum" ? "minimum" : "maximum")}`, display(answer), `조건을 만족하는 네 수는 2, 3, 5, 7입니다. 가능한 배치를 모두 확인하면 ${mode === "max-difference" ? "가장 큰 차" : mode === "max-sum" ? "가장 큰 합" : "가장 작은 합"}은 ${fractionMarkup(shown[0], shown[1])}${sign}${fractionMarkup(shown[2], shown[3])}=${markup(answer)}입니다.`);
       }
       if (variant === 14) {
         const [numerator, firstDenominator, secondDenominator, thirdDenominator] = choose([
@@ -21008,8 +21076,9 @@
         const base = [
           value(3, 4), value(37, 12), null, value(1), value(13, 4), null, null, value(9, 4)
         ];
-        const scale = choose([[1], [2, 3], [2, 3, 4]]);
-        const offset = choose([[0], [0, 1], [0, 1, 2]]);
+        // 2026-11-24: 쉬움도 원문 수치(배율 1·더하기 0) 외에 같은 구조의 변형이 나오도록 넓힌다(3문항 요청 시 3문항).
+        const scale = choose([[1, 2], [2, 3], [2, 3, 4]]);
+        const offset = choose([[0, 1], [0, 1], [0, 1, 2]]);
         const transformed = base.map(current => current && add(multiply(current, value(scale)), value(offset)));
         const canonicalAnswers = [value(25, 12), value(5, 6), value(7, 12)];
         const answers = canonicalAnswers.map(current => add(multiply(current, value(scale)), value(offset)));
@@ -21793,44 +21862,61 @@
           resultContract: contract
         }
       );
-      const project = (scale, origin = [64, 166]) => ([x, y, z]) => [origin[0] + (x - y) * scale, origin[1] - z * scale * .9 + (x + y) * scale * .32];
+      // 2026-11-24: 겨냥도 투영. 앞면(y=0)은 실제 모양 그대로, 깊이(y)는 오른쪽 위로 비스듬히 줄여 그린다(교과서 겨냥도 방식).
+      // 예전 투영은 y가 앞으로 나와 보여야 할 앞면 대신 뒷면을 그리는 바람에 직육면체가 흩어진 면 조각처럼 보였다.
+      const depthX = .42, depthY = .3;
+      const project = (scale, origin = [64, 166]) => ([x, y, z]) => [origin[0] + (x + y * depthX) * scale, origin[1] - (z + y * depthY) * scale];
+      // 점 목록이 상자 [left, top, width, height] 안에 가운데 맞춤으로 들어가도록 투영을 정한다.
+      const fitProject = (points, box, maxScale = 40) => {
+        const raw = project(1, [0, 0]), flat = points.map(raw);
+        const xs = flat.map(point => point[0]), ys = flat.map(point => point[1]);
+        const minX = Math.min(...xs), maxX = Math.max(...xs), minY = Math.min(...ys), maxY = Math.max(...ys);
+        const scale = Math.min(maxScale, box[2] / Math.max(1e-6, maxX - minX), box[3] / Math.max(1e-6, maxY - minY));
+        const origin = [box[0] + (box[2] - (maxX - minX) * scale) / 2 - minX * scale, box[1] + (box[3] - (maxY - minY) * scale) / 2 - minY * scale];
+        return project(scale, origin);
+      };
+      const boxCorners = (a, b, c) => [[0, 0, 0], [a, 0, 0], [a, b, 0], [0, b, 0], [0, 0, c], [a, 0, c], [a, b, c], [0, b, c]];
+      const hiddenEdges = (p, a, b, c) => [[[0, b, 0], [a, b, 0]], [[0, b, 0], [0, 0, 0]], [[0, b, 0], [0, b, c]]].map(([start, end]) => line(...p(start), ...p(end), `class="source61-vs-e3-hidden-edge"`)).join("");
+      const centroid = points => [points.reduce((sum, point) => sum + point[0], 0) / points.length, points.reduce((sum, point) => sum + point[1], 0) / points.length];
       const cuboidBody = ({ a, b, c, solved = false, cut = 0, labels = true }) => {
-        const scale = Math.min(8, 146 / Math.max(a, b));
-        const p = project(scale);
+        const p = fitProject(boxCorners(a, b, c), [40, 34, 250, 160], 8);
         const face = (points, className, extra = "") => polygon(points.map(p), className, extra);
         // The removed cube is the top-front-right corner: the remaining faces are L-shaped,
         // and the three newly exposed square faces close the notch.
         const front = [[0, 0, 0], [a, 0, 0], [a, 0, c - cut], [a - cut, 0, c - cut], [a - cut, 0, c], [0, 0, c]];
         const right = [[a, 0, 0], [a, b, 0], [a, b, c], [a, cut, c], [a, cut, c - cut], [a, 0, c - cut]];
-        const top = [[0, 0, c], [a - cut, 0, c], [a - cut, cut, c], [a, b, c], [0, b, c]];
+        const top = [[0, 0, c], [a - cut, 0, c], [a - cut, cut, c], [a, cut, c], [a, b, c], [0, b, c]];
         const cutX = [[a - cut, 0, c - cut], [a - cut, cut, c - cut], [a - cut, cut, c], [a - cut, 0, c]];
         const cutY = [[a - cut, cut, c - cut], [a, cut, c - cut], [a, cut, c], [a - cut, cut, c]];
         const cutZ = [[a - cut, 0, c - cut], [a, 0, c - cut], [a, cut, c - cut], [a - cut, cut, c - cut]];
         const faces = `${face(top, "source61-vs-e3-face source61-vs-e3-top-face")}${face(right, "source61-vs-e3-face source61-vs-e3-right-face")}${face(front, "source61-vs-e3-face source61-vs-e3-front-face")}${face(cutX, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="x=${a - cut}"`)}${face(cutY, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="y=${cut}"`)}${face(cutZ, solved ? "source61-vs-e3-cut-face is-solved" : "source61-vs-e3-cut-face", `data-cut-position="top-front-right-corner" data-cut-face="z=${c - cut}"`)}`;
-        const edges = [
-          [[0, 0, 0], [a, 0, 0]], [[a, 0, 0], [a, 0, c - cut]], [[a, 0, c - cut], [a - cut, 0, c - cut]], [[a - cut, 0, c - cut], [a - cut, 0, c]], [[a - cut, 0, c], [0, 0, c]], [[0, 0, c], [0, 0, 0]],
-          [[a, 0, 0], [a, b, 0]], [[a, b, 0], [a, b, c]], [[a, b, c], [a, cut, c]], [[a, cut, c], [a, cut, c - cut]], [[a, cut, c - cut], [a, 0, c - cut]],
-          [[0, 0, c], [0, b, c]], [[0, b, c], [a, b, c]], [[a - cut, 0, c], [a - cut, cut, c]], [[a - cut, cut, c], [a, cut, c]],
-          [[a - cut, 0, c - cut], [a - cut, cut, c - cut]], [[a, 0, c - cut], [a, cut, c - cut]], [[a - cut, cut, c - cut], [a, cut, c - cut]]
-        ].map(([start, end], index) => line(...p(start), ...p(end), `class="${index >= 11 ? "source61-vs-e3-cut-edge" : index > 5 && index < 11 ? "source61-vs-e3-hidden-edge" : "source61-vs-e3-edge"}"`)).join("");
-        const labelsMarkup = labels ? `${text(120, 213, `밑면 ${a}cm × ${b}cm`)}${solved ? text(33, 103, `${c}cm`, `class="source61-vs-e3-result-label"`) : ""}${cut ? text(300, 41, solved ? `모서리 홈 ${cut}cm` : "모서리에서 잘라 냄", `class="source61-vs-e3-cut-label"`) : ""}` : "";
-        return `${faces}${edges}${labelsMarkup}${text(305, 68, solved ? `절단면 3개` : "홈 위치", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
+        const edges = `${hiddenEdges(p, a, b, c)}${cut ? [[[a - cut, 0, c - cut], [a - cut, cut, c - cut]], [[a - cut, cut, c - cut], [a, cut, c - cut]], [[a - cut, cut, c - cut], [a - cut, cut, c]]].map(([start, end]) => line(...p(start), ...p(end), `class="source61-vs-e3-cut-edge"`)).join("") : ""}`;
+        const frontBottom = [p([0, 0, 0]), p([a, 0, 0])], leftEdge = [p([0, 0, 0]), p([0, 0, c])], notch = p([a, cut / 2, c]);
+        const labelsMarkup = labels ? `${text((frontBottom[0][0] + frontBottom[1][0]) / 2, frontBottom[0][1] + 24, `밑면 ${a}cm × ${b}cm`)}${solved ? text(leftEdge[0][0] - 10, (leftEdge[0][1] + leftEdge[1][1]) / 2, `${c}cm`, `class="source61-vs-e3-result-label" style="text-anchor:end"`) : ""}${cut ? text(notch[0] + 24, notch[1] - 30, solved ? `모서리 홈 ${cut}cm` : "모서리에서 잘라 냄", `class="source61-vs-e3-cut-label" style="text-anchor:start"`) : ""}` : "";
+        return `${faces}${edges}${labelsMarkup}${text(notch[0] + 24, notch[1] - 12, solved ? `절단면 3개` : "홈 위치", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}" style="text-anchor:start"`)}`;
       };
       const netBody = ({ a, b, c, givenA, givenSum, solved = false }) => {
-        const scale = 10;
-        const x = 158, y = 82, aw = a * scale, bh = b * scale, cw = c * scale;
+        // 2026-11-25: 원본 예제 3-1 전개도와 같게, 앞면 가로 a·높이 c, 옆면 가로 b, 윗면·아랫면 세로 b로 그린다.
+        // 파란 변(앞면 아래 a)과 주황 변(왼쪽 옆면 아래 b)이 한 줄로 이어지고, 두 변을 이은 길이(a+b)를 아래에 표시한다.
+        const scale = Math.min(10, 196 / (2 * b + c), 300 / (2 * a + 2 * b));
+        const aw = a * scale, bw = b * scale, ch = c * scale;
+        const x = 24 + bw, y = 8 + bw;
         const rect = (rx, ry, width, height, face, fill) => `<rect class="source61-vs-e3-net-face ${fill}" x="${rx}" y="${ry}" width="${width}" height="${height}" data-net-face="${face}"/>`;
-        const faces = `${rect(x, y, aw, bh, "front", "source61-vs-e3-net-a")}${rect(x - cw, y, cw, bh, "left", "source61-vs-e3-net-b")}${rect(x + aw, y, cw, bh, "right", "source61-vs-e3-net-c")}${rect(x, y - cw, aw, cw, "top", "source61-vs-e3-net-c")}${rect(x, y + bh, aw, cw, "bottom", "source61-vs-e3-net-c")}${rect(x - cw, y + bh, cw, bh, "back", "source61-vs-e3-net-b")}`;
-        const marks = `<line class="source61-vs-e3-net-edge is-a" x1="${x}" y1="${y + bh}" x2="${x + aw}" y2="${y + bh}"/><line class="source61-vs-e3-net-edge is-b" x1="${x - cw}" y1="${y}" x2="${x - cw}" y2="${y + bh}"/><line class="source61-vs-e3-net-edge is-c" x1="${x + aw}" y1="${y}" x2="${x + aw + cw}" y2="${y}"/>`;
-        const labels = solved ? `${text(185, 42, `세 변 ${a}cm, ${b}cm, ${c}cm`, `class="source61-vs-e3-result-label"`)}${text(210, 218, `접은 뒤 ${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label"`)}` : `${text(70, 209, `${givenA}cm`, `class="source61-vs-e3-measure"`)}${text(214, 35, `${givenSum}cm`, `class="source61-vs-e3-measure"`)}${text(210, 218, "같은 색 변을 대응시켜 접기", `class="source61-vs-e3-note"`)}`;
+        const faces = `${rect(x, y, aw, ch, "front", "source61-vs-e3-net-a")}${rect(x - bw, y, bw, ch, "left", "source61-vs-e3-net-b")}${rect(x + aw, y, bw, ch, "right", "source61-vs-e3-net-b")}${rect(x + aw + bw, y, aw, ch, "back", "source61-vs-e3-net-a")}${rect(x, y - bw, aw, bw, "top", "source61-vs-e3-net-c")}${rect(x, y + ch, aw, bw, "bottom", "source61-vs-e3-net-c")}`;
+        const baseY = y + ch, guideY = y + ch + bw + 10;
+        const marks = `<line class="source61-vs-e3-net-edge is-b" data-net-edge="blue-a" x1="${x}" y1="${baseY}" x2="${x + aw}" y2="${baseY}"/><line class="source61-vs-e3-net-edge is-c" data-net-edge="orange-b" x1="${x - bw}" y1="${baseY}" x2="${x}" y2="${baseY}"/><line class="source61-vs-e3-dimension-guide" data-net-edge="sum-guide" x1="${x - bw}" y1="${guideY}" x2="${x + aw}" y2="${guideY}" stroke="#244b68" stroke-width="1.2"/><line class="source61-vs-e3-dimension-guide" x1="${x - bw}" y1="${baseY}" x2="${x - bw}" y2="${guideY + 5}" stroke="#244b68" stroke-width="1" stroke-dasharray="3 3"/><line class="source61-vs-e3-dimension-guide" x1="${x + aw}" y1="${baseY + bw}" x2="${x + aw}" y2="${guideY + 5}" stroke="#244b68" stroke-width="1" stroke-dasharray="3 3"/>`;
+        const labels = solved
+          ? `${text(x + aw + bw + 4, y - bw / 2, `세 변 ${a}cm, ${b}cm, ${c}cm`, `class="source61-vs-e3-result-label" style="text-anchor:start"`)}${text(x + aw + bw + 4, baseY + bw / 2 + 4, `접은 뒤 ${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label" style="text-anchor:start"`)}`
+          : `${text(x + aw / 2, baseY - 8, `${givenA}cm`, `class="source61-vs-e3-measure"`)}${text(x - bw / 2 + aw / 2, guideY + 16, `${givenSum}cm`, `class="source61-vs-e3-measure"`)}${text(x + aw + bw + 4, baseY + bw / 2 + 4, "같은 색 변을 대응시켜 접기", `class="source61-vs-e3-note" style="text-anchor:start"`)}`;
         return `${faces}${marks}${labels}`;
       };
       const chainBody = ({ a, b, c, s, solved = false }) => {
         const totalLength = 4 * a + 4 * s;
         const depthSkew = .45, depthRise = .3, heightScale = .86;
         const scale = 388 / (totalLength + depthSkew * b);
-        const originX = 16 + depthSkew * b * scale, originY = 145;
-        const p = ([x, y, z]) => [originX + x * scale - y * scale * depthSkew, originY + y * scale * depthRise - z * scale * heightScale];
+        const originX = 16, originY = 175;
+        // 깊이(y)는 오른쪽 위로 그린다(앞면 y=0이 보이는 면).
+        const p = ([x, y, z]) => [originX + x * scale + y * scale * depthSkew, originY - y * scale * depthRise - z * scale * heightScale];
         const pieces = Array.from({ length: 8 }, (_, index) => {
           const big = index % 2 === 0, x = Array.from({ length: index }, (_, prior) => prior % 2 === 0 ? a : s).reduce((sum, value) => sum + value, 0), length = big ? a : s, depth = big ? b : s, height = big ? c : s;
           const front = [[x, 0, 0], [x + length, 0, 0], [x + length, 0, height], [x, 0, height]];
@@ -21850,12 +21936,17 @@
         return `${pieces}${contacts}${answerBand}`;
       };
       const threeFaceBody = ({ a, b, c, areas, solved = false }) => {
-        const p = project(8, [76, 170]);
+        // 세 면: 윗면 a×b(areas[0]), 오른쪽 옆면 b×c(areas[1]), 앞면 a×c(areas[2]). 넓이는 각 면 한가운데에 적는다.
+        const p = fitProject(boxCorners(a, b, c), [70, 26, 260, 168], 12);
         const front = [[0, 0, 0], [a, 0, 0], [a, 0, c], [0, 0, c]].map(p);
         const right = [[a, 0, 0], [a, b, 0], [a, b, c], [a, 0, c]].map(p);
         const top = [[0, 0, c], [a, 0, c], [a, b, c], [0, b, c]].map(p);
-        const labels = solved ? `${text(135, 215, `${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label"`)}${text(135, 232, `부피 ${a * b * c}cm³`, `class="source61-vs-e3-result-label"`)}` : `${text(92, 111, `${areas[0]}cm²`, `class="source61-vs-e3-measure"`)}${text(216, 116, `${areas[1]}cm²`, `class="source61-vs-e3-measure"`)}${text(132, 45, `${areas[2]}cm²`, `class="source61-vs-e3-measure"`)}`;
-        return `${polygon(top, "source61-vs-e3-face source61-vs-e3-area-face-a")}${polygon(front, "source61-vs-e3-face source61-vs-e3-area-face-b")}${polygon(right, "source61-vs-e3-face source61-vs-e3-area-face-c")}${line(front[0][0], front[0][1], front[1][0], front[1][1], `class="source61-vs-e3-edge"`)}${line(front[1][0], front[1][1], front[2][0], front[2][1], `class="source61-vs-e3-edge"`)}${line(right[1][0], right[1][1], right[2][0], right[2][1], `class="source61-vs-e3-hidden-edge"`)}${labels}`;
+        const [topX, topY] = centroid(top), [rightX, rightY] = centroid(right), [frontX, frontY] = centroid(front);
+        const bottomY = Math.max(...front.map(point => point[1]), ...right.map(point => point[1]));
+        const labels = solved
+          ? `${text(200, bottomY + 22, `${a}cm × ${b}cm × ${c}cm`, `class="source61-vs-e3-result-label"`)}${text(200, bottomY + 39, `부피 ${a * b * c}cm³`, `class="source61-vs-e3-result-label"`)}`
+          : `${text(topX, topY + 4, `${areas[0]}cm²`, `class="source61-vs-e3-measure"`)}${text(rightX, rightY + 4, `${areas[1]}cm²`, `class="source61-vs-e3-measure"`)}${text(frontX, frontY + 4, `${areas[2]}cm²`, `class="source61-vs-e3-measure"`)}`;
+        return `${hiddenEdges(p, a, b, c)}${polygon(top, "source61-vs-e3-face source61-vs-e3-area-face-a")}${polygon(front, "source61-vs-e3-face source61-vs-e3-area-face-b")}${polygon(right, "source61-vs-e3-face source61-vs-e3-area-face-c")}${labels}`;
       };
       const stairCells = () => {
         const cells = [];
@@ -21865,7 +21956,7 @@
       const stairBody = ({ faceArea, solved = false }) => {
         const cells = stairCells();
         const occupied = new Set(cells.map(cell => cell.join(",")));
-        const p = project(25, [122, 154]);
+        const p = fitProject(boxCorners(4, 4, 4), [16, 40, 226, 180], 34);
         const directions = { top: [0, 0, 1], front: [0, -1, 0], right: [1, 0, 0] };
         const facePoints = {
           top: ([x, y, z]) => [[x, y, z + 1], [x + 1, y, z + 1], [x + 1, y + 1, z + 1], [x, y + 1, z + 1]],
@@ -21873,7 +21964,8 @@
           right: ([x, y, z]) => [[x + 1, y, z], [x + 1, y + 1, z], [x + 1, y + 1, z + 1], [x + 1, y, z + 1]]
         };
         const isOccupied = ([x, y, z]) => occupied.has(`${x},${y},${z}`);
-        const cubes = [...cells].sort((left, right) => (left[2] - right[2]) || ((left[0] + left[1]) - (right[0] + right[1]))).map(([x, y, z], index) => {
+        // 뒤(깊이 y가 큰 것)부터, 같은 깊이에서는 아래층·왼쪽부터 그려 앞의 정육면체가 뒤를 가리게 한다.
+        const cubes = [...cells].sort((left, right) => (right[1] - left[1]) || (left[2] - right[2]) || (left[0] - right[0])).map(([x, y, z], index) => {
           const coordinate = `${x},${y},${z}`;
           const layer = z + 1;
           const faceMarkup = Object.entries(directions).filter(([, [dx, dy, dz]]) => !isOccupied([x + dx, y + dy, z + dz])).map(([name]) => {
@@ -21904,17 +21996,20 @@
       const crossBody = ({ side, solved = false }) => {
         const coords = [[0, 0, -1], [0, 1, 0], [-1, 0, 0], [1, 0, 0], [0, 0, 0], [0, -1, 0], [0, 0, 1]];
         const directions = ["아래", "뒤", "왼쪽", "오른쪽", "가운데", "앞", "위"];
-        const mapped = coords.map(([x, y, z]) => [188 + (x - y) * 34, 112 + (x + y) * 12 - z * 34]);
-        const cubes = mapped.map(([x, y], index) => cubeMarkup(x, y, 34, solved && index !== 4, index === 4 ? "가운데" : "", `data-cross-coordinate="${coords[index].join(",")}" data-cross-direction="${directions[index]}"`)).join("");
-        const joins = solved ? mapped.slice(1).map(([x, y], index) => line(188 + (coords[index + 1][0] - coords[index + 1][1]) * 17, 129 + (coords[index + 1][0] + coords[index + 1][1]) * 6 - coords[index + 1][2] * 17, x + 17, y + 17, `class="source61-vs-e3-shared-face" data-shared-face="${index + 1}"`)).join("") : "";
+        // cubeMarkup은 앞면 정사각형에 오른쪽 위로 깊이 11을 그리므로, 위치도 같은 방향(깊이 y → 오른쪽 위)으로 놓는다.
+        const mapped = coords.map(([x, y, z]) => [176 + x * 34 + y * 11, 104 - z * 34 - y * 11]);
+        const order = coords.map((coord, index) => index).sort((left, right) => (coords[right][1] - coords[left][1]) || (coords[left][2] - coords[right][2]) || (coords[left][0] - coords[right][0]));
+        const cubes = order.map(index => cubeMarkup(mapped[index][0], mapped[index][1], 34, solved && index !== 4, index === 4 ? "가운데" : "", `data-cross-coordinate="${coords[index].join(",")}" data-cross-direction="${directions[index]}"`)).join("");
+        const joins = solved ? mapped.map(([x, y], index) => index === 4 ? "" : line(mapped[4][0] + 17, mapped[4][1] + 17, x + 17, y + 17, `class="source61-vs-e3-shared-face" data-shared-face="${index < 4 ? index + 1 : index}"`)).join("") : "";
         return `${cubes}${joins}${text(210, 25, `가운데 1개 + 앞·뒤·왼쪽·오른쪽·위·아래 6개`, `class="source61-vs-e3-note"`)}${text(210, 218, solved ? `정육면체 한 변 ${side}cm · 공유면 6개` : "일곱 정육면체의 위치를 그림에서 확인하세요", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
       };
       const cutBody = ({ side, height, solved = false }) => {
-        const p = project(9, [70, 168]);
+        const p = fitProject(boxCorners(side, side, height), [120, 44, 180, 150], 9);
         const front = [[0, 0, 0], [side, 0, 0], [side, 0, height], [0, 0, height]].map(p);
+        const right = [[side, 0, 0], [side, side, 0], [side, side, height], [side, 0, height]].map(p);
         const top = [[0, 0, height], [side, 0, height], [side, side, height], [0, side, height]].map(p);
         const mid = [[0, 0, height / 2], [side, 0, height / 2], [side, side, height / 2], [0, side, height / 2]].map(p);
-        return `${polygon(top, "source61-vs-e3-face")}${polygon(front, "source61-vs-e3-face source61-vs-e3-front-face")}${polygon(mid, solved ? "source61-vs-e3-cut-plane is-solved" : "source61-vs-e3-cut-plane")}${line(mid[0][0], mid[0][1], mid[1][0], mid[1][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[1][0], mid[1][1], mid[2][0], mid[2][1], `class="source61-vs-e3-cut-edge"`)}${text(210, 30, `${side}cm × ${side}cm 밑면에 평행한 절단`, `class="source61-vs-e3-note"`)}${text(210, 210, solved ? `새 절단면 2개 · 밑면 ${side}cm × ${side}cm` : "위와 아래에 새로 생긴 절단면을 표시", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
+        return `${hiddenEdges(p, side, side, height)}${polygon(top, "source61-vs-e3-face source61-vs-e3-top-face")}${polygon(right, "source61-vs-e3-face source61-vs-e3-right-face")}${polygon(front, "source61-vs-e3-face source61-vs-e3-front-face")}${polygon(mid, solved ? "source61-vs-e3-cut-plane is-solved" : "source61-vs-e3-cut-plane")}${line(mid[0][0], mid[0][1], mid[1][0], mid[1][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[1][0], mid[1][1], mid[2][0], mid[2][1], `class="source61-vs-e3-cut-edge"`)}${line(mid[2][0], mid[2][1], mid[3][0], mid[3][1], `class="source61-vs-e3-cut-hidden-edge"`)}${line(mid[3][0], mid[3][1], mid[0][0], mid[0][1], `class="source61-vs-e3-cut-hidden-edge"`)}${text(210, 30, `${side}cm × ${side}cm 밑면에 평행한 절단`, `class="source61-vs-e3-note"`)}${text(210, 210, solved ? `새 절단면 2개 · 밑면 ${side}cm × ${side}cm` : "위와 아래에 새로 생긴 절단면을 표시", `class="${solved ? "source61-vs-e3-result-label" : "source61-vs-e3-note"}"`)}`;
       };
       const viewsBody = ({ a, b, h, solved = false }) => {
         // 원문 그림: 위에서 본 직사각형의 윗변에 한 변의 길이, 두 직사각형 안에 둘레만 적습니다.
@@ -22167,7 +22262,7 @@
         "6-1-u2-e4-example-4-3",
         "6-1-u2-e4-mission-5"
       ];
-      const poolCounts = [1, 3, 3, 3, 3, 3, 3];
+      const poolCounts = [3, 3, 3, 3, 3, 3, 3];
       if (!Number.isInteger(variant) || variant < 0 || variant >= sourceIds.length) throw new Error("6-1 각기둥과 각뿔 개념탐구 4 원문 분기는 0부터 6까지여야 합니다.");
       const sourceItemId = sourceIds[variant];
       const poolIndex = int(rng, 0, poolCounts[variant] - 1);
@@ -22255,6 +22350,71 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-counting-net is-solved" viewBox="0 0 330 300" role="img" aria-label="정육면체의 여섯 면에 붙인 사각뿔의 겉면을 펼쳐 세는 그림" data-source61-e4-structure="cube-six-pyramid-assembly" data-source61-e4-geometry="shared-cube-six-pyramid-model" data-solid-face-count="24" data-solid-edge-count="36" data-solid-vertex-count="14" data-result-highlight="74"><text x="165" y="17" text-anchor="middle">겉면을 펼쳐 세는 그림</text>${faces.join("")}${edges.join("")}${vertices.join("")}<text x="165" y="179" text-anchor="middle">면: 삼각형 4개 × 사각뿔 6개 = 24개</text><text x="165" y="207" text-anchor="middle">모서리: 정육면체 12개 + 옆모서리 24개 = 36개</text><text x="165" y="235" text-anchor="middle">꼭짓점: 정육면체 8개 + 각뿔 꼭짓점 6개 = 14개</text><text x="165" y="271" text-anchor="middle">사각뿔의 밑면 6개는 붙인 뒤 겉에서 보이지 않습니다.</text></svg>`;
       };
 
+      // 예제 4-1 추가 고정 문항(pool 1·2): 같은 구조(정육면체의 면에 밑면이 꼭 맞는 사각뿔을 하나씩 붙임)에서 사각뿔을 붙이는 면의 수만 바꿉니다.
+      // pool 1: 윗면과 아랫면을 뺀 네 옆면 + 사각뿔 4개, pool 2: 아랫면을 뺀 다섯 면 + 사각뿔 5개
+      const cubePartialPyramidSvg = ({ bare, solved = false }) => {
+        const count = 6 - bare.length;
+        const countWord = { 4: "네", 5: "다섯" }[count];
+        const placeText = { 4: "윗면과 아랫면을 뺀 네 옆면", 5: "아랫면을 뺀 다섯 면" }[count];
+        const solidKind = `cube-${{ 4: "four", 5: "five" }[count]}-pyramids`;
+        const structure = `data-source61-e4-structure="cube-${{ 4: "four", 5: "five" }[count]}-pyramid-assembly" data-source61-e4-geometry="shared-${solidKind}-model"`;
+        if (!solved) {
+          const cube = [[58, 92], [158, 92], [158, 184], [58, 184], [106, 56], [206, 56], [206, 148], [106, 148]];
+          const cubeEdges = [[0, 1], [1, 2], [2, 3], [3, 0], [4, 5], [5, 6], [6, 7], [7, 4], [0, 4], [1, 5], [2, 6], [3, 7]];
+          const wire = cubeEdges.map(([a, b], index) => line(cube[a], cube[b], `source61-e4-edge${index > 4 && index < 9 ? " source61-e4-hidden-edge" : ""}`)).join("");
+          const glyph = (cx, cy, scale) => {
+            const base = [[cx - 16 * scale, cy + 10 * scale], [cx + 16 * scale, cy + 10 * scale], [cx + 9 * scale, cy - 9 * scale], [cx - 9 * scale, cy - 9 * scale]];
+            const apex = [cx, cy - 27 * scale];
+            return `<g class="source61-e4-separate-pyramid">${base.map(point => line(apex, point, "source61-e4-edge")).join("")}${base.map((point, i) => line(point, base[(i + 1) % 4], "source61-e4-edge")).join("")}</g>`;
+          };
+          const glyphSpots = count === 4 ? [[267, 70], [269, 214], [26, 70], [27, 214]] : [[267, 54], [287, 138], [269, 230], [26, 54], [25, 138]];
+          return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-cube-partial-pyramids" viewBox="0 0 330 300" role="img" aria-label="정육면체의 ${placeText}에 합동인 사각뿔을 붙이는 관계 그림" ${structure} data-final-topology="unknown">${wire}${cube.map((point, index) => circle(point, "source61-e4-vertex", `data-source-vertex="cube-${index + 1}"`)).join("")}<text x="108" y="204" text-anchor="middle">정육면체</text>${glyphSpots.map(([x, y]) => glyph(x, y, 0.72)).join("")}<text x="164" y="292" text-anchor="middle">정육면체의 ${placeText}에 사각뿔을 하나씩 붙입니다.</text></svg>`;
+        }
+        const netFaces = [
+          { name: "윗면", col: 1, row: 0, corners: ["E", "F", "B", "A"] },
+          { name: "왼쪽", col: 0, row: 1, corners: ["E", "A", "D", "H"] },
+          { name: "앞면", col: 1, row: 1, corners: ["A", "B", "C", "D"] },
+          { name: "오른쪽", col: 2, row: 1, corners: ["B", "F", "G", "C"] },
+          { name: "뒷면", col: 3, row: 1, corners: ["F", "E", "H", "G"] },
+          { name: "아랫면", col: 1, row: 2, corners: ["D", "C", "G", "H"] }
+        ].map(face => ({ ...face, pyramid: !bare.includes(face.name) }));
+        const cellSize = 40, startX = 65, startY = 30;
+        const seenCubeEdges = new Set(), seenCubeVertices = new Set();
+        let edgeIndex = 0, faceIndex = 0, apexIndex = 0;
+        const faces = [], edges = [], vertices = [];
+        netFaces.forEach(face => {
+          const x = startX + face.col * cellSize, y = startY + face.row * cellSize;
+          const corners = [[x, y], [x + cellSize, y], [x + cellSize, y + cellSize], [x, y + cellSize]];
+          const center = [x + cellSize / 2, y + cellSize / 2];
+          if (!face.pyramid) {
+            faceIndex += 1;
+            faces.push(polygon(corners, "source61-e4-face source61-e4-plain-face", `data-solid-face="${solidKind}" data-face-index="${faceIndex}" data-face-role="cube-${face.name}"`));
+          }
+          face.corners.forEach((vertexId, index) => {
+            const next = (index + 1) % 4;
+            if (face.pyramid) {
+              faceIndex += 1;
+              faces.push(polygon([center, corners[index], corners[next]], `source61-e4-face source61-e4-face-${faceIndex % 4}`, `data-solid-face="${solidKind}" data-face-index="${faceIndex}"`));
+            }
+            const cubeEdgeId = edgeKey(vertexId, face.corners[next]);
+            const cubeEdgeData = seenCubeEdges.has(cubeEdgeId) ? "" : `data-solid-edge="${solidKind}" data-edge-index="${++edgeIndex}" data-edge-role="cube-${cubeEdgeId}"`;
+            seenCubeEdges.add(cubeEdgeId);
+            edges.push(line(corners[index], corners[next], "source61-e4-edge source61-e4-net-boundary", cubeEdgeData));
+            if (face.pyramid) edges.push(line(center, corners[index], "source61-e4-edge source61-e4-net-ray", `data-solid-edge="${solidKind}" data-edge-index="${++edgeIndex}" data-edge-role="pyramid-${face.name}-${index + 1}"`));
+            if (!seenCubeVertices.has(vertexId)) {
+              seenCubeVertices.add(vertexId);
+              vertices.push(circle(corners[index], "source61-e4-vertex", `data-solid-vertex="${solidKind}" data-vertex-index="cube-${vertexId}"`));
+            }
+          });
+          if (face.pyramid) {
+            apexIndex += 1;
+            vertices.push(circle(center, "source61-e4-vertex source61-e4-net-apex", `data-solid-vertex="${solidKind}" data-vertex-index="apex-${apexIndex}"`));
+          }
+        });
+        const faceTotal = faceIndex, edgeTotal = edgeIndex, vertexTotal = seenCubeVertices.size + apexIndex;
+        const bareText = bare.length === 1 ? "아랫면 1개" : "윗면·아랫면 2개";
+        return `<svg class="geometry-diagram source61-e4-diagram source61-e4-cube-pyramids source61-e4-cube-partial-pyramids source61-e4-counting-net is-solved" viewBox="0 0 330 300" role="img" aria-label="정육면체의 ${countWord} 면에 붙인 사각뿔과 붙이지 않은 면의 겉면을 펼쳐 세는 그림" ${structure} data-solid-face-count="${faceTotal}" data-solid-edge-count="${edgeTotal}" data-solid-vertex-count="${vertexTotal}" data-result-highlight="${faceTotal + edgeTotal + vertexTotal}"><text x="165" y="17" text-anchor="middle">겉면을 펼쳐 세는 그림</text>${faces.join("")}${edges.join("")}${vertices.join("")}<text x="165" y="179" text-anchor="middle">면: 삼각형 4개 × 사각뿔 ${count}개 + ${bareText} = ${faceTotal}개</text><text x="165" y="207" text-anchor="middle">모서리: 정육면체 12개 + 옆모서리 ${4 * count}개 = ${edgeTotal}개</text><text x="165" y="235" text-anchor="middle">꼭짓점: 정육면체 8개 + 각뿔 꼭짓점 ${count}개 = ${vertexTotal}개</text><text x="165" y="271" text-anchor="middle">사각뿔의 밑면 ${count}개는 붙인 뒤 겉에서 보이지 않습니다.</text></svg>`;
+      };
       const truncatedPyramidModel = n => {
         const base = ring(n, 154, 164, 84, 42);
         const apex = [154, 28];
@@ -22428,6 +22588,19 @@
         return `<svg class="geometry-diagram source61-e4-diagram source61-e4-square-net${apexSquare ? " source61-e4-apex-square-net" : ""}${solved ? " is-solved" : ""}" viewBox="0 0 330 300" role="img" aria-label="정사각뿔 전개도와 각뿔 꼭짓점을 이은 정사각형" data-source61-e4-structure="${structure}" data-source61-e4-geometry="shared-square-pyramid-net-coordinate-model" data-frame-kind="${frameKind}" data-outer-side-cm="${outerSide}" data-base-diagonal-cm="${diagonal}"${!apexSquare || solved ? ` data-base-area-cm2="${baseArea}"` : ""}${solved ? ` data-net-area-cm2="${netArea}" data-result-highlight="${netArea}"` : ""}>${solvedHeading}${polygon(frame, frameClass, `data-net-frame="${frameKind}"`)}${faces}${complements}${foldLines}${diagonalLine}${diagonalLabel}${baseLabel}${apexPoints}<text class="source61-e4-net-dimension" x="165" y="270">${frameCaption}</text>${!apexSquare ? `<text class="source61-e4-net-dimension" x="294" y="142" transform="rotate(-90 294 142)">${outerSide}cm</text>` : ""}${solved ? `<text class="source61-e4-result-label" x="165" y="290">전개도 넓이 ${netArea}cm²</text>` : ""}</svg>`;
       };
 
+      if (variant === 0 && poolIndex > 0) {
+        // 추가 고정 문항: 면 = 붙이지 않은 정육면체 면 + 사각뿔 수×4, 모서리 = 12 + 사각뿔 수×4, 꼭짓점 = 8 + 사각뿔 수
+        const bare = [null, ["윗면", "아랫면"], ["아랫면"]][poolIndex];
+        const count = 6 - bare.length;
+        const faces = bare.length + count * 4, edges = 12 + count * 4, vertices = 8 + count, total = faces + edges + vertices;
+        if (vertices - edges + faces !== 2 || total !== [null, 58, 66][poolIndex]) throw new Error(`${sourceItemId} 고정 문항 ${poolIndex + 1}의 면·모서리·꼭짓점 검산이 맞지 않습니다.`);
+        const countWord = { 4: "4", 5: "5" }[count];
+        const placeText = { 4: "윗면과 아랫면을 뺀 네 옆면", 5: "아랫면을 뺀 다섯 면" }[count];
+        const bareSolution = bare.length === 1 ? "사각뿔을 붙이지 않은 아랫면 1개가" : "사각뿔을 붙이지 않은 윗면과 아랫면 2개가";
+        const promptVisual = `${cubePartialPyramidSvg({ bare })}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", `${placeText}에 하나씩`))}`;
+        const answerVisual = `${cubePartialPyramidSvg({ bare, solved: true })}${mathBoard("완성된 입체도형", row("면", `삼각형 ${count * 4}개, 정사각형 ${bare.length}개`) + row("모서리", `${edges}개`) + row("꼭짓점", `${vertices}개`) + row("합", `${faces}+${edges}+${vertices}=${total}`))}`;
+        return fixedResult(`모든 모서리의 길이가 같은 정육면체 1개와, 밑면의 모양과 크기가 정육면체의 한 면과 같은 사각뿔 ${countWord}개가 있습니다. 사각뿔을 정육면체의 ${placeText}에 꼭 맞게 하나씩 붙여 입체도형을 만들 때, 완성된 입체도형의 꼭짓점 수, 모서리 수, 면의 수의 합을 구하세요.${promptVisual}${support("붙인 뒤 겉으로 보이는 삼각형 면과 새로 생긴 꼭짓점을 나누어 세어 보세요.")}${challenge}${evidence("cube-six-pyramid-assembly", [count])}`, `${total}`, `사각뿔을 붙인 ${count}개의 면마다 삼각형 면 4개가 겉으로 보이고, ${bareSolution} 그대로 남으므로 면은 ${count}×4+${bare.length}=${faces}개입니다. 정육면체의 모서리 12개와 사각뿔의 옆모서리 ${count}×4=${count * 4}개를 합하면 모서리는 ${edges}개입니다. 정육면체의 꼭짓점 8개와 사각뿔의 꼭짓점 ${count}개를 합하면 꼭짓점은 ${vertices}개입니다. 따라서 합은 ${faces}+${edges}+${vertices}=${total}입니다.`, answerVisual);
+      }
       if (variant === 0) {
         const total = 74;
         const promptVisual = `${cubePyramidSvg({})}${mathBoard("붙이는 방법", row("가운데 도형", "정육면체") + row("붙이는 도형", "합동인 사각뿔") + row("붙이는 자리", "정육면체의 각 면에 하나씩"))}`;
@@ -22587,11 +22760,13 @@
         const pools = [
           { low: 66.7, high: 72.4, divisor: 16, min: 66.72, max: 72.32 },
           { low: 54.3, high: 61.8, divisor: 24, min: 54.48, max: 61.68 },
-          { low: 82.1, high: 90.6, divisor: 25, min: 82.25, max: 90.50 }
+          { low: 82.1, high: 90.6, divisor: 25, min: 82.25, max: 90.25 }
         ][poolIndex];
+        // 2026-11-24: 90.50(=90.5)은 소수 둘째 자리 수가 아니므로 pool 2의 가장 큰 수는 90.25. 답은 물음 순서(가장 큰 수, 가장 작은 수)대로 쓴다.
         const cents = [];
-        for (let scaled = Math.floor(pools.low * 100) + 1; scaled < Math.ceil(pools.high * 100); scaled += 1) if (scaled % pools.divisor === 0) cents.push(scaled / 100);
-        const answer = `${fixed2(pools.min)}, ${fixed2(pools.max)}`;
+        for (let scaled = Math.floor(pools.low * 100) + 1; scaled < Math.ceil(pools.high * 100); scaled += 1) if (scaled % pools.divisor === 0 && scaled % 10 !== 0) cents.push(scaled / 100);
+        if (cents[0] !== pools.min || cents.at(-1) !== pools.max) throw new Error("6-1-u3-e1-example-3: 범위 안 소수 둘째 자리 수의 최소·최대가 고정 값과 다릅니다.");
+        const answer = `가장 큰 수 ${fixed2(pools.max)}, 가장 작은 수 ${fixed2(pools.min)}`;
         const answerHtml = `${svg("범위 안에서 나눌 수 있는 수직선", `<line class="source61-e1-number-line" x1="34" y1="94" x2="326" y2="94"/><line class="source61-e1-range" x1="88" y1="94" x2="272" y2="94"/><circle class="source61-e1-point" cx="${88 + (pools.min - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><circle class="source61-e1-point" cx="${88 + (pools.max - pools.low) / (pools.high - pools.low) * 184}" cy="94" r="7"/><text x="88" y="70">${pools.low}</text><text x="272" y="70">${pools.high}</text><text class="source61-e1-result" x="180" y="137">가장 작은 수 ${fixed2(pools.min)} · 가장 큰 수 ${fixed2(pools.max)}</text>`, true, [pools.min, pools.max])}${mathBoard("나눌 수 있는 수", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", `${pools.divisor}`) + row("확인한 수", cents.map(fixed2).join(", ")) )}`;
         return fixedResult(`${pools.low}보다 크고 ${pools.high}보다 작은 소수 둘째 자리 수 중 ${pools.divisor}로 나누어 소수 둘째 자리까지 나타낼 수 있는 수의 가장 큰 수와 가장 작은 수를 각각 구하세요.${mathBoard("조건", row("범위", `${pools.low} &lt; □ &lt; ${pools.high}`) + row("나누는 수", pools.divisor))}${support("범위 안의 소수 둘째 자리 수를 만들고 ${pools.divisor}로 나누어지는 수를 골라 보세요.")}${challenge}${evidence([pools.low, pools.high, pools.divisor, pools.min, pools.max], "two-values")}`, answer, `범위 안의 소수 둘째 자리 수 중 ${pools.divisor}로 나누어지는 수를 모두 확인하면 가장 작은 수는 ${fixed2(pools.min)}, 가장 큰 수는 ${fixed2(pools.max)}입니다.`, answerWrap(answerHtml, [pools.min, pools.max]));
       }
@@ -23847,7 +24022,7 @@
         return fixedResult(`가에 대한 나의 비율은 ${fractionText(baN, baD)}, 나와 다의 비율은 ${bdDecimal}일 때, 가에 대한 다의 비율을 소수로 나타내세요.${promptVisual}`, decimalText, `풀이 기준: 나와 다의 비율은 다를 기준량으로 한 나의 비율(나÷다)입니다. ${bdDecimal}=${fractionText(bdN, bdD)}이므로 (가에 대한 다의 비율)=(가에 대한 나의 비율)÷(다에 대한 나의 비율)=${fractionText(baN, baD)}÷${fractionText(bdN, bdD)}=${fractionText(daN, daD)}=${decimalText}입니다.`, promptVisual, answerVisual, pools);
       }
 
-      const pools = [[48, 1, 8, 2, 1, 17, 10], [60, 1, 5, 3, 1, 2, 1], [64, 3, 8, 1, 4, 4, 7]][poolIndex];
+      const pools = [[48, 1, 8, 2, 1, 17, 10], [60, 1, 5, 2, 1, 11, 7], [64, 3, 8, 1, 4, 4, 7]][poolIndex]; // 2026-11-24: pool 1은 답이 2(자연수)라 "기약분수로" 물음과 맞지 않아 K팝만:힙합만 2:1(답 11/7)로 바꿈
       const [total, commonNumerator, commonDenominator, onlyKNumerator, onlyKNumeratorDenominator, answerNumerator, answerDenominator] = pools;
       const commonRatioDecimal = String(Number((commonNumerator / commonDenominator).toFixed(3)));
       const common = total * commonNumerator / commonDenominator;
@@ -28779,7 +28954,8 @@
       }
 
       if (variant === 8) {
-        const values = [[21500, 34000, 16000, 32000, 25200, 5, 8, 4, 10, 6], [18000, 32000, 18000, 33000, 25200, 5, 8, 4, 10, 6], [22000, 30000, 16400, 35000, 23400, 5, 8, 4, 10, 6]][poolIndex];
+        // 2026-11-24: pool 0의 나 공장은 원본 그림(1만 자루 3개, 100자루 4개)대로 30400자루다.
+        const values = [[21500, 30400, 16000, 32000, 25200, 5, 8, 4, 10, 6], [18000, 32000, 18000, 33000, 25200, 5, 8, 4, 10, 6], [22000, 30000, 16400, 35000, 23400, 5, 8, 4, 10, 6]][poolIndex];
         const production = values.slice(0, 5), machines = values.slice(5);
         const rates = production.map((value, index) => value / machines[index]);
         const answerValue = Math.max(...rates) - Math.min(...rates);
@@ -29104,7 +29280,10 @@
       const stripSvg = ({ title, rows, values, solved = false, highlights = [], resultText = "", rowHeight = 72, showLegend = true, emptyStrip = false }) => {
         const top = 82;
         const legendSegments = rows[0]?.segments || [];
-        const legendRows = Math.max(1, Math.ceil(legendSegments.length / 3));
+        // 2026-11-24: 첫 줄과 항목이 다른 띠(예: 2반이 좋아하는 과일)는 legend:true일 때 그 줄 이름과 함께 범례를 하나 더 둔다.
+        const extraLegends = rows.slice(1).filter(row => row.legend);
+        const extraLegendLines = extraLegends.reduce((sum, row) => sum + 1 + Math.ceil(row.segments.length / 3), 0);
+        const legendRows = Math.max(1, Math.ceil(legendSegments.length / 3)) + extraLegendLines;
         const legendTop = top + rows.length * rowHeight + 4;
         const resultTop = legendTop + legendRows * 18 + 5;
         const height = resultTop + (solved && resultText ? 34 : 10);
@@ -29114,8 +29293,16 @@
         }).join("");
         const rowsMarkup = rows.map((row, index) => stripRow({ y: top + index * rowHeight, label: row.label, segments: row.segments, solved, highlight: highlights[index] || [], meta: row.meta, annotations: row.annotations, dimensions: row.dimensions })).join("");
         const legend = showLegend ? legendSegments.map((segment, index) => `<g><rect x="${34 + (index % 3) * 168}" y="${legendTop + Math.floor(index / 3) * 18}" width="9" height="9" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width=".6"/>${svgText(48 + (index % 3) * 168, legendTop + 8 + Math.floor(index / 3) * 18, segment.legendValue || `${segment.label}${segment.showPercent === false ? "" : ` ${segment.percent}%`}`, "font-size=\"8\" style=\"text-anchor:start\"")}</g>`).join("") : "";
+        let extraLine = Math.ceil(legendSegments.length / 3);
+        const extraLegendMarkup = showLegend ? extraLegends.map(row => {
+          const headY = legendTop + extraLine * 18 + 8;
+          const items = row.segments.map((segment, index) => `<g><rect x="${34 + (index % 3) * 168}" y="${legendTop + (extraLine + 1 + Math.floor(index / 3)) * 18}" width="9" height="9" fill="${colors[index % colors.length]}" stroke="#183b56" stroke-width=".6"/>${svgText(48 + (index % 3) * 168, legendTop + 8 + (extraLine + 1 + Math.floor(index / 3)) * 18, segment.label, "font-size=\"8\" style=\"text-anchor:start\"")}</g>`).join("");
+          const markup = `<g class="source61-e2-extra-legend">${svgText(34, headY, row.label, "font-size=\"8\" font-weight=\"900\" style=\"text-anchor:start\"")}${items}</g>`;
+          extraLine += 1 + Math.ceil(row.segments.length / 3);
+          return markup;
+        }).join("") : "";
         const resultMarkup = solved && resultText ? `<rect class="source61-e2-result-box" data-final-answer="${esc(resultText)}" x="32" y="${resultTop}" width="476" height="28" rx="4" fill="#ffe9a8" stroke="#c78b00" stroke-width="2"/>${svgText(270, resultTop + 18, `답: ${resultText}`, "font-size=\"9\" font-weight=\"900\"")}` : "";
-        return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-structure="${esc(title)}" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-segment-order="${rows.map(row => row.segments.map(segment => segment.label).join("|")).join(";")}"${emptyStrip ? ` data-source61-e2-empty-strip="true"` : ""}${solved ? ` data-result-highlight="${esc(rows.flatMap((row, rowIndex) => row.segments.filter((_, index) => (highlights[rowIndex] || []).includes(index)).map(segment => segment.label).join(",")))}" data-final-answer="${esc(resultText)}"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 31, title, "font-size=\"13\" font-weight=\"900\"")}${ticks}${svgText(166, 70, "백분율(%)", "font-size=\"9\" style=\"text-anchor:start\"")}${rowsMarkup}${legend}${resultMarkup}</svg>`;
+        return `<svg class="geometry-diagram source61-graphs-e2-diagram" style="width:min(560px,100%);height:auto" viewBox="0 0 540 ${height}" role="img" aria-label="${esc(title)}" data-source61-graphs-e2-structure="${esc(title)}" data-source61-graphs-e2-layout="${layoutKind}" data-source61-graphs-e2-values="${values.join(",")}" data-source61-graphs-e2-segment-order="${rows.map(row => row.segments.map(segment => segment.label).join("|")).join(";")}"${emptyStrip ? ` data-source61-e2-empty-strip="true"` : ""}${solved ? ` data-result-highlight="${esc(rows.flatMap((row, rowIndex) => row.segments.filter((_, index) => (highlights[rowIndex] || []).includes(index)).map(segment => segment.label).join(",")))}" data-final-answer="${esc(resultText)}"` : ""}><rect class="source61-e2-frame" x="18" y="15" width="504" height="${height - 20}" rx="6" fill="#f7fafc" stroke="#183b56" stroke-width="2"/>${svgText(270, 31, title, "font-size=\"13\" font-weight=\"900\"")}${ticks}${svgText(166, 70, "백분율(%)", "font-size=\"9\" style=\"text-anchor:start\"")}${rowsMarkup}${legend}${extraLegendMarkup}${resultMarkup}</svg>`;
       };
       const facePictograph = ({ title, labels, values, solved = false }) => {
         const cellWidth = 226, cellHeight = 92, startX = 28, startY = 56, gapX = 14, gapY = 12;
@@ -29206,7 +29393,7 @@
           { total: 300, classes: [20, 40, 25, 15], fruits: [28, 24, 22, 15, 11] }
         ][poolIndex];
         const classLabels = ["1반", "2반", "3반", "4반"], fruitLabels = ["바나나", "사과", "귤", "포도", "배"];
-        const makeRows = solved => [{ label: "6학년 반별", segments: classLabels.map((label, index) => ({ label, percent: pools.classes[index], showPercent: solved || index !== 1 })) }, { label: "2반이 좋아하는 과일", segments: fruitLabels.map((label, index) => ({ label, percent: pools.fruits[index] })) }];
+        const makeRows = solved => [{ label: "6학년 반별", segments: classLabels.map((label, index) => ({ label, percent: pools.classes[index], showPercent: solved || index !== 1 })) }, { label: "2반이 좋아하는 과일", legend: true, segments: fruitLabels.map((label, index) => ({ label, percent: pools.fruits[index] })) }];
         const classCount = pools.total * pools.classes[1] / 100, grapeCount = classCount * pools.fruits[3] / 100;
         const resultText = `포도 ${grapeCount}명`;
         const visual = solved => stripSvg({ title: "반별 학생 수와 2반이 좋아하는 과일", rows: makeRows(solved), values: [pools.total, ...pools.classes, ...pools.fruits], solved, highlights: solved ? [[1], [3]] : [[], []], resultText: solved ? resultText : "" });
@@ -29243,11 +29430,14 @@
       }
 
       if (variant === 7) {
+        // 2026-11-24: pool 1·2는 그림의 띠 길이와 답이 문장 조건(봄=여름×분수, 겨울=봄×2)과 맞지 않았다(답 18·40명 → 조건대로면 6·20명).
+        // 조건을 만족하는 수치로 바꾸고, 생성할 때 조건을 다시 확인한다.
         const pools = [
-          { total: 80, percent: [15, 35, 20, 30], relation: `${fractionMarkup(3, 7)}` },
-          { total: 120, percent: [20, 35, 15, 30], relation: `${fractionMarkup(4, 7)}` },
-          { total: 200, percent: [20, 30, 20, 30], relation: `${fractionMarkup(2, 3)}` }
-        ][poolIndex];
+          { total: 80, percent: [15, 35, 20, 30], rel: [3, 7] },
+          { total: 120, percent: [15, 30, 25, 30], rel: [1, 2] },
+          { total: 200, percent: [20, 28, 12, 40], rel: [5, 7] }
+        ].map(pool => ({ ...pool, relation: `${fractionMarkup(pool.rel[0], pool.rel[1])}` }))[poolIndex];
+        if (pools.percent[0] * pools.rel[1] !== pools.percent[1] * pools.rel[0] || pools.percent[3] !== 2 * pools.percent[0] || pools.percent.reduce((sum, value) => sum + value, 0) !== 100) throw new Error("6-1-u5-e2-mission-4: 계절 띠그래프 수치가 문장 조건과 맞지 않습니다.");
         const labels = ["봄", "여름", "가을", "겨울"], makeRows = solved => [{ label: "태어난 계절", segments: labels.map((label, index) => ({ label, percent: pools.percent[index], showPercent: solved || index === 1 })) }];
         const answer = pools.total * pools.percent[2] / 100;
         const resultText = `${answer}명`;
@@ -30769,7 +30959,8 @@
         return fixed(`${surveyIntro(d.total)} 가장 많은 사람들이 찬성한 이유는 가장 많은 사람들이 반대한 이유보다 몇 명이 더 많습니까?`, answer, `찬성의 큰 이유는 ${num(d.total * d.agree / 100 * agreeMax / 100)}명, 반대의 큰 이유는 ${num(d.total * d.oppose / 100 * opposeMax / 100)}명입니다. 차는 ${answer}입니다.`, `${main}${p1}${p2}`, `${a1}${a2}${a3}`, [d.total, d.agree, d.oppose, ...d.agreeReasons, ...d.opposeReasons], "circle-strip-difference", `찬성 중 가장 큰 이유에 해당하는 사람은 ${num(d.total * d.agree * agreeMax / 10000)}명입니다.`);
       }
       if (variant === 1) {
-        const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [30, 28, 25, 17], opposeReasons: [40, 30, 20, 10] }][poolIndex];
+        // 2026-11-24: pool 2는 답이 22.1875%로 끝나지 않아(반올림 지시 없음) 찬성 이유 [34, 30, 24, 12]로 바꿔 17.5%가 되게 함.
+        const d = [{ total: 5000, agree: 70, oppose: 30, agreeReasons: [35, 34, 22, 9], opposeReasons: [33, 32, 28, 7] }, { total: 6000, agree: 60, oppose: 40, agreeReasons: [40, 30, 20, 10], opposeReasons: [25, 35, 30, 10] }, { total: 4000, agree: 75, oppose: 25, agreeReasons: [34, 30, 24, 12], opposeReasons: [40, 30, 20, 10] }][poolIndex];
         const trafficRate = d.opposeReasons[2];
         const moved = d.total * d.oppose * trafficRate / 10000, oldOther = d.total * d.agree * d.agreeReasons[3] / 10000;
         const newAgree = d.total * d.agree / 100 + moved, newOther = oldOther + moved, answer = `${(newOther * 100 / newAgree).toFixed(2).replace(/0+$/, "").replace(/\.$/, "")}%`;

@@ -1,7 +1,7 @@
 // Generated from approved public channels. Do not add post bodies or personal data.
 globalThis.HIGHSELECT_ACADEMY_NOTICES = {
   "schemaVersion": 1,
-  "checkedAt": "2026-11-23",
+  "checkedAt": "2026-11-25",
   "policy": {
     "branches": [
       "대치",
@@ -19,96 +19,84 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "dg-bundang-tests",
       "academy": "DG",
       "branch": "분당",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=bundang",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "dg-daechi-seminars",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/parent-seminar/",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "dg-daechi-tests",
       "academy": "DG",
       "branch": "대치",
       "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "dp-blog",
       "academy": "DP",
       "branch": "title",
       "url": "https://blog.naver.com/dpmath",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "ed-blog",
       "academy": "ED",
       "branch": "대치",
       "url": "https://blog.naver.com/edenmath",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "sh-blog",
       "academy": "SH",
       "branch": "대치",
       "url": "https://blog.naver.com/sharpedu",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "sm-blog",
       "academy": "SM",
       "branch": "대치",
       "url": "https://blog.naver.com/won1934",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     },
     {
       "id": "wm-blog",
       "academy": "WM",
       "branch": "대치",
       "url": "https://blog.naver.com/wonmath563",
-      "checkedAt": "2026-11-23",
+      "checkedAt": "2026-11-25",
       "status": "ok",
-      "lastSuccessAt": "2026-11-23"
+      "lastSuccessAt": "2026-11-25"
     }
   ],
   "items": [
-    {
-      "id": "dg-daechi-seminars-1371",
-      "sourceId": "dg-daechi-seminars",
-      "academy": "DG",
-      "branch": "대치",
-      "category": "seminar",
-      "title": "[대치] 2027 예비중2 (현 중1) 온라인 학습전략설명회",
-      "url": "https://apply.dailystudy.com/parent-seminar/",
-      "publishedAt": null,
-      "eventDate": "2026-11-24",
-      "scheduleText": "2026-11-24 11:00 · 깊생TV 유튜브 (온라인)"
-    },
     {
       "id": "dg-daechi-seminars-1372",
       "sourceId": "dg-daechi-seminars",
@@ -144,6 +132,127 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": null,
       "eventDate": "2026-11-27",
       "scheduleText": "2026-11-27 11:00 · 깊생TV 유튜브 (온라인)"
+    },
+    {
+      "id": "dg-daechi-tests-11300179da25",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "초4·초5·초6 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-11-28",
+      "scheduleText": "2026-11-28 · 13:00 / 15:00"
+    },
+    {
+      "id": "dg-daechi-tests-8776fa4f3cc9",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "초4·초5·초6 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-11-29",
+      "scheduleText": "2026-11-29 · 13:00 / 15:00"
+    },
+    {
+      "id": "dg-daechi-tests-ea145d027623",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "초4·초5·초6 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-05",
+      "scheduleText": "2026-12-05 · 13:00 / 15:00"
+    },
+    {
+      "id": "dg-daechi-seminars-1380",
+      "sourceId": "dg-daechi-seminars",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "seminar",
+      "title": "[대치] 2027 휘문고 2학년 학부모 설명회",
+      "url": "https://apply.dailystudy.com/parent-seminar/",
+      "publishedAt": null,
+      "eventDate": "2026-12-10",
+      "scheduleText": "2026-12-10 20:00 · 대치 고등수학 본원 501호"
+    },
+    {
+      "id": "dg-daechi-tests-f991c56e8f27",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "중2 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-12",
+      "scheduleText": "2026-12-12 · 13:00 / 15:30"
+    },
+    {
+      "id": "dg-daechi-tests-c89b5a0df067",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "중2 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-13",
+      "scheduleText": "2026-12-13 · 13:00 / 15:30"
+    },
+    {
+      "id": "dg-daechi-tests-68b6f6409200",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "중2 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-19",
+      "scheduleText": "2026-12-19 · 10:00"
+    },
+    {
+      "id": "dg-daechi-tests-a7e1d4fcd014",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "중2 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-20",
+      "scheduleText": "2026-12-20 · 13:00 / 15:30"
+    },
+    {
+      "id": "dg-daechi-tests-b9a32fb98567",
+      "sourceId": "dg-daechi-tests",
+      "academy": "DG",
+      "branch": "대치",
+      "category": "test",
+      "title": "중2 입학테스트",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master",
+      "publishedAt": null,
+      "eventDate": "2026-12-27",
+      "scheduleText": "2026-12-27 · 13:00 / 15:30"
+    },
+    {
+      "id": "ed-blog-224486250795-대치",
+      "sourceId": "ed-blog",
+      "academy": "ED",
+      "branch": "대치",
+      "category": "test",
+      "title": "[중등관] 공통수학1 기본반 개강 (★초6★)",
+      "url": "https://blog.naver.com/edenmath/224486250795",
+      "publishedAt": "2026-11-24",
+      "eventDate": null,
+      "scheduleText": "",
+      "revision": "b979ca22240b8467"
     },
     {
       "id": "dp-blog-224486234102-대치",
@@ -286,7 +395,7 @@ globalThis.HIGHSELECT_ACADEMY_NOTICES = {
       "publishedAt": "2026-10-30",
       "eventDate": null,
       "scheduleText": "",
-      "revision": "5c9067d07e7c2017"
+      "revision": "f66a790cae338dea"
     },
     {
       "id": "sh-blog-224455796072-대치",

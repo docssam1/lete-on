@@ -5,6 +5,7 @@
 // 선은 검정, 색칠한 부분은 연두, 길이를 나타내는 점선 호는 갈색 점선, 각 표시는 빨강, 직각 표시는 검정.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, mark, ringed } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "G5", title: "도형의 넓이와 비" };
@@ -39,10 +40,43 @@ function label([x, y, value]) {
   const plain = text(f(x), f(y), value, { size: 12, weight: 600 });
   return /^[0-9]$/.test(value) ? plain : halo(plain); // 8번 □·○·△ 속 숫자는 테 없이(테가 틀 선을 가린다)
 }
+// 길이 표시(스킬 gfield-textbook-design 4-3): 길이 글자가 붙은 원문 점선 호는 같은 두 끝·같은 쪽·같은 만큼 휜
+// 바깥 곡선 점선으로 다시 긋고, 글자는 호 가운데를 끊은 자리에 넣는다(원장 2026-11-24 「점선 호를 사용하여 길이를 써야지」).
+// 길이 글자 = 수 + cm·㎝·m, 또는 14번 수선의 길이 r. 비(8번 1·2·3·4)·넓이·각도 글자는 그대로 둔다.
+const isLength = (n, value) => /^[\d.]+\s*(cm|㎝|m)$/.test(value) || (n === 14 && value === "r");
+function pathPoints(d) {
+  const v = d.match(/-?[\d.]+/g).map(Number), out = [[v[0], v[1]]];
+  let x = v[0], y = v[1];
+  for (let k = 2; k + 5 < v.length; k += 6) {
+    const c = [x, y, ...v.slice(k, k + 6)];
+    for (let t = 0.1; t <= 1.0001; t += 0.1) out.push([0, 1].map((q) => (1 - t) ** 3 * c[q] + 3 * (1 - t) ** 2 * t * c[2 + q] + 3 * (1 - t) * t * t * c[4 + q] + t ** 3 * c[6 + q]));
+    x = v[k + 4]; y = v[k + 5];
+  }
+  return out;
+}
+function lengthArcs(n, fig) {
+  const arcs = fig.p.map(([role, d], i) => ({ i, pts: role === "dash" && /C/.test(d) ? pathPoints(d) : null })).filter((a) => a.pts);
+  const taken = new Map();   // 길 번호 → 글자
+  for (const t of fig.t) {
+    if (!isLength(n, t[2])) continue;
+    let best = null;
+    for (const a of arcs) for (const [px, py] of a.pts) { const dd = Math.hypot(px - t[0], py - t[1]); if (!best || dd < best.d) best = { a, d: dd }; }
+    if (best && !taken.has(best.a.i)) taken.set(best.a.i, { label: t, pts: best.a.pts });
+  }
+  return taken;
+}
+// 글자가 점 이름에 붙는 그림은 호를 조금 더 띄운다(10번 E)
+const FAR = { 10: 12 };
+function arcFor(n, { label: [, , value], pts }) {
+  const [x1, y1] = pts[0], [x2, y2] = pts[pts.length - 1], l = Math.hypot(x2 - x1, y2 - y1) || 1, nx = -(y2 - y1) / l, ny = (x2 - x1) / l;
+  const dev = pts.reduce((m, [px, py]) => { const d = (px - x1) * nx + (py - y1) * ny; return Math.abs(d) > Math.abs(m) ? d : m; }, 0);
+  return lenArc({ x: x1, y: y1 }, { x: x2, y: y2 }, value, { side: dev < 0 ? -1 : 1, atLeast: Math.abs(dev) * 0.9 + (FAR[n] || 0), size: 12.5, varName: value === "r" });
+}
 // 원문 그림 한 장: 칸 이름 바꾸기(swap)로 문항마다 색을 고를 수 있다
 function draw(n, alt, { swap = {}, max } = {}) {
-  const fig = FIG[n];
-  const body = fig.p.map(([role, d]) => `<path d="${d}" ${STYLE[swap[role] || role]}/>`).join("") + fig.t.map(label).join("");
+  const fig = FIG[n], dims = lengthArcs(n, fig), moved = new Set([...dims.values()].map((d) => d.label));
+  const body = fig.p.map(([role, d], i) => (dims.has(i) ? arcFor(n, dims.get(i)) : `<path d="${d}" ${STYLE[swap[role] || role]}/>`)).join("")
+    + fig.t.filter((t) => !moved.has(t)).map(label).join("");
   return svg(fig.w, fig.h, alt, body, max || fig.w);
 }
 

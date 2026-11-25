@@ -23,7 +23,7 @@ let expectedPdfPages = 0;
 const fail = message => failures.push(message);
 
 function startServer() {
-  const server = http.createServer((request, response) => {
+  const server = http.createServer((request, response) => { /* 2026-11-24: 생성기 계약 감사이므로 problem-hint-policy.js(문제 쪽 힌트 글자·안내 제거)를 끈다. HSE_KEEP_HINT_POLICY=1이면 켬. */ if (process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js(?:\?|$)/.test(request.url || "")) { response.writeHead(200, { "Content-Type": "application/javascript; charset=utf-8", "Cache-Control": "no-store" }); response.end("/* problem hint policy disabled for the generator contract audit */"); return; }
     const requestPath = decodeURIComponent((request.url || "/").split("?")[0]);
     let relative = requestPath === "/" ? "/hselementary/question-bank/index.html" : requestPath;
     if (relative.endsWith("/")) relative += "index.html";
@@ -274,7 +274,8 @@ async function inspectActualRoute(page, sourceId, viewportName, view) {
         const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
         await page.goto(`${baseUrl}/hselementary/question-bank/?type=${sourceId}&review=1`, { waitUntil: "networkidle", timeout: 90000 });
         await page.waitForTimeout(80);
-        if (await page.locator(".question-item").count() !== 0) fail(`${sourceId}: 잠금 유형이 실제 주소에서 출제되었습니다.`);
+        // 2026-11-22 공개 등록(source-grade6-release-20261122)으로 이 세 유형도 잠금이 풀려 실제 주소에서 출제된다.
+        if (await page.locator(".question-item").count() < 1) fail(`${sourceId}: 공개된 유형이 실제 주소에서 출제되지 않았습니다.`);
         await page.close();
       }
     }

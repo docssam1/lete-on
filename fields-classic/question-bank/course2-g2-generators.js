@@ -2,6 +2,7 @@
 // G1 생성기(course2-g1-generators.js)와 같은 약속: ({ difficulty }) → { prompt, visual:{kind:"c2", html}, answer, solution, meta }.
 // 문제는 모두 새로 지은 것이다(교재 문장·그림을 옮기지 않는다). 답은 그림을 만든 수에서 계산하고, 세는 문제는 하나씩 세어 본다.
 import { plainText } from "./course2-plain.js?v=20261122zi";
+import { dimArc, isLength } from "./length-dim.js?v=20261124h";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
@@ -43,7 +44,16 @@ const grid = (o, cols, rows, s, { color = GRID, width = 1.1 } = {}) => {
   return out;
 };
 const dots = (o, n, s) => { let out = ""; for (let j = 0; j < n; j += 1) for (let i = 0; i < n; i += 1) out += dot(P(o.x + i * s, o.y + j * s), 3, "#8a948f"); return out; };
+// 길이(「12cm」「?」)는 바깥 곡선 점선 + 끊은 자리에 글자(length-dim.js, 스킬 gfield-textbook-design 4-3), 그 밖의 글자는 변 옆 그대로.
+// offset 쪽(변 진행 방향 왼쪽이 +)으로 휜다 — dimArc의 bend는 오른쪽이 +라 부호를 바꾼다.
+// 세로에 가까운 변은 가로로 쓴 글자가 변에 닿지 않게 글자 반 폭만큼은 띄운다(clearBend)
+const clearBend = (a, b, value, bend, size = 13) => {
+  const len = Math.hypot(b.x - a.x, b.y - a.y) || 1, w = String(value).length * 0.62 * size, h = size * 1.1;
+  const need = Math.abs(b.y - a.y) / len * w / 2 + Math.abs(b.x - a.x) / len * h / 2 + 3;
+  return Math.sign(bend || 1) * Math.max(Math.abs(bend), need);
+};
 const lenLabel = (a, b, value, { offset = 14, color = INK, size = 13 } = {}) => {
+  if (isLength(value)) return dimArc(a.x, a.y, b.x, b.y, clearBend(a, b, value, -offset * 0.9, size), value, { size, labelColor: color === INK ? null : color });
   const m = mid(a, b), d = dirOf(a, b) + 90, p = at(m, offset, d);
   return text(p.x, p.y, value, { size, color });
 };
@@ -380,7 +390,7 @@ function c2CornerQuarterCircles({ difficulty = 2 }) {
   for (let tries = 0; tries < 50; tries += 1) {
     const W = randomInt(9, 18), H = randomInt(6, W - 1);
     const rA = randomInt(2, W - 2), rB = W - rA, rC = H - rB;
-    if (rC < 2 || rC >= W) continue;
+    if (rC < 2 || rC >= W || rA > H) continue;   // ㄱ의 사분원이 직사각형 아래로 삐져나가지 않게
     const s = 240 / W, o = P(30, 30);
     const A = P(o.x, o.y), B = P(o.x + W * s, o.y), C = P(o.x + W * s, o.y + H * s), D = P(o.x, o.y + H * s);
     const arc = (c, r, a1, a2, fill) => { const p1 = at(c, r * s, a1), p2 = at(c, r * s, a2); return `<path d="M ${f1(c.x)} ${f1(c.y)} L ${f1(p1.x)} ${f1(p1.y)} A ${f1(r * s)} ${f1(r * s)} 0 0 0 ${f1(p2.x)} ${f1(p2.y)} Z" fill="${fill}" stroke="${INK}" stroke-width="1.8"/>`; };
@@ -470,7 +480,7 @@ function c2TriangleInequality({ difficulty = 2 }) {
   if (kind === "third") {
     const a = randomInt(2, 8), b = randomInt(a + 1, 12);
     const lo = b - a + 1, hi = a + b - 1;
-    const body = rect(20, 30, a * 18, 14, { fill: YELLOW }) + text(20 + a * 9, 20, `${a}cm`, { size: 13 }) + rect(20, 80, b * 18, 14, { fill: SOFT }) + text(20 + b * 9, 70, `${b}cm`, { size: 13 });
+    const body = rect(20, 30, a * 18, 14, { fill: YELLOW }) + lenLabel(P(20, 30), P(20 + a * 18, 30), `${a}cm`, { offset: 11 }) + rect(20, 80, b * 18, 14, { fill: SOFT }) + lenLabel(P(20, 80), P(20 + b * 18, 80), `${b}cm`, { offset: 11 });
     return problem({
       prompt: `길이가 ${a}cm, ${b}cm인 막대가 하나씩 있습니다. 1cm, 2cm, 3cm, …처럼 길이가 자연수인 막대를 하나 더 골라 세 막대로 삼각형을 만들려고 합니다. 고를 수 있는 막대의 길이는 모두 몇 가지인가요?`,
       subtype: "triangle-sticks", html: svg(b * 18 + 50, 110, body, "두 막대"), answer: `${hi - lo + 1}가지`,

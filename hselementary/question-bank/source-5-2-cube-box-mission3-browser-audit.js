@@ -30,7 +30,10 @@ async function prepare(page, width) {
   let states = 0;
   for (const width of widths) for (const difficulty of [-1, 0, 1]) for (const variant of (width === 1280 ? [0, 1, 2] : [0])) {
     const context = await browser.newContext({ viewport: { width, height: 1000 }, serviceWorkers: "block" });
-    await context.route("**/*", route => new URL(route.request().url()).origin === origin
+    // 2026-11-24: problem-hint-policy.js는 원문에 없는 상자 그림을 문제에서 지운다(DIAGRAM_RULES). 이 감사는 생성기 그림 계약을 보므로 정책을 끈다(HSE_KEEP_HINT_POLICY=1이면 켬).
+    await context.route("**/*", route => process.env.HSE_KEEP_HINT_POLICY !== "1" && /\/problem-hint-policy\.js$/.test(new URL(route.request().url()).pathname)
+      ? route.fulfill({ status: 200, contentType: "application/javascript", body: "/* problem hint policy disabled */" })
+      : new URL(route.request().url()).origin === origin
       ? route.continue() : (blockedRequests++, route.fulfill({ status: 200, contentType: "text/plain", body: "" })));
     const page = await context.newPage();
     page.on("pageerror", error => errors.push(error.message));

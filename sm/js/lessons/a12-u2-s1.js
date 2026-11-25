@@ -3,8 +3,8 @@
 //        (피노키오 스티커 A1-2-4는 책에 없는 스티커지라, 조각을 누르면 제자리로 날아가는 조립으로 만들었다)
 //  34 토순이의 방 물건 살펴보기 · 35 입체도형과 비슷한 물건 찾기(정육면체→주사위, 삼각기둥→연필꽂이, 원기둥→휴지통,
 //     육각기둥→선물 상자, 사각뿔→피라미드, 구→지구본, 원뿔→고깔모자, 반구→스노볼)
-import { scene, onHit } from "../numbers.js?v=20261117a";
-import { solidArt, solidIcon, OBJ_PIC } from "../shapes.js?v=20261117a";
+import { scene, onHit } from "../numbers.js?v=20261123a";
+import { solidArt, solidIcon, OBJ_PIC } from "../shapes.js?v=20261123a";
 
 const T = (x, y, t, { size = 26, fill = "#25324a", weight = 800, anchor = "middle" } = {}) => `<text x="${x}" y="${y}" font-size="${size}" font-weight="${weight}" fill="${fill}" text-anchor="${anchor}">${t}</text>`;
 const at = (x, y, s, body) => `<g transform="translate(${x} ${y}) scale(${s})">${body}</g>`;

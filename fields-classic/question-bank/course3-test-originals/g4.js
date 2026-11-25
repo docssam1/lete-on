@@ -13,6 +13,7 @@
 // 만나지 않는다) · 2번 그림은 DC 12㎝, AB 18㎝ 길이에 맞게 · 20번 그림은 ∠BEM 24°가 되게 직사각형 가로세로를 맞춤.
 // 정답은 여기 두지 않는다(비공개 자리에만). 그림은 우리 색표(워밍업 그림 색), 글자는 검정.
 import { UT, text, svg, line } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "../course2-test-originals/len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "G4", title: "넓이분할과 도형의 변환" };
@@ -88,11 +89,9 @@ function chev(a, b, n = 1, t = 0.5) {
     return `<polyline points="${f(back.x + nx * 4)},${f(back.y + ny * 4)} ${f(tip.x)},${f(tip.y)} ${f(back.x - nx * 4)},${f(back.y - ny * 4)}" fill="none" stroke="${UT.purple}" stroke-width="1.5" stroke-linejoin="round"/>`;
   }).join("");
 }
-// 길이 글자를 선분 옆에(왼쪽 법선 쪽으로 off)
-function along(a, b, value, off = 12, size = 12) {
-  const m = lerp(a, b, 0.5), l = len(a, b);
-  return small(P(m.x + (-(b.y - a.y) / l) * off, m.y + ((b.x - a.x) / l) * off), value, size);
-}
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24).
+// off 부호 = 휘는 쪽(양수 = a→b 진행 방향의 (−dy, dx) 쪽, 옛 글자 자리와 같은 쪽). far = 더 띄울 만큼 · halo = 다른 선 위 글자에 흰 테.
+const along = (a, b, value, off = 12, { far = 0, halo = false } = {}) => lenArc(a, b, value, { side: off < 0 ? -1 : 1, far, halo, size: 12.5, unit: "㎝" });
 // 점 이름을 중심에서 바깥쪽으로 조금 떨어뜨려
 function out(p, value, center, d = 12, size = 13) {
   const l = Math.hypot(p.x - center.x, p.y - center.y) || 1;
@@ -203,7 +202,7 @@ function q9() {
   return svg(290, h, "삼각형 ABC와 선분 AD",
     poly([a, b, c], { fill: tint.yellow }) + seg(a, d)
     + arcAt(a, b, d, 16, "60°", { lr: 30 }) + arcAt(a, d, c, 22, "60°", { lr: 36 })
-    + along(b, a, "6㎝", 13) + along(a, c, "12㎝", 12)
+    + along(b, a, "6㎝", -13) + along(a, c, "12㎝", -12)
     + name(a, "A", -6, -10) + name(b, "B", -10, 6) + name(c, "C", 11, 0) + name(d, "D", 4, 13), 290);
 }
 function q10() {
@@ -260,10 +259,10 @@ function q14() {
     + seg(T(P(-160, top)), T(P(1000, top)), { stroke: UT.blue, width: 1.4 }) + seg(T(P(-160, bot)), T(P(1000, bot)), { stroke: UT.blue, width: 1.4 });
   const dash = { dash: "4 4", width: 1.2 };
   const sTop = T(P(0, top)), sBot = T(P(0, bot)), o = T(P(0, 0)), hBank = T(P(800, bot));
-  return svg(290, h, "강을 사이에 둔 학교와 집",
+  return svg(290, h + 10, "강을 사이에 둔 학교와 집",
     river + seg(s, sTop, dash) + seg(sBot, o, dash) + seg(o, hh, dash) + seg(hh, hBank, dash) + rightAt(o, sBot, hh, 7)
-    + small(P(s.x - 22, (s.y + sTop.y) / 2 + 4), "200m", 11.5) + small(P(hh.x + 24, (hh.y + hBank.y) / 2 + 4), "400m", 11.5)
-    + small(P((o.x + hh.x) / 2, o.y + 14), "800m", 11.5) + small(P(T(P(930, 0)).x, (r1.y + r2.y) / 2 + 4), "300m", 11.5)
+    + along(sTop, s, "200m", -1) + along(hh, hBank, "400m", 1)
+    + along(o, hh, "800m", 1) + along(T(P(930, bot)), T(P(930, top)), "300m", -1)
     + dot(s, 3) + dot(hh, 3) + small(P(s.x + 22, s.y + 4), "학교", 12) + small(P(hh.x + 2, hh.y + 17), "집", 12), 290);
 }
 function q15() {
@@ -358,7 +357,7 @@ function q22() {
   const [a, b, c, d, e, ff] = [A, B, C, D, E, F].map(T);
   return svg(230, h, "정사각형 ABCD와 선분 AE, AF",
     poly([a, b, c, d], { fill: tint.blue }) + seg(a, e) + seg(a, ff) + bisectDots(a, e, d, 22)
-    + along(b, e, "9㎝", -13) + along(d, ff, "6㎝", -17)
+    + along(b, e, "9㎝", 13) + along(d, ff, "6㎝", -17)
     + name(a, "A", -9, -7) + name(b, "B", -10, 5) + name(c, "C", 10, 5) + name(d, "D", 9, -7) + name(e, "E", 0, 13) + name(ff, "F", 11, 0), 230);
 }
 function q23() {
@@ -382,7 +381,7 @@ function q24() {
   const dash = { dash: "4 3", width: 1.2 };
   return svg(250, h, "삼각형 ABC와 내부의 점 F",
     poly([a, b, c], { fill: tint.purple }) + seg(ff, a, dash) + seg(ff, b, dash) + seg(ff, c, dash) + dot(ff, 2.4)
-    + arcAt(b, c, a, 18, "60°", { lr: 32 }) + along(b, a, "8", 12) + along(c, b, "7", 13)
+    + arcAt(b, c, a, 18, "60°", { lr: 32 }) + along(b, a, "8", -12) + along(c, b, "7", -13)
     + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(ff, "F", 9, -6, 12), 250);
 }
 function q25() {
@@ -396,7 +395,7 @@ function q25() {
   return svg(240, h, "정삼각형 ABC와 점 D",
     poly([a, b, c], { fill: tint.yellow }) + poly([b, d, c], { fill: "none" }) + seg(a, d)
     + arcAt(d, a, b, 11) + arcAt(d, a, c, 14)
-    + along(b, a, "10㎝", 14) + along(a, d, "11㎝", 22)
+    + along(b, a, "10㎝", -14) + along(a, d, "11㎝", 22)
     + name(a, "A", 0, -10) + name(b, "B", -10, 4) + name(c, "C", 10, 4) + name(d, "D", 0, 14), 240);
 }
 

@@ -18,6 +18,25 @@ const sourceTypes = unit.subunits
 
 fs.mkdirSync(outputDir, { recursive: true });
 
+// 2026-11-24: 2026-11-22부터 앱(buildQuestions)은 같은 문장의 문항을 한 번만 낸다. 원문 수치가 정해진 유형처럼
+// 생성기가 만들 수 있는 서로 다른 문제 문장이 요청 수보다 적으면 그만큼만 나오므로(의도된 동작),
+// 앱과 같은 변형 규칙으로 문장 수를 세어 min(요청 수, 서로 다른 문장 수)를 기대한다.
+const expectedDistinctQuestions = (page, typeId, requested = 3) => page.evaluate(({ typeId, requested }) => {
+  const type = window.HSE_CURRICULUM.semesters.flatMap(semester => semester.units.flatMap(unit => unit.subunits.flatMap(subunit => subunit.types))).find(item => item.id === typeId);
+  if (!type) return 0;
+  const fixedPool = type.generationMode === "fixed-verified-pool";
+  const prompts = new Set();
+  for (let index = 0; index < requested; index += 1) {
+    for (let attempt = 0; attempt < 64; attempt += 1) {
+      try {
+        const candidate = window.HSE_GENERATORS.generate(type, 0, 0, (20261124 + index * 7919 + attempt * 104729) >>> 0, fixedPool ? attempt : index);
+        if (candidate?.prompt) prompts.add(candidate.prompt);
+      } catch {}
+    }
+  }
+  return Math.min(requested, prompts.size);
+}, { typeId, requested });
+
 async function inspectQuestion(browser, type, viewport, label, failures) {
   const page = await browser.newPage({ viewport, deviceScaleFactor: 1 });
   page.setDefaultTimeout(60000);
@@ -29,6 +48,7 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
   const url = `${baseUrl}?type=${encodeURIComponent(type.id)}&review=1`;
   await page.goto(url, { waitUntil: "domcontentloaded", timeout: 90000 });
   await page.locator("#worksheet:not([hidden])").waitFor({ state: "visible" });
+  const expectedCount = await expectedDistinctQuestions(page, type.id);
 
   const state = await page.evaluate(() => {
     const clipped = element => {
@@ -88,8 +108,8 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
   });
 
   if (state.documentOverflow) failures.push(`${label} ${type.id}: 문서에 가로 넘침이 있습니다.`);
-  if (state.questionCount !== 3) failures.push(`${label} ${type.id}: 생성된 문제 수가 ${state.questionCount}개입니다. 3개여야 합니다.`);
-  if (state.uniquePromptCount < 2) failures.push(`${label} ${type.id}: 세 문제의 문구가 충분히 달라지지 않았습니다.`);
+  if (!expectedCount || state.questionCount !== expectedCount) failures.push(`${label} ${type.id}: 생성된 문제 수가 ${state.questionCount}개입니다. ${expectedCount}개(서로 다른 문장 수)여야 합니다.`);
+  if (state.uniquePromptCount < Math.min(2, expectedCount)) failures.push(`${label} ${type.id}: 세 문제의 문구가 충분히 달라지지 않았습니다.`);
   state.questions.forEach((question, index) => {
     const number = index + 1;
     if (!question.promptText) failures.push(`${label} ${type.id} ${number}번: 문제 내용이 비었습니다.`);
@@ -126,7 +146,7 @@ async function inspectQuestion(browser, type, viewport, label, failures) {
       fractionOverlap: fractionOverlap(solution)
     }));
   });
-  if (solutionState.length !== 3) failures.push(`${label} ${type.id}: 정답·풀이가 ${solutionState.length}개입니다. 3개여야 합니다.`);
+  if (solutionState.length !== state.questionCount) failures.push(`${label} ${type.id}: 정답·풀이가 ${solutionState.length}개입니다. 문제 수 ${state.questionCount}개와 같아야 합니다.`);
   solutionState.forEach((solution, index) => {
     const number = index + 1;
     if (!solution.text || !solution.answer) failures.push(`${label} ${type.id} ${number}번: 정답·풀이 또는 답안 표시가 비었습니다.`);

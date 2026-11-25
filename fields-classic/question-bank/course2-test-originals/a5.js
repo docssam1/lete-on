@@ -3,6 +3,7 @@
 // 단원: 1~7번 소인수분해 · 8~13번 크기가 같은 분수 · 14~19번 포함과 배제 · 20~25번 변하지 않는 것 찾기.
 // 분수는 글 속 빗금(3/5)으로 적고 화면이 mathText로 위아래로 쌓는다(mathPrompt). 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "./len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "2과정", book: "A5", title: "소인수분해와 비" };
@@ -26,7 +27,8 @@ function q18() {
     line(14, g, 262, g, { stroke: UT.line, width: 2 })
     + `<path d="${path}" fill="none" stroke="${UT.orange}" stroke-width="1.8" stroke-dasharray="5 4"/>`
     + `<circle cx="${xs[0]}" cy="${y(16)}" r="7" fill="${UT.orange}"/>`
-    + line(16, y(16), 16, g, { stroke: UT.ink, width: 1 }) + small(34, (y(16) + g) / 2 + 30, "16m", 12), 260);
+    // 떨어뜨린 높이 16m: 공 높이와 바닥을 잇는 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3)
+    + lenArc({ x: 18, y: y(16) }, { x: 18, y: g }, "16m", { side: -1 }), 260);
 }
 
 // 22. 연못과 두 막대

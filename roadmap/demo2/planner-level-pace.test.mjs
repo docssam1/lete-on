@@ -77,13 +77,13 @@ test('Premier, Fields S and Challenge tables are named as the standard roadmap o
 
 test('each row names its level and what it studies now, and the table puts the last book under each end month',()=>{
  const now=60,m=P.model(standard('L7',now),LEVELS,fields),row=m.rows.find(r=>r.id==='up1');
- assert.equal(row.level,'L6');assert.equal(row.summary,level('L6').summary);
+ assert.equal(row.level,'L6');assert.equal(row.summary,row.doing.school);assert.doesNotMatch(row.summary,/^초2 3월/);
  assert.deepEqual(Array.from(row.books),['6-2 디딤돌 응용','중3-2 원리해설','공통수학2']);
  const at=(rows,t)=>rows.find(b=>t>=b[1]&&t<b[2]+1)[0];
  assert.equal(row.doing.school,at(level('L6').school,now));assert.equal(row.doing.comp,at(level('L6').comp,now));
  const html=P.render(standard('L7',now),fields);
  assert.match(html,/한 레벨 위/);assert.doesNotMatch(html,/단계 위|단계 아래/);
- assert.ok(html.includes('class="lv">L6 · '+level('L6').summary));
+ assert.ok(html.includes('class="lv">'+row.summary+' (L6)'));
  const months=end('L7',/^중3-2/)+1-now,i=10+months-1;
  assert.ok(html.includes(`<div class="cell c1 is-now"><b>${2026+Math.floor(i/12)}.${i%12+1}</b><small>중3-2 원리해설</small></div>`));
 });

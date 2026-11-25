@@ -13,6 +13,7 @@
 // 3번 문장의 분수(1/3)는 mathPrompt 로 위아래로 쌓는다. 제곱근(25번 6√2)은 글 속에서는 √ 글자 그대로, 그림에서는 근호 선을 그린다.
 // 정답은 여기 두지 않는다(비공개 자리에만).
 import { UT, text, svg, line, ringed } from "../selection-test-originals/kit.js?v=20261114a";
+import { lenArc } from "../course2-test-originals/len-arc.js?v=20261124a";
 
 export const perPage = 4;
 export const meta = { course: "3과정", book: "G3", title: "정다면체와 피타고라스의 정리" };
@@ -45,15 +46,13 @@ const hex = (h) => [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16));
 const mix = (a, b, t) => "#" + hex(a).map((v, i) => Math.round(v + (hex(b)[i] - v) * t).toString(16).padStart(2, "0")).join("");
 const FACE = { top: mix("#ffffff", UT.green, 0.1), side: UT.greenSoft, dark: mix("#ffffff", UT.green, 0.3), hole: "#ffffff" };
 
-// 길이 표시: a~b 를 잇는 점선 곡선(bulge 만큼 부풂, 양수 = 진행 방향의 시계 쪽)과 가운데 글자(흰 바탕)
-function dim(a, b, value, bulge = 14, { size = 12 } = {}) {
-  const l = Math.hypot(b.x - a.x, b.y - a.y), nx = -(b.y - a.y) / l, ny = (b.x - a.x) / l, m = lerp(a, b, 0.5);
-  const c = P(m.x + nx * bulge * 2, m.y + ny * bulge * 2), top = P(m.x + nx * bulge, m.y + ny * bulge);
-  const curve = `<path d="M${f(a.x)} ${f(a.y)} Q${f(c.x)} ${f(c.y)} ${f(b.x)} ${f(b.y)}" fill="none" stroke="${DIM}" stroke-width="1" stroke-dasharray="3 3"/>`;
-  if (!value) return curve;
-  if (typeof value === "function") return curve + value(top);
-  const w = tw(value, size) + 6;
-  return curve + `<rect x="${f(top.x - w / 2)}" y="${f(top.y - size * 0.62)}" width="${f(w)}" height="${f(size * 1.24)}" fill="#fff"/>` + text(f(top.x), f(top.y), value, { size, weight: 600 });
+// 길이 표시: a~b 바깥 곡선 점선 + 끊은 자리에 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24 — 흰 판으로 덮지 않는다).
+// bulge 부호 = 휘는 쪽(양수 = 진행 방향의 시계 쪽), far = 더 띄울 만큼. value 가 함수면 { w: 글자 폭 자리표, draw(p) } 로 그 자리에 직접 그린다.
+function dim(a, b, value, bulge = 14, { far = 0, varName = false, halo = false } = {}) {
+  const side = bulge < 0 ? -1 : 1;
+  if (typeof value !== "object") return lenArc(a, b, value, { side, far, unit: "㎝", size: 12.5, varName, halo });
+  const out = lenArc(a, b, value.w, { side, far, size: 12.5 });
+  return out.replace(/<text x="([\d.-]+)" y="([\d.-]+)"[^>]*>[^<]*<\/text>/, (m, x, y) => value.draw(P(+x, +y - 1)));
 }
 // 화살촉(끝점 tip, 들어오는 방향의 한 점 from)
 function head(tip, from, { size = 6, color = INK } = {}) {
@@ -250,7 +249,7 @@ function q7() {
   const cyl = poly([P(c.x - r, c.y), P(c.x - r, b.y), ...arcPts(b, r, ry, Math.PI, 0).slice(1, -1), P(c.x + r, b.y), P(c.x + r, c.y)], { fill: FACE.side, stroke: "none" })
     + ellipse(c, r, ry, { fill: FACE.top }) + seg(P(c.x - r, c.y), P(c.x - r, b.y)) + seg(P(c.x + r, c.y), P(c.x + r, b.y)) + baseEllipse(b, r, ry)
     + seg(b, P(b.x + r, b.y), { width: 1.3 }) + dot(b, 2.4)
-    + dim(P(c.x + r, c.y), P(b.x + r, b.y), "8㎝", -14) + leader(P(286, 192), P(b.x + r * 0.55, b.y + 1), "4㎝", { bend: -0.4 });
+    + dim(P(c.x + r, c.y), P(b.x + r, b.y), "8㎝", -14) + dim(b, P(b.x + r, b.y), "4㎝", 1, { halo: true });
   return svg(320, 214, "직육면체와 원기둥",
     `<text x="10" y="14" dominant-baseline="central" style="font-size:12px;font-weight:700;fill:${INK}">(1)</text>`
     + box.markup + dim(a([6, 6, 8]), a([6, 6, 0]), "8㎝", -14) + dim(a([6, 0, 0]), a([6, 6, 0]), "6㎝", 12) + dim(a([0, 0, 0]), a([6, 0, 0]), "6㎝", 12)
@@ -262,10 +261,8 @@ function q8() {
   const onTop = ([u, v], y) => P(c.x + u * s, y - v * s * k * 1.9);
   const T = sq.map((p) => onTop(p, c.y)), B = sq.map((p) => onTop(p, b.y));
   const side = poly([P(c.x - r, c.y), P(c.x - r, b.y), ...arcPts(b, r, ry, Math.PI, 0).slice(1, -1), P(c.x + r, b.y), P(c.x + r, c.y)], { fill: FACE.dark, stroke: "none" });
-  const yl = b.y + ry + 22;
-  const span = seg(P(c.x - r, yl - 8), P(c.x - r, yl + 8), { width: 1.2 }) + seg(P(c.x + r, yl - 8), P(c.x + r, yl + 8), { width: 1.2 })
-    + seg(P(c.x - r + 4, yl), P(c.x - 22, yl), { width: 1.2 }) + seg(P(c.x + 22, yl), P(c.x + r - 4, yl), { width: 1.2 })
-    + head(P(c.x - r, yl), P(c.x - r + 10, yl)) + head(P(c.x + r, yl), P(c.x + r - 10, yl)) + text(c.x, yl, "18㎝", { size: 12, weight: 600 });
+  // 밑면 지름 18㎝: 밑면 양 끝을 잇는 바깥 곡선 점선(밑면 타원 아래로 지나가게)
+  const span = dim(P(b.x - r, b.y), P(b.x + r, b.y), "18㎝", 1, { far: ry + 2 });
   return svg(320, 220, "가운데에 정사각형 모양 구멍을 뚫은 원기둥",
     side + ellipse(c, r, ry, { fill: FACE.side }) + seg(P(c.x - r, c.y), P(c.x - r, b.y)) + seg(P(c.x + r, c.y), P(c.x + r, b.y)) + baseEllipse(b, r, ry)
     + T.map((p, i) => hid(p, B[i])).join("") + poly(B, { stroke: DASH, width: 1.1, dash: "4 3" }) + poly(T, { fill: "#fff", width: 1.5 })
@@ -307,7 +304,7 @@ function q12() {
     side + draw(pathOf(topPts, true), { fill: FACE.top }) + seg(topAt(Math.PI), P(b.x - r, b.y)) + seg(topAt(0), P(b.x + r, b.y)) + baseEllipse(b, r, ry)
     + seg(b, P(b.x + r, b.y), { width: 1.3 }) + dot(b, 2.4)
     + dim(P(b.x - r, b.y), topAt(Math.PI), "14㎝", -14) + dim(topAt(0), P(b.x + r, b.y), "18㎝", -14)
-    + leader(P(b.x + 66, b.y + 28), P(b.x + r * 0.5, b.y + 1), "6㎝", { bend: -0.4 }), 300);
+    + dim(b, P(b.x + r, b.y), "6㎝", 1, { halo: true }), 300);
 }
 
 // ── 13~16번
@@ -351,13 +348,13 @@ function q16() {
     const ax = 96, T = P(ax, 58), O = P(ax, 58 + 4 * s), L = P(ax - 3 * s, O.y), Bt = P(ax, O.y + 3 * s);
     return `<path d="M${f(T.x)} ${f(T.y)} L${f(L.x)} ${f(L.y)} A${3 * s} ${3 * s} 0 0 0 ${f(Bt.x)} ${f(Bt.y)} Z" fill="${UT.yellowSoft}" stroke="${INK}" stroke-width="1.5"/>`
       + axis(ax, 32, Bt.y + 16, 40) + hid(L, O) + rightAt(O, T, L, 8)
-      + dim(L, T, "5㎝", -14) + dim(O, T, "4㎝", 19) + tag(lerp(L, O, 0.5), "3㎝", 12) + dim(O, Bt, "3㎝", -19);
+      + dim(L, T, "5㎝", -14) + dim(O, T, "4㎝", 19) + dim(L, O, "3㎝", 1) + dim(O, Bt, "3㎝", -19);
   })();
   const two = (() => {
     const ax = 214, O = P(ax, 58 + 4 * s), Rt = P(ax + 3 * s, O.y), T = P(ax + 3 * s, 58), Bt = P(ax, O.y + 3 * s);
     return `<path d="M${f(O.x)} ${f(O.y)} L${f(T.x)} ${f(T.y)} L${f(Rt.x)} ${f(Rt.y)} A${3 * s} ${3 * s} 0 0 1 ${f(Bt.x)} ${f(Bt.y)} Z" fill="${UT.yellowSoft}" stroke="${INK}" stroke-width="1.5"/>`
       + axis(ax, 32, Bt.y + 16, 40) + hid(O, Rt) + rightAt(Rt, T, O, 8) + rightAt(O, Bt, Rt, 8)
-      + dim(O, T, "5㎝", -14) + dim(T, Rt, "4㎝", -16) + tag(lerp(O, Rt, 0.5), "3㎝", 12) + dim(Bt, O, "3㎝", -19);
+      + dim(O, T, "5㎝", -14) + dim(T, Rt, "4㎝", -16) + dim(O, Rt, "3㎝", 1) + dim(Bt, O, "3㎝", -19);
   })();
   return svg(320, 226, "직선 ℓ에 붙은 두 도형",
     `<text x="14" y="14" dominant-baseline="central" style="font-size:12px;font-weight:700;fill:${INK}">(1)</text>` + one
@@ -380,7 +377,7 @@ function q17() {
     + ellipse(T, rt, rt * ry, { fill: FACE.top }) + seg(P(T.x - rt, T.y), P(B.x - rb, B.y)) + seg(P(T.x + rt, T.y), P(B.x + rb, B.y)) + baseEllipse(B, rb, rb * ry)
     + hid(P(T.x - rt, T.y), A) + hid(P(T.x + rt, T.y), A) + hid(A, B) + hid(T, P(T.x + rt, T.y)) + hid(B, P(B.x + rb, B.y)) + dot(B, 2.2)
     + rightAt(T, A, P(T.x + rt, T.y), 6) + rightAt(B, A, P(B.x + rb, B.y), 6)
-    + dim(A, T, "6㎝", 14) + dim(T, B, "6㎝", 14) + leader(P(T.x + 82, T.y + 6), P(T.x + rt * 0.6, T.y), "4㎝", { bend: -0.35 }) + dim(B, P(B.x + rb, B.y), "8㎝", 10);
+    + dim(A, T, "6㎝", 14) + dim(T, B, "6㎝", 14) + dim(T, P(T.x + rt, T.y), "4㎝", 1, { halo: true }) + dim(B, P(B.x + rb, B.y), "8㎝", 10);
   return svg(320, 372, "정사각뿔대와 원뿔대",
     `<text x="14" y="14" dominant-baseline="central" style="font-size:12px;font-weight:700;fill:${INK}">(1)</text>` + one
     + `<text x="14" y="${y0}" dominant-baseline="central" style="font-size:12px;font-weight:700;fill:${INK}">(2)</text>` + two, 320);
@@ -392,8 +389,8 @@ function q18() {
     + poly([P(w.x - rw, w.y), apex, P(w.x + rw, w.y)], { fill: UT.greenSoft, stroke: "none" }) + ellipse(w, rw, rw * 0.3, { fill: FACE.dark, width: 1.3 })
     + seg(P(c.x - r, c.y), apex) + seg(P(c.x + r, c.y), apex) + ellipse(c, r, ry)
     + hid(c, apex) + hid(c, P(c.x + r, c.y)) + hid(w, P(w.x + rw, w.y))
-    + dim(c, P(c.x + r, c.y), "6㎝", -9) + dim(w, c, "12㎝", -14) + dim(apex, w, "6㎝", -12)
-    + leader(P(w.x + 62, w.y + 10), P(w.x + rw * 0.6, w.y), "2㎝", { bend: -0.35 }), 300);
+    + dim(c, P(c.x + r, c.y), "6㎝", -9) + dim(w, c, "12㎝", -14) + dim(apex, w, "6㎝", -12, { halo: true })
+    + dim(w, P(w.x + rw, w.y), "2㎝", 1, { halo: true }), 300);
 }
 function q19() {
   const s = 15, B = P(34, 150), C = P(34 + 12 * s, 150), A = P(C.x, 150 - 5 * s), M = lerp(B, C, 0.5);
@@ -423,12 +420,10 @@ function q22() {
   const s = 4.6, A = P(196, 106), ub = P(-0.785, 0.62), uc = P(0.62, 0.785);
   const B = P(A.x + ub.x * 24 * s, A.y + ub.y * 24 * s), C = P(A.x + uc.x * 7 * s, A.y + uc.y * 7 * s), D = P(A.x - uc.x * 24 * s, A.y - uc.y * 24 * s);
   const E = P(B.x + D.x - A.x, B.y + D.y - A.y);
-  const xcm = (p) => `<rect x="${f(p.x - 18)}" y="${f(p.y - 8)}" width="36" height="16" fill="#fff"/>`
-    + `<text x="${f(p.x - 4)}" y="${f(p.y)}" text-anchor="end" dominant-baseline="central" style="font-size:15px;font-style:italic;font-family:serif;fill:${INK}">x</text>`
-    + text(f(p.x + 6), f(p.y), "㎝", { size: 12, weight: 600 });
+
   return svg(280, 206, "직각삼각형 ABC와 변 AB 위의 정사각형 ADEB",
     poly([A, D, E, B]) + poly([A, B, C], { fill: UT.greenSoft }) + seg(E, C) + rightAt(A, B, C, 7)
-    + dim(A, C, xcm, -12) + dim(B, C, "25㎝", 12)
+    + dim(A, C, "x㎝", -12, { varName: true }) + dim(B, C, "25㎝", 12)
     + nm(A, "A", 2, -13) + nm(B, "B", -2, 14) + nm(C, "C", 12, 2) + nm(D, "D", 0, -12) + nm(E, "E", -13, 0), 280);
 }
 function q23() {
@@ -463,12 +458,13 @@ function q24() {
 function q25() {
   const s = 14, B = P(30, 146), C = P(B.x + 14 * s, B.y), A = P(B.x + 8 * s, B.y - 6 * s);
   // 6√2㎝: 근호 선을 직접 그린다
-  const root = (p) => {
+  const serif = (x, y, v) => `<text x="${f(x)}" y="${f(y)}" text-anchor="middle" dominant-baseline="central" style="font-family:'FC Serif','Noto Serif KR',serif;font-size:12.5px;font-weight:400;fill:${INK}">${v}</text>`;
+  const root = { w: "66√2㎝", draw: (p) => {
     const x = p.x - 22, y = p.y;
-    return `<rect x="${f(x - 2)}" y="${f(y - 10)}" width="48" height="20" fill="#fff"/>` + text(f(x + 4), f(y + 1), "6", { size: 12.5, weight: 600 })
+    return serif(x + 4, y + 1, "6")
       + `<polyline points="${f(x + 9)},${f(y + 1)} ${f(x + 11.5)},${f(y - 0.5)} ${f(x + 14.5)},${f(y + 6)} ${f(x + 18)},${f(y - 8)} ${f(x + 27)},${f(y - 8)}" fill="none" stroke="${INK}" stroke-width="1.1"/>`
-      + text(f(x + 22.5), f(y + 1), "2", { size: 12.5, weight: 600 }) + text(f(x + 34), f(y + 1), "㎝", { size: 12, weight: 600 });
-  };
+      + serif(x + 22.5, y + 1, "2") + serif(x + 34, y + 1, "㎝");
+  } };
   return svg(270, 180, "삼각형 ABC",
     poly([A, B, C], { fill: UT.greenSoft }) + dim(B, A, "10㎝", -14) + dim(A, C, root, -14) + dim(B, C, "14㎝", 12)
     + nm(A, "A", 0, -13) + nm(B, "B", -12, 2) + nm(C, "C", 12, 2), 270);
