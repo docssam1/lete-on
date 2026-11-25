@@ -752,6 +752,145 @@ function ringOtherSum({ difficulty = 2 } = {}) {
   };
 }
 
+// ───────────────────────────── 1단원 — 바로 선·기운 정사각형이 번갈아 감싸며 넓이가 두 배 ─────────────────────────────
+// 가장 작은 정사각형(바로 선)을 기운 정사각형이 꼭짓점에 닿게 감싸고, 그것을 다시 바로 선 정사각형이 감싼다 — 바깥 정사각형의 넓이는 늘 두 배.
+
+function nestedDoublingFigure(level, cell) {
+  // level번째 모양: 넓이 1, 2, 4, …, 2^(level-1)(칸 단위) 정사각형을 차례로 겹친다.
+  const outerArea = 2 ** (level - 1);
+  const half = (level - 1) % 2 === 0 ? Math.sqrt(outerArea) / 2 : Math.sqrt(outerArea / 2);
+  const span = Math.max(2, Math.ceil(half * 2) + 2);
+  const size = span * cell;
+  const center = size / 2;
+  const parts = [];
+  for (let i = 0; i <= span; i += 1) {
+    parts.push(`<line x1="${i * cell}" y1="0" x2="${i * cell}" y2="${size}" stroke="#d9d2c3" stroke-width="0.8"/>`);
+    parts.push(`<line x1="0" y1="${i * cell}" x2="${size}" y2="${i * cell}" stroke="#d9d2c3" stroke-width="0.8"/>`);
+  }
+  for (let j = level - 1; j >= 0; j -= 1) {
+    const area = 2 ** j;
+    let poly;
+    if (j % 2 === 0) {
+      const h = (Math.sqrt(area) / 2) * cell;
+      poly = [[center - h, center - h], [center + h, center - h], [center + h, center + h], [center - h, center + h]];
+    } else {
+      const d = Math.sqrt(area / 2) * cell;
+      poly = [[center, center - d], [center + d, center], [center, center + d], [center - d, center]];
+    }
+    const fill = j === level - 1 && level > 1 ? "#e3f0ea" : j === 0 ? FILL : "none";
+    parts.push(`<polygon points="${pts(poly)}" fill="${fill}" stroke="${j === 0 ? "#b03a2e" : INK}" stroke-width="${j === 0 ? 1.8 : 1.4}"/>`);
+  }
+  return { svg: parts.join(""), size };
+}
+
+function nestedSquareDoubling({ difficulty = 2 } = {}) {
+  const unit = difficulty === 1 ? 1 : randomInt(1, difficulty === 3 ? 5 : 3);
+  const askSum = difficulty === 1 ? Math.random() < 0.4 : Math.random() < 0.6;
+  const target = difficulty === 1 ? randomInt(5, 6) : difficulty === 2 ? randomInt(5, 7) : randomInt(6, 9);
+  const cell = 14;
+  const figures = range(1, 4).map((level) => nestedDoublingFigure(level, cell));
+  const gap = 18;
+  const height = Math.max(...figures.map((f) => f.size)) + 22;
+  let x = 0;
+  const groups = figures.map((figure, index) => {
+    const y = (height - 22 - figure.size) / 2;
+    const out = `<g transform="translate(${x},${y})">${figure.svg}</g><text x="${x + figure.size / 2}" y="${height - 4}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}">${index + 1}번째</text>`;
+    x += figure.size + gap;
+    return out;
+  });
+  const width = x + 20;
+  groups.push(`<text x="${x - 2}" y="${(height - 22) / 2 + 5}" font-size="16" font-weight="700" fill="${INK}">…</text>`);
+  const svg = `<svg viewBox="0 0 ${width} ${height}" style="width:${Math.min(width, 560)}px;max-width:100%;height:auto" role="img" aria-label="바로 선 정사각형과 기운 정사각형이 번갈아 감싸는 모양">${groups.join("")}</svg>`;
+  const areas = range(1, target).map((k) => unit * 2 ** (k - 1));
+  const total = areas.reduce((sum, value) => sum + value, 0);
+  const answer = askSum ? total : areas[target - 1];
+  return {
+    prompt: askSum
+      ? `모눈 위에 같은 규칙으로 정사각형을 겹쳐 그렸습니다. 가장 작은 정사각형의 넓이가 ${unit}일 때, 1번째부터 ${target}번째까지 가장 바깥에 있는 정사각형 넓이의 합을 구하세요.`
+      : `모눈 위에 같은 규칙으로 정사각형을 겹쳐 그렸습니다. 가장 작은 정사각형의 넓이가 ${unit}일 때, ${target}번째 모양에서 가장 바깥에 있는 정사각형의 넓이를 구하세요.`,
+    visual: { kind: "fig", html: svg },
+    answer: String(answer),
+    solution: `감싸는 정사각형은 안쪽 정사각형을 반으로 접은 삼각형 네 개를 바깥에 더 붙인 것이라 넓이가 두 배입니다. 가장 바깥 정사각형의 넓이는 ${areas.join(", ")}${askSum ? `이고, 모두 더하면 ${total}입니다.` : `이므로 ${target}번째는 ${answer}입니다.`}`,
+    meta: { family: "b3s-nested-doubling", unit, target, askSum, areas, answer }
+  };
+}
+
+// ───────────────────────────── 2단원 — 같은 길이의 줄에 막대를 여러 개씩(막대 사슬) ─────────────────────────────
+// 줄마다 같은 전체 길이를 서로 다른 막대로 채운다. 한 막대의 길이를 알려 주고 나머지 막대의 길이를 묻는다.
+const ROD_NAMES = ["㉠", "㉡", "㉢", "㉣", "㉤"];
+
+function rodRowsFigure(rows, total, givenText) {
+  const width = 300;
+  const rowHeight = 30;
+  const parts = [];
+  rows.forEach((row, r) => {
+    let x = 0;
+    row.forEach((piece) => {
+      const w = (piece.length / total) * width;
+      parts.push(`<rect x="${fmt(x + 2)}" y="${r * rowHeight + 2}" width="${fmt(w)}" height="${rowHeight}" fill="#eef5f1" stroke="${INK}" stroke-width="1.4"/>`);
+      const label = givenText && piece.name === givenText.name && !givenText.used ? `${piece.name}=${givenText.value}cm` : piece.name;
+      if (label !== piece.name) givenText.used = true;
+      parts.push(`<text x="${fmt(x + 2 + w / 2)}" y="${r * rowHeight + 2 + rowHeight / 2 + 5}" text-anchor="middle" font-size="${label.length > 3 ? 12 : 14}" font-weight="700" fill="${INK}">${label}</text>`);
+      x += w;
+    });
+  });
+  return `<svg viewBox="0 0 ${width + 4} ${rows.length * rowHeight + 4}" style="width:${width + 40}px;max-width:100%;height:auto" role="img" aria-label="같은 길이의 줄을 서로 다른 막대로 채운 그림">${parts.join("")}</svg>`;
+}
+
+// 줄마다 한 가지 막대를 여러 개(연습 14 꼴)
+function rodRowsCounts({ difficulty = 2 } = {}) {
+  const rowsCount = difficulty === 1 ? 3 : 4;
+  const counts = shuffle(difficulty === 3 ? range(2, 6) : range(1, 5)).slice(0, rowsCount).sort((a, b) => a - b);
+  const lcm = counts.reduce((acc, value) => (acc * value) / gcdInt(acc, value), 1);
+  const scale = randomInt(1, difficulty === 3 ? 3 : 2);
+  const total = lcm * scale;
+  const rods = counts.map((count, index) => ({ name: ROD_NAMES[index], count, length: total / count }));
+  const given = sample(rods);
+  const rows = rods.map((rod) => Array.from({ length: rod.count }, () => ({ name: rod.name, length: rod.length })));
+  const others = rods.filter((rod) => rod !== given);
+  return {
+    prompt: `길이가 다른 막대 ${rowsCount}가지를 같은 길이의 줄에 늘어놓았습니다. 막대 ${given.name}의 길이가 ${given.length}cm일 때, 나머지 막대의 길이를 각각 구하세요.`,
+    visual: { kind: "fig", html: rodRowsFigure(rows, total, { name: given.name, value: given.length }) },
+    answer: others.map((rod) => `${rod.name}=${rod.length}cm`).join(", "),
+    solution: `막대 ${given.name} ${given.count}개가 한 줄이므로 한 줄의 길이는 ${given.length} × ${given.count} = ${total}cm입니다. 한 줄을 다른 막대의 개수로 나누면 ${others.map((rod) => `${rod.name}은 ${total} ÷ ${rod.count} = ${rod.length}cm`).join(", ")}입니다.`,
+    meta: { family: "b3s-rod-rows", total, rods, given: given.name }
+  };
+}
+
+// 첫 줄이 「긴 막대 하나 + 짧은 막대 여럿」(연습 13 꼴) — 짧은 막대 몇 개가 아래 줄 막대 하나와 끝이 맞는다.
+function rodRowsMixed({ difficulty = 2 } = {}) {
+  const middleCount = sample(difficulty === 1 ? [3] : [3, 4]);           // 둘째 줄 막대 개수
+  const shortPerMiddle = sample(difficulty === 3 ? [2, 3] : [2]);       // 짧은 막대 몇 개 = 둘째 줄 막대 하나
+  const lastCount = sample(range(2, 6).filter((value) => value !== middleCount));
+  const shortLength = randomInt(1, difficulty === 3 ? 4 : 3);
+  const middleLength = shortLength * shortPerMiddle;
+  const total = middleLength * middleCount;
+  const longLength = total - middleLength;
+  // 네 막대 길이가 모두 다르고 ㉣도 자연수일 때만(같은 길이 둘이면 그림에서 구별이 흐려진다)
+  if (total % lastCount || new Set([shortLength, longLength, middleLength, total / lastCount]).size !== 4) return rodRowsMixed({ difficulty });
+  const rods = [
+    { name: "㉠", length: shortLength },
+    { name: "㉡", length: longLength },
+    { name: "㉢", length: middleLength },
+    { name: "㉣", length: total / lastCount }
+  ];
+  const rows = [
+    [{ name: "㉡", length: longLength }, ...Array.from({ length: shortPerMiddle }, () => ({ name: "㉠", length: shortLength }))],
+    Array.from({ length: middleCount }, () => ({ name: "㉢", length: middleLength })),
+    Array.from({ length: lastCount }, () => ({ name: "㉣", length: total / lastCount }))
+  ];
+  const others = rods.slice(1);
+  return {
+    prompt: `여러 개의 막대가 같은 길이의 줄에 놓여 있습니다. 막대 ㉠의 길이가 ${shortLength}cm일 때, 막대 ㉡, ㉢, ㉣의 길이를 각각 구하세요.`,
+    visual: { kind: "fig", html: rodRowsFigure(rows, total, null) },
+    answer: others.map((rod) => `${rod.name}=${rod.length}cm`).join(", "),
+    solution: `막대 ㉠ ${shortPerMiddle}개와 막대 ㉢ 1개의 끝이 맞으므로 ㉢은 ${shortLength} × ${shortPerMiddle} = ${middleLength}cm, 한 줄은 ${middleLength} × ${middleCount} = ${total}cm입니다. ㉡은 ${total} − ${middleLength} = ${longLength}cm, ㉣은 ${total} ÷ ${lastCount} = ${total / lastCount}cm입니다.`,
+    meta: { family: "b3s-rod-rows", total, rods, given: "㉠", rows }
+  };
+}
+
+function gcdInt(a, b) { let x = Math.abs(a); let y = Math.abs(b); while (y) [x, y] = [y, x % y]; return x || 1; }
+
 // ───────────────────────────── 생성기 · 유형 · 안내 · 번호 ─────────────────────────────
 
 export const BOOK03_STRUCTURE_GENERATORS = {
@@ -775,7 +914,10 @@ export const BOOK03_STRUCTURE_GENERATORS = {
   b3sMagicHelperCells: magicHelperCells,
   b3sMagicSumThenFill: magicSumThenFill,
   b3sMagicFourSparse: magicFourSparse,
-  b3sRingOtherSum: ringOtherSum
+  b3sRingOtherSum: ringOtherSum,
+  b3sNestedSquareDoubling: nestedSquareDoubling,
+  b3sRodRowsCounts: rodRowsCounts,
+  b3sRodRowsMixed: rodRowsMixed
 };
 
 const cryptRow = (id, label, generator, aliases = []) => ({
@@ -817,7 +959,10 @@ export const BOOK03_STRUCTURE_TYPE_ROWS = [
   magicRow("magic-helper-cells-b3", "도움 칸을 써서 3×3 마방진 만들기", "b3sMagicHelperCells", ["도움 칸", "보조 칸", "대각선으로 쓰기"]),
   magicRow("magic-sum-then-fill-b3", "한 줄의 합을 먼저 구해 3×3 마방진 모두 채우기", "b3sMagicSumThenFill", ["한 줄의 합"]),
   magicRow("magic-four-sparse-b3", "수가 조금만 보이는 4×4 마방진의 색칠한 칸", "b3sMagicFourSparse", ["4×4"]),
-  magicRow("ring-other-sum-b3", "오각진의 세 수 합을 정해진 합으로 맞추기", "b3sRingOtherSum", ["오각진", "합 19"])
+  magicRow("ring-other-sum-b3", "오각진의 세 수 합을 정해진 합으로 맞추기", "b3sRingOtherSum", ["오각진", "합 19"]),
+  { id: "nested-square-doubling-b3", domain: "pattern", middle: "넓이 규칙", label: "바로 선·기운 정사각형이 번갈아 감싸 넓이가 두 배씩", generator: "b3sNestedSquareDoubling", catalogGroup: "단위넓이", catalogStrategy: "두 배씩 커지는 넓이", searchAliases: ["겹친 정사각형", "기운 정사각형", "넓이 두 배"] },
+  { id: "rod-rows-counts-b3", domain: "geometry", middle: "막대와 배수", label: "같은 길이 줄을 막대 여러 가지로 채운 막대 사슬", generator: "b3sRodRowsCounts", catalogGroup: "단위길이와 배수", catalogStrategy: "한 줄의 길이 먼저", searchAliases: ["막대", "막대 사슬", "배수"] },
+  { id: "rod-rows-mixed-b3", domain: "geometry", middle: "막대와 배수", label: "긴 막대와 짧은 막대가 섞인 줄의 막대 길이", generator: "b3sRodRowsMixed", catalogGroup: "단위길이와 배수", catalogStrategy: "끝이 맞는 막대 찾기", searchAliases: ["막대", "막대 사슬", "끝 맞추기"] }
 ];
 
 export const BOOK03_STRUCTURE_GUIDES = {
@@ -841,7 +986,10 @@ export const BOOK03_STRUCTURE_GUIDES = {
   "magic-helper-cells-b3": "수를 대각선으로 세 개씩 이어 쓰고, 네모 밖 도움 칸의 수는 맞은편 안쪽 빈칸으로 옮깁니다.",
   "magic-sum-then-fill-b3": "세 수가 다 보이는 줄로 한 줄의 합을 구하고(가운데 수의 세 배), 두 칸을 아는 줄부터 채웁니다.",
   "magic-four-sparse-b3": "한 줄의 합은 34입니다. 모르는 칸이 하나뿐인 줄부터 채우며 색칠한 칸까지 갑니다.",
-  "ring-other-sum-b3": "꼭짓점 다섯 수의 합은 (한 줄의 합) × 5 − 55입니다. 두 수를 아는 줄부터 빼서 채웁니다."
+  "ring-other-sum-b3": "꼭짓점 다섯 수의 합은 (한 줄의 합) × 5 − 55입니다. 두 수를 아는 줄부터 빼서 채웁니다.",
+  "nested-square-doubling-b3": "감싸는 정사각형은 안쪽 정사각형의 넓이에 같은 넓이를 한 번 더 붙인 것이라 두 배씩 커집니다.",
+  "rod-rows-counts-b3": "아는 막대로 한 줄의 길이를 먼저 구하고, 그 길이를 다른 막대의 개수로 나눕니다.",
+  "rod-rows-mixed-b3": "끝이 맞는 곳을 찾아 짧은 막대 몇 개가 아래 막대 하나인지 보고, 한 줄의 길이를 구한 뒤 나머지를 뺍니다."
 };
 
 export const BOOK03_STRUCTURE_REMAPS = [
@@ -878,7 +1026,12 @@ export const BOOK03_STRUCTURE_REMAPS = [
   ["book-03", 4, "practice", 1, [11], "magic-sum-then-fill-b3"],
   ["book-03", 4, "check", 2, [3], "magic-four-sparse-b3"],
   ["book-03", 4, "practice", 1, [14], "magic-four-sparse-b3"],
-  ["book-03", 4, "practice", 1, [15], "ring-other-sum-b3"]
+  ["book-03", 4, "practice", 1, [15], "ring-other-sum-b3"],
+  // 1단원 겹친 정사각형(두 배씩) · 2단원 막대 사슬
+  ["book-03", 1, "check", 1, [4], "nested-square-doubling-b3"],
+  ["book-03", 1, "practice", 1, [7], "nested-square-doubling-b3"],
+  ["book-03", 2, "practice", 1, [13], "rod-rows-mixed-b3"],
+  ["book-03", 2, "practice", 1, [14], "rod-rows-counts-b3"]
 ];
 
 // 검사기용: 새 생성기 문항을 다른 방법으로 다시 풀어 본다. 틀리면 까닭을 글로 돌려준다(맞으면 "").
@@ -943,6 +1096,18 @@ export function verifyBook03Structure(problem) {
     };
     walk(0);
     return count === 1 ? "" : `답이 ${count}개`;
+  }
+  if (meta.family === "b3s-nested-doubling") {
+    const areas = range(1, meta.target).map((k) => meta.unit * 2 ** (k - 1));
+    const want = meta.askSum ? areas.reduce((sum, value) => sum + value, 0) : areas[meta.target - 1];
+    return want === meta.answer && problem.answer === String(want) ? "" : "넓이가 다름";
+  }
+  if (meta.family === "b3s-rod-rows") {
+    if (meta.rods.some((rod) => !Number.isInteger(rod.length) || rod.length <= 0)) return "막대 길이가 자연수가 아님";
+    if (meta.rows && meta.rows.some((row) => row.reduce((sum, piece) => sum + piece.length, 0) !== meta.total)) return "줄 길이가 다름";
+    if (!meta.rows && meta.rods.some((rod) => rod.count * rod.length !== meta.total)) return "줄 길이가 다름";
+    if (new Set(meta.rods.map((rod) => rod.length)).size !== meta.rods.length) return "막대 길이가 겹침";
+    return "";
   }
   return `모르는 꼴 ${meta.family}`;
 }
