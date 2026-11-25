@@ -1502,9 +1502,74 @@ function stoneTriangleFlipB7({ difficulty = 2 }) {
   };
 }
 
+
+// ── 남은 번호(2차) — 거울 시계 정각, 세 원 모두 같은 합 ─────────────
+
+// 1단원 도전 4: 거울에 비친 정각 시계 두 개로 잔 시간
+function mirrorClockOclockB7({ difficulty = 2 }) {
+  const sleepH = randomInt(difficulty === 1 ? 8 : 7, 11);
+  const wakeH = randomInt(5, difficulty === 3 ? 9 : 8);
+  const sleep12 = sleepH * 60;
+  const wake12 = wakeH * 60;
+  const mirror = (t) => mod(720 - t, 720);
+  const hours = 12 - sleepH + wakeH;
+  const shown = (t) => (mirror(t) / 60) || 12;
+  return {
+    prompt: "밤에 잠들 때와 아침에 일어날 때 거울에 비친 시계입니다. 두 시계 모두 정각을 가리킵니다. 잠을 잔 시간은 몇 시간인가요?",
+    visual: { kind: "fig", html: wrapRow([[sleep12, "밤 · 거울"], [wake12, "아침 · 거울"]].map(([real, label]) => `<div style="display:flex;flex-direction:column;align-items:center;gap:4px"><div style="transform:scaleX(-1)">${clockSvg(real)}</div><b style="font-size:14px">${label}</b></div>`)) },
+    answer: `${hours}시간`,
+    solution: `거울에 비친 시계는 좌우가 바뀌어 ${shown(sleep12)}시처럼 보이면 실제로는 ${sleepH}시, ${shown(wake12)}시처럼 보이면 실제로는 ${wakeH}시입니다(보이는 시 + 실제 시 = 12). 밤 ${sleepH}시부터 밤 12시까지 ${12 - sleepH}시간, 아침 ${wakeH}시까지 ${wakeH}시간 → ${hours}시간.`,
+    meta: { family: "mirror-clock-oclock-b7", sleepH, wakeH, hours }
+  };
+}
+
+// 4단원 연습 20: 세 원 모두 같은 합 — 가려진 두 칸 찾기
+function threeCircleAllEqualSvg(v, shadeKeys) {
+  const cells = { top: [210, 62], leftOverlap: [164, 125], rightOverlap: [256, 125], leftExclusive: [115, 205], rightExclusive: [305, 205] };
+  const circle = (cx, cy) => `<circle cx="${cx}" cy="${cy}" r="78" style="fill:none;stroke:${ACCENT};stroke-width:2"/>`;
+  const marks = Object.entries(cells).map(([k, [x, y]]) => (shadeKeys.includes(k)
+    ? `<rect x="${x - 17}" y="${y - 20}" width="34" height="28" rx="4" style="fill:#f6d58a;stroke:${INK};stroke-width:1"/>${text(x, y, "?", 18, 'font-weight="700"')}`
+    : text(x, y, v[k], 20, 'font-weight="700"'))).join("");
+  return `${svgOpen(420, 290, "세 원의 합이 모두 같은 그림")}${circle(210, 92)}${circle(155, 175)}${circle(265, 175)}${marks}${text(210, 282, "세 원 안의 수의 합이 모두 같습니다", 14)}</svg>`;
+}
+function threeCircleAllEqualB7({ difficulty = 2 }) {
+  for (;;) {
+    const hi = difficulty === 3 ? 30 : 18;
+    const leftOverlap = randomInt(2, hi);
+    const rightOverlap = randomInt(2, hi);
+    const top = randomInt(2, hi);
+    const S = top + leftOverlap + rightOverlap;
+    const leftExclusive = S - leftOverlap;
+    const rightExclusive = S - rightOverlap;
+    const v = { top, leftOverlap, rightOverlap, leftExclusive, rightExclusive };
+    // 가릴 두 칸: 늘 아는 칸에서 S를 구할 수 있게(한 원은 다 보이게)
+    const plans = [["top", "rightExclusive"], ["top", "leftExclusive"], ["leftExclusive", "rightExclusive"]];
+    const hide = pick(plans);
+    if (new Set(Object.values(v)).size < 4) continue;
+    const name = { top: "위 원만의 칸", leftOverlap: "위·왼쪽이 겹친 칸", rightOverlap: "위·오른쪽이 겹친 칸", leftExclusive: "왼쪽 원만의 칸", rightExclusive: "오른쪽 원만의 칸" };
+    const circles = { 위: ["top", "leftOverlap", "rightOverlap"], 왼쪽: ["leftOverlap", "leftExclusive"], 오른쪽: ["rightOverlap", "rightExclusive"] };
+    const full = Object.entries(circles).find(([, ks]) => ks.every((k) => !hide.includes(k)));
+    if (!full) continue;
+    const steps = [`${full[0]} 원은 다 보이므로 한 원의 합 = ${full[1].map((k) => v[k]).join(" + ")} = ${S}`];
+    for (const k of hide) {
+      const [cname, ks] = Object.entries(circles).find(([, list]) => list.includes(k) && list.filter((x) => x !== k).every((x) => !hide.includes(x)));
+      steps.push(`${cname} 원에서 ${name[k]} = ${S} − ${ks.filter((x) => x !== k).map((x) => v[x]).join(" − ")} = ${v[k]}`);
+    }
+    return {
+      prompt: "세 원 안에 쓰인 수의 합이 세 원 모두 같습니다. 색칠한 두 칸에 알맞은 수를 구하세요.",
+      visual: { kind: "fig", html: threeCircleAllEqualSvg(v, hide) },
+      answer: hide.map((k) => `${name[k]} ${v[k]}`).join(", "),
+      solution: `${steps.join(". ")}.`,
+      meta: { family: "three-circle-all-equal-b7", values: v, hide, S }
+    };
+  }
+}
+
 // ── 내보내기 ─────────────────────────────────────────
 
 export const BOOK07_STRUCTURE_GENERATORS = {
+  mirrorClockOclockB7,
+  threeCircleAllEqualB7,
   calendarDateChainB7,
   calendarRemainingDaysB7,
   elapsedTimeAmPmB7,
@@ -1585,10 +1650,14 @@ export const BOOK07_STRUCTURE_TYPE_ROWS = [
   row("reverse-add-chain-b7", "number", "팔린드롬", "거꾸로 읽은 수 더하기를 되풀이해 대칭수 만들기", "reverseAddChainB7", ["거꾸로 더하기", "대칭수 만들기"]),
   row("kaprekar-fill-b7", "number", "수의 규칙", "큰 수에서 작은 수 빼기를 되풀이해 마지막 수 찾기", "kaprekarFillB7", ["495", "되풀이"]),
   row("palindrome-card-adjacent-b7", "number", "팔린드롬", "숫자 카드로 이웃한 차가 같은 대칭수 만들기", "palindromeCardAdjacentB7", ["숫자 카드", "이웃한 차", "대칭수"]),
-  row("stone-triangle-flip-b7", "logic", "도형 옮기기", "삼각형 바둑돌을 거꾸로 만드는 가장 적은 이동", "stoneTriangleFlipB7", ["바둑돌 뒤집기", "가장 적게 옮기기"])
+  row("stone-triangle-flip-b7", "logic", "도형 옮기기", "삼각형 바둑돌을 거꾸로 만드는 가장 적은 이동", "stoneTriangleFlipB7", ["바둑돌 뒤집기", "가장 적게 옮기기"]),
+  row("mirror-clock-oclock-b7", "logic", "거울 시계", "거울에 비친 정각 시계 두 개로 잔 시간 구하기", "mirrorClockOclockB7", ["거울 시계", "정각"]),
+  row("three-circle-all-equal-b7", "number", "수 배열과 합", "세 원 모두 합이 같을 때 가려진 두 칸 구하기", "threeCircleAllEqualB7", ["세 원", "같은 합"])
 ];
 
 export const BOOK07_STRUCTURE_GUIDES = {
+  "mirror-clock-oclock-b7": "거울 시계는 좌우가 바뀝니다. 보이는 시와 실제 시를 더하면 12이므로 실제 시각을 먼저 구합니다.",
+  "three-circle-all-equal-b7": "다 보이는 원 하나로 한 원의 합을 구하고, 가려진 칸이 하나뿐인 원에서 차례로 뺍니다.",
   "calendar-date-chain-b7": "같은 날짜끼리 다음 달로 건너면 앞 달의 날 수만큼 지나고, 마지막 칸은 날짜의 차(또는 남은 날 + 날짜)만큼 지납니다. 날 수를 7로 나눈 나머지만큼 요일을 옮깁니다.",
   "calendar-remaining-days-b7": "앞 달의 남은 날 수에 다음 달 날짜를 더해 며칠 뒤인지 구하고, 7로 나눈 나머지만큼 요일을 옮깁니다.",
   "elapsed-time-am-pm-b7": "오후 시각은 12를 더한 시로 바꾸어 끝난 시각에서 시작한 시각을 빼고, 분이 모자라면 1시간을 60분으로 바꿉니다.",
@@ -1628,6 +1697,8 @@ export const BOOK07_STRUCTURE_GUIDES = {
 };
 
 export const BOOK07_STRUCTURE_REMAPS = [
+  ["book-07", 1, "advanced", 1, [4], "mirror-clock-oclock-b7"],
+  ["book-07", 4, "practice", 1, [20], "three-circle-all-equal-b7"],
   // 1단원 — 달력 징검다리 · 남은 날 + 날짜
   ["book-07", 1, "activity", 1, [3, 4, 5, 6], "calendar-date-chain-b7"],
   ["book-07", 1, "check", 1, [2, 3], "calendar-date-chain-b7"],

@@ -1,6 +1,7 @@
 /* Translate the existing reference table into parent-facing labels for a selected age or grade. */
 (function(global){
 'use strict';
+if(global.PlannerLevelGuide)return;
 
 const learners=[
  ...[4,5,6,7].map(age=>['pre:'+age,age+'세']),
@@ -108,11 +109,10 @@ function options(items,selected){
  return items.map(([value,label])=>'<option value="'+esc(value)+'"'+(value===selected?' selected':'')+'>'+esc(label)+'</option>').join('');
 }
 
-function render({learner,month,open=false}={}){
+function render({learner,month,open=false,embedded=false}={}){
  const guide=model({learner,month});
  if(!guide.rows.length)return '';
- return '<details class="level-guide"'+(open?' open':'')+'><summary>유아·초등 레벨 기준 보기</summary>'+
-  '<p>같은 L번호라도 나이·학년과 월에 따라 공부하는 과정이 달라집니다.</p>'+
+ const contents='<p>같은 L번호라도 나이·학년과 월에 따라 공부하는 과정이 달라집니다.</p>'+
   (Number.isFinite(guide.premierStart)?'<p>개월 차이는 프리미어1 참고표와 각 기준표의 <strong>중1-1 시작 시점</strong>을 비교한 값입니다.</p>':'')+
   '<ul class="level-guide-next"><li><a href="planner.html?guest=1&amp;goal=contest">이후 KMO 준비</a><span>중등 심화부터 경시 기초·입문·심화까지</span></li>'+
   '<li><a href="planner.html?admissions=private">자사고 지원 조건·합격 준비</a><span>외대부고·민사고·상산고의 지원 자격, 내신과 면접</span></li></ul>'+
@@ -122,7 +122,8 @@ function render({learner,month,open=false}={}){
   '<div class="level-guide-scroll" tabindex="0" role="region" aria-label="레벨별 참고 진도표"><table>'+
   '<caption>'+esc(guide.label)+' 기준</caption><thead><tr><th scope="col">학습 과정과 L번호</th>'+
   guide.columns.map(([,label])=>'<th scope="col">'+esc(label)+'</th>').join('')+
-  '</tr></thead><tbody>'+rowMarkup(guide)+'</tbody></table></div></details>';
+  '</tr></thead><tbody>'+rowMarkup(guide)+'</tbody></table></div>';
+ return embedded?contents:'<details class="level-guide"'+(open?' open':'')+'><summary>유아·초등 레벨 기준 보기</summary>'+contents+'</details>';
 }
 
 global.document?.addEventListener('change',event=>{

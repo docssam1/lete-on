@@ -515,6 +515,23 @@ function validate(type, problem, difficulty) {
     case "route-strip-set-b5":
       assert(meta.heights.every((h, i) => meta.answers[i] === countPaths(h + 1, 2)), id, difficulty, "strip route count mismatch");
       return;
+    case "digit-card-ranked-mix-b5": {
+      const brute = [];
+      for (let n = 10 ** (meta.length - 1); n < 10 ** meta.length; n += 1) {
+        const left = meta.cards.slice();
+        if (String(n).split("").every((ch) => { const i = left.indexOf(Number(ch)); if (i < 0) return false; left.splice(i, 1); return true; })) brute.push(n);
+      }
+      const ordered = meta.fromLarge ? brute.slice().reverse() : brute;
+      assert(String(ordered[meta.rank - 1]) === String(problem.answer) && meta.rank <= brute.length, id, difficulty, "ranked card number mismatch");
+      return;
+    }
+    case "digit-directed-difference-b5": {
+      const brute = [];
+      for (let n = 10; n <= 99; n += 1) { const a = Math.floor(n / 10), b = n % 10; if ((meta.tensBigger ? a - b : b - a) === meta.d) brute.push(n); }
+      if (meta.mode === "all") assert(String(problem.answer) === brute.join(", ") && brute.length >= 2, id, difficulty, "directed difference list mismatch");
+      else assert(String(problem.answer) === String((meta.fromLarge ? brute.slice().reverse() : brute)[meta.rank - 1]), id, difficulty, "directed difference rank mismatch");
+      return;
+    }
     case "triangular-table-b5":
       assert(meta.asked.every((n, i) => meta.answers[i] === sum(Array.from({ length: n }, (_, j) => j + 1))), id, difficulty, "triangular table mismatch");
       return;
@@ -526,7 +543,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
-if (typeIds.length !== 72) throw new Error(`book-05 type count ${typeIds.length}`);
+if (typeIds.length !== 75) throw new Error(`book-05 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);

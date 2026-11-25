@@ -60,6 +60,12 @@ test('the controls and table expose readable labels and support compact source-o
  assert.equal(guide.model({details:null}).columns.some(([id])=>id==='depth'),false);
 });
 
+test('an embedded guide uses the result screen’s existing disclosure and learner',()=>{
+ const html=guide.render({learner:'grade:3',month:11,embedded:true});
+ assert.doesNotMatch(html,/<details|<summary/);
+ assert.match(html,/<option value="grade:3" selected>초3<\/option>/);
+ assert.match(html,/<caption>초3 11월 기준<\/caption>/);
+});
 test('benchmark names and month gaps use the separate Premier1 middle-school entry milestone',()=>{
  const model=guide.model({learner:'pre:7',month:11});
  assert.equal(model.premierStart,51);

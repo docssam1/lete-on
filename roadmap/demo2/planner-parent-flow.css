@@ -183,10 +183,14 @@ body.questioning #conversation:has(#questionOptions>.parent-slides)>:not(#questi
 /* Runtime CSS may already be loaded when a bundle fails. Keep boot in one column. */
 body.parent-slide-open #parentBoot{grid-template-columns:minmax(0,1fr)!important}
 
-/* One starting point and the learner's current study, together on one screen. */
+/* Two short questions share one canvas and keep the existing answer controls mounted. */
 .parent-quick.parent-slides .parent-slide-layout{grid-template-columns:minmax(0,1fr);grid-template-rows:minmax(0,1fr);max-width:680px;margin-inline:auto}
 .parent-quick .parent-age-intake{margin-bottom:16px}
 .parent-quick .parent-current-row>label:has(select[name$="Source"]),.parent-quick .parent-current-row>label:has(select[name$="Status"]),.parent-quick .parent-current-row>label:has([name^="thinkingLevel"]),.parent-quick .parent-thinking-note{display:none!important}
+.parent-quick[data-slide-detail=false] [data-active=true][data-progress-open=true] .parent-current-row>label:not([hidden]):is(.parent-range,:has(select[name$="Status"]),:has([name^="thinkingLevel"])){display:flex!important}
+.parent-quick .parent-slide-footer>nav>[data-quick-next],#questionOptions .parent-quick .parent-slide-footer>nav>[data-quick-next]{grid-column:1/-1}
+:is(.parent-quick,#questionOptions .parent-quick) [data-quick-progress]{display:none}
+:is(.parent-quick,#questionOptions .parent-quick) [data-active=true]>[data-quick-progress]{display:inline-flex;align-items:center;min-height:36px;padding:4px 0;border:0;background:transparent;color:#69457f;font:inherit;font-size:13px;text-decoration:underline;text-underline-offset:3px;cursor:pointer}
 .parent-quick .parent-slide-viewport{padding-block-start:24px}
 .parent-quick .parent-slide-question{display:flex;align-items:center;gap:10px;margin-bottom:20px}
 .parent-quick .parent-slide-question::before{content:"";flex:0 0 40px;height:40px;background:url("assets/ui/roadmap-glass.svg") center/contain no-repeat}
@@ -223,4 +227,31 @@ body.questioning #conversation:has(#questionOptions>.parent-draft-view){grid-col
 #questionOptions .parent-draft-actions>.parent-primary{background:#64457c;color:#fff;border:1px solid #64457c;font-weight:700}
 #questionOptions .parent-draft-actions>.parent-advanced{background:white;color:#56336b;border:1px solid #b8a0c4;text-decoration:none}
 
-@media(max-width:520px){.parent-quick .parent-current-rows{grid-template-columns:1fr;gap:6px}.parent-quick fieldset{padding:0 8px 6px}.parent-quick .parent-current-row>label{font-size:0;gap:0}.parent-quick .parent-quick-starting{margin-top:2px}}
+@media(max-width:520px){.parent-quick .parent-current-rows{grid-template-columns:1fr;gap:6px}.parent-quick fieldset{padding:0 8px 6px}.parent-quick .parent-current-row>label{font-size:0;gap:0}.parent-quick [data-progress-open=true] .parent-current-row>label:is(.parent-range,:has(select[name$="Status"]),:has([name^="thinkingLevel"])){font-size:13px;gap:4px}.parent-quick .parent-quick-starting{margin-top:2px}}
+
+.parent-plan-overview,.parent-plan-options{min-width:0;color:#35283e;text-align:left}
+.parent-plan-overview>header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.parent-plan-overview h3,.parent-math-draft .parent-plan-overview h3{margin:0;color:#4f345e;font-size:18px;line-height:1.45}
+.parent-math-draft .parent-plan-overview{margin-top:20px}
+.parent-plan-overview>dl{margin:0;padding:0;border-block:1px solid #d7cddd}
+.parent-plan-overview .parent-plan-row{display:grid;grid-template-columns:110px minmax(0,1fr);gap:12px;align-items:stretch;padding:0;margin:0;border:0;background:none}
+.parent-plan-overview .parent-plan-row+.parent-plan-row{border-top:1px solid #e4dbe9}
+.parent-plan-row dt{margin:0;padding:13px 0;font-size:14px;font-weight:700;color:#4f345e}
+.parent-plan-row dd,.parent-math-draft .parent-plan-row dd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;margin:0;font-weight:400}
+.parent-plan-current,.parent-plan-next{display:flex;flex-direction:column;gap:3px;padding:12px 9px;min-width:0;overflow-wrap:anywhere}
+.parent-plan-next{border-left:1px solid #e4dbe9;padding-inline-start:14px;background:#f7f3fa}
+.parent-plan-row small{color:#685574;font-size:12px;line-height:1.45}
+.parent-plan-row strong{font-size:15px;line-height:1.45;color:#3d2b48}
+.parent-plan-row span{font-size:13px;line-height:1.5;color:#60516a}
+.parent-plan-options{margin-block:14px}
+.parent-draft-view .parent-plan-options{max-width:680px;margin-inline:auto}
+.parent-plan-options details,#parentBoot .parent-plan-options details{margin:8px 0;min-width:0}
+.parent-plan-options summary,#parentBoot .parent-plan-options summary{box-sizing:border-box;min-height:44px;padding:10px 14px;line-height:1.45;font-size:14px;font-weight:700;cursor:pointer}
+.parent-plan-routes{border:1px solid #ded2e6;border-radius:10px;background:white}
+.parent-plan-routes[open]>summary{border-bottom:1px solid #ded2e6}
+.parent-plan-routes ul{display:flex;flex-wrap:wrap;gap:4px 18px;margin:0;padding:6px 14px;list-style:none}
+.parent-plan-routes li:last-child{flex-basis:100%}
+.parent-plan-routes li>strong{font-size:14px}
+.parent-plan-routes li>div{display:flex;gap:0 14px;flex-wrap:wrap}
+.parent-plan-routes a{display:inline-flex;align-items:center;min-height:44px;color:#57386e;font-size:14px;text-underline-offset:4px}
+@media(max-width:520px){.parent-plan-overview .parent-plan-row{grid-template-columns:1fr;gap:0}.parent-plan-row dt{padding:10px 8px 4px}.parent-plan-current,.parent-plan-next{padding:8px}.parent-plan-overview>header{margin-bottom:9px}}

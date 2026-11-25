@@ -7,10 +7,12 @@ function initialMode(answers={}){
  // submission describes a single activity, so it must never replace those axes.
  return Object.keys(answers).length?'detail':'quick';
 }
-function showDraft(host,answers,{onDetail,onMap}){
+function showDraft(host,answers,{onDetail,onMap,overview='',fields={},loadOverview}){
+ const today=new Date();
+ const referenceFields={year:today.getFullYear(),mon:today.getMonth()+1,...fields};
  const doc=host.ownerDocument,view=doc.createElement('section');
  view.className='parent-draft-view';
- view.innerHTML=g.PlannerParentFlow.draftMarkup(answers);
+ view.innerHTML=g.PlannerParentFlow.draftMarkup(answers,overview);
  const actions=doc.createElement('div');actions.className='parent-draft-actions';
  const detail=doc.createElement('button'),map=doc.createElement('button');
  detail.type=map.type='button';
@@ -23,8 +25,18 @@ function showDraft(host,answers,{onDetail,onMap}){
   finally{detail.disabled=map.disabled=false;}
  };
  detail.onclick=()=>run(onDetail);map.onclick=()=>run(onMap);
- actions.append(map,detail);view.append(actions,error);host.replaceChildren(view);
+ actions.append(map,detail);view.append(actions,error);
+ const references=g.PlannerParentOverview?.references(answers,referenceFields);
+ if(references)view.insertAdjacentHTML('beforeend',references);
+ host.replaceChildren(view);
  const title=view.querySelector('h2');if(title){title.tabIndex=-1;title.focus({preventScroll:true});}
+ if(loadOverview)void loadOverview(referenceFields).then(html=>{
+  if(!html||!view.isConnected)return;
+  const current=view.querySelector('.parent-math-draft');
+  const restoreFocus=current.contains(doc.activeElement);
+  current.outerHTML=g.PlannerParentFlow.draftMarkup(answers,html);
+  if(restoreFocus){const h=view.querySelector('h2');h.tabIndex=-1;h.focus({preventScroll:true});}
+ }).catch(()=>{/* The reported current study remains usable while optional projections are unavailable. */});
 }
 async function mount({loadFull,member,saved}){
  const doc=g.document,host=doc.createElement('main');host.id='parentBoot';
@@ -50,7 +62,13 @@ async function mount({loadFull,member,saved}){
  };
  const preview=answers=>{
   doc.body.classList.remove('parent-slide-open');delete host.dataset.slideEditing;
-  showDraft(entry,answers,{onDetail:()=>edit('detail',answers),onMap:()=>open(answers,false)});
+  showDraft(entry,answers,{
+   onDetail:()=>edit('detail',answers),onMap:()=>open(answers,false),fields:saved?.fields,
+   loadOverview:async fields=>{
+    const standard=await g.PlannerLevelGuideEntry.loadStandard(answers);
+    return g.PlannerParentOverview.render(answers,fields,standard.model(answers,fields));
+   }
+  });
   g.RoadmapSpeed?.ready('roadmap_ready','.parent-math-draft');
  };
  const submit=async next=>{

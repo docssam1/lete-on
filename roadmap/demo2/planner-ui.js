@@ -141,8 +141,9 @@ function showMathDraft(next){
  $('questionTitle').textContent='우리 아이 수학 로드맵 초안';$('questionHelp').textContent='';
  $('questionStep').textContent='현재 수학';$('questionOptions').dataset.question=question;
  $('intakeLater').hidden=true;$('questionBack').disabled=true;
+ const fields=intakeFields(),standard=PlannerStandard.model(answers,fields,{calcDaysPerWeek,highStudy:curriculumState.highStudy,highMonths:curriculumState.periods.highMonths});
  window.RoadmapParentBoot.showDraft($('questionOptions'),answers,{
-  onDetail:()=>openCurrentStudy('detail'),onMap:()=>applyCurrentStudy(answers)
+  fields,overview:PlannerParentOverview.render(answers,fields,standard),onDetail:()=>openCurrentStudy('detail'),onMap:()=>applyCurrentStudy(answers)
  });
  showView('vmap');mobileWorkspace('choice');saveDraft();
 }
@@ -1399,11 +1400,6 @@ function drawJourney(){
  const patternChoices=standardActive&&standard.independentDepth&&standard.lanes.find(row=>row.id==='thinking')?.status==='known'?'<div class="standard-patterns"><p>교과·사고력·심화·연산은 각각의 현재 진도에서 이어집니다.</p></div>':standardActive?'<div class="standard-patterns" aria-label="아직 정하지 않은 공부 구성 비교"><button type="button" data-standard-pattern="thinking" aria-pressed="'+(standard.pattern==='thinking')+'">교과·사고력 중심</button><button type="button" data-standard-pattern="deep" aria-pressed="'+(standard.pattern==='deep')+'">교과·심화 중심</button><p>공부 중인 사고력·심화·연산은 각각의 진도로 계속 이어집니다.</p></div>':'';
  $('journeyMap').innerHTML='<div class="workspace-results">'+(standardActive?PlannerStandard.renderSummary(standard):PlannerWorkspace.summary(transition,progression,answers,intakeFields(),pathwayTrail))+patternChoices+'<div class="workspace-tabs" role="tablist" aria-label="같은 계획 비교">'+tabs.map(([id,title])=>`<button type="button" role="tab" id="workspace-tab-${id}" data-workspace-view="${id}" aria-controls="workspace-panel-${id}" aria-selected="${workspaceView===id}" tabindex="${workspaceView===id?0:-1}">${title}</button>`).join('')+'</div>'+pane('map',standardActive&&!intakeFields().internationalCalendar?PlannerStandard.render(standard,{view:'map',summary:false}):(board+routeLedger+(completed?PlannerStandard.renderSupplementChoices(standard):'')))+pane('graph',(intakeFields().internationalCalendar?'<p class="course-empty">해외 교육과정은 현재 학교의 과목과 학기 일정을 기준으로 설계합니다. 선택한 과목의 월별 계획을 먼저 확인해 주세요.</p>':standardActive?standardGraph+(window.PlannerLevelPace?window.PlannerLevelPace.render(standard,intakeFields()):''):transition?.axis==='calc'?PlannerStandard.renderCalculationGraph(standard.calcPlan):T.renderGraph(transition,progression,answers,intakeFields(),{academyLines}))||'<p class="course-empty">현재 학년과 공부 범위를 고르면 비교 그래프가 이어집니다.</p>')+pane('table',standardActive&&!intakeFields().internationalCalendar?PlannerStandard.render(standard,{view:'table',summary:false}):((schedule+(completed?PlannerStandard.renderSupplementChoices(standard):''))||'<p class="course-empty">교재와 이어갈 범위를 고르면 같은 계획의 기간·회차 표가 표시됩니다.</p>'))+pane('records',records)+'</div>'+'<div class="workspace-question-source">'+(flowMode==='reference'?RP.questions():standardActive?(PlannerStandard.renderQuestions?.(standard)||''):currentChoiceQuestions()+(completed?PlannerWorkspace.renderQuestions(transition,progression,answers,intakeFields(),pathwayTrail)+PlannerStandard.renderSupplementQuestions(standard):''))+X.renderQuestions(pathwayTrail,pathwayActiveId,pathwayContext())+(flowMode==='personality'?Y.renderQuestions(personalityState,pathwayTrail):'')+'</div>';
 
- if(completed&&!intakeFields().internationalCalendar&&window.PlannerLevelGuide){
-  const fields=intakeFields(),grade=I.gradeChoice(answers,fields);
-  const learner=grade==='pre'?'pre:'+I.age(answers,fields):'grade:'+grade;
-  $('workspace-panel-graph').insertAdjacentHTML('afterbegin',window.PlannerLevelGuide.render({learner,month:Number(fields.mon)}));
- }
  if(completed&&!intakeFields().internationalCalendar&&!parentActive){
   const currentGrade=I.gradeChoice(answers,intakeFields()),stage=currentGrade==='pre'?'preschool':Number(currentGrade)<=6?'elementary':'middle';
   if(window.PlannerCounsellingUpdates){$('workspace-panel-map').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.render(stage,{compact:true}));$('workspace-panel-records').insertAdjacentHTML('beforeend',window.PlannerCounsellingUpdates.render(stage,{excludeCommon:true}));$('workspace-panel-records').insertAdjacentHTML('afterbegin',window.PlannerCounsellingUpdates.renderCommon(currentGrade,{hwangso:answers.hw==='1'}));}
@@ -1507,12 +1503,19 @@ function drawJourney(){
   });
  }
  if(parentActive){
-  const auto=PF.automatic(answers,intakeFields(),standard,{language:languageState,science:scienceState});
-  $('workspace-panel-map').insertAdjacentHTML('afterbegin',PF.renderResult(auto));
+  const fields=intakeFields(),auto=PF.automatic(answers,fields,standard,{language:languageState,science:scienceState});
+  const panel=$('workspace-panel-map');
+  panel.insertAdjacentHTML('afterbegin',PlannerParentOverview.render(answers,fields,standard,{studyAction:true})+PlannerParentOverview.references(answers,fields)+PF.renderResult(auto));
+  const support=panel.querySelector('.parent-result');
+  support.querySelector('.parent-input-summary').remove();
+  support.querySelector('[data-parent-study]').remove();
+  support.querySelector('h2').textContent='국어·과학과 진학 준비';
+  support.setAttribute('aria-label','국어·과학과 진학 준비');
   $('workspace-panel-table').insertAdjacentHTML('beforeend','<details class="parent-reference-fold"><summary>참고용 학원 운영표 보기</summary>'+T.renderAcademyMonthly(T.academyReferences(G.comparison(answers,intakeFields()),'school',academyLines),G.comparison(answers,intakeFields()),intakeFields())+'</details>');
-  $('journeyTitle').textContent='현재 공부에서 대학 진학까지';
+  $('journeyTitle').textContent='우리 아이의 수학 로드맵';
  }else if(completed&&!flowMode){
-  $('workspace-panel-map').insertAdjacentHTML('afterbegin',PF.balanceNotice(answers));
+  const fields=intakeFields(),references=fields.internationalCalendar?'':PlannerParentOverview.references(answers,fields);
+  $('workspace-panel-map').insertAdjacentHTML('afterbegin',PF.balanceNotice(answers)+references);
  }
 }
 async function startParentStudy(){
@@ -1542,7 +1545,7 @@ function openOxCheck(queue=false){
 document.addEventListener('click',event=>{
  if(event.target.closest('[data-parent-study]')){startParentStudy();return;}
  const ownUnit=event.target.closest('[data-parent-unit-bank]');if(ownUnit){PlannerOxPlanner.openForStage(ownUnit.dataset.parentUnitBank);return;}
- if(event.target.closest('[data-parent-result]')){document.body.classList.remove('parent-studying');$('journeyMap').querySelector('.parent-result')?.scrollIntoView({block:'start'});return;}
+ if(event.target.closest('[data-parent-result]')){document.body.classList.remove('parent-studying');$('journeyMap').querySelector('.parent-plan-overview')?.scrollIntoView({block:'start'});return;}
  if(event.target.closest('[data-ox-open]'))openOxCheck(event.target.closest('[data-ox-open]').dataset.oxOpen==='queue');
  if(event.target.closest('[data-weekly-open]'))openWeeklyCheck();
  if(event.target.closest('[data-unit-checklist-open]'))openWeeklyCheck(true);

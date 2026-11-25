@@ -100,7 +100,8 @@ const STRUCTURE_FAMILIES = new Set([
   "palindrome-range-digit-sum-b7", "month-date-palindrome-b7", "date-palindrome-count-range-b7", "four-point-overlap-b7",
   "six-point-overlap-b7", "reversed-diff-both-ways-b7", "reversed-digit-grows-b7", "reversed-diff-smallest-b7",
   "venn-total-neither-one-b7", "branch-tree-two-level-b7", "branch-tree-three-level-b7", "disjoint-groups-rest-b7",
-  "reverse-add-chain-b7", "kaprekar-fill-b7", "palindrome-card-adjacent-b7", "stone-triangle-flip-b7"
+  "reverse-add-chain-b7", "kaprekar-fill-b7", "palindrome-card-adjacent-b7", "stone-triangle-flip-b7",
+  "mirror-clock-oclock-b7", "three-circle-all-equal-b7"
 ]);
 const clock12 = (t) => { const x = mod(t, 720); return `${Math.floor(x / 60) || 12}시 ${x % 60}분`; };
 const dur = (t) => `${Math.floor(t / 60)}시간 ${t % 60}분`;
@@ -396,6 +397,18 @@ function validateStructure(problem, id, difficulty) {
         assert(moves === meta.moves[i] && moves === Math.floor((n * (n + 1)) / 6), id, difficulty, `삼각형 바둑돌 ${n}줄 최소 이동 오류`);
       });
       return;
+    case "mirror-clock-oclock-b7": {
+      assert((problem.visual.html.match(/scaleX\(-1\)/g) || []).length === 2, id, difficulty, "거울 시계 뒤집기 없음");
+      assert(problem.answer === `${12 - meta.sleepH + meta.wakeH}시간` && meta.sleepH >= 7 && meta.wakeH <= 9, id, difficulty, "잔 시간 오류");
+      return;
+    }
+    case "three-circle-all-equal-b7": {
+      const v = meta.values;
+      const sums = [v.top + v.leftOverlap + v.rightOverlap, v.leftOverlap + v.leftExclusive, v.rightOverlap + v.rightExclusive];
+      assert(sums.every((s) => s === meta.S), id, difficulty, "세 원 합이 다름");
+      assert(meta.hide.length === 2 && (problem.visual.html.match(/>\?</g) || []).length === 2, id, difficulty, "가린 칸 수");
+      return;
+    }
     default:
       fail(id, difficulty, `검산 분기 없음: ${meta.family}`);
   }
@@ -650,7 +663,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-07 missing");
 if (units.length !== 4) throw new Error(`book-07 unit count ${units.length}`);
-if (typeIds.length !== 111) throw new Error(`book-07 type count ${typeIds.length}`);
+if (typeIds.length !== 113) throw new Error(`book-07 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-07 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-07 unit test number ${question.number}, expected ${index + 1}`);

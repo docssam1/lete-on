@@ -1,5 +1,5 @@
-import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source-data.js?v=20261125n";
-import { remediationUrl } from "./result-diagnosis-data.js?v=20261125n";
+import { EXAMS, PRACTICE_EXAM_TYPES, FINAL_EXAM_TYPES, typeById } from "./source-data.js?v=20261125s";
+import { remediationUrl } from "./result-diagnosis-data.js?v=20261125s";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";
 import { productForExam, openExamIds, hasBank } from "./entrance-products.js?v=20261116b";

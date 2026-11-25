@@ -1126,7 +1126,82 @@ function routeStripSetB5({ difficulty = 2 }) {
 
 // ── 내보내기 ─────────────────────────────────────────
 
+
+// ── 남은 번호(2차) — 2단원 숫자 카드: 큰 수부터·카드 수 조합, 방향 있는 차 ─────────────
+const cardRowSvg = (digits) => {
+  const w = 52, gap = 10, W = digits.length * (w + gap) + 10;
+  return `${svgOpen(W, 80, "숫자 카드")}${digits.map((d, i) => `<rect x="${8 + i * (w + gap)}" y="8" width="${w}" height="64" rx="7" style="fill:#fff;stroke:#2f6b4f;stroke-width:2"/>${text(8 + i * (w + gap) + w / 2, 52, d, 28, 'font-weight="700"')}`).join("")}</svg>`;
+};
+const madeNumbers = (cards, length) => {
+  const out = new Set();
+  const walk = (chosen, left) => {
+    if (chosen.length === length) { if (chosen[0] !== 0) out.add(Number(chosen.join(""))); return; }
+    left.forEach((d, i) => walk([...chosen, d], left.filter((_, j) => j !== i)));
+  };
+  walk([], cards);
+  return [...out].sort((a, b) => a - b);
+};
+const NUM_KO = { 2: "두", 3: "세", 4: "네", 5: "다섯" };
+function digitCardRankedMixB5({ difficulty = 2 }) {
+  for (;;) {
+    const combos = difficulty === 1 ? [[3, 2], [4, 2]] : difficulty === 2 ? [[4, 2], [3, 3], [4, 3], [5, 2]] : [[4, 3], [5, 3], [5, 2]];
+    const [cardCount, length] = pick(combos);
+    const withZero = randomInt(0, 2) === 0;
+    const nonzero = shuffle([1, 2, 3, 4, 5, 6, 7, 8, 9]).slice(0, withZero ? cardCount - 1 : cardCount);
+    const cards = (withZero ? [0, ...nonzero] : nonzero).sort((a, b) => a - b);
+    const list = madeNumbers(cards, length);
+    const fromLarge = difficulty === 1 ? true : randomInt(0, 2) > 0;
+    const rank = randomInt(3, Math.min(difficulty === 3 ? 20 : 12, list.length - 1));
+    if (rank > list.length) continue;
+    const ordered = fromLarge ? list.slice().reverse() : list;
+    const answer = ordered[rank - 1];
+    const first = ordered[0];
+    const lead = String(first)[0];
+    const sameLead = ordered.filter((n) => String(n)[0] === lead).length;
+    return {
+      prompt: `숫자 카드 ${NUM_KO[cardCount]} 장${cardCount === length ? "을 모두 한 번씩 써서" : ` 중 ${NUM_KO[length]} 장을 골라 한 번씩만 써서`} ${NUM_KO[length]} 자리 수를 만들었습니다. 만든 수를 ${fromLarge ? "큰" : "작은"} 수부터 차례로 쓸 때 ${rank}번째 수를 구하세요.`,
+      visual: { kind: "fig", html: cardRowSvg(cards) },
+      answer: String(answer),
+      solution: `맨 앞자리에 ${fromLarge ? "가장 큰" : "가장 작은"} 숫자 ${josa(Number(lead), "을", "를")}${withZero && !fromLarge ? "(0은 맨 앞에 올 수 없음)" : ""} 놓으면 ${sameLead}개가 만들어집니다. 맨 앞자리를 한 칸씩 바꾸며 개수를 묶어 세면 ${rank}번째는 ${answer}입니다. (${ordered.slice(0, rank).join(", ")})`,
+      meta: { family: "digit-card-ranked-mix-b5", cards, length, fromLarge, rank, list }
+    };
+  }
+}
+function digitDirectedDifferenceB5({ difficulty = 2 }) {
+  for (;;) {
+    const d = randomInt(difficulty === 1 ? 3 : 1, difficulty === 3 ? 6 : 7);
+    const tensBigger = randomInt(0, 1) === 1;
+    const list = [];
+    for (let n = 10; n <= 99; n += 1) { const a = Math.floor(n / 10), b = n % 10; if ((tensBigger ? a - b : b - a) === d) list.push(n); }
+    const mode = difficulty === 1 ? "all" : pick(["all", "rank", "rank"]);
+    const relation = tensBigger ? `십의 자리 숫자가 일의 자리 숫자보다 ${d} 큰` : `일의 자리 숫자가 십의 자리 숫자보다 ${d} 큰`;
+    if (mode === "all") {
+      if (list.length < 2) continue;
+      return {
+        prompt: `${relation} 두 자리 수를 모두 쓰세요.`,
+        visual: { kind: "fig", html: `${svgOpen(320, 70, "십의 자리와 일의 자리")}<rect x="60" y="10" width="60" height="50" rx="5" style="fill:#fff;stroke:#2f6b4f;stroke-width:2"/><rect x="200" y="10" width="60" height="50" rx="5" style="fill:#fff;stroke:#2f6b4f;stroke-width:2"/>${text(90, 42, "십", 18)}${text(230, 42, "일", 18)}${text(160, 42, tensBigger ? `− ${d} →` : `← − ${d}`, 16)}</svg>` },
+        answer: list.join(", "),
+        solution: `${tensBigger ? `일의 자리가 0부터 ${9 - d}까지일 때 십의 자리는 ${d}부터 9까지` : `십의 자리가 1부터 ${9 - d}까지일 때 일의 자리는 ${d + 1}부터 9까지`}이므로 ${list.join(", ")} — 모두 ${list.length}개입니다. 차만 보면 두 방향이 있지만 「누가 더 큰지」가 정해져 있어 한쪽만 셉니다.`,
+        meta: { family: "digit-directed-difference-b5", d, tensBigger, mode, list }
+      };
+    }
+    const fromLarge = randomInt(0, 1) === 1;
+    if (list.length < 3) continue;
+    const rank = randomInt(2, list.length);
+    const ordered = fromLarge ? list.slice().reverse() : list;
+    return {
+      prompt: `${relation} 두 자리 수를 ${fromLarge ? "큰" : "작은"} 수부터 차례로 쓸 때 ${rank}번째 수를 구하세요.`,
+      visual: { kind: "fig", html: `${svgOpen(320, 70, "십의 자리와 일의 자리")}<rect x="60" y="10" width="60" height="50" rx="5" style="fill:#fff;stroke:#2f6b4f;stroke-width:2"/><rect x="200" y="10" width="60" height="50" rx="5" style="fill:#fff;stroke:#2f6b4f;stroke-width:2"/>${text(90, 42, "십", 18)}${text(230, 42, "일", 18)}${text(160, 42, tensBigger ? `− ${d} →` : `← − ${d}`, 16)}</svg>` },
+      answer: String(ordered[rank - 1]),
+      solution: `조건에 맞는 수를 차례로 쓰면 ${ordered.join(", ")}이므로 ${rank}번째는 ${ordered[rank - 1]}입니다.`,
+      meta: { family: "digit-directed-difference-b5", d, tensBigger, mode, list, fromLarge, rank }
+    };
+  }
+}
+
 export const BOOK05_STRUCTURE_GENERATORS = {
+  digitCardRankedMixB5,
+  digitDirectedDifferenceB5,
   symbolCardListNetworkB5,
   symbolCardLeftoverB5,
   symbolCardCrossNetworkB5,
@@ -1156,6 +1231,8 @@ const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, mi
 
 export const BOOK05_STRUCTURE_TYPE_ROWS = [
   // domain/middle은 같은 단원 기존 유형 값을 따른다
+  row("digit-card-ranked-mix-b5", "number", "숫자 카드", "카드 수·자리 수를 바꿔 만든 수의 큰(작은) 수부터 순서", "digitCardRankedMixB5", ["숫자 카드", "큰 수부터", "순서"]),
+  row("digit-directed-difference-b5", "number", "숫자 카드", "한쪽 자리 숫자가 정해진 만큼 큰 두 자리 수 모두·순서", "digitDirectedDifferenceB5", ["자리 숫자의 차", "방향"]),
   row("symbol-card-list-network-b5", "number", "도형 곱셈식", "수 카드로 푸는 도형식 여러 개", "symbolCardListNetworkB5", ["도형식", "수 카드", "같은 모양 같은 수"]),
   row("symbol-card-leftover-b5", "number", "도형 곱셈식", "도형식에 쓰이지 않은 수 카드 찾기", "symbolCardLeftoverB5", ["도형식", "남는 카드", "쓰이지 않은 수"]),
   row("symbol-card-cross-network-b5", "number", "도형 곱셈식", "가로·세로 도형식에 수 카드 넣기", "symbolCardCrossNetworkB5", ["가로 세로 도형식", "십자 도형식", "수 카드"]),
@@ -1179,6 +1256,8 @@ export const BOOK05_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK05_STRUCTURE_GUIDES = {
+  "digit-card-ranked-mix-b5": "맨 앞자리 숫자마다 만들어지는 수의 개수를 묶어 세어 몇 번째인지 찾습니다.",
+  "digit-directed-difference-b5": "어느 자리가 더 큰지 정해져 있으면 한 방향만 셉니다. 작은 쪽 숫자를 0(또는 1)부터 올려 가며 씁니다.",
   "symbol-card-list-network-b5": "될 수 있는 경우가 가장 적은 식부터 카드를 넣어 보고, 정해진 수는 다른 모양에서 지웁니다.",
   "symbol-card-leftover-b5": "식을 하나씩 맞춰 모양마다 수를 정한 뒤, 쓴 카드를 지우면 남는 카드가 답입니다.",
   "symbol-card-cross-network-b5": "가로식과 세로식이 만나는 모서리 모양부터 두 식에 함께 맞는 카드를 찾습니다.",
@@ -1202,6 +1281,13 @@ export const BOOK05_STRUCTURE_GUIDES = {
 };
 
 export const BOOK05_STRUCTURE_REMAPS = [
+  // (2차) 2단원 숫자 카드 — 모두 쓰기·0 넣기·3장 세 자리는 10권과 같은 꼴, 큰 수부터·카드 수 조합, 방향 있는 차
+  ["book-05", 2, "activity", 2, [1, 2], "digit-cards-list-all-b10"],
+  ["book-05", 2, "practice", 1, [12, 13], "digit-cards-list-all-b10"],
+  ["book-05", 2, "activity", 2, [4, 5, 6], "digit-card-ranked-mix-b5"],
+  ["book-05", 2, "practice", 1, [9, 10, 11, 14, 15], "digit-card-ranked-mix-b5"],
+  ["book-05", 2, "check", 2, [5, 6], "digit-directed-difference-b5"],
+  ["book-05", 2, "practice", 1, [20, 21], "digit-directed-difference-b5"],
   // 1단원 — 정사각 층 수 배열(ㄱ자 · 번갈아), 같은 요일 두 날짜의 합
   ["book-05", 1, "activity", 1, [1], "wide-snake-number-grid-b5"],
   ["book-05", 1, "practice", 1, [2, 3], "wide-snake-number-grid-b5"],

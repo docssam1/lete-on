@@ -96,7 +96,9 @@ for(let n = 0; n <= 37; n++){
       if(total < 20 * s.studyDays - 2) fail.push(`F · ${at}: 하루 ${Math.round(total / s.studyDays)}문항 — 20문항 미만`);
       if(s.minutes / s.studyDays > 20) fail.push(`F · ${at}: 하루 예상 ${Math.round(s.minutes / s.studyDays)}분 — 20분 넘음`);
     }
-    else if(!(s.minutes >= lo && s.minutes <= hi)) fail.push(`F · ${at}: 예상 ${s.minutes}분 — ${lo}~${hi}분 밖`);
+    /* 중등은 회차가 아니라 학습 묶음(5일)에 하루 20문항을 채운다(2026-11-25) — 시간은 아래 묶음 검사(H)에서 하루 단위로 본다 */
+    else if(!s.lessonDaily && !(s.minutes >= lo && s.minutes <= hi)) fail.push(`F · ${at}: 예상 ${s.minutes}분 — ${lo}~${hi}분 밖`);
+    if(s.lessonDaily && !(s.baseMinutes >= lo && s.baseMinutes <= hi)) fail.push(`F · ${at}: 채우기 전 예상 ${s.baseMinutes}분 — ${lo}~${hi}분 밖`);
     mins.push(s.minutes);
   });
   const ns = c.sessions.filter(s => !s.test).length;
@@ -126,7 +128,32 @@ else {
   });
   (P.legacyIds||[]).forEach(id=>{if(!P.getSession(+id[1],id))fail.push(`G · 옛 번호 ${id} 연결 실패`);});
 }
+/* H. 중·고등 하루 20문항(2026-11-25): 학습 묶음 하나 = 주 1회 5일. 묶음 문항 수가 100(5일 × 20)이거나,
+   모자라면 더 늘릴 칸이 없어야 한다(같은 채우기를 다시 불러도 그대로). 하루 예상 시간은 중등 20분 · 고등 25분까지. */
+const FILL = w.NM_FILL_LESSON_DAILY, lessonShort = [];
+const sumOf = s => [...s.school, ...s.strategy.practice, ...s.application].reduce((n, d) => n + d.count, 0);
+for(const [k, c] of Object.entries(C)){
+  if(!c.studyPlan || c.comingSoon) continue;
+  const middle = BAND[c.tier] === 'middle';
+  c.studyPlan.lessons.forEach(l => {
+    const own = l.sourceIndices.map(i => c.sessions[i]).filter(s => !s.test);
+    if(!own.length) return;
+    const total = own.reduce((n, s) => n + sumOf(s), 0);
+    if(typeof FILL !== 'function'){ fail.push('H · NM_FILL_LESSON_DAILY 가 없다'); return; }
+    if(own.some(s => !s.lessonDaily || JSON.stringify(s.lessonDaily.group) !== JSON.stringify(l.sourceIndices)))
+      fail.push(`H · ${k} 묶음 ${l.index + 1}: courses.js 가 채운 묶음과 high-pacing.js 묶음이 다르다`);
+    const snap = JSON.stringify(own.map(sumOf));
+    FILL(c, l.sourceIndices);
+    if(JSON.stringify(own.map(sumOf)) !== snap) fail.push(`H · ${k} 묶음 ${l.index + 1}: 채우기가 덜 됐다(다시 부르면 늘어난다)`);
+    if(own.some(s => !s.lessonDaily)) fail.push(`H · ${k} 묶음 ${l.index + 1}: 하루 20문항 채우기 표시가 없다`);
+    if(total < 98) lessonShort.push(`${k}-${l.index + 1}:${total}`);
+    const perDay = own.reduce((n, s) => n + s.minutes, 0) / 5, limit = middle ? 20 : 25;
+    const grown = own.some(s => s.minutes !== s.baseMinutes);   // 원래부터 100문항이 넘던 고등 묶음(대수 120~150)은 채우지 않았다 — 그 시간은 이 검사 밖
+    if(grown && perDay > limit) fail.push(`H · ${k} 묶음 ${l.index + 1}: 하루 예상 ${Math.round(perDay)}분 — ${limit}분 넘음`);
+  });
+}
 console.log(rows.join('\n'));
+if(lessonShort.length) console.log(`\n유형 상한에 막혀 100문항이 안 되는 묶음 ${lessonShort.length}개: ${lessonShort.join(' ')}`);
 console.log(`\n과정 0~37 회차 ${sessions} · 세 층이 모두 있는 과정 ${full}/38 · 중등 보기 ${mpSessions}회(정규에서 계산)`);
 
 function finish(){

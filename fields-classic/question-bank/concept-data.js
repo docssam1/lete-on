@@ -1244,7 +1244,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "가장 짧지 않은 되돌아가는 길을 포함하거나 갈림길에서 방법 수를 더하지 않고 칸 수만 세지 않았는지 확인합니다.",
     [book5Evidence("최단거리와 숫자 카드", 1, [2, 3, 4, 5, 6])]
   ),
-  "digit-card-number-enumeration": sourceLesson(
+  "digit-cards-list-all-b10": sourceLesson(
     "concept:number:digit-card-enumerate-rank",
     [
       beat("choose-leading-digit", "맨 앞자리부터 정해요", "0이 아닌 카드 중 하나를 맨 앞자리에 놓고 사용할 수 있는 남은 카드를 확인합니다."),
@@ -1262,7 +1262,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("select-rank", "묻는 번째 수를 골라요", "작은 수부터인지 큰 수부터인지 확인한 뒤 정렬한 목록에서 정확한 번째 수를 찾습니다.")
     ],
     "가능한 수를 다 만들기 전에 눈에 띄는 수만 고르거나 큰 수부터와 작은 수부터를 반대로 읽지 않았는지 확인합니다.",
-    [book5Evidence("최단거리와 숫자 카드", 2, [3, 4, 5, 6])]
+    [book5Evidence("최단거리와 숫자 카드", 2, [3])]
   ),
   "multiplication-table-pattern": sourceLesson(
     "concept:number:multiplication-head-table",
