@@ -1782,3 +1782,27 @@ button{
 
 /* 2026-11-25: 겨냥도 모서리 규칙 — 보이는 모서리는 실선, 보이지 않는 모서리만 점선(잘린 면의 보이지 않는 모서리는 주황 점선). */
 .geometry-diagram .source61-vs-e3-cut-hidden-edge{fill:none;stroke:#b77909;stroke-width:1.8;stroke-dasharray:4 3;vector-effect:non-scaling-stroke}
+
+/* 2026-11-25: 여러 학년·학기·단원 함께 고르기, 여러 난이도 섞기, 문항 수 1~150 */
+.semester-filter{flex-wrap:wrap}
+.semester-chips{display:flex;flex-wrap:wrap;gap:6px}
+.semester-chip{min-height:32px;padding:0 13px;border:1px solid #bcc9ca;border-radius:16px;background:#fff;color:#52676d;font-size:12px;font-weight:800;cursor:pointer}
+.semester-chip.is-active{border-color:#2f7d8a;background:#e3f1f3;color:#1f5f69}
+.semester-chip.is-primary{border-color:#1f5f69;background:#1f5f69;color:#fff;cursor:default;opacity:1}
+.tree-semester{border-top:2px solid #cbd4d4}
+.tree-semester:first-child{border-top:0}
+.tree-semester-head{display:flex;align-items:center;gap:9px;padding:11px 12px;background:#eaf2f3;color:#1f4f59;font-size:14px}
+.tree-unit-row{display:flex;align-items:center}
+.tree-unit-row .tree-unit-toggle{flex:1 1 auto;min-width:0}
+.tree-group-check{flex:0 0 auto;width:16px;height:16px;margin:0 2px 0 10px;accent-color:#2f7d8a;cursor:pointer}
+.tree-subunit-head .tree-group-check,.tree-semester-head .tree-group-check{margin:0}
+.count-presets{grid-template-columns:repeat(5,minmax(0,1fr))}
+.count-range{display:block}
+.count-range input{width:100%;accent-color:#2f7d8a}
+.count-range-scale{display:flex;justify-content:space-between;color:#6b7f85;font-size:11px}
+.count-range-scale i{font-style:normal}
+.mix-toggle{display:flex;align-items:center;gap:7px;margin-top:9px;color:#4d636a;font-size:12px;font-weight:700;cursor:pointer}
+.mix-toggle input{width:16px;height:16px;accent-color:#2f7d8a}
+.segmented.is-mixed .segment.is-active{background:#2f7d8a;color:#fff;box-shadow:none}
+.segmented.is-mixed .segment.is-active::before{content:"✓ ";font-weight:900}
+@media print{.semester-chips,.count-range,.mix-toggle{display:none!important}}

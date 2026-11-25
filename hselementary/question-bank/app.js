@@ -127,6 +127,10 @@
     unitId: "",
     search: "",
     difficulty: 0,
+    // 2026-11-25: 여러 학년·학기를 함께 고르고(extraSemesters), 여러 난이도를 섞어 낼 수 있게 한다(mixDifficulty·difficulties).
+    extraSemesters: new Set(),
+    mixDifficulty: false,
+    difficulties: new Set([0]),
     selected: new Set(),
     collapsedUnits: new Set(),
     count: 12,
@@ -146,15 +150,34 @@
     return curriculum.semesters.find(item => item.grade === state.grade && item.term === state.term);
   }
 
+  const difficultyLabel = value => ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(value)] || "심화 기준";
   function currentDifficultyLabel() {
-    return ({ "-1": "심화 쉬움", "0": "심화 기준", "1": "심화 어려움" })[String(state.difficulty)] || "심화 기준";
+    return difficultyLabel(state.difficulty);
+  }
+  function difficultyList() {
+    return state.mixDifficulty ? [-1, 0, 1].filter(value => state.difficulties.has(value)) : [state.difficulty];
+  }
+  function worksheetDifficultyLabel() {
+    const list = difficultyList();
+    return list.length > 1 ? `${list.map(value => difficultyLabel(value).replace("심화 ", "")).join("·")} 섞음` : difficultyLabel(list[0]);
+  }
+  const semesterKey = (grade, term) => `${grade}-${term}`;
+  function shownSemesters() {
+    const primary = currentSemester();
+    const extras = curriculum.semesters.filter(item => item !== primary && state.extraSemesters.has(semesterKey(item.grade, item.term)) && bankAccess.canAccess(item.grade, item.term));
+    return [primary, ...extras].filter(Boolean).sort((left, right) => left.grade - right.grade || left.term - right.term);
+  }
+  function isReadyType(type) {
+    return Boolean(type?.generator) && !type.reviewLocked && bankAccess.canAccess(type.grade, type.term);
   }
 
   function visibleTypes() {
     const search = state.search.trim().toLocaleLowerCase("ko");
     return types.filter(type => {
-      if (type.grade !== state.grade || type.term !== state.term) return false;
-      if (state.unitId && type.unitId !== state.unitId) return false;
+      const primary = type.grade === state.grade && type.term === state.term;
+      if (!primary && !state.extraSemesters.has(semesterKey(type.grade, type.term))) return false;
+      if (!primary && !bankAccess.canAccess(type.grade, type.term)) return false;
+      if (primary && state.unitId && type.unitId !== state.unitId) return false;
       if (search && !`${typeDisplayName(type)} ${type.sourceItemLabel || ""} ${type.name} ${type.subunitName} ${type.unitName}`.toLocaleLowerCase("ko").includes(search)) return false;
       return true;
     });
@@ -198,11 +221,29 @@
     '</div>';
   }
 
+  // 학기·단원·소단원 묶음 체크박스: 묶음 안 생성 가능한 유형이 모두 선택되면 체크, 일부면 중간 표시.
+  function groupCheckbox(scope, id, groupTypes, label) {
+    const ready = groupTypes.filter(isReadyType);
+    if (!ready.length) return "";
+    const count = ready.filter(type => state.selected.has(type.id)).length;
+    return '<input type="checkbox" class="tree-group-check" data-select-scope="' + scope + '" data-select-id="' + id + '" aria-label="' + escapeHtml(label) + ' 전체 선택"' + (count === ready.length ? " checked" : "") + (count > 0 && count < ready.length ? ' data-indeterminate="true"' : "") + '>';
+  }
+  function renderSemesterPicker() {
+    const pairs = bankAccess.allowedPairs();
+    $("semesterPicker").innerHTML = curriculum.semesters.filter(item => pairs.some(pair => pair.grade === item.grade && pair.term === item.term)).map(item => {
+      const key = semesterKey(item.grade, item.term);
+      const primary = item.grade === state.grade && item.term === state.term;
+      const active = primary || state.extraSemesters.has(key);
+      return '<button type="button" class="semester-chip' + (active ? " is-active" : "") + (primary ? " is-primary" : "") + '" data-semester-key="' + key + '" aria-pressed="' + active + '"' + (primary ? ' disabled title="지금 보고 있는 학기"' : "") + '>' + item.grade + '-' + item.term + '</button>';
+    }).join("");
+  }
   function renderCatalog() {
     hideTypePreview(true);
+    renderSemesterPicker();
     const visible = visibleTypes();
-    const semester = currentSemester();
-    const markup = (semester?.units || []).map(unit => {
+    const semesters = shownSemesters();
+    const multiple = semesters.length > 1;
+    const unitMarkup = unit => {
       const unitTypes = visible.filter(type => type.unitId === unit.id);
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
@@ -212,18 +253,27 @@
         return commonType?.generator && !commonType.reviewLocked ? [commonType.id] : [];
       })).size;
       return '<section class="tree-unit ' + (isOpen ? "is-open" : "") + '">' +
+        '<div class="tree-unit-row">' + groupCheckbox("unit", unit.id, unitTypes, unit.name) +
         '<button class="tree-unit-toggle" type="button" data-tree-unit="' + unit.id + '" aria-expanded="' + isOpen + '">' +
           '<span class="tree-chevron" aria-hidden="true">›</span><span class="tree-unit-number">' + unit.number + '</span>' +
           '<span class="tree-unit-copy"><strong>' + escapeHtml(unit.name) + '</strong><small>' + readyCount + '개 유형 생성 가능</small></span>' +
-        '</button>' +
+        '</button></div>' +
         '<div class="tree-branch" ' + (isOpen ? "" : "hidden") + '>' + (unit.subunits || []).map(subunit => {
           const subunitTypes = unitTypes.filter(type => type.subunitId === subunit.id);
           if (!subunitTypes.length) return "";
-          return '<section class="tree-subunit"><div class="tree-subunit-head"><span>소단원 ' + String(subunit.number).padStart(2, "0") + '</span><strong>' + escapeHtml(subunit.name) + '</strong></div>' + subunitTypes.map(typeTreeRow).join("") + '</section>';
+          return '<section class="tree-subunit"><div class="tree-subunit-head">' + groupCheckbox("subunit", subunit.id, subunitTypes, subunit.name) + '<span>소단원 ' + String(subunit.number).padStart(2, "0") + '</span><strong>' + escapeHtml(subunit.name) + '</strong></div>' + subunitTypes.map(typeTreeRow).join("") + '</section>';
         }).join("") + '</div>' +
       '</section>';
+    };
+    const markup = semesters.map(semester => {
+      const units = (semester.units || []).map(unitMarkup).join("");
+      if (!multiple) return units;
+      const semesterTypes = visible.filter(type => type.grade === semester.grade && type.term === semester.term);
+      if (!semesterTypes.length) return "";
+      return '<section class="tree-semester" data-tree-semester="' + semester.id + '"><div class="tree-semester-head">' + groupCheckbox("semester", semester.id, semesterTypes, semester.label) + '<strong>' + escapeHtml(semester.label) + '</strong></div>' + units + '</section>';
     }).join("");
     $("typeList").innerHTML = markup;
+    $("typeList").querySelectorAll("input[data-indeterminate]").forEach(input => { input.indeterminate = true; });
     $("catalogEmpty").hidden = visible.length > 0;
     renderSummary();
   }
@@ -351,11 +401,25 @@
   }
 
   function plannedQuestionTypes(selected, requestedCount = state.count) {
-    const ready = distinctQuestionPools(selected);
+    const pooled = distinctQuestionPools(selected);
+    // 2026-11-25: 여러 학기·단원을 고르면 학기마다, 학기 안에서는 단원마다 돌아가며 뽑아
+    // 문항 수가 유형 수보다 적어도 고른 학기·단원이 고르게 나오게 한다(단원 id는 학기마다 겹치므로 학기와 함께 묶는다).
+    const roundRobin = queues => {
+      const out = [];
+      for (let round = 0; queues.some(queue => queue.length > round); round += 1) for (const queue of queues) if (round < queue.length) out.push(queue[round]);
+      return out;
+    };
+    const groupBy = (list, key) => [...list.reduce((map, item) => map.set(key(item), [...(map.get(key(item)) || []), item]), new Map()).values()];
+    const unitCount = new Set(pooled.map(type => `${type.semesterId}|${type.unitId}`)).size;
+    // 문항 수가 고른 유형 수보다 적어 일부 단원이 빠질 때만 번갈아 뽑는다(그 밖에는 예전 순서 그대로).
+    const multiUnit = unitCount > 1 && requestedCount < pooled.length;
+    const ready = multiUnit
+      ? roundRobin(groupBy(pooled, type => type.semesterId).map(semesterTypes => roundRobin(groupBy(semesterTypes, type => type.unitId))))
+      : pooled;
     const remaining = new Map(ready.map(type => [
       type.id,
       type.generationMode === "fixed-verified-pool"
-        ? Math.max(0, Number(type.verifiedVariantCount) || 0)
+        ? Math.max(0, Number(type.verifiedVariantCount) || 0) * difficultyList().length
         : Infinity
     ]));
     const planned = [];
@@ -371,7 +435,13 @@
       }
       if (!added) break;
     }
-    return planned;
+    if (!multiUnit) return planned;
+    // 문제지에는 교육과정 순서(학년·학기·단원·고른 순서)로 놓는다.
+    const rank = new Map(pooled.map((type, index) => [type.id, index]));
+    const semesterRank = type => type.grade * 10 + type.term;
+    return planned.map((type, index) => ({ type, index })).sort((left, right) =>
+      semesterRank(left.type) - semesterRank(right.type) || (left.type.unitNumber || 0) - (right.type.unitNumber || 0) || rank.get(left.type.id) - rank.get(right.type.id) || left.index - right.index
+    ).map(entry => entry.type);
   }
 
   function renderSummary() {
@@ -397,8 +467,9 @@
   }
 
   function setQuestionCount(value) {
-    state.count = Math.max(1, Math.min(120, Number.isFinite(value) ? Math.trunc(value) : 12));
+    state.count = Math.max(1, Math.min(150, Number.isFinite(value) ? Math.trunc(value) : 12));
     $("questionCountInput").value = String(state.count);
+    if ($("questionCountRange")) $("questionCountRange").value = String(state.count);
     document.querySelectorAll("[data-count]").forEach(button => {
       button.classList.toggle("is-active", Number(button.dataset.count) === state.count);
     });
@@ -451,10 +522,19 @@
     const seenAnswersByType = new Map();
     const seenPoolIndicesByType = new Map();
     const seenCompoundQuestions = new Set();
+    const difficulties = difficultyList();
+    const occurrenceByType = new Map();
+    const typeOrdinal = new Map();
     let nextQuestions;
     try { nextQuestions = plannedTypes.map((type, index) => {
+      // 같은 유형이 여러 번 나오면 고른 난이도를 차례로 돌려 쓴다(유형마다 쉬움·기준·어려움이 고르게 섞이도록).
+      const occurrence = occurrenceByType.get(type.id) || 0;
+      occurrenceByType.set(type.id, occurrence + 1);
+      if (!typeOrdinal.has(type.id)) typeOrdinal.set(type.id, typeOrdinal.size);
+      const difficulty = difficulties[(typeOrdinal.get(type.id) + occurrence) % difficulties.length];
+      const poolKey = `${type.id}|${difficulty}`;
       const typeAnswers = seenAnswersByType.get(type.id) || new Set();
-      const typePoolIndices = seenPoolIndicesByType.get(type.id) || new Set();
+      const typePoolIndices = seenPoolIndicesByType.get(poolKey) || new Set();
       let generated;
       let uniquePromptFallback;
       const fixedPool = type.generationMode === "fixed-verified-pool";
@@ -462,7 +542,7 @@
       for (let attempt = 0; attempt < attemptLimit; attempt += 1) {
         const seed = (baseSeed + index * 7919 + attempt * 104729 + hash(type.id)) >>> 0;
         const variant = fixedPool ? attempt : index;
-        const candidate = generatorApi.generate(type, level.rank, state.difficulty, seed, variant);
+        const candidate = generatorApi.generate(type, level.rank, difficulty, seed, variant);
         if (!candidate || seenPrompts.has(candidate.prompt)) continue;
         if (candidate.generationMode === "fixed-verified-pool" && typePoolIndices.has(candidate.verifiedPoolIndex)) continue;
         uniquePromptFallback ||= candidate;
@@ -472,7 +552,7 @@
         }
       }
       const fallbackVariant = type.generationMode === "fixed-verified-pool" ? typePoolIndices.size : index;
-      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, state.difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, fallbackVariant);
+      generated ||= uniquePromptFallback || generatorApi.generate(type, level.rank, difficulty, (baseSeed + index * 7919 + hash(type.id)) >>> 0, fallbackVariant);
       if (!generated || typeof generated.prompt !== "string" || !generated.prompt.trim()
         || type.generationMode === "fixed-verified-pool" && generated.generationMode !== "fixed-verified-pool") {
         throw new Error(`${typeDisplayName(type)}의 검증 문항을 중복 없이 구성하지 못했습니다.`);
@@ -494,12 +574,12 @@
           throw new Error(`${typeDisplayName(type)}의 검증 문항 수가 분류표와 다릅니다.`);
         }
         typePoolIndices.add(generated.verifiedPoolIndex);
-        seenPoolIndicesByType.set(type.id, typePoolIndices);
+        seenPoolIndicesByType.set(poolKey, typePoolIndices);
       }
       seenPrompts.add(generated.prompt);
       typeAnswers.add(String(generated.answer));
       seenAnswersByType.set(type.id, typeAnswers);
-      return { number: index + 1, type, level, difficulty: currentDifficultyLabel(), ...generated };
+      return { number: index + 1, type, level, difficulty: difficultyLabel(difficulty), difficultyValue: difficulty, ...generated };
     }); } catch (error) {
       alert(error?.message || "검증 문항을 구성하지 못했습니다. 이전 문제는 그대로 유지됩니다.");
       return;
@@ -510,6 +590,7 @@
       return;
     }
     state.questions = nextQuestions;
+    state.requestedCount = state.count;
     state.view = "problem";
     state.solutionViewerIndex = 0;
     renderWorksheet();
@@ -872,7 +953,7 @@
     const selected = selectedQuestionTypes();
     $("worksheetStudent").textContent = student;
     $("worksheetTitle").textContent = state.view === "problem" ? "맞춤 유사문제" : "맞춤 유사문제 정답·풀이";
-    $("worksheetMeta").textContent = `심화 문제은행 · ${currentDifficultyLabel()} · ${state.questions.length}문항 · ${selected.length}개 유형`;
+    $("worksheetMeta").textContent = `심화 문제은행 · ${worksheetDifficultyLabel()} · ${state.questions.length}문항 · ${selected.length}개 유형${state.requestedCount > state.questions.length ? ` · 요청한 ${state.requestedCount}문항 중 서로 다른 문항 ${state.questions.length}개` : ""}`;
     $("problemView").hidden = state.view !== "problem";
     $("solutionView").hidden = state.view !== "solution";
     $("answerKeyView").hidden = true;
@@ -1116,11 +1197,50 @@
 
   bindSegment("gradeFilter", "grade", "grade", Number);
   bindSegment("termFilter", "term", "term", Number);
-  bindSegment("difficultyFilter", "difficulty", "difficulty", Number);
+  function refreshDifficultyButtons() {
+    $("difficultyFilter").querySelectorAll("button[data-difficulty]").forEach(button => {
+      const value = Number(button.dataset.difficulty);
+      const active = state.mixDifficulty ? state.difficulties.has(value) : value === state.difficulty;
+      button.classList.toggle("is-active", active);
+      button.setAttribute("aria-pressed", active ? "true" : "false");
+    });
+    $("difficultyFilter").classList.toggle("is-mixed", state.mixDifficulty);
+  }
+  $("difficultyFilter").addEventListener("click", event => {
+    const button = event.target.closest("button[data-difficulty]");
+    if (!button || button.disabled) return;
+    const value = Number(button.dataset.difficulty);
+    if (state.mixDifficulty) {
+      // 섞기: 누를 때마다 넣고 빼되, 하나는 남긴다.
+      if (state.difficulties.has(value) && state.difficulties.size > 1) state.difficulties.delete(value); else state.difficulties.add(value);
+      state.difficulty = [-1, 0, 1].find(item => state.difficulties.has(item)) ?? 0;
+    } else {
+      state.difficulty = value;
+      state.difficulties = new Set([value]);
+    }
+    refreshDifficultyButtons();
+    renderSummary();
+  });
+  $("difficultyMixToggle").addEventListener("change", event => {
+    state.mixDifficulty = event.target.checked;
+    if (!state.mixDifficulty) state.difficulties = new Set([state.difficulty]);
+    refreshDifficultyButtons();
+    renderSummary();
+  });
+  $("semesterPicker").addEventListener("click", event => {
+    const button = event.target.closest("button[data-semester-key]");
+    if (!button || button.disabled) return;
+    const key = button.dataset.semesterKey;
+    if (state.extraSemesters.has(key)) state.extraSemesters.delete(key); else state.extraSemesters.add(key);
+    renderCatalog();
+  });
 
   $("unitFilter").addEventListener("change", event => { state.unitId = event.target.value; renderCatalog(); });
   $("typeSearchInput").addEventListener("input", event => { state.search = event.target.value; renderCatalog(); });
   $("questionCountInput").addEventListener("input", event => {
+    setQuestionCount(Number(event.target.value));
+  });
+  $("questionCountRange").addEventListener("input", event => {
     setQuestionCount(Number(event.target.value));
   });
   document.querySelector(".count-presets").addEventListener("click", event => {
@@ -1148,6 +1268,19 @@
     if (!row) return;
     event.preventDefault();
     showTypePreview(row.dataset.previewTypeId, row);
+  });
+  $("typeList").addEventListener("change", event => {
+    const group = event.target.closest("input[data-select-scope]");
+    if (!group) return;
+    const scope = group.dataset.selectScope, id = group.dataset.selectId;
+    const field = { semester: "semesterId", unit: "unitId", subunit: "subunitId" }[scope];
+    const members = visibleTypes().filter(type => type[field] === id && isReadyType(type));
+    for (const type of members) {
+      const target = sourceQuestionType(type);
+      if (!target) continue;
+      if (group.checked) state.selected.add(target.id); else state.selected.delete(target.id);
+    }
+    renderCatalog();
   });
   $("typeList").addEventListener("change", event => {
     const input = event.target.closest("input[data-type-id]");
