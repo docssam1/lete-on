@@ -43,6 +43,24 @@ function divisorsOf(n){
    부호 두 개가 붙어 읽기 힘들어진다(교재는 항상 괄호로 묶어 "(-5)"로 쓴다).
    음수만 괄호로 감싸 그 문제를 없앤다 — 양수는 그대로. */
 function wrapSigned(x){ return x < 0 ? `(${x})` : String(x); }
+/* ── 중1-1 세분화 공용(2026-11-25, 원장 「시중 교재와 너무 차이」 — 디딤돌 개념연산 중1-1A 44유형 대조) ── */
+const shuffleM = NM_RNG.shuffle;
+function L3m(ko, en, zh){ return { ko, en, zh }; }
+/* 분수 TeX — 부호는 분수 밖(교과서 표기 −2/3), 분모 1은 정수 */
+function fT(n, d){ if(d === 1) return String(n); return (n < 0 ? '-' : '') + `\\dfrac{${Math.abs(n)}}{${d}}`; }
+/* 연산 기호 옆에 올 때 — 음수만 괄호 */
+function pT(n, d){ const t = fT(n, d); return n < 0 ? `\\left(${t}\\right)` : t; }
+/* 부호를 늘 붙인 정수 (+5)·(−7) — 중1 첫 단원 표기 */
+function sT(n){ return n < 0 ? `(${n})` : `(+${n})`; }
+function fracAns(n, d){ const [a, b] = normFrac(n, d); return b === 1 ? { answer: a } : { answer: [a, b], answerShape: 'fraction' }; }
+function wordM(story, ask, unit, answer, solution, tex){
+  const prompt = {}; ['ko','en','zh'].forEach(l => { prompt[l] = story[l] + (l === 'zh' ? '' : ' ') + ask[l]; });
+  const p = { prompt, word: story, wordAsk: ask, wordUnit: unit, answer, answerType: 'number', widget: 'numpad',
+    negative: Array.isArray(answer) ? answer.some(x => x < 0) : answer < 0, solution: solution || [] };
+  if(tex) p.tex = tex;
+  return p;
+}
+
 
 /* ── MD1 — 정수 개념·수직선 (G03·G05: 절댓값·대소 비교·수직선 위 거리) ──
    mode: 'abs'(절댓값) · 'compare'(대소 비교) · 'distance'(수직선 위 두 점 거리).
@@ -50,6 +68,80 @@ function wrapSigned(x){ return x < 0 ? `(${x})` : String(x); }
    항상 0 이상이라 필요 없다. */
 NM_TGEN['md1_intConcept'] = function (params, rng) {
   const mode = params.mode || 'abs';
+  /* ── 중1-1 세분화 단계(2026-11-25) ── */
+  if (mode === 'absProps') {
+    /* 절댓값의 성질 — 절댓값이 n인 두 수 · 절댓값이 n 이하/미만인 정수의 개수 */
+    const n = R(rng, 1, 15), kind = pick(rng, ['two', 'le', 'lt']);
+    if (kind === 'two') return {
+      prompt: L3m(`절댓값이 ${n}인 수를 작은 것부터 모두 쓰시오.`, `Write every number whose absolute value is ${n}, smallest first.`, `从小到大写出绝对值为${n}的所有数。`),
+      tex: `|x| = ${n} \\;\\Rightarrow\\; x = \\square,\\,\\square`, answer: [-n, n], answerType: 'number', widget: 'numpad', negative: true,
+      solution: [{ tex: `\\text{원점에서 거리가 } ${n}\\text{인 점}: -${n},\\, +${n}` }] };
+    const cnt = kind === 'le' ? 2 * n + 1 : 2 * n - 1, rel = kind === 'le' ? '\\le' : '<';
+    return {
+      prompt: L3m(`절댓값이 ${n} ${kind === 'le' ? '이하' : '미만'}인 정수의 개수를 구하시오.`, `How many integers have absolute value ${kind === 'le' ? 'at most' : 'less than'} ${n}?`, `绝对值${kind === 'le' ? '不大于' : '小于'}${n}的整数有几个？`),
+      tex: `|x| ${rel} ${n} \\;\\Rightarrow\\; \\text{정수 x의 개수} = \\square`, answer: cnt, answerType: 'number', widget: 'numpad',
+      solution: [{ tex: kind === 'le' ? `-${n},\\,\\cdots,\\,0,\\,\\cdots,\\,${n}` : `-${n - 1},\\,\\cdots,\\,0,\\,\\cdots,\\,${n - 1}` },
+                 { tex: `\\text{개수} = \\square`, blank: cnt }] };
+  }
+
+  if (mode === 'sign') {
+    /* 양의 부호와 음의 부호 — 서로 반대인 성질을 +, −로 */
+    const n = R(rng, 2, 40), pos = R(rng, 0, 1) === 1;
+    const S = pick(rng, [
+      [L3m(`영상 ${n}°C`, `${n}°C above zero`, `零上${n}°C`), L3m(`영하 ${n}°C`, `${n}°C below zero`, `零下${n}°C`)],
+      [L3m(`해발 ${n * 10}m`, `${n * 10} m above sea level`, `海拔${n * 10}m`), L3m(`해저 ${n * 10}m`, `${n * 10} m below sea level`, `海平面下${n * 10}m`)],
+      [L3m(`${n * 100}원 이익`, `a profit of ${n * 100} won`, `盈利${n * 100}韩元`), L3m(`${n * 100}원 손해`, `a loss of ${n * 100} won`, `亏损${n * 100}韩元`)],
+      [L3m(`몸무게 ${Math.min(n, 9)}kg 증가`, `a weight gain of ${Math.min(n, 9)} kg`, `体重增加${Math.min(n, 9)}kg`), L3m(`몸무게 ${Math.min(n, 9)}kg 감소`, `a weight loss of ${Math.min(n, 9)} kg`, `体重减少${Math.min(n, 9)}kg`)],
+      [L3m(`지상 ${Math.min(n, 30)}층`, `floor ${Math.min(n, 30)} above ground`, `地上${Math.min(n, 30)}层`), L3m(`지하 ${Math.min(n, 9)}층`, `basement floor ${Math.min(n, 9)}`, `地下${Math.min(n, 9)}层`)],
+      [L3m(`출발 ${Math.min(n, 12)}시간 후`, `${Math.min(n, 12)} hours after departure`, `出发后${Math.min(n, 12)}小时`), L3m(`출발 ${Math.min(n, 12)}시간 전`, `${Math.min(n, 12)} hours before departure`, `出发前${Math.min(n, 12)}小时`)],
+      [L3m(`${n * 1000}원 수입`, `an income of ${n * 1000} won`, `收入${n * 1000}韩元`), L3m(`${n * 1000}원 지출`, `spending of ${n * 1000} won`, `支出${n * 1000}韩元`)]
+    ]);
+    const phrase = pos ? S[0] : S[1];
+    const m = +((pos ? S[0] : S[1]).ko.match(/\d+/)[0]);
+    const answer = pos ? m : -m;
+    return wordM(phrase, L3m('→ 부호 +, −를 붙여 수로 나타내면?', '→ write it as a number with a + or − sign.', '→ 用带+、−号的数表示。'), L3m('', '', ''), answer,
+      [{ tex: `${pos ? '+' : '-'}${m}` }]);
+  }
+
+  if (mode === 'intClassify' || mode === 'ratClassify') {
+    /* 정수·유리수의 분류 — 약분하면 정수가 되는 분수(−12/3)를 섞는다 */
+    const pool = [];
+    const addInt = () => { const v = R(rng, -9, 9); pool.push({ t: v > 0 && R(rng, 0, 1) ? `+${v}` : String(v), v, int: true }); };
+    const addFracInt = () => { const k = R(rng, 1, 5) * (R(rng, 0, 1) ? 1 : -1), d = R(rng, 2, 4); pool.push({ t: (k > 0 ? '+' : '-') + `\\dfrac{${Math.abs(k) * d}}{${d}}`, v: k, int: true }); };
+    const addFrac = () => { let a, d; do { d = R(rng, 2, 7); a = R(rng, 1, 3 * d); } while (a % d === 0); const s = R(rng, 0, 1) ? 1 : -1; pool.push({ t: (s > 0 ? '+' : '-') + `\\dfrac{${a}}{${d}}`, v: s * a / d, int: false }); };
+    const addDec = () => { const v = (R(rng, 1, 49) / 10) * (R(rng, 0, 1) ? 1 : -1); if (Number.isInteger(v)) return addFrac(); pool.push({ t: v > 0 ? `+${v}` : String(v), v, int: false }); };
+    for (let i = 0; i < 3; i++) addInt();
+    addFracInt(); addFrac(); addDec(); if (R(rng, 0, 1)) pool.push({ t: '0', v: 0, int: true }); else addFrac();
+    const seenV = new Set(), list = shuffleM(rng, pool.filter(x => !seenV.has(x.t) && !seenV.has(String(x.v)) && seenV.add(x.t) && seenV.add(String(x.v))));
+    const kinds = mode === 'intClassify'
+      ? [['양의 정수의 개수', x => x.int && x.v > 0], ['음의 정수의 개수', x => x.int && x.v < 0], ['정수의 개수', x => x.int]]
+      : [['정수가 아닌 유리수의 개수', x => !x.int], ['양의 유리수의 개수', x => x.v > 0], ['음의 유리수의 개수', x => x.v < 0]];
+    const [name, test] = pick(rng, kinds), cnt = list.filter(test).length;
+    return {
+      prompt: L3m(`다음 수 가운데 ${name.replace('의 개수', '')}의 개수를 구하시오.`, `Count the numbers of the asked kind in the list.`, `数一数下列数中符合要求的数有几个。`),
+      tex: `${list.map(x => x.t).join(',\\;\\; ')} \\;\\Rightarrow\\; \\text{${name}} = \\square`,
+      answer: cnt, answerType: 'number', widget: 'numpad',
+      solution: [{ tex: list.filter(test).map(x => x.t).join(',\\;') || '\\text{없음}' }, { tex: `\\text{${name}} = \\square`, blank: cnt }] };
+  }
+
+  if (mode === 'inequality') {
+    /* 부등호의 사용 — 문장 → 부등호(< 1, ≤ 2) 또는 그 범위의 정수 개수 */
+    let a, b; do { a = R(rng, -6, 3); b = R(rng, -2, 8); } while (b - a < 2);
+    const lowStrict = R(rng, 0, 1) === 1, upStrict = R(rng, 0, 1) === 1;
+    const lowKo = lowStrict ? pick(rng, [`${a}보다 크고`, `${a} 초과이고`]) : pick(rng, [`${a}보다 크거나 같고`, `${a} 이상이고`, `${a}보다 작지 않고`]);
+    const upKo = upStrict ? pick(rng, [`${b}보다 작다`, `${b} 미만이다`]) : pick(rng, [`${b}보다 작거나 같다`, `${b} 이하이다`, `${b}보다 크지 않다`]);
+    const lowEn = lowStrict ? `greater than ${a}` : `greater than or equal to ${a}`, upEn = upStrict ? `less than ${b}` : `less than or equal to ${b}`;
+    const lowZh = lowStrict ? `大于${a}` : `大于或等于${a}`, upZh = upStrict ? `小于${b}` : `小于或等于${b}`;
+    const r1 = lowStrict ? '<' : '\\le', r2 = upStrict ? '<' : '\\le';
+    if (R(rng, 0, 1) === 1) return wordM(L3m(`x는 ${lowKo} ${upKo}.`, `x is ${lowEn} and ${upEn}.`, `x${lowZh}且${upZh}。`),
+      L3m('→ 부등호로 나타낼 때 <이면 1, ≤이면 2를 쓰시오.', '→ write 1 for < or 2 for ≤ in each box.', '→ 用不等号表示：<填1，≤填2。'), L3m('', '', ''),
+      [lowStrict ? 1 : 2, upStrict ? 1 : 2], [{ tex: `${a} ${r1} x ${r2} ${b}` }], `${a} \\;\\square\\; x \\;\\square\\; ${b}`);
+    const lo = lowStrict ? a + 1 : a, hi = upStrict ? b - 1 : b, cnt = hi - lo + 1;
+    return wordM(L3m(`x는 ${lowKo} ${upKo}.`, `x is ${lowEn} and ${upEn}.`, `x${lowZh}且${upZh}。`),
+      L3m('→ 이를 만족하는 정수 x의 개수는?', '→ how many integers x satisfy this?', '→ 满足条件的整数x有几个？'), L3m('개', '', '个'), cnt,
+      [{ tex: `${a} ${r1} x ${r2} ${b}` }, { tex: `x = ${lo},\\,${lo + 1},\\,\\cdots,\\,${hi}` }, { tex: `\\text{개수} = \\square`, blank: cnt }]);
+  }
+
 
   if (mode === 'abs') {
     const lv = params.level || 'main';
@@ -123,6 +215,44 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
   const mode = params.mode || 'same';
   const lv = params.level || 'main';
   const mag = () => lv === 'practice' ? nzMag(rng, 1, 20) : nzMag(rng, 10, 50);
+  /* ── 중1-1 세분화 단계(2026-11-25) ── */
+  if (mode === 'addLaws') {
+    /* 덧셈의 계산 법칙 — 바꾸고(교환) 묶어서(결합) 양수끼리 · 음수끼리 먼저 */
+    const P = [R(rng, 2, 25), R(rng, 2, 25)], N = [-R(rng, 2, 25), -R(rng, 2, 25)];
+    const order = shuffleM(rng, [P[0], N[0], P[1], N[1]]);
+    if (order[0] > 0 && order[2] > 0) { const t = order[1]; order[1] = order[2]; order[2] = t; }
+    const ps = P[0] + P[1], ns = N[0] + N[1], ans = ps + ns;
+    const steps = [{ tex: `${sT(P[0])}+${sT(P[1])} = \\square`, blank: ps }, { tex: `${sT(N[0])}+${sT(N[1])} = \\square`, blank: ns },
+                   { tex: `${sT(ps)}+${sT(ns)} = \\square`, blank: ans }];
+    return { prompt: L3m('덧셈의 교환법칙·결합법칙으로 양수끼리, 음수끼리 먼저 더해요', 'Use the commutative and associative laws: add the positives together and the negatives together first.', '用加法交换律、结合律：先把正数相加，负数相加。'),
+      tex: `${order.map(sT).join('+')} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+  }
+
+  if (mode === 'addSubRelation') {
+    /* 덧셈과 뺄셈 사이의 관계 — 어떤 수(□) 구하기 */
+    const a = signOf(rng) * nzMag(rng, 2, 15), c = R(rng, -15, 15), kind = pick(rng, ['xPlus', 'plusX', 'xMinus', 'minusX']);
+    const X = { xPlus: c - a, plusX: c - a, xMinus: c + a, minusX: a - c }[kind];
+    const tex = { xPlus: `\\square + ${sT(a)} = ${c}`, plusX: `${sT(a)} + \\square = ${c}`, xMinus: `\\square - ${sT(a)} = ${c}`, minusX: `${sT(a)} - \\square = ${c}` }[kind];
+    const sol = { xPlus: `\\square = ${c} - ${sT(a)}`, plusX: `\\square = ${c} - ${sT(a)}`, xMinus: `\\square = ${c} + ${sT(a)}`, minusX: `\\square = ${sT(a)} - ${sT(c)}` }[kind];
+    return { prompt: L3m('덧셈과 뺄셈 사이의 관계를 이용해 □ 안에 알맞은 수를 구해요', 'Use the link between addition and subtraction to find the missing number.', '利用加法与减法的关系求□里的数。'),
+      tex, answer: X, answerType: 'number', widget: 'numpad', negative: true, solution: [{ tex: sol }, { tex: `\\square = ${X}` }] };
+  }
+
+  if (mode === 'absPair') {
+    /* 절댓값이 주어진 두 수의 덧셈과 뺄셈 */
+    const m = R(rng, 1, 12), n = R(rng, 1, 12), kind = pick(rng, ['maxSum', 'minSum', 'maxDiff', 'minDiff', 'signed']);
+    const ask = { maxSum: ['a+b', '의 가장 큰 값', m + n], minSum: ['a+b', '의 가장 작은 값', -(m + n)], maxDiff: ['a-b', '의 가장 큰 값', m + n], minDiff: ['a-b', '의 가장 작은 값', -(m + n)] }[kind];
+    if (kind === 'signed') {
+      const ans = m - n;
+      return { prompt: L3m('절댓값과 부호로 a, b를 정해 계산해요', 'Use the absolute values and signs to fix a and b, then calculate.', '由绝对值和符号确定a、b再计算。'),
+        tex: `|a| = ${m},\\;\\; |b| = ${n},\\;\\; a>0,\\;\\; b<0 \\;\\Rightarrow\\; a+b = \\square`, answer: ans, answerType: 'number', widget: 'numpad', negative: true,
+        solution: [{ tex: `a = ${m},\\;\\; b = -${n}` }, { tex: `a+b = ${m}+(-${n}) = \\square`, blank: ans }] };
+    }
+    return { prompt: L3m('a, b가 될 수 있는 수를 모두 생각해 가장 큰(작은) 값을 구해요', 'Try every possible a and b and find the largest (smallest) value.', '考虑a、b所有可能的值，求最大(最小)值。'),
+      tex: `|a| = ${m},\\;\\; |b| = ${n} \\;\\Rightarrow\\; ${ask[0]}\\text{${ask[1]}} = \\square`, answer: ask[2], answerType: 'number', widget: 'numpad', negative: true,
+      solution: [{ tex: `a = \\pm ${m},\\;\\; b = \\pm ${n}` }, { tex: `${ask[0]}\\text{${ask[1]}} = \\square`, blank: ask[2] }] };
+  }
+
 
   if (mode === 'same') {
     const s = signOf(rng);
@@ -237,6 +367,19 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
     };
   }
 
+  /* chain3 — 반은 부호가 있는 꼴 (+5) − (−3) + (−8)(2026-11-25, 디딤돌 중1-1A 「덧셈과 뺄셈의 혼합 계산」 — 예전엔 양수만 나왔다) */
+  if (R(rng, 0, 1) === 1) {
+    const v = [signOf(rng) * mag(), signOf(rng) * mag(), signOf(rng) * mag()];
+    const ops = [pick(rng, ['+', '-']), pick(rng, ['+', '-'])];
+    const w = [v[0], ops[0] === '+' ? v[1] : -v[1], ops[1] === '+' ? v[2] : -v[2]];
+    const answer = w[0] + w[1] + w[2];
+    const steps = [{ tex: `= ${w.map(sT).join(' + ')}` }, { tex: `${sT(w[0])} + ${sT(w[1])} = \\square`, blank: w[0] + w[1] },
+                   { tex: `${sT(w[0] + w[1])} + ${sT(w[2])} = \\square`, blank: answer }];
+    return { prompt: L3m('뺄셈은 빼는 수의 부호를 바꾸어 덧셈으로 고친 뒤 계산합니다', 'Turn each subtraction into adding the opposite, then add.', '把减法改成加上相反数，再计算。'),
+      tex: `${sT(v[0])} ${ops[0]} ${sT(v[1])} ${ops[1]} ${sT(v[2])} = \\square`, answer, answerType: 'steps', widget: 'steps', negative: answer < 0,
+      steps: steps.filter(s => s.blank !== undefined), solution: steps };
+  }
+
   /* chain3 — G12: 세 정수의 덧셈과 뺄셈 혼합, 앞에서부터 차례로 */
   const m1 = mag(), m2 = mag(), m3 = mag();
   const op1 = pick(rng, ['+', '-']);
@@ -268,6 +411,22 @@ NM_TGEN['md2_intAddSub'] = function (params, rng) {
 NM_TGEN['md3_ratAddSub'] = function (params, rng) {
   const mode = params.mode || 'sameDenom';
   const DENOMS = [2, 3, 4, 5, 6, 7, 8, 9, 10, 12];
+  /* ── 소수가 섞인 유리수의 덧셈·뺄셈(2026-11-25) — 소수를 분수로 바꾸어 통분 ── */
+  if (mode === 'decFrac') {
+    const DEC = [[0.5, 1, 2], [0.25, 1, 4], [0.75, 3, 4], [0.2, 1, 5], [0.4, 2, 5], [0.6, 3, 5], [0.8, 4, 5], [1.5, 3, 2], [1.2, 6, 5], [0.3, 3, 10], [0.7, 7, 10]];
+    const [dv, dn, dd] = pick(rng, DEC), ds = signOf(rng);
+    let fd, fn; do { fd = pick(rng, [2, 3, 4, 5, 6, 8, 10, 12]); fn = R(rng, 1, fd - 1); } while (fd === dd || gcd(fn, fd) !== 1);
+    const fs = signOf(rng), op = pick(rng, ['+', '-']), decFirst = R(rng, 0, 1) === 1;
+    const A = decFirst ? [ds * dn, dd] : [fs * fn, fd], B = decFirst ? [fs * fn, fd] : [ds * dn, dd];
+    const At = decFirst ? sT(ds * dv) : `\\left(${fs < 0 ? '-' : '+'}\\dfrac{${fn}}{${fd}}\\right)`;
+    const Bt = decFirst ? `\\left(${fs < 0 ? '-' : '+'}\\dfrac{${fn}}{${fd}}\\right)` : sT(ds * dv);
+    const L = lcm(A[1], B[1]), num = A[0] * (L / A[1]) + (op === '+' ? 1 : -1) * B[0] * (L / B[1]);
+    const r = fracAns(num, L);
+    return Object.assign({ prompt: L3m('소수를 분수로 바꾼 뒤 통분하여 계산합니다', 'Change the decimal to a fraction, use a common denominator, then calculate.', '先把小数化成分数，通分后再计算。'),
+      tex: `${At} ${op} ${Bt} = \\square`, answerType: 'number', widget: 'numpad', negative: num < 0,
+      solution: [{ tex: `${ds * dv} = ${fT(ds * dn, dd)}` }, { tex: `= ${fT(num, L)}` }] }, r);
+  }
+
 
   if (mode === 'sameDenom') {
     const d = pick(rng, DENOMS);
@@ -351,6 +510,50 @@ NM_TGEN['md4_intMulDiv'] = function (params, rng) {
   const mode = params.mode || 'mul2';
   const lv = params.level || 'main';
   const mag = (hi) => nzMag(rng, 2, lv === 'practice' ? Math.min(hi, 12) : hi);
+  /* ── 중1-1 세분화 단계(2026-11-25) ── */
+  if (mode === 'mulLaws') {
+    /* 곱셈의 계산 법칙 — 곱이 10·100이 되는 두 수를 먼저(교환·결합) */
+    const [p, q] = pick(rng, [[4, 25], [2, 50], [5, 20], [8, 125], [2, 5], [4, 5], [25, 8]]);
+    const m = nzMag(rng, 3, 13), sp = signOf(rng), sq = signOf(rng), sm = signOf(rng);
+    const A = sp * p, B = sq * q, M = sm * m, pair = A * B, ans = pair * M;
+    const order = pick(rng, [[A, M, B], [B, M, A], [M, A, B].reverse()]);
+    const steps = [{ tex: `${sT(A)}\\times${sT(B)} = \\square`, blank: pair }, { tex: `${sT(pair)}\\times${sT(M)} = \\square`, blank: ans }];
+    return { prompt: L3m('곱셈의 교환법칙·결합법칙으로 계산이 쉬운 두 수를 먼저 곱해요', 'Use the commutative and associative laws: multiply the easy pair first.', '用乘法交换律、结合律：先把容易相乘的两个数相乘。'),
+      tex: `${order.map(sT).join('\\times')} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+  }
+
+  if (mode === 'distributive') {
+    /* 분배법칙 — 100 가까운 수로 나누기 · 공통인 수로 묶기 · a×b, a×c로 a×(b+c) */
+    const kind = pick(rng, ['near', 'factor', 'given', 'frac']);
+    if (kind === 'near') {
+      const a = signOf(rng) * nzMag(rng, 2, 9), d = R(rng, 1, 3), up = R(rng, 0, 1) === 1, b = up ? 100 + d : 100 - d, ans = a * b;
+      const steps = [{ tex: `${sT(a)}\\times 100 = \\square`, blank: a * 100 }, { tex: `${sT(a)}\\times ${sT(up ? d : -d)} = \\square`, blank: a * (up ? d : -d) },
+                     { tex: `${a * 100} + ${sT(a * (up ? d : -d))} = \\square`, blank: ans }];
+      return { prompt: L3m('100에 가까운 수를 (100 ± 몇)으로 나누어 분배법칙으로 계산해요', 'Split the number near 100 as 100 ± something and use the distributive law.', '把接近100的数拆成100±几，用分配律计算。'),
+        tex: `${sT(a)}\\times ${b} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: [{ tex: `= ${sT(a)}\\times(100 ${up ? '+' : '-'} ${d})` }].concat(steps) };
+    }
+    if (kind === 'factor') {
+      const T = pick(rng, [100, 100, 50, 200]), a = signOf(rng) * nzMag(rng, 2, 15), b = R(rng, 11, T - 11), c = T - b;
+      const ans = a * (b + c);
+      const steps = [{ tex: `${b} + ${c} = \\square`, blank: b + c }, { tex: `${sT(a)}\\times ${b + c} = \\square`, blank: ans }];
+      return { prompt: L3m('공통인 수로 묶어 분배법칙으로 계산해요', 'Factor out the common number and use the distributive law.', '提取公因数，用分配律计算。'),
+        tex: `${sT(a)}\\times ${b} + ${sT(a)}\\times ${c} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps,
+        solution: [{ tex: `= ${sT(a)}\\times(${b} + ${c})` }].concat(steps) };
+    }
+    if (kind === 'given') {
+      const x = R(rng, -30, 30), y = R(rng, -30, 30), ans = x + y;
+      return { prompt: L3m('분배법칙 a×(b+c) = a×b + a×c 를 써서 값을 구해요', 'Use a×(b+c) = a×b + a×c.', '利用 a×(b+c)=a×b+a×c 求值。'),
+        tex: `a\\times b = ${x},\\;\\; a\\times c = ${y} \\;\\Rightarrow\\; a\\times(b+c) = \\square`, answer: ans, answerType: 'number', widget: 'numpad', negative: true,
+        solution: [{ tex: `a\\times(b+c) = a\\times b + a\\times c` }, { tex: `= ${x} + ${sT(y)} = \\square`, blank: ans }] };
+    }
+    const [d1, d2] = shuffleM(rng, [2, 3, 4, 6]).slice(0, 2), L = d1 * d2 / gcd(d1, d2), m = signOf(rng) * L * R(rng, 1, 2), op = pick(rng, ['+', '-']);
+    const t1 = m / d1, t2 = m / d2, ans = op === '+' ? t1 + t2 : t1 - t2;
+    const steps = [{ tex: `\\dfrac{1}{${d1}}\\times${sT(m)} = \\square`, blank: t1 }, { tex: `\\dfrac{1}{${d2}}\\times${sT(m)} = \\square`, blank: t2 },
+                   { tex: `${t1} ${op} ${sT(t2)} = \\square`, blank: ans }];
+    return { prompt: L3m('분배법칙으로 괄호 안 분수에 각각 곱해요', 'Use the distributive law: multiply each fraction in the brackets.', '用分配律，把括号里的每个分数分别相乘。'),
+      tex: `\\left(\\dfrac{1}{${d1}} ${op} \\dfrac{1}{${d2}}\\right)\\times${sT(m)} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+  }
+
 
   if (mode === 'mul2') {
     const a = signOf(rng) * mag(30), b = signOf(rng) * mag(30);
@@ -681,6 +884,43 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
   const mode = params.mode || 'noBrackets';
   const lv = params.level || 'main';
   const mag = (hi) => nzMag(rng, 2, lv === 'practice' ? Math.min(hi, 9) : hi);
+  /* ── 거듭제곱·괄호가 있는 혼합 계산(2026-11-25, 디딤돌 중1-1A 「덧셈, 뺄셈, 곱셈, 나눗셈의 혼합 계산」) ── */
+  if (mode === 'powMixed') {
+    const kind = pick(rng, ['powFrac', 'brace', 'cube', 'bracket']);
+    if (kind === 'powFrac') {
+      const a = pick(rng, [2, 3, 4, 6]), sq = a * a, c = pick(rng, [2, 3, 4, 6, 9].filter(v => sq % v === 0)), b = R(rng, 1, 5);
+      const e = nzMag(rng, 2, 6), k = signOf(rng) * nzMag(rng, 2, 6), d = e * k, op = pick(rng, ['+', '-']);
+      const t1 = sq * b / c, t2 = d / -e, ans = op === '+' ? t1 + t2 : t1 - t2;
+      const steps = [{ tex: `(-${a})^{2} = \\square`, blank: sq }, { tex: `${sq}\\times\\dfrac{${b}}{${c}} = \\square`, blank: t1 },
+                     { tex: `${sT(d)}\\div(-${e}) = \\square`, blank: t2 }, { tex: `${t1} ${op} ${sT(t2)} = \\square`, blank: ans }];
+      return { prompt: L3m('거듭제곱 → 곱셈·나눗셈 → 덧셈·뺄셈 차례로 계산합니다', 'Powers first, then × and ÷, then + and −.', '先算乘方，再算乘除，最后算加减。'),
+        tex: `(-${a})^{2}\\times\\dfrac{${b}}{${c}} ${op} ${sT(d)}\\div(-${e}) = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+    }
+    if (kind === 'brace') {
+      const a = nzMag(rng, 2, 12), b = R(rng, -9, 12), c = nzMag(rng, 2, 4), d = R(rng, -20, 20);
+      const s = -a + b, p = c * c, ans = s * p - d;
+      const steps = [{ tex: `(-${a}) + ${sT(b)} = \\square`, blank: s }, { tex: `(-${c})^{2} = \\square`, blank: p },
+                     { tex: `${sT(s)}\\times ${p} - ${sT(d)} = \\square`, blank: ans }];
+      return { prompt: L3m('괄호 안 → 거듭제곱 → 곱셈 → 뺄셈 차례로 계산합니다', 'Brackets first, then powers, then ×, then −.', '先算括号，再算乘方、乘法，最后算减法。'),
+        tex: `\\{(-${a}) + ${sT(b)}\\}\\times(-${c})^{2} - ${sT(d)} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+    }
+    if (kind === 'cube') {
+      const a = nzMag(rng, 2, 6), b = nzMag(rng, 2, 4), cube = -b * b * b, c = pick(rng, [2, 4, 8, 1].filter(v => (b * b * b) % v === 0 && v > 1).concat([b]));
+      const t1 = -a * a, t2 = cube / c, ans = t1 + t2;
+      const steps = [{ tex: `-${a}^{2} = \\square`, blank: t1 }, { tex: `(-${b})^{3} = \\square`, blank: cube },
+                     { tex: `${sT(cube)}\\div ${c} = \\square`, blank: t2 }, { tex: `${t1} + ${sT(t2)} = \\square`, blank: ans }];
+      return { prompt: L3m('−a² 와 (−a)³ 의 부호에 주의해 거듭제곱부터 계산합니다', 'Watch the signs of −a² and (−a)³ and work out the powers first.', '注意−a²与(−a)³的符号，先算乘方。'),
+        tex: `-${a}^{2} + (-${b})^{3}\\div ${c} = \\square`, answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+    }
+    const a = R(rng, -10, 10), b = nzMag(rng, 2, 9), c = nzMag(rng, 2, 4), d = R(rng, 1, 15), e = signOf(rng) * nzMag(rng, 2, 4);
+    const inner = c * c - d, mid = b + inner, ans = a - mid * e;
+    const steps = [{ tex: `(-${c})^{2} - ${d} = \\square`, blank: inner }, { tex: `${b} + ${sT(inner)} = \\square`, blank: mid },
+                   { tex: `${sT(mid)}\\times ${sT(e)} = \\square`, blank: mid * e }, { tex: `${sT(a)} - ${sT(mid * e)} = \\square`, blank: ans }];
+    return { prompt: L3m('소괄호 → 중괄호 → 대괄호 차례로, 안쪽부터 계산합니다', 'Work from the inside out: ( ), then { }, then [ ].', '由内向外：先小括号，再中括号，最后大括号。'),
+      tex: `${sT(a)} - [\\,${b} + \\{(-${c})^{2} - ${d}\\}\\,]\\times ${sT(e)} = \\square`,
+      answer: ans, answerType: 'steps', widget: 'steps', negative: ans < 0, steps, solution: steps };
+  }
+
 
   if (mode === 'noBrackets') {
     /* a + b×c (부호 있는 a,b,c) */
@@ -775,6 +1015,20 @@ NM_TGEN['md6_intMixed'] = function (params, rng) {
 NM_TGEN['md7_ratMulDiv'] = function (params, rng) {
   const mode = params.mode || 'mul';
   const DENOMS = [2, 3, 4, 5, 6, 7, 8, 9];
+  /* ── 역수 구하기(2026-11-25, 디딤돌 중1-1A 「역수」) — 곱해서 1이 되는 수 ── */
+  if (mode === 'reciprocal') {
+    const kind = pick(rng, ['frac', 'int', 'dec', 'mixed']);
+    let n, d, show;
+    if (kind === 'frac') { do { d = R(rng, 2, 9); n = R(rng, 1, d * 2); } while (n % d === 0 || gcd(n, d) !== 1 || n === 1); n *= signOf(rng); show = fT(n, d); }
+    else if (kind === 'int') { n = signOf(rng) * R(rng, 2, 12); d = 1; show = String(n); }
+    else if (kind === 'dec') { [n, d] = pick(rng, [[1, 2], [1, 5], [1, 4], [2, 5], [3, 2], [6, 5], [3, 5], [7, 10], [3, 10]]); n *= signOf(rng); show = String(n / d); }
+    else { const w = R(rng, 1, 3); let r; do { d = R(rng, 2, 5); r = R(rng, 1, d - 1); } while (gcd(r, d) !== 1); const sg = signOf(rng); n = sg * (w * d + r); show = (sg < 0 ? '-' : '') + `${w}\\dfrac{${r}}{${d}}`; }
+    const [rn, rd] = normFrac(d * Math.sign(n), Math.abs(n)), r = fracAns(rn, rd);
+    return Object.assign({ prompt: L3m('곱해서 1이 되는 수가 역수예요 — 소수·대분수는 먼저 분수로 바꿉니다', 'The reciprocal is the number that multiplies to 1; change decimals and mixed numbers to fractions first.', '乘积为1的两个数互为倒数；小数、带分数先化成分数。'),
+      tex: `${show}\\text{의 역수} = ${rd === 1 ? '\\square' : '\\dfrac{\\square}{\\square}'}`, answerType: 'number', widget: 'numpad', negative: n < 0,
+      solution: [{ tex: `${show} = ${fT(n, d)}` }, { tex: `${fT(n, d)}\\times ${pT(rn, rd)} = 1` }] }, r);
+  }
+
 
   if (mode === 'mul') {
     const d1 = pick(rng, DENOMS), d2 = pick(rng, DENOMS);

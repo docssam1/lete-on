@@ -1001,12 +1001,15 @@ function main(){
     'Node/browser negative-array grading mismatch');
   same(learningLevels(node.world), node.levelsBefore, 'diagnosis must not add or change source learning levels');
   const termAudit=loadBrowserVM(undefined,true),termModes=new Set();let termFixtures=0;
-  for(const level of termAudit.world.NM_THREADS.DV7.levels)for(let i=0;i<20;i++){
+  /* 진단에 쓰는 사다리 단계(1~3)만 — 2026-11-25에 더한 곁가지 단계(4~10: 짧은 나눗셈 표·문장제 등)는 진단 문항으로 쓰지 않는다 */
+  for(const level of termAudit.world.NM_THREADS.DV7.levels.filter(l=>!l.offLadder))for(let i=0;i<20;i++){
     const ref={t:'DV7',lv:level.id},original=termAudit.api._auditSource(ref,'curriculum-term-'+i),before=plain(original);
     const q=termAudit.api._auditAdapt(ref,original,false);
     assert(q,'curriculum terms: supported divisor/multiple question rejected');
     assert(!/\b(?:GCD|LCM)\b/.test(q.prompt.en),'curriculum terms: acronym exposed in test question');
-    same(q.prompt,{...original.prompt,en:original.prompt.en.replace(/\bGCD\b/g,'greatest common divisor').replace(/\bLCM\b/g,'least common multiple')},'curriculum terms: preserve complete question semantics');
+    /* 답이 여러 개인 새 단계(2026-11-25 DV7 4~7)는 진단이 「답 N개를 제시된 순서대로」 한 줄을 덧붙인다 — 그 앞은 원문 그대로 */
+    const termWant={...original.prompt,en:original.prompt.en.replace(/\bGCD\b/g,'greatest common divisor').replace(/\bLCM\b/g,'least common multiple')};
+    for(const l of ['ko','en','zh'])assert(String(q.prompt[l]).startsWith(termWant[l]),'curriculum terms: preserve complete question semantics '+l+': '+q.prompt[l]);
     same(original,before,'curriculum terms: do not mutate learning generator');same(q.answer,original.answer,'curriculum terms: answer invariant');
     if(/greatest common divisor/.test(q.prompt.en))termModes.add('divisor');
     if(/least common multiple/.test(q.prompt.en))termModes.add('multiple');termFixtures++;

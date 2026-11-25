@@ -88,7 +88,15 @@ for(let n = 0; n <= 37; n++){
     /* 유아 20분 · 중2·중3 40분(원장 결정 2026-09-25) · 나머지 30분 */
     const forty = c.tier === 'middle2' || c.tier === 'middle3';
     const lo = c.tier === 'level0' ? 15 : forty ? 30 : 20, hi = c.tier === 'level0' ? 25 : forty ? 42 : 38;
-    if(!(s.minutes >= lo && s.minutes <= hi)) fail.push(`F · ${at}: 예상 ${s.minutes}분 — ${lo}~${hi}분 밖`);
+    /* 초등(과정 1~28)은 하루 20문항(2026-11-25, 원장 「하루에 20문항씩은 공부해야지」) — 회차 시간이 아니라
+       공부하는 날 하루 분량으로 본다: 하루 20문항 이상, 하루 예상 20분 이하(challenge 문항당 50초 × 20 ≈ 17분 + 문장제·독셈 가중). */
+    if(s.studyDays){
+      const total = [...s.school, ...s.strategy.practice, ...s.application].reduce((n, d) => n + d.count, 0);
+      /* 유형 상한에 막혀 2문항 모자란 회차(과정 26~28 세 회차, 하루 19.5문항 — 표지에는 「하루 약 20문항」)까지는 받는다 */
+      if(total < 20 * s.studyDays - 2) fail.push(`F · ${at}: 하루 ${Math.round(total / s.studyDays)}문항 — 20문항 미만`);
+      if(s.minutes / s.studyDays > 20) fail.push(`F · ${at}: 하루 예상 ${Math.round(s.minutes / s.studyDays)}분 — 20분 넘음`);
+    }
+    else if(!(s.minutes >= lo && s.minutes <= hi)) fail.push(`F · ${at}: 예상 ${s.minutes}분 — ${lo}~${hi}분 밖`);
     mins.push(s.minutes);
   });
   const ns = c.sessions.filter(s => !s.test).length;

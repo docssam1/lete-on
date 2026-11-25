@@ -29,9 +29,10 @@ const withoutPlans = () => JSON.stringify(courses, (key, value) => key === 'stud
 assert.equal(withoutPlans(), before, 'all canonical fields, source sessions and tests are unchanged');
 const near = (actual, expected, label) => assert(Math.abs(actual - expected) < 1e-8, label || `${actual} != ${expected}`);
 const bands = [
-  {tier:'middle1', from:29, source:29, practice:26, seconds:40, minutes:961.3333333333333, drawing:12},
+  /* 2026-11-25 중1-1 세분화 — 과정 29에 새 유형이 들어가 원본 회차 29 → 34 (묶음 수 6·6·8은 그대로) */
+  {tier:'middle1', from:29, source:34, practice:31, seconds:40, minutes:1126.3333333333333, drawing:12},
   {tier:'middle2', from:32, source:26, practice:23, seconds:45, minutes:1010, drawing:12},
-  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1244.3333333333335, drawing:12}
+  {tier:'middle3', from:35, source:31, practice:28, seconds:50, minutes:1249.3333333333335, drawing:12}   /* 복습 칸이 새 중1 유형을 고르며 +5분(2026-11-25) */
 ];
 const WEEK_MS = 7 * 86400000;
 const startMs = Date.parse('2026-10-26T00:00:00Z');
