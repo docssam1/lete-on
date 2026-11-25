@@ -1,4 +1,4 @@
-"""Finite exact-rule assembly search for unit squares and unit triangles.
+"""Finite-rule assembly search for unit squares, triangles, and pentagons.
 
 Assemblies use complete equal-length edges, are connected, and cannot overlap
 in their interiors. Regular-tile placements use floating coordinates rounded
@@ -19,6 +19,9 @@ TILES = {
     "square": ((0.0, 0.0), (1.0, 0.0), (1.0, 1.0), (0.0, 1.0)),
     "right-isosceles": ((0.0, 0.0), (1.0, 0.0), (0.0, 1.0)),
     "equilateral": ((0.0, 0.0), (1.0, 0.0), (0.5, ROOT3 / 2)),
+    "pentagon": tuple((1 / (2 * sin(pi / 5)) * cos(pi / 2 + 2 * pi * i / 5),
+                       1 / (2 * sin(pi / 5)) * sin(pi / 2 + 2 * pi * i / 5))
+                      for i in range(5)),
 }
 
 
@@ -204,6 +207,24 @@ def enumerate_extensions(base_polygons, tile_type, count):
                      "uniqueOutlines": len(ordered), "placementChecks": checks}
 
 
+def enumerate_across_bases(base_arrangements, tile_type, count):
+    """Extend each allowed starting arrangement and deduplicate final outlines."""
+    by_outline = {}
+    per_base = []
+    checks = partitions = 0
+    for base_index, base in enumerate(base_arrangements):
+        outlines, stats = enumerate_extensions(base, tile_type, count)
+        per_base.append({"baseIndex": base_index, **stats})
+        checks += stats["placementChecks"]
+        partitions += stats["validEdgeConnectedPartitions"]
+        for outline, polygons in outlines:
+            by_outline.setdefault(outline, polygons)
+    ordered = [(outline, by_outline[outline]) for outline in sorted(by_outline)]
+    return ordered, {"validEdgeConnectedPartitions": partitions,
+                     "uniqueOutlines": len(ordered), "placementChecks": checks,
+                     "perBase": per_base}
+
+
 def tray(counts):
     parts = []
     i = 0
@@ -214,6 +235,11 @@ def tray(counts):
                 shape = f'<polygon points="{x},10 {x+32},10 {x+32},42 {x},42"'
             elif kind == 'right-isosceles':
                 shape = f'<polygon points="{x},42 {x+32},42 {x},10"'
+            elif kind == 'pentagon':
+                r = 16 / sin(pi / 5)
+                points = ' '.join(f'{x + 16 + r*cos(pi/2 + 2*pi*j/5):.3f},{26 - r*sin(pi/2 + 2*pi*j/5):.3f}'
+                                  for j in range(5))
+                shape = f'<polygon points="{points}"'
             else:
                 shape = f'<polygon points="{x},42 {x+32},42 {x+16},14"'
             parts.append(shape + ' fill="#fff" stroke="#38584f" stroke-width="2"/>')

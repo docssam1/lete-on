@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1832902,
-      "sha256": "60247e2860e7547941d609f083b37ebee7994ebe4efbd6c37e754fb0e32040e5",
+      "bytes": 1867638,
+      "sha256": "f0a709673a006221d290e29c19033f05adba32010cb07d18851328fd603a1846",
       "contentIncludedInGit": false
     },
     {
@@ -28,14 +28,14 @@
     },
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47634333,
-      "sha256": "2bb737df6b0685df8b36af55103d04ed98a49560421288169cbd5e51103348e6",
+      "bytes": 47661893,
+      "sha256": "461d8e7b8110af716ed592b349bced7d549d417f81b63167e4df917ddb7b8551",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 60181898,
-      "sha256": "1c411daec1c7f6bd307fa2d3fcf65a2b2b5e4f158e078274978573c973f6c042",
+      "bytes": 60225526,
+      "sha256": "f285ab4fd611ea4cfc249d4aa14c63161b0a71896ed99f29ed050c82316d718d",
       "contentIncludedInGit": false
     },
     {
@@ -144,9 +144,21 @@
       "contentIncludedInGit": false,
       "bytes": 2270,
       "sha256": "551281d8a82d357361ec29d1c5a72f6d445889b1e32c699221e44a86f0fbe936"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page15-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 2120,
+      "sha256": "57d6f0b2a7d7e6033531c5da22fb824fed15ab91a24c25efcfe34b03521e0c67"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page15-check.json",
+      "contentIncludedInGit": false,
+      "bytes": 1075,
+      "sha256": "ce60005b719661dfd9e5553c80c799e09fda6da44a9f58a5b15de1f3f098d331"
     }
   ],
-  "source": "Checkpoint 77; 초급 B p.12 고정 기본 도형 활동·본문 풀이와 독립 열거 일치, 답안 p.113 도형별 대조 보류. p.13 원문 조건·답 개수 검산 재사용.",
+  "source": "Content-map private workspace · checkpoint 78 · 2026-11-25",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",
