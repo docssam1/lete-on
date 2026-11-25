@@ -794,9 +794,18 @@
   const BOARD_DROP = new Set(["6-1-u2-e4-mission-4","6-1-u3-e2-example-1","6-1-u3-e2-mission-3","6-1-u4-e5-mission-5","6-1-u2-e3-mission-5","6-1-u1-e2-example-2", "6-1-u1-e2-mission-3", "6-1-u1-e2-mission-5", "6-1-u2-e1-mission-5", "6-1-u2-e2-example-2-3", "6-1-u2-e2-mission-5", "6-1-u3-e1-example-3", "6-1-u3-e1-example-4", "6-1-u3-e1-mission-5", "6-1-u3-e3-mission-4", "6-1-u3-e4-mission-1", "6-1-u4-e1-mission-4", "6-1-u4-e2-example-2-4", "6-1-u4-e2-mission-6", "6-1-u4-e3-example-3-3", "6-1-u4-e3-mission-2", "6-1-u4-e3-mission-5", "6-1-u4-e4-example-4-1", "6-1-u4-e4-mission-1", "6-1-u4-e5-example-5-1", "6-1-u4-e5-example-5-2", "6-1-u4-e5-example-5-4", "6-1-u4-e5-mission-1", "6-1-u4-e5-mission-2", "6-1-u4-e5-mission-3", "6-1-u4-e5-mission-4", "6-1-u4-e6-exploration-6-1", "6-2-u1-e2-example-4", "6-2-u1-e2-mission-4", "6-2-u1-e2-mission-6", "6-2-u1-e3-example-2", "6-2-u1-e3-example-3", "6-2-u1-e3-mission-3", "6-2-u1-e3-mission-4", "6-2-u1-e3-mission-6", "6-2-u1-e5-example-1"]);
 
   const escape = text => text.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+  // 2026-11-25: "1cm, 2cm"처럼 단위가 붙은 숫자를 쉼표로 이은 목록은 개수와 관계없이 맞춘다(변형 문항은 목록 길이가 다를 수 있다).
+  const LIST_TOKEN = "\u0001";
   function sentencePattern(sentence) {
-    const parts = String(sentence).replace(/\s+/g, " ").trim().split(/(\d[\d,./]*)/);
-    return parts.map((part, index) => index % 2 ? "(?<![\\d,./])\\d[\\d,./]*" : escape(part).replace(/ /g, "\\s*")).join("\\s*");
+    const units = [];
+    const normalized = String(sentence).replace(/\s+/g, " ").trim().replace(/\d[\d./]*([가-힣A-Za-z²³]+)(?:, ?\d[\d./]*\1)+/g, (match, unit) => { units.push(unit); return LIST_TOKEN; });
+    const parts = normalized.split(/(\d[\d,./]*|\u0001)/);
+    let listIndex = 0;
+    return parts.map((part, index) => {
+      if (index % 2 === 0) return escape(part).replace(/ /g, "\\s*");
+      if (part === LIST_TOKEN) { const unit = escape(units[listIndex++]); return `(?<![\\d,./])\\d[\\d./]*${unit}(?:\\s*,\\s*\\d[\\d./]*${unit})*`; }
+      return "(?<![\\d,./])\\d[\\d,./]*";
+    }).join("\\s*");
   }
   const compiled = new Map();
   function patternsFor(id) {

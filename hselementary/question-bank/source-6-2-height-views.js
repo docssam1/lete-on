@@ -127,7 +127,8 @@
     const hiddenStep = hidden ? `□에 쌓인 수는 전체 ${total(h)}개에서 나머지 칸의 ${total(h) - h[hidden[0]][hidden[1]]}개를 빼면 ${h[hidden[0]][hidden[1]]}개입니다. ` : "";
     if (definition.kind === "four-views") {
       const v = views(h), names = { front: "앞쪽", back: "뒤쪽", left: "왼쪽", right: "오른쪽" };
-      const known = level === 0 ? "front" : null;
+      // 2026-11-25: 쉬움 난이도에서 앞쪽 모양을 미리 칠해 두던 것(원문에 없는 정답 일부)을 빼고, 네 칸 모두 빈칸으로 둔다.
+      const known = null;
       const grids = Object.entries(v).map(([direction, values]) => profile(values, names[direction], id, "problem", direction !== known, Math.max(...h.flat()))).join("");
       const answer = "그림 참조";
       return { prompt: `그림의 수는 각 칸에 쌓은 쌓기나무의 개수입니다.${missingCondition} 앞쪽, 뒤쪽, 왼쪽, 오른쪽에서 본 모양을 각각 그리세요.${heightChart(h, id, "problem", hidden, true)}${group(grids)}`,
