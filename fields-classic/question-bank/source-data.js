@@ -6,7 +6,7 @@ import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_R
 import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
 import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125d";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125c";
-import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125c";
+import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125h";
 import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125c";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125c";
 import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125c";
@@ -1042,8 +1042,8 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "shape-transform": Object.freeze(["line-letter-two-flips-half-b1", "line-letter-turn-four-b1", "shape-rotate-flip-grid"]),
   "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
   "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
-  "tree-planting": Object.freeze(["closed-perimeter-object-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
-  "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "calendar-date-palindrome-b7", "clock-palindrome-unpadded-unit-test-book7", "reverse-add-palindrome-b7"]),
+  "tree-planting": Object.freeze(["rect-perimeter-tree-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
+  "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "month-date-palindrome-b7", "clock-palindrome-unpadded-unit-test-book7", "reverse-add-chain-b7"]),
   "catch-up": Object.freeze(["catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10"]),
   "number-baseball": Object.freeze(["number-baseball-b10"]),
   "unit-area-fraction": Object.freeze(["unit-grid-area", "equal-part-shaded-fraction", "incomplete-partition-fraction", "paired-hexagon-fractions", "triangle-twelve-part-fraction", "concentric-square-sixteen-fraction"]),

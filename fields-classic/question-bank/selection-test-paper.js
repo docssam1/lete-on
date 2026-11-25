@@ -1,4 +1,4 @@
-import { EXAMS } from "./source-data.js?v=20261125g";
+import { EXAMS } from "./source-data.js?v=20261125h";
 import { loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { productForExam, openExamIds } from "./entrance-products.js?v=20261116b";
 import { TYPESET_EXAMS } from "./selection-test-originals/index.js?v=20261116a";
