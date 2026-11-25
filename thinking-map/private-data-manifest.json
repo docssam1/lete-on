@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1542213,
-      "sha256": "181eaa3b78134fa63c874acedb290787d31bbe313adf68e3f7ae50e594721c03",
+      "bytes": 1581588,
+      "sha256": "340e9f7149b67d7a6411d7aa4707bcac06614c8d255e2e763c70da2eee53770f",
       "contentIncludedInGit": false
     },
     {
@@ -28,14 +28,14 @@
     },
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47444352,
-      "sha256": "bbe5c696e96203da540e4f238973d2e296d8a22557904bd4976806f3ef42b0ce",
+      "bytes": 47471961,
+      "sha256": "c997241a673fafcc26b58c8581356b072afb501bc80f01af95cfb58bb586012e",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59848956,
-      "sha256": "28be9cf4c61979735cb65526493bc7d7fbbf5dc203e9d9fdd990d67a7a49d0ba",
+      "bytes": 59894697,
+      "sha256": "ed58c7dc9465890c0646fde7790d6a1f517e0abb1880822dd92d79db6b9a1f70",
       "contentIncludedInGit": false
     },
     {
@@ -99,6 +99,12 @@
       "contentIncludedInGit": false
     },
     {
+      "path": "work/quantity-relations/1031-basic-b-right-isosceles-checkpoint.json",
+      "bytes": 951,
+      "sha256": "1e4fb5ab14a4d323e8b51c1d0abe73d25e1f8c7f00c522dc6ceb64d1afdb459b",
+      "contentIncludedInGit": false
+    },
+    {
       "path": "work/quantity-relations/1031-basic-b-triangle-edge-checkpoint.json",
       "bytes": 1005,
       "sha256": "311f51f03050fa73d20953b1ddbd3d256f97494aa27473a3c156d34b7ed0b91a"
@@ -108,6 +114,12 @@
       "bytes": 605,
       "sha256": "3d43daaab3c4f01961b9e79d123be1846f8a0a7d9afa264795e8be567dcd1cc5",
       "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/right_isosceles_core.py",
+      "bytes": 6275,
+      "sha256": "42d81d62c45af7a8fdad8a9320bdfe9b26c062b3cf83fd1d91262637c5b60637",
+      "contentIncludedInGit": true
     },
     {
       "path": "work/quantity-relations/soma-authoring-answer-check.json",

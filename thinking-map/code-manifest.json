@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 74,
+  "sourceCheckpoint": 75,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -159,6 +159,12 @@
       "storedPath": "runtime/work/quantity-relations/reviewed-native-ui.js",
       "bytes": 1762,
       "sha256": "9c43a7bee47c9230906618aeed1ead46c187b5c363c04f4dc82a1968ead91ec9"
+    },
+    {
+      "path": "work/quantity-relations/right_isosceles_core.py",
+      "storedPath": "runtime/work/quantity-relations/right_isosceles_core.py",
+      "bytes": 6275,
+      "sha256": "42d81d62c45af7a8fdad8a9320bdfe9b26c062b3cf83fd1d91262637c5b60637"
     },
     {
       "path": "work/quantity-relations/soma-authoring.css",
