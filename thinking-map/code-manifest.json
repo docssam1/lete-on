@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 76,
+  "sourceCheckpoint": 77,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -103,8 +103,8 @@
     {
       "path": "work/quantity-relations/mixed_polygon_assembly_core.py",
       "storedPath": "runtime/work/quantity-relations/mixed_polygon_assembly_core.py",
-      "bytes": 8902,
-      "sha256": "490e838b160b1866fffec035c705ffd8c0504fc8c6917164004112a185c4dacc"
+      "bytes": 10451,
+      "sha256": "0af6af503d01a1b87a4270ec8cc206f7058ca7cc9c90e49a6c670f2d924cd05e"
     },
     {
       "path": "work/quantity-relations/native-reused-verifiers.mjs",

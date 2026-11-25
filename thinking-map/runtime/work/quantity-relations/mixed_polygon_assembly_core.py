@@ -175,6 +175,35 @@ def enumerate_outlines(counts):
                      "uniqueOutlines": len(ordered), "placementChecks": checks}
 
 
+def enumerate_extensions(base_polygons, tile_type, count):
+    """Enumerate outlines after adding tiles to a fixed, already-joined base.
+
+    Unlike ``enumerate_outlines``, this keeps the supplied base arrangement in
+    place while each new tile is attached to an exposed complete edge. This is
+    needed when a source problem fixes a starting shape and asks how additional
+    pieces can be added; freely rearranging the base changes the task.
+    """
+    if tile_type not in TILES or count < 0 or not base_polygons:
+        return [], {"validEdgeConnectedPartitions": 0, "uniqueOutlines": 0,
+                    "placementChecks": 0}
+    seed = tuple(tuple(_point(p) for p in polygon) for polygon in base_polygons)
+    states = {_canonical_polygons(seed): seed}
+    checks = 0
+    for _ in range(count):
+        next_states = {}
+        for polygons in states.values():
+            for candidate in _assembly_candidates(polygons, tile_type):
+                checks += 1
+                new_polygons = tuple(sorted((*polygons, candidate),
+                                            key=lambda p: tuple(sorted(p))))
+                next_states.setdefault(_canonical_polygons(new_polygons), new_polygons)
+        states = next_states
+    outlines = {_canonical_outline(polygons): polygons for polygons in states.values()}
+    ordered = [(outline, outlines[outline]) for outline in sorted(outlines)]
+    return ordered, {"validEdgeConnectedPartitions": len(states),
+                     "uniqueOutlines": len(ordered), "placementChecks": checks}
+
+
 def tray(counts):
     parts = []
     i = 0

@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1721817,
-      "sha256": "62577e0cba66cec30e4000da7535205a5cff8e7b9823dfd9d00fa293f56585ed",
+      "bytes": 1832902,
+      "sha256": "60247e2860e7547941d609f083b37ebee7994ebe4efbd6c37e754fb0e32040e5",
       "contentIncludedInGit": false
     },
     {
@@ -28,14 +28,14 @@
     },
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47568365,
-      "sha256": "18c1b68f9ac91cfec59817728cef540d2b322fe63c0f08d642fb78d554775fb2",
+      "bytes": 47634333,
+      "sha256": "2bb737df6b0685df8b36af55103d04ed98a49560421288169cbd5e51103348e6",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 60060915,
-      "sha256": "e5f45388acc9360a987470ff551e6d97d936ebe88fdf8abc43ab729da15de5d6",
+      "bytes": 60181898,
+      "sha256": "1c411daec1c7f6bd307fa2d3fcf65a2b2b5e4f158e078274978573c973f6c042",
       "contentIncludedInGit": false
     },
     {
@@ -132,9 +132,21 @@
       "bytes": 29095,
       "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
       "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page12-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 1492,
+      "sha256": "4a7ce718c914540a94a03eb67dfd5cfee35b27fb4d2e254037be0468178afcab"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page12-check.json",
+      "contentIncludedInGit": false,
+      "bytes": 2270,
+      "sha256": "551281d8a82d357361ec29d1c5a72f6d445889b1e32c699221e44a86f0fbe936"
     }
   ],
-  "source": "Checkpoint 76; 초급 B p.13 확인 4문항의 원문 조건·답 개수와 혼합 도형 열거를 대조. 원문 페이지/교사 이미지/사용자 DB는 비공개 작업공간에 유지.",
+  "source": "Checkpoint 77; 초급 B p.12 고정 기본 도형 활동·본문 풀이와 독립 열거 일치, 답안 p.113 도형별 대조 보류. p.13 원문 조건·답 개수 검산 재사용.",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",
