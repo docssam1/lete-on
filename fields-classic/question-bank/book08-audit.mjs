@@ -444,7 +444,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 100) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 101) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -691,6 +691,12 @@ function validateStructure(problem, id, difficulty) {
         assert(String(problem.answer).includes(`(${i + 1}) `) && String(problem.answer).includes(`=${m.big}, `), id, difficulty, "합과 차 답 오류");
       });
       return;
+    case "mutual-give-as-much-b8": {
+      let [x, y] = meta.start;
+      for (let r = 0; r < meta.rounds; r += 1) { if (r % 2 === 0) { x -= y; y *= 2; } else { y -= x; x *= 2; } assert(x > 0 && y > 0, id, difficulty, "옮기는 중 0 이하"); }
+      assert(x === meta.n && y === meta.n, id, difficulty, "서로 가진 만큼 옮기기 결과 오류");
+      return;
+    }
     default:
       fail(id, difficulty, "새 유형 검산 분기 없음: " + meta.family);
   }

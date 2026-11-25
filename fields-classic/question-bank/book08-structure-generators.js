@@ -1403,6 +1403,7 @@ function reverseStepsBase({ difficulty = 2, ctx }) {
       mids.push(cur);
     }
     const final = cur;
+    if (new Set(steps.map(([, v]) => v)).size < Math.min(steps.length, 3)) continue;
     if (!ok || final === start || mids.slice(0, -1).includes(final)) continue;
     const backLine = [...steps].reverse().reduce((acc, [op, v]) => `${acc} ${op === "+" ? "−" : "+"} ${v}`, String(final));
     if (ctx === "number") {
@@ -1501,6 +1502,30 @@ function giveAsMuchReturnEqualB8({ difficulty = 2 }) {
   throw new Error("book08 give-as-much-return-equal generation failed");
 }
 
+// 서로 상대가 가진 만큼 차례로 옮긴 뒤 둘 다 N — 거꾸로(마지막에 받은 쪽을 반으로) 처음 수를 찾는다
+function mutualGiveAsMuchB8({ difficulty = 2 }) {
+  const rounds = difficulty === 3 ? 3 : 2;
+  const unit = 2 ** rounds;
+  const n = unit * randomInt(difficulty === 1 ? 2 : 3, difficulty === 3 ? 6 : 8);
+  const [a, b] = pick([["가", "나"], ["빨간", "파란"], ["왼쪽", "오른쪽"]]);
+  // 앞으로: i번째는 짝수 번째면 a → b, 홀수 번째면 b → a
+  let x = n;
+  let y = n;
+  const back = [];
+  for (let r = rounds - 1; r >= 0; r -= 1) {
+    if (r % 2 === 0) { const half = y / 2; back.push(`${b} ${y}개 → ${half}개, ${a} ${x}+${half}=${x + half}개`); y = half; x += half; } else { const half = x / 2; back.push(`${a} ${x}개 → ${half}개, ${b} ${y}+${half}=${y + half}개`); x = half; y += half; }
+  }
+  const steps = range(0, rounds - 1).map((r) => (r % 2 === 0 ? `${a} 상자에서 ${b} 상자로 ${b} 상자에 든 개수만큼` : `${b} 상자에서 ${a} 상자로 ${a} 상자에 든 개수만큼`));
+  const label = (r) => (r % 2 === 0 ? `${a} → ${b}` : `${b} → ${a}`);
+  return {
+    prompt: `${a} 상자와 ${b} 상자에 사탕이 들어 있습니다. 먼저 ${steps.join(" 옮기고, 그다음 ")} 사탕을 옮겼더니 두 상자의 사탕이 똑같이 ${n}개가 되었습니다. 처음 두 상자에 든 사탕은 각각 몇 개인지 구하세요.`,
+    visual: figs(transferTableSvg([`${a} 상자`, `${b} 상자`], range(0, rounds - 1).map(label), [`${n}개`, `${n}개`])),
+    answer: `${a} 상자 ${x}개, ${b} 상자 ${y}개`,
+    solution: `상자에 든 만큼 받으면 두 배가 되므로, 마지막부터 받은 상자를 반으로 줄이고 줄인 만큼 준 상자에 되돌립니다. ${back.join(" → ")}입니다. 처음에는 ${a} 상자 ${x}개, ${b} 상자 ${y}개입니다.`,
+    meta: { family: "mutual-give-as-much-b8", rounds, n, start: [x, y] }
+  };
+}
+
 // ── 내보내기 ────────────────────────────────────────
 
 export const BOOK08_STRUCTURE_GENERATORS = {
@@ -1533,7 +1558,8 @@ export const BOOK08_STRUCTURE_GENERATORS = {
   reverseFloorMovesB8,
   reversePeopleMarblesB8,
   giveAsMuchEqualB8,
-  giveAsMuchReturnEqualB8
+  giveAsMuchReturnEqualB8,
+  mutualGiveAsMuchB8
 };
 
 // 풀이기(검사기가 쓴다)
@@ -1571,6 +1597,7 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
   row("reverse-floor-moves-b8", "number", "거꾸로 생각하기", "계단을 오르내린 뒤의 층에서 처음 층 찾기", "reverseFloorMovesB8", ["층 오르내리기", "거꾸로 계산"]),
   row("reverse-people-marbles-b8", "number", "거꾸로 생각하기", "세 사람과 주고받은 구슬 거꾸로 풀기", "reversePeopleMarblesB8", ["주고받기", "거꾸로 계산"]),
   row("give-as-much-equal-b8", "number", "거꾸로 생각하기", "가진 만큼 준 뒤 둘 다 같아진 처음 수", "giveAsMuchEqualB8", ["가진 만큼 주기", "똑같이 됨"]),
+  row("mutual-give-as-much-b8", "number", "거꾸로 생각하기", "서로 가진 만큼 옮긴 뒤 둘 다 같아진 처음 수", "mutualGiveAsMuchB8", ["서로 가진 만큼", "거꾸로 표"]),
   row("give-as-much-return-equal-b8", "number", "거꾸로 생각하기", "가진 만큼 주고 일부 돌려받아 같아진 처음 수", "giveAsMuchReturnEqualB8", ["가진 만큼 주기", "돌려받기", "똑같이 됨"])
 ];
 
@@ -1604,6 +1631,7 @@ export const BOOK08_STRUCTURE_GUIDES = {
   "reverse-floor-moves-b8": "도착한 층에서 올라간 만큼 내려가고 내려간 만큼 올라가며 거꾸로 따라갑니다.",
   "reverse-people-marbles-b8": "마지막 개수에서 받은 것은 빼고 준 것은 더하며 거꾸로 셉니다.",
   "give-as-much-equal-b8": "가진 만큼 받은 쪽은 두 배가 되었으므로 반으로 나누어 처음 수를 찾고, 준 쪽은 준 만큼 더합니다.",
+  "mutual-give-as-much-b8": "가진 만큼 받은 상자는 두 배가 되었으므로, 마지막에 받은 상자부터 반으로 줄이고 그만큼 준 상자에 되돌립니다.",
   "give-as-much-return-equal-b8": "마지막에 주고받은 것부터 되돌린 뒤, 두 배가 된 쪽을 반으로 나누어 처음 수를 찾습니다."
 };
 
@@ -1662,5 +1690,6 @@ export const BOOK08_STRUCTURE_REMAPS = [
   ["book-08", 4, "check", 1, [1, 2], "give-as-much-equal-b8"],
   ["book-08", 4, "check", 1, [3, 4], "give-as-much-return-equal-b8"],
   ["book-08", 4, "practice", 1, [7, 8], "give-as-much-equal-b8"],
-  ["book-08", 4, "practice", 1, [9, 10], "give-as-much-return-equal-b8"]
+  ["book-08", 4, "practice", 1, [9, 10], "give-as-much-return-equal-b8"],
+  ["book-08", 4, "advanced", 1, [2], "mutual-give-as-much-b8"]
 ];
