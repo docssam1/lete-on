@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 46542532,
-      "sha256": "3a070353f2608ce7b54cffca2f2edc3455466dc6f0979ec80619dfcbc626f7b4",
+      "bytes": 46841632,
+      "sha256": "d0f4d9cd31ac833177196b8b87fe274b8229991512b29282ba14c0bb2c321943",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 58228001,
-      "sha256": "7a434d25ebdac276b9f78d79837ee8e1b98a6eb246e5ff32aa285fc1c4e62dc9",
+      "bytes": 58572344,
+      "sha256": "555cbc372f788ba85d12efd0cb8d5e0258f3fa3350ee891ca44ff708a58689b4",
       "contentIncludedInGit": false
     },
     {
@@ -67,9 +67,15 @@
       "contentIncludedInGit": false,
       "bytes": 70051,
       "sha256": "1a5e7577741fd253a33b77560dae3ac06679e10f123633fdd0574933ef162c43"
+    },
+    {
+      "path": "outputs/1031-basic-b-shape-composition-items.json",
+      "bytes": 321803,
+      "sha256": "acb5ff7bcaa7729f02e2b1e2594aed11034f224e4284bdfa1e58920ae13b998b",
+      "contentIncludedInGit": false
     }
   ],
-  "source": "Existing owner-controlled Drive research folder; preserve file IDs and verify checksums.",
+  "source": "Checkpoint 67; private source records and answer data remain outside Git.",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",

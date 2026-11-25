@@ -418,7 +418,7 @@
   }
   function providerMatchesMarkup(result) {
     if(!result.nativeMatches?.length)return '';
-    return `<section class="native-input-matches"><h3>문장 구조가 비슷한 필즈 은행 유형</h3><p class="meta">기존 생성 예시와 비교한 후보입니다. 그림 조건·응답을 확인해야 하며, 통합 난도와 원문 일치를 확정한 결과는 아닙니다.</p>${result.nativeMatches.map(m=>{
+    return `<section class="native-input-matches"><h3>문장 구조가 비슷한 필즈 더 클래식 문제은행 유형</h3><p class="meta">기존 생성 예시와 비교한 후보입니다. 그림 조건·응답을 확인해야 하며, 통합 난도와 원문 일치를 확정한 결과는 아닙니다.</p>${result.nativeMatches.map(m=>{
       const positions=(m.sourcePositionIds||[]).map(id=>corpus.find(r=>r.id===id)).filter(Boolean);
       return `<article><h4>${escape(m.label)}</h4><ul>${positions.slice(0,4).map(r=>`<li>${escape(position(r))}</li>`).join('')}</ul>${positions[0]?`<button data-preview-source="${escape(positions[0].id)}" data-provider-instance="${escape(m.instanceId)}">은행 유사문제·정답 보기</button>`:''}<p class="meta">${positions.length}개 교재 위치에 등록된 은행 유형 · 원문 조건별 동등성은 확인 전</p></article>`;
     }).join('')}</section>`;
@@ -550,7 +550,7 @@
   relationshipNames['related-shape-assembly-different-pieces']='같은 구성 행동 · 조각과 응답 비교';
   relationshipNames['existing-bank-type-reference'] = '기프티드 매쓰 본문 위치 색인';
   const option = document.createElement('option'); option.textContent = '필즈 더클래식'; el('book').append(option);
-  el('stats').innerHTML = `${families.length}유형군 · ${DATA.types.length}세부유형 · 연결 근거 ${DATA.summary.sourceRecords}건<br>책·단원 검색 색인 ${corpus.length}건 · 검산 대표 ${DATA.specimens.length}개`+(DATA.a1Normalization?`<br>응답별 통합 예시 ${DATA.summary.normalizedResponseProfiles}개(저장 은행 ${DATA.providerSpecimens.length}·기존 응답 분기 ${DATA.normalizationExamples.length}·새 연계 ${DATA.summary.sourceAlignedNewExamples||0}) · 필즈 은행 예시 ${DATA.providerSpecimens.length}개`:DATA.providerSpecimens?`<br>필즈 은행 예시 ${DATA.providerSpecimens.length}개`:'');
+  el('stats').innerHTML = `${families.length}유형군 · ${DATA.types.length}세부유형 · 연결 근거 ${DATA.summary.sourceRecords}건<br>책·단원 검색 색인 ${corpus.length}건 · 검산 대표 ${DATA.specimens.length}개`+(DATA.a1Normalization?`<br>응답별 통합 예시 ${DATA.summary.normalizedResponseProfiles}개(저장 은행 ${DATA.providerSpecimens.length}·기존 응답 분기 ${DATA.normalizationExamples.length}·새 연계 ${DATA.summary.sourceAlignedNewExamples||0}) · 필즈 더 클래식 문제은행 예시 ${DATA.providerSpecimens.length}개`:DATA.providerSpecimens?`<br>필즈 더 클래식 문제은행 예시 ${DATA.providerSpecimens.length}개`:'');
   document.querySelector('.mast h1').textContent = '사고력 유형·교재 연결 지도';
   document.title = '사고력 유형 · 입력 검색과 연결 지도';
   chapterOptions(); render();

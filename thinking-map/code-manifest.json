@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 65,
+  "sourceCheckpoint": 67,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -31,8 +31,8 @@
     {
       "path": "work/quantity-relations/catalog-preview.js",
       "storedPath": "runtime/work/quantity-relations/catalog-preview.js",
-      "bytes": 35034,
-      "sha256": "f8d895d55b6c6fcc358feaf297eb877f77badcba22d1558ead65b783b870e01e"
+      "bytes": 36457,
+      "sha256": "cefb7ad53276243a1915e5fd4a193c36e5f84e9e057b5a9185b01ea6c2eed966"
     },
     {
       "path": "work/quantity-relations/crossbook-alignment-ui.js",
@@ -79,8 +79,8 @@
     {
       "path": "work/quantity-relations/input-search.js",
       "storedPath": "runtime/work/quantity-relations/input-search.js",
-      "bytes": 77719,
-      "sha256": "78de12b9da3de2e697074230fc041c86e662ad333e165edfccbbfe404dca58d2"
+      "bytes": 77779,
+      "sha256": "c18fec7329d2c497f26efd8c212924edc7aff189bc8090f0a79f532636fdf2d6"
     },
     {
       "path": "work/quantity-relations/local-bank-server.py",
@@ -133,8 +133,8 @@
     {
       "path": "work/quantity-relations/render-crossbook-bank.py",
       "storedPath": "runtime/work/quantity-relations/render-crossbook-bank.py",
-      "bytes": 26821,
-      "sha256": "e5a23139a45445af5fb4b9e7c4888b95ad33f34606044e33c748b53595e2df52"
+      "bytes": 27068,
+      "sha256": "4d1269b1e9d52119c862e914c76fc548160ed15dedab8e52989ccb3978436a47"
     },
     {
       "path": "work/quantity-relations/reviewed-native-ui.js",
@@ -229,8 +229,8 @@
     {
       "path": "work/quantity-relations/textbook-workbench.js",
       "storedPath": "runtime/work/quantity-relations/textbook-workbench.js",
-      "bytes": 8135,
-      "sha256": "55648fc5dcda6a113f3f37c49884916c7fd25100584a01c9511c7ec7c070b58a"
+      "bytes": 8229,
+      "sha256": "10f07286fae964e00c2dd2a5d4f1cd7a7226370923483642a14de7b22a534418"
     },
     {
       "path": "work/quantity-relations/vision-text-candidates.swift",
@@ -261,6 +261,12 @@
       "storedPath": "runtime/work/quantity-relations/build-taxonomy-hierarchy.py",
       "bytes": 3767,
       "sha256": "0961c277f9b42b269db9e33259190f5e9981bbd928e0f0d6be2d797a261d3fbc"
+    },
+    {
+      "path": "work/quantity-relations/textbook-scope.json",
+      "storedPath": "runtime/work/quantity-relations/textbook-scope.json",
+      "bytes": 905,
+      "sha256": "df1ecdbe713c090b8c8af8b497ca4afac5822d7dd4a9782ca0dbf25e0ec2ae35"
     }
   ],
   "pinnedGitFiles": [
