@@ -8,13 +8,12 @@
 <title>우리 아이 공부 지도 · GFIELD</title>
 <link rel="preconnect" href="https://fgahqumaldheqettmvqg.supabase.co" crossorigin>
 <link rel="stylesheet" href="membership.css?v=20261101-fill1">
-<link rel="stylesheet" href="account-landing.css?v=20261123-film2">
-<link rel="stylesheet" href="account-intro.css?v=20261116-speed1">
-<link rel="stylesheet" href="planner-level-guide.css?v=20261123-bench1">
+<link rel="stylesheet" href="account-landing.css?v=20261126-start1">
+<link rel="stylesheet" href="account-intro.css?v=20261126-start1">
 <link rel="stylesheet" href="docssam-contact.css?v=20261104-compact1">
 </head>
 <body class="member-page member-landing">
-<a class="account-skip" href="#accountEntry">무료 시작으로 바로가기</a>
+<a class="account-skip" href="#accountCreate">로드맵 만들기로 바로가기</a>
 <header class="member-header">
  <a href="planner.html" class="member-brand"><img src="assets/gfield-logo.svg" width="125" height="43" alt="GFIELD"></a>
  <nav class="account-nav" aria-label="계정과 문의"><a href="#accountEntry" data-account-entry="login">로그인</a><a class="docssam-contact-link" href="https://open.kakao.com/me/gfield" target="_blank" rel="noopener noreferrer" aria-label="독쌤에게 물어보기 · 카카오톡 채팅, 새 창" title="독쌤에게 물어보기 · 카카오톡 채팅"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M12 3C6.5 3 2 6.5 2 10.8c0 2.7 1.8 5.1 4.5 6.5L5.4 21l4.4-2.6c.7.1 1.4.2 2.2.2 5.5 0 10-3.5 10-7.8S17.5 3 12 3Z"/></svg><span>독쌤에게 물어보기</span></a></nav>
@@ -23,25 +22,8 @@
  <section class="account-hero" aria-labelledby="accountHeading">
   <div class="account-hero-content">
    <h1 id="accountHeading">우리 아이 공부 지도</h1>
-   <p>궁금한 로드맵부터 살펴보세요.</p>
-   <div class="account-topics">
-    <details name="roadmap-topic">
-     <summary><strong>초등 수학 선발</strong><span>생각하는 황소 · 소마 프리미어 · 필즈 S</span></summary>
-     <div class="account-topic-content">
-      <p>황소 준비는 현재 교과와 심화 범위를 확인하는 데서 시작합니다. 프리미어·필즈 S는 합격생이 사고력과 연산을 어떻게 병행했는지 볼 수 있습니다.</p>
-      <ul><li><a href="planner.html?academy=academy-hwangso">생각하는 황소 준비</a></li><li><a href="planner.html?senior=premier-cohort">프리미어·필즈 S 합격생 사례</a></li></ul>
-      <small>전체 자료는 로그인 후 볼 수 있습니다.</small>
-     </div>
-    </details>
-    <details name="roadmap-topic">
-     <summary><strong>이과 최상위권</strong><span>KMO · 영재고 · 과학고 · 자사고</span></summary>
-     <div class="account-topic-content">
-      <p>교과 선행·심화와 과학을 이어가면서, 목표별로 더 필요한 경시·탐구·면접 준비를 살펴보세요.</p>
-      <ul><li><a href="planner.html?guest=1&amp;goal=contest">KMO</a></li><li><a href="planner.html?guest=1&amp;goal=giftedSchool">영재고</a></li><li><a href="planner.html?guest=1&amp;goal=scienceHigh">과학고</a></li><li><a href="planner.html?admissions=1">과학고·자사고 비교 · 로그인</a></li></ul>
-     </div>
-    </details>
-   </div>
-   <div class="account-create"><a class="member-primary" href="planner.html?guest=1">우리 아이 로드맵 만들기</a></div>
+   <p>지금 공부하는 교재를 알려주시면, 다음 교재와 시작 시기를 보여드려요.</p>
+   <div class="account-create"><a id="accountCreate" class="member-primary" href="planner.html?guest=1">우리 아이 로드맵 만들기</a></div>
   </div>
   <div class="account-stage">
    <aside class="account-film" aria-label="학습 로드맵 소개 영상">
@@ -62,14 +44,7 @@
  <nav class="account-quicklinks" aria-label="로드맵 둘러보기">
    <a href="#introduction">로드맵 소개</a>
    <a href="#seniorExample">선배들의 로드맵</a>
-   <a href="planner.html?books=math">교재 난이도 지도</a>
-   <a href="#levelGuide">유아·초등 레벨 기준</a>
   </nav>
- <details id="levelGuide" class="level-guide" data-level-guide-load>
-  <summary>유아·초등 레벨 기준 보기</summary>
-  <p role="status">기준표를 준비하고 있어요.</p>
-  <button type="button" data-level-guide-retry hidden>다시 불러오기</button>
- </details>
  <section id="introduction" class="account-introduction" aria-labelledby="introHeading">
   <div class="account-ask">
    <p class="account-ask-question" data-zoom="out">“교과는 앞서가는데<br>심화는 언제 할까요?”</p>
@@ -289,7 +264,7 @@
   <details><summary>모든 과목의 교재를 입력해야 하나요?</summary><p>먼저 수학의 교과·응용·사고력·연산 중 지금 하는 공부부터 입력하세요. 국어·과학·영어는 현재 수준과 선택한 계획에 따라 함께 살펴봅니다. 아직 시작하지 않은 과정은 현재 공부와 구분합니다.</p></details>
   <details><summary>선배와 같은 속도로 공부해야 하나요?</summary><p>선배 사례는 어떤 공부를 병행했고 언제 다음 과정으로 넘어갔는지 비교하는 자료입니다. 우리 아이의 현재 교재·마친 분량·공부할 시간에 맞춰 계획을 정합니다. 사례의 합격 결과가 같은 결과를 보장하지는 않습니다.</p></details>
   <details><summary>예상 일정은 나중에 바꿀 수 있나요?</summary><p>네. 실제 진도와 남은 분량을 다시 입력하고, 학습량이나 선택 과정을 조정해 다음 일정을 살펴볼 수 있습니다. 학교 시험일과 학원 반 배정이 정해지면 그 일정도 함께 확인해 주세요.</p></details>
-  <details><summary>가입하지 않고 먼저 볼 수 있나요?</summary><p>네. ‘우리 아이 로드맵 만들기’에서 초안을 볼 수 있습니다. 살펴보기는 로드맵이 만들어지는 데까지이며, 입력한 내용은 저장되지 않습니다. 진도 비교, 월별 교재 계획, 총평·인쇄, 학습 기록, 학원가 이야기, 교재 난이도 지도, 선배들의 로드맵은 이메일 인증 후 볼 수 있습니다. <a href="planner.html?guest=1">로그인 없이 살펴보기</a></p></details>
+  <details><summary>가입하지 않고 먼저 볼 수 있나요?</summary><p>네. ‘우리 아이 로드맵 만들기’에서 초안을 볼 수 있습니다. 살펴보기는 로드맵이 만들어지는 데까지이며, 입력한 내용은 저장되지 않습니다. 개인 진도 그래프, 월별 교재 계획, 총평·인쇄, 학습 기록, 학원가 이야기, 교재 난이도 지도, 선배들의 로드맵은 이메일 인증 후 볼 수 있습니다. <a href="planner.html?guest=1">로그인 없이 살펴보기</a></p></details>
   <details><summary>로드맵은 무료인가요?</summary><p>이메일 인증을 마치면 별도 승인 없이 무료로 이용할 수 있습니다.</p></details>
   <details><summary>만든 계획은 어디에 저장되나요?</summary><p>먼저 이 기기에 보관합니다. 로드맵 화면의 ‘계정에 저장’을 누르면 다른 기기에서도 이어갈 수 있습니다. 서로 다르게 수정한 계획은 선택해 이어갑니다.</p></details>
  </section>
@@ -297,7 +272,7 @@
   <h2 id="howHeading" data-zoom="in">현재 진도를 알려주시면 시작할 수 있어요</h2>
   <ol><li><span aria-hidden="true" data-zoom="in" data-zoom-step="0">1</span><div><h3>지금 공부 확인</h3><p>학년·나이와 교재, 진행한 범위를 입력합니다.</p></div></li><li><span aria-hidden="true" data-zoom="in" data-zoom-step="1">2</span><div><h3>교재와 속도 선택</h3><p>함께 공부할 과정과 학습량을 정합니다.</p></div></li><li><span aria-hidden="true" data-zoom="in" data-zoom-step="2">3</span><div><h3>로드맵 완성</h3><p>예상 일정과 월별 계획을 확인하고, 학습 후 조정합니다.</p></div></li></ol>
  </section>
- <section class="account-start" aria-labelledby="startHeading"><img src="assets/guide/docssam-listen.webp" width="72" height="84" loading="lazy" alt="독쌤"><div><h2 id="startHeading">우리 아이의 현재 진도부터 정리해 보세요.</h2><p>이메일 인증 후 무료로 학습 로드맵을 만들 수 있습니다.</p></div><a class="member-primary" href="#accountEntry" data-account-entry="signup">이메일로 무료 시작하기</a></section>
+ <section class="account-start" aria-labelledby="startHeading"><img src="assets/guide/docssam-listen.webp" width="72" height="84" loading="lazy" alt="독쌤"><div><h2 id="startHeading">우리 아이의 현재 진도부터 정리해 보세요.</h2><p>이메일 인증 후 만든 로드맵을 저장하고 다른 기기에서 이어볼 수 있어요.</p></div><a class="member-primary" href="#accountEntry" data-account-entry="signup">이메일로 무료 시작하기</a></section>
  <section id="accountEntry" class="member-card account-signin" aria-labelledby="memberTitle">
   <div id="memberContent"><h2 id="memberTitle" tabindex="-1">계정을 확인하고 있습니다.</h2></div>
   <p id="memberStatus" role="status" aria-live="polite"></p>
@@ -305,5 +280,5 @@
 
 </main>
 <footer class="member-footer">GFIELD · <a href="privacy.html">개인정보 수집·이용</a> · <a href="mailto:docssam1@gmail.com">이용 문의</a></footer>
-<script src="account-reel.js?v=20261116-speed1"></script><script src="account-reel-lines.js?v=20261111-film1"></script><script src="account-landing.js?v=20261123-bench1"></script><script src="account-intro.js?v=20261111-shots1"></script><script src="membership-policy.js?v=20261103-sync1"></script><script src="membership-api.js?v=20261116-speed1"></script><script src="../../fields-classic/admin-auth.js?v=20261030-member1"></script><script src="account.js?v=20261123-learner1"></script><script src="account-fields.js?v=20261118-validation1"></script>
+<script src="account-reel.js?v=20261116-speed1"></script><script src="account-reel-lines.js?v=20261111-film1"></script><script src="account-landing.js?v=20261126-start1"></script><script src="account-intro.js?v=20261111-shots1"></script><script src="membership-policy.js?v=20261103-sync1"></script><script src="membership-api.js?v=20261116-speed1"></script><script src="../../fields-classic/admin-auth.js?v=20261030-member1"></script><script src="account.js?v=20261123-learner1"></script><script src="account-fields.js?v=20261118-validation1"></script>
 </body></html>

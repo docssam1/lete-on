@@ -11,7 +11,8 @@ function read(file){
 function build(out){
  const html=read('planner.html'),scripts=[...html.matchAll(/<script\b([^>]*data-member-src="([^"]+)"[^>]*)>/g)].map(m=>({src:m[2],entry:m[1].includes('data-parent-boot')}));
  const styles=[...html.matchAll(/data-member-href="([^"]+)"/g)].map(m=>m[1]);
- if(scripts.filter(s=>s.entry).length!==7||scripts.length<100||styles.length<20)throw Error('Unexpected roadmap delivery manifest');
+ const entryScripts=scripts.filter(s=>s.entry).length;
+ if(entryScripts!==9||scripts.length<100||styles.length<20)throw Error('Unexpected roadmap delivery manifest');
  const files={},publish=(kind,extension,body)=>{const hash=crypto.createHash('sha256').update(body).digest('hex').slice(0,16),name='planner-'+kind+'.'+hash+'.'+extension;files[name]=body;return name;};
  function scriptBundle(entry){const list=scripts.filter(s=>s.entry===entry);const body=list.map(s=>'\n/* '+s.src+' */\n'+read(s.src)+'\n;\n').join('');new vm.Script(body,{filename:entry?'planner-entry':'planner-runtime'});return publish(entry?'entry':'runtime','js',body);}
  const entry=scriptBundle(true),runtime=scriptBundle(false),style=publish('runtime','css',styles.map(s=>'\n/* '+s+' */\n'+read(s)).join('\n'));
@@ -19,7 +20,7 @@ function build(out){
  if(prepared===html)throw Error('Missing protected roadmap document root');
  fs.mkdirSync(out,{recursive:true});for(const [name,body]of Object.entries(files))fs.writeFileSync(path.join(out,name),body);
  fs.writeFileSync(path.join(out,'planner.html'),prepared);
- const manifest={entry,runtime,style,assets:Object.keys(files),entryScripts:7,runtimeScripts:scripts.length-7,styles:styles.length};
+ const manifest={entry,runtime,style,assets:Object.keys(files),entryScripts,runtimeScripts:scripts.length-entryScripts,styles:styles.length};
  fs.writeFileSync(path.join(out,'manifest.json'),JSON.stringify(manifest,null,2));return manifest;
 }
 if(require.main===module){const out=process.argv[2];if(!out)throw Error('Usage: node tools/build-delivery.cjs DESTINATION');console.log(JSON.stringify(build(path.resolve(out))));}

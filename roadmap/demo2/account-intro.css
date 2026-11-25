@@ -16,7 +16,7 @@
 html,body.member-landing{overflow-x:clip}
 
 /* Under the film: a plain index of the page instead of icon tiles. */
-.account-quicklinks{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));border-bottom:1px solid var(--in-line)}
+.account-quicklinks{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));border-bottom:1px solid var(--in-line)}
 .account-quicklinks a{display:flex;align-items:center;min-height:76px;padding:var(--in-s4) var(--in-s5);font-size:1.125rem;font-weight:700;line-height:1.4;letter-spacing:-.02em;color:var(--member-ink);text-decoration:none}
 .account-quicklinks a:first-child{padding-left:0}
 .account-quicklinks a+a{border-left:1px solid var(--in-line)}
@@ -246,10 +246,7 @@ html,body.member-landing{overflow-x:clip}
 }
 @media(max-width:700px){
  .member-landing{--in-amp:.14;--in-s7:36px;--in-s8:48px}
- .account-quicklinks{grid-template-columns:repeat(2,minmax(0,1fr))}
  .account-quicklinks a{min-height:60px;padding:var(--in-s3) var(--in-s4);font-size:1rem}
- .account-quicklinks a:nth-child(odd){padding-left:0;border-left:0}
- .account-quicklinks a:nth-child(n+3){border-top:1px solid var(--in-line)}
  .account-ask-answer,.account-senior-concern{margin-left:0}
  .account-preview{display:block}
  .account-preview-tabs{position:static;flex-direction:row;flex-wrap:wrap;gap:0 var(--in-s4);margin-bottom:var(--in-s4)}

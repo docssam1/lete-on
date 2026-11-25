@@ -53,23 +53,10 @@ p.member-field-error{margin:-2px 0 8px 28px}
 }
 @media(prefers-reduced-motion:no-preference){.member-landing{scroll-behavior:smooth}}
 
-/* Topic browsing and the original introduction film share the web hero. */
+/* Start with the child’s current study; the introduction film supports that first action. */
 .account-hero{display:grid;grid-template-columns:minmax(0,.88fr) minmax(0,1.12fr);gap:clamp(24px,4.2vw,66px);align-items:center;padding:38px 0 42px}
 .account-hero-content>h1{margin:0;color:var(--member-ink);font-size:clamp(2rem,3.25vw,3.125rem);line-height:1.25;letter-spacing:-.052em}
-.account-hero-content>p{margin:13px 0 24px;color:var(--member-muted);font-size:16px}
-.account-topics{border-top:1px solid var(--account-line)}
-.account-topics>details{border-bottom:1px solid var(--account-line)}
-.account-topics>details>summary{display:grid;position:relative;align-content:center;gap:4px;min-height:76px;padding:10px 34px 10px 0;list-style:none;cursor:pointer}
-.account-topics>details>summary::-webkit-details-marker{display:none}
-.account-topics>details>summary::after{content:"";position:absolute;right:8px;top:50%;width:8px;height:8px;border:solid var(--account-accent);border-width:0 2px 2px 0;transform:translateY(-65%) rotate(45deg)}
-.account-topics>details[open]>summary::after{transform:translateY(-20%) rotate(225deg)}
-.account-topics summary strong{font-size:19px;font-weight:700}
-.account-topics summary span{color:var(--member-muted);font-size:14px;line-height:1.45}
-.account-topic-content{padding:0 0 15px;color:var(--member-muted);font-size:14px;line-height:1.55}
-.account-topic-content p{margin:0;max-width:48ch}
-.account-topic-content ul{display:flex;flex-wrap:wrap;gap:0 16px;list-style:none;padding:0;margin:4px 0 0}
-.account-topic-content a{display:inline-flex;min-height:44px;align-items:center;color:#295d55;text-underline-offset:3px}
-.account-topic-content small{font-size:12px}
+.account-hero-content>p{max-width:25em;margin:14px 0 0;color:var(--member-muted);font-size:clamp(16px,1.5vw,19px);line-height:1.65;word-break:keep-all}
 .account-create{margin-top:24px}
 .account-create .member-primary{display:inline-flex;align-items:center;justify-content:center;width:auto;margin:0;text-decoration:none}
 .member-landing .account-signin{max-width:720px;margin:28px auto 40px;padding-inline:0;border-top:1px solid var(--account-line)}
@@ -100,10 +87,7 @@ p.member-field-error{margin:-2px 0 8px 28px}
 }
 @media(max-width:560px){
  .account-hero{gap:18px;padding-block:16px 22px}
- .account-hero-content>p{margin:8px 0 16px;font-size:14px}
- .account-topics>details>summary{min-height:66px}
- .account-topics summary strong{font-size:17px}
- .account-topics summary span{font-size:13px}
+ .account-hero-content>p{margin-top:8px;font-size:16px}
  .account-create{margin-top:16px}
  .account-create .member-primary{width:100%}
  .member-landing .member-reel{--film-h:clamp(200px,57vw,300px);column-gap:8px;padding-left:11px}
