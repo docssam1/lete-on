@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 67,
+  "sourceCheckpoint": 68,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -229,8 +229,8 @@
     {
       "path": "work/quantity-relations/textbook-workbench.js",
       "storedPath": "runtime/work/quantity-relations/textbook-workbench.js",
-      "bytes": 8229,
-      "sha256": "10f07286fae964e00c2dd2a5d4f1cd7a7226370923483642a14de7b22a534418"
+      "bytes": 8322,
+      "sha256": "c0e1b00f75d85967a3d629d1d37c6c5138ec5ff1ffbadcc37cd803294f7beb7d"
     },
     {
       "path": "work/quantity-relations/vision-text-candidates.swift",

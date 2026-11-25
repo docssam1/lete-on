@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 46841632,
-      "sha256": "d0f4d9cd31ac833177196b8b87fe274b8229991512b29282ba14c0bb2c321943",
+      "bytes": 47041218,
+      "sha256": "208d594b2204a01f190701d592b39ba21ea9c990346c28693930b7c59b224b13",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 58572344,
-      "sha256": "555cbc372f788ba85d12efd0cb8d5e0258f3fa3350ee891ca44ff708a58689b4",
+      "bytes": 59022861,
+      "sha256": "a260710769964ff054664c3ecbddb9565a0d85ce6f8574f63eb8e91af024c309",
       "contentIncludedInGit": false
     },
     {
@@ -70,12 +70,12 @@
     },
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 321803,
-      "sha256": "acb5ff7bcaa7729f02e2b1e2594aed11034f224e4284bdfa1e58920ae13b998b",
+      "bytes": 762839,
+      "sha256": "bf4118ac68f79d1299a1057132cddb576bffb4f8c0e6981e3e5cf610eff64428",
       "contentIncludedInGit": false
     }
   ],
-  "source": "Checkpoint 67; private source records and answer data remain outside Git.",
+  "source": "Checkpoint 68; 1031 초급 B 1단원 3개 원문과 6개 유사문항은 private bank/pack에 저장; source originals remain outside Git.",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",
