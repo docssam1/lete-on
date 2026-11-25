@@ -474,6 +474,284 @@ function cellCodeProblem(layoutName, { difficulty = 2 } = {}) {
   return null;
 }
 
+// ───────────────────────────── 4단원 마방진 — 교재 꼴 넷 ─────────────────────────────
+// ① 도움 칸(마름모)으로 3×3 만들기 ② 보이는 수로 한 줄의 합부터 구하고 모두 채우기
+// ③ 수가 조금만 보이는 4×4에서 색칠한 칸 ④ 오각진의 줄 합이 14가 아닌 다른 합
+
+const magicFlat = (grid) => grid.flat();
+const MAGIC_LINES_3 = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+const MAGIC_LINES_4 = [
+  [0, 1, 2, 3], [4, 5, 6, 7], [8, 9, 10, 11], [12, 13, 14, 15],
+  [0, 4, 8, 12], [1, 5, 9, 13], [2, 6, 10, 14], [3, 7, 11, 15],
+  [0, 5, 10, 15], [3, 6, 9, 12]
+];
+const isMagic = (flat, lines) => {
+  const sums = lines.map((line) => line.reduce((sum, index) => sum + flat[index], 0));
+  return sums.every((sum) => sum === sums[0]) && new Set(flat).size === flat.length;
+};
+
+// ① 도움 칸 — 5×5 마름모 자리에 이어지는 아홉 수를 대각선으로 세 줄 쓰고, 3×3 밖으로 나간 수를 맞은편 안쪽으로 옮긴다.
+//    마름모 자리: k번째 수(0~8) = (i, j) = (k÷3, k%3) → 행 i + j, 열 2 − i + j. 여덟 가지 방향은 마름모를 돌리고 뒤집어 만든다.
+function diamondPositions(symmetry) {
+  const base = range(0, 8).map((k) => { const i = Math.floor(k / 3); const j = k % 3; return [i + j, 2 - i + j]; });
+  const turn = ([r, c]) => [c, 4 - r];
+  const flip = ([r, c]) => [r, 4 - c];
+  return base.map((point) => {
+    let p = point;
+    for (let t = 0; t < symmetry % 4; t += 1) p = turn(p);
+    return symmetry >= 4 ? flip(p) : p;
+  });
+}
+function helperSquare(start, step, symmetry) {
+  const places = diamondPositions(symmetry);
+  const grid = Array.from({ length: 3 }, () => Array(3).fill(null));
+  places.forEach(([r, c], k) => {
+    let rr = r; let cc = c;
+    if (rr === 0) rr = 3; else if (rr === 4) rr = 1;
+    if (cc === 0) cc = 3; else if (cc === 4) cc = 1;
+    grid[rr - 1][cc - 1] = start + k * step;
+  });
+  return { grid, places };
+}
+
+function diamondFigure(places, values, shownCount) {
+  const size = 34;
+  const pad = 4;
+  const parts = [];
+  const inside = (r, c) => r >= 1 && r <= 3 && c >= 1 && c <= 3;
+  const cells = new Set(places.map(([r, c]) => `${r},${c}`));
+  for (let r = 0; r < 5; r += 1) for (let c = 0; c < 5; c += 1) {
+    if (!inside(r, c) && !cells.has(`${r},${c}`)) continue;
+    const x = pad + c * size; const y = pad + r * size;
+    parts.push(inside(r, c)
+      ? `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="#fff" stroke="${INK}" stroke-width="1.6"/>`
+      : `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="#fffaf0" stroke="${LINE}" stroke-width="1.2" stroke-dasharray="4 3"/>`);
+  }
+  places.slice(0, shownCount).forEach(([r, c], k) => {
+    parts.push(`<text x="${pad + c * size + size / 2}" y="${pad + r * size + size / 2 + 7}" text-anchor="middle" font-size="19" font-weight="700" fill="${INK}">${values[k]}</text>`);
+  });
+  const total = pad * 2 + size * 5;
+  return `<svg viewBox="0 0 ${total} ${total}" style="width:${total + 20}px;max-width:100%;height:auto" role="img" aria-label="도움 칸이 붙은 3×3 마방진">${parts.join("")}</svg>`;
+}
+
+function magicHelperCells({ difficulty = 2 } = {}) {
+  const start = difficulty === 1 ? 1 : randomInt(1, difficulty === 3 ? 6 : 4);
+  const step = difficulty === 3 ? randomInt(1, 2) : 1;
+  const symmetry = randomInt(0, 7);
+  const { grid, places } = helperSquare(start, step, symmetry);
+  const values = range(0, 8).map((k) => start + k * step);
+  const shownCount = difficulty === 1 ? 4 : 3;
+  const lineSum = grid[0].reduce((sum, value) => sum + value, 0);
+  const cards = values;
+  return {
+    prompt: `${values[0]}부터 ${values[8]}까지 ${step === 1 ? "이어지는" : `${step}씩 커지는`} 아홉 수를 보이는 수처럼 대각선 방향으로 차례로 쓰고, 점선 도움 칸에 들어간 수를 맞은편 안쪽 빈칸으로 옮겨 가로, 세로, 대각선의 합이 모두 같은 마방진을 완성하세요.`,
+    visual: { kind: "fig", html: `${diamondFigure(places, values, shownCount)}` },
+    answerVisual: { kind: "book3", subtype: "magic-grid", size: 3, cards: [], shown: magicFlat(grid), lineSum },
+    answer: grid.map((row) => row.join(" ")).join(" / "),
+    responseKind: "drawing",
+    solution: `보이는 수 다음 수를 같은 대각선 방향으로 세 개씩 이어 씁니다. 3×3 밖 점선 칸의 수는 세 칸 건너 맞은편 안쪽으로 옮깁니다. 그러면 ${grid.map((row) => row.join(", ")).join(" / ")}이 되고 모든 줄의 합은 ${lineSum}입니다.`,
+    meta: { family: "b3s-magic-helper", start, step, symmetry, grid, lineSum, shownCount, cards }
+  };
+}
+
+// ② 한 줄의 합부터 — 마방진은 가운데 c와 두 수 a, b로 모두 쓸 수 있다(아래 자리별 식). 보이는 칸으로 c·a·b가 하나로 정해지면 답이 하나다.
+const MAGIC3_FORM = [[1, 1, 0], [1, -1, -1], [1, 0, 1], [1, -1, 1], [1, 0, 0], [1, 1, -1], [1, 0, -1], [1, 1, 1], [1, -1, 0]]; // c, a, b 계수
+function rank3(rows) {
+  const m = rows.map((row) => [...row]);
+  let rank = 0;
+  for (let col = 0; col < 3 && rank < m.length; col += 1) {
+    const pivot = m.findIndex((row, index) => index >= rank && Math.abs(row[col]) > 1e-9);
+    if (pivot < 0) continue;
+    [m[rank], m[pivot]] = [m[pivot], m[rank]];
+    for (let r = 0; r < m.length; r += 1) if (r !== rank) {
+      const f = m[r][col] / m[rank][col];
+      for (let k = 0; k < 3; k += 1) m[r][k] -= f * m[rank][k];
+    }
+    rank += 1;
+  }
+  return rank;
+}
+function magicSquareFromParams(c, a, b) {
+  return MAGIC3_FORM.map(([kc, ka, kb]) => kc * c + ka * a + kb * b);
+}
+
+function magicSumThenFill({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const step = difficulty === 1 ? 1 : randomInt(1, difficulty === 3 ? 3 : 2);
+    const start = randomInt(1, difficulty === 3 ? 9 : 5);
+    // 이어지는(또는 일정하게 커지는) 아홉 수의 마방진 — 가운데는 다섯째 수, a·b는 step의 배수
+    const c = start + 4 * step;
+    const [a, b] = sample([[1, 3], [-1, 3], [1, -3], [-1, -3], [3, 1], [-3, 1], [3, -1], [-3, -1]]).map((value) => value * step);
+    const flat = magicSquareFromParams(c, a, b);
+    if (!isMagic(flat, MAGIC_LINES_3) || Math.min(...flat) < 1) continue;
+    // 보이는 칸: 한 줄 전부 + 다른 한 칸(교재 꼴) — 또는 가운데 + 두 칸
+    const pattern = difficulty === 1 || Math.random() < 0.6 ? "line" : "center";
+    let shownIdx;
+    if (pattern === "line") {
+      const line = sample(MAGIC_LINES_3.slice(0, 6));
+      const other = sample(range(0, 8).filter((index) => !line.includes(index) && index !== 4));
+      shownIdx = [...line, other];
+    } else {
+      shownIdx = [4, ...shuffle(range(0, 8).filter((index) => index !== 4)).slice(0, 2)];
+    }
+    if (rank3(shownIdx.map((index) => MAGIC3_FORM[index])) !== 3) continue;
+    const lineSum = 3 * c;
+    const shown = flat.map((value, index) => shownIdx.includes(index) ? value : null);
+    const grid = [flat.slice(0, 3), flat.slice(3, 6), flat.slice(6, 9)];
+    return {
+      prompt: "가로, 세로, 대각선의 합이 모두 같도록 빈칸을 채우려고 합니다. 한 줄의 합을 먼저 구하고, 빈칸을 모두 채우세요.",
+      visual: { kind: "book3", subtype: "magic-grid", size: 3, cards: [], shown, lineSum: null },
+      answerVisual: { kind: "book3", subtype: "magic-grid", size: 3, cards: [], shown: flat, lineSum },
+      answer: `합 ${lineSum} · ${grid.map((row) => row.join(" ")).join(" / ")}`,
+      responseKind: "drawing",
+      solution: pattern === "line"
+        ? `세 칸이 모두 보이는 줄을 더하면 한 줄의 합은 ${lineSum}이고, 가운데 수는 그 합을 셋으로 나눈 ${c}입니다. 두 칸을 아는 줄부터 ${lineSum}에서 빼며 채우면 ${grid.map((row) => row.join(", ")).join(" / ")}입니다.`
+        : `가운데 수 ${c}의 세 배인 ${lineSum}이 한 줄의 합입니다. 두 칸을 아는 줄부터 ${lineSum}에서 빼며 채우면 ${grid.map((row) => row.join(", ")).join(" / ")}입니다.`,
+      meta: { family: "b3s-magic-fill", flat, shownIdx, lineSum, pattern }
+    };
+  }
+  return null;
+}
+
+// ③ 4×4, 수가 조금만 보이는 마방진 — 1부터 16까지의 마방진을 찾아 두고(한 줄 34), 한 줄에 모르는 칸이 하나뿐이면 채우는 일을 되풀이해
+//    색칠한 칸이 정해질 때까지 남기는 칸을 줄인다. 이렇게 채워지는 칸은 다른 답이 있을 수 없다.
+let magicFourPool = null;
+function findMagicFours(limit) {
+  const found = [];
+  const grid = Array(16).fill(0);
+  const used = Array(17).fill(false);
+  const order = shuffle(range(1, 16));
+  const rowOk = (r) => grid[r * 4] + grid[r * 4 + 1] + grid[r * 4 + 2] + grid[r * 4 + 3] === 34;
+  const walk = (index) => {
+    if (found.length >= limit) return;
+    if (index === 16) {
+      if (isMagic(grid, MAGIC_LINES_4)) found.push([...grid]);
+      return;
+    }
+    const r = Math.floor(index / 4); const c = index % 4;
+    for (const value of order) {
+      if (used[value]) continue;
+      grid[index] = value;
+      if (c === 3 && !rowOk(r)) continue;
+      if (r === 3) {
+        const colSum = grid[c] + grid[4 + c] + grid[8 + c] + value;
+        if (colSum !== 34) continue;
+        if (c === 0 && grid[3] + grid[6] + grid[9] + value !== 34) continue;
+        if (c === 3 && grid[0] + grid[5] + grid[10] + value !== 34) continue;
+      }
+      if (c === 2) { const need = 34 - grid[r * 4] - grid[r * 4 + 1] - value; if (need < 1 || need > 16 || used[need] || need === value) continue; }
+      used[value] = true;
+      walk(index + 1);
+      used[value] = false;
+      if (found.length >= limit) return;
+    }
+    grid[index] = 0;
+  };
+  walk(0);
+  return found;
+}
+function propagateFour(shown) {
+  const values = [...shown];
+  let progress = true;
+  while (progress) {
+    progress = false;
+    for (const line of MAGIC_LINES_4) {
+      const unknown = line.filter((index) => values[index] == null);
+      if (unknown.length !== 1) continue;
+      values[unknown[0]] = 34 - line.filter((index) => values[index] != null).reduce((sum, index) => sum + values[index], 0);
+      progress = true;
+    }
+  }
+  return values;
+}
+function magicFourSparse({ difficulty = 2 } = {}) {
+  if (!magicFourPool) {
+    magicFourPool = [];
+    for (let round = 0; round < 6 && magicFourPool.length < 24; round += 1) magicFourPool.push(...findMagicFours(4));
+  }
+  const solution = sample(magicFourPool);
+  const target = randomInt(0, 15);
+  // 칸을 하나씩 지워 보며 색칠한 칸이 여전히 정해지면 지운다(지우는 차례는 뽑는다).
+  let shown = [...solution];
+  shown[target] = null;
+  const keepAtLeast = difficulty === 1 ? 9 : difficulty === 2 ? 7 : 5;
+  for (const index of shuffle(range(0, 15).filter((value) => value !== target))) {
+    if (shown.filter((value) => value != null).length <= keepAtLeast) break;
+    const trial = [...shown];
+    trial[index] = null;
+    if (propagateFour(trial)[target] === solution[target]) shown = trial;
+  }
+  const answer = solution[target];
+  const display = shown.map((value, index) => (index === target ? "㉠" : value));
+  return {
+    prompt: "1부터 16까지의 수를 한 번씩 쓴 4×4 마방진입니다. 가로, 세로, 대각선의 네 수의 합이 모두 같을 때 ㉠에 알맞은 수를 구하세요.",
+    visual: { kind: "book3", subtype: "magic-grid", size: 4, cards: [], shown: display, lineSum: null },
+    answerVisual: { kind: "book3", subtype: "magic-grid", size: 4, cards: [], shown: solution, lineSum: 34 },
+    answer: String(answer),
+    solution: `1부터 16까지의 합은 136이고 가로줄이 넷이므로 한 줄의 합은 136 ÷ 4 = 34입니다. 모르는 칸이 하나뿐인 줄부터 34에서 보이는 수를 빼며 채워 가면 ㉠은 ${answer}입니다.`,
+    meta: { family: "b3s-magic-four", solution, shown, target, answer }
+  };
+}
+
+// ④ 오각진 — 꼭짓점 다섯과 변 가운데 다섯에 1~10, 다섯 줄(꼭짓점–가운데–꼭짓점)의 합이 같다. 합 14·16·17·19 가운데 14가 아닌 합.
+const RING_CACHE = new Map();
+function ringSolutions(lineSum) {
+  if (RING_CACHE.has(lineSum)) return RING_CACHE.get(lineSum);
+  const list = [];
+  const corners = [];
+  const used = Array(11).fill(false);
+  const walk = () => {
+    if (corners.length === 5) {
+      const mids = corners.map((value, index) => lineSum - value - corners[(index + 1) % 5]);
+      const all = new Set([...corners, ...mids]);
+      if (all.size === 10 && mids.every((value) => value >= 1 && value <= 10)) {
+        const ring = [];
+        corners.forEach((value, index) => ring.push(value, mids[index]));
+        list.push(ring);
+      }
+      return;
+    }
+    for (let value = 1; value <= 10; value += 1) {
+      if (used[value]) continue;
+      used[value] = true; corners.push(value);
+      walk();
+      corners.pop(); used[value] = false;
+    }
+  };
+  walk();
+  RING_CACHE.set(lineSum, list);
+  return list;
+}
+function ringOtherSum({ difficulty = 2 } = {}) {
+  const lineSum = sample(difficulty === 1 ? [16, 17] : [16, 17, 19]);
+  const all = ringSolutions(lineSum);
+  const solution = sample(all);
+  const order = shuffle(range(0, 9));
+  const clues = [];
+  const matches = () => all.filter((ring) => clues.every((index) => ring[index] === solution[index])).length;
+  const start = difficulty === 1 ? 5 : difficulty === 2 ? 4 : 3;
+  for (const index of order) {
+    clues.push(index);
+    if (clues.length >= start && matches() === 1) break;
+  }
+  // 줄이 되는 만큼 줄여 본다(교재처럼 적게 보이도록)
+  for (const index of shuffle([...clues])) {
+    if (clues.length <= 3) break;
+    const keep = clues.filter((value) => value !== index);
+    if (all.filter((ring) => keep.every((i) => ring[i] === solution[i])).length === 1) clues.splice(clues.indexOf(index), 1);
+  }
+  const shown = solution.map((value, index) => (clues.includes(index) ? value : null));
+  return {
+    prompt: `1부터 10까지의 수를 한 번씩 넣어 오각형의 한 줄 위에 있는 세 수의 합이 모두 ${lineSum}${BATCHIM_DIGIT[lineSum % 10] ? "이" : "가"} 되게 빈 원을 채우세요.`,
+    visual: { kind: "book3", subtype: "polygon-ring", cards: range(1, 10), shown, lineSum },
+    answerVisual: { kind: "book3", subtype: "polygon-ring", cards: [], shown: solution, lineSum },
+    answer: solution.join(", "),
+    responseKind: "drawing",
+    solution: `다섯 줄의 합을 모두 더하면 1부터 10까지의 합 55에 꼭짓점 수가 한 번 더 들어가므로, 꼭짓점 다섯 수의 합은 ${lineSum} × 5 − 55 = ${lineSum * 5 - 55}입니다. 두 수를 아는 줄부터 ${lineSum}에서 빼며 채우면 ${solution.join(", ")} 차례가 됩니다.`,
+    meta: { family: "b3s-ring", solution, lineSum, clues }
+  };
+}
+
 // ───────────────────────────── 생성기 · 유형 · 안내 · 번호 ─────────────────────────────
 
 export const BOOK03_STRUCTURE_GENERATORS = {
@@ -493,7 +771,11 @@ export const BOOK03_STRUCTURE_GENERATORS = {
   b3sCellCodeCircle32: (options) => cellCodeProblem("circle32", options),
   b3sCellCodeHexagram: (options) => cellCodeProblem("hexagram", options),
   b3sCellCodePentagram: (options) => cellCodeProblem("pentagram", options),
-  b3sCellCodeNested: (options) => cellCodeProblem("nested", options)
+  b3sCellCodeNested: (options) => cellCodeProblem("nested", options),
+  b3sMagicHelperCells: magicHelperCells,
+  b3sMagicSumThenFill: magicSumThenFill,
+  b3sMagicFourSparse: magicFourSparse,
+  b3sRingOtherSum: ringOtherSum
 };
 
 const cryptRow = (id, label, generator, aliases = []) => ({
@@ -506,6 +788,12 @@ const codeRow = (id, label, generator, aliases = []) => ({
   id, domain: "pattern", middle: "마법카드와 도형수", label, generator,
   catalogGroup: "마법카드와 도형수", catalogStrategy: "보기로 칸의 값 찾기",
   searchAliases: ["도형수", "색칠한 칸", "비밀 수", ...aliases]
+});
+
+const magicRow = (id, label, generator, aliases = []) => ({
+  id, domain: "pattern", middle: "마방진", label, generator,
+  catalogGroup: "마방진", catalogStrategy: "한 줄의 합 먼저",
+  searchAliases: ["마방진", ...aliases]
 });
 
 export const BOOK03_STRUCTURE_TYPE_ROWS = [
@@ -525,7 +813,11 @@ export const BOOK03_STRUCTURE_TYPE_ROWS = [
   codeRow("cell-code-circle32-b3", "3×2 칸에 동그라미를 그려 수 나타내기", "b3sCellCodeCircle32", ["동그라미 표시"]),
   codeRow("cell-code-hexagram-b3", "육각별 끝 삼각형에 색칠해 수 나타내기", "b3sCellCodeHexagram", ["육각별"]),
   codeRow("cell-code-pentagram-b3", "오각별 끝 삼각형에 색칠해 수 나타내기", "b3sCellCodePentagram", ["오각별", "별 모양"]),
-  codeRow("cell-code-nested-square-b3", "겹친 정사각형 고리에 색칠해 수 나타내기", "b3sCellCodeNested", ["고리", "겹친 정사각형"])
+  codeRow("cell-code-nested-square-b3", "겹친 정사각형 고리에 색칠해 수 나타내기", "b3sCellCodeNested", ["고리", "겹친 정사각형"]),
+  magicRow("magic-helper-cells-b3", "도움 칸을 써서 3×3 마방진 만들기", "b3sMagicHelperCells", ["도움 칸", "보조 칸", "대각선으로 쓰기"]),
+  magicRow("magic-sum-then-fill-b3", "한 줄의 합을 먼저 구해 3×3 마방진 모두 채우기", "b3sMagicSumThenFill", ["한 줄의 합"]),
+  magicRow("magic-four-sparse-b3", "수가 조금만 보이는 4×4 마방진의 색칠한 칸", "b3sMagicFourSparse", ["4×4"]),
+  magicRow("ring-other-sum-b3", "오각진의 세 수 합을 정해진 합으로 맞추기", "b3sRingOtherSum", ["오각진", "합 19"])
 ];
 
 export const BOOK03_STRUCTURE_GUIDES = {
@@ -545,7 +837,11 @@ export const BOOK03_STRUCTURE_GUIDES = {
   "cell-code-circle32-b3": "동그라미가 하나인 보기로 칸의 수를 찾고, 동그라미가 둘인 보기에서 아는 칸을 빼 나머지를 찾습니다.",
   "cell-code-hexagram-b3": "끝 삼각형 하나만 칠한 보기부터 보고, 별을 한 바퀴 돌며 칸의 수가 두 배씩 커지는지 확인합니다.",
   "cell-code-pentagram-b3": "끝 삼각형 하나만 칠한 보기부터 보고, 별을 한 바퀴 돌며 칸의 수가 두 배씩 커지는지 확인합니다.",
-  "cell-code-nested-square-b3": "같은 고리의 칸은 같은 수입니다. 안쪽 칸 하나의 수부터 찾고 가운데·바깥 고리 한 칸의 수를 차례로 찾습니다."
+  "cell-code-nested-square-b3": "같은 고리의 칸은 같은 수입니다. 안쪽 칸 하나의 수부터 찾고 가운데·바깥 고리 한 칸의 수를 차례로 찾습니다.",
+  "magic-helper-cells-b3": "수를 대각선으로 세 개씩 이어 쓰고, 네모 밖 도움 칸의 수는 맞은편 안쪽 빈칸으로 옮깁니다.",
+  "magic-sum-then-fill-b3": "세 수가 다 보이는 줄로 한 줄의 합을 구하고(가운데 수의 세 배), 두 칸을 아는 줄부터 채웁니다.",
+  "magic-four-sparse-b3": "한 줄의 합은 34입니다. 모르는 칸이 하나뿐인 줄부터 채우며 색칠한 칸까지 갑니다.",
+  "ring-other-sum-b3": "꼭짓점 다섯 수의 합은 (한 줄의 합) × 5 − 55입니다. 두 수를 아는 줄부터 빼서 채웁니다."
 };
 
 export const BOOK03_STRUCTURE_REMAPS = [
@@ -574,7 +870,15 @@ export const BOOK03_STRUCTURE_REMAPS = [
   ["book-03", 4, "practice", 1, [4], "cell-code-circle32-b3"],
   ["book-03", 4, "practice", 1, [5], "cell-code-grid23-b3"],
   ["book-03", 4, "practice", 1, [7], "cell-code-pentagram-b3"],
-  ["book-03", 4, "advanced", 1, [4], "cell-code-nested-square-b3"]
+  ["book-03", 4, "advanced", 1, [4], "cell-code-nested-square-b3"],
+  // 4단원 마방진
+  ["book-03", 4, "activity", 2, [1], "magic-helper-cells-b3"],
+  ["book-03", 4, "practice", 1, [9], "magic-helper-cells-b3"],
+  ["book-03", 4, "activity", 2, [3], "magic-sum-then-fill-b3"],
+  ["book-03", 4, "practice", 1, [11], "magic-sum-then-fill-b3"],
+  ["book-03", 4, "check", 2, [3], "magic-four-sparse-b3"],
+  ["book-03", 4, "practice", 1, [14], "magic-four-sparse-b3"],
+  ["book-03", 4, "practice", 1, [15], "ring-other-sum-b3"]
 ];
 
 // 검사기용: 새 생성기 문항을 다른 방법으로 다시 풀어 본다. 틀리면 까닭을 글로 돌려준다(맞으면 "").
@@ -602,6 +906,43 @@ export function verifyBook03Structure(problem) {
     if (meta.layout !== "nested" && new Set(meta.weights).size !== meta.weights.length) return "칸의 수가 겹침";
     if (meta.mode === "read" && problem.answer !== String(meta.target)) return "답이 다름";
     return "";
+  }
+  if (meta.family === "b3s-magic-helper") {
+    const flat = meta.grid.flat();
+    if (!isMagic(flat, MAGIC_LINES_3)) return "마방진이 아님";
+    if (JSON.stringify(helperSquare(meta.start, meta.step, meta.symmetry).grid) !== JSON.stringify(meta.grid)) return "도움 칸 방법과 다름";
+    if (problem.answer !== meta.grid.map((row) => row.join(" ")).join(" / ")) return "답이 다름";
+    return "";
+  }
+  if (meta.family === "b3s-magic-fill") {
+    if (!isMagic(meta.flat, MAGIC_LINES_3)) return "마방진이 아님";
+    if (rank3(meta.shownIdx.map((index) => MAGIC3_FORM[index])) !== 3) return "보이는 칸으로 정해지지 않음";
+    if (meta.lineSum !== meta.flat[0] + meta.flat[1] + meta.flat[2]) return "합이 다름";
+    return "";
+  }
+  if (meta.family === "b3s-magic-four") {
+    if (!isMagic(meta.solution, MAGIC_LINES_4) || meta.solution.some((value) => value < 1 || value > 16)) return "1~16 마방진이 아님";
+    if (propagateFour(meta.shown)[meta.target] !== meta.answer || meta.solution[meta.target] !== meta.answer) return "색칠한 칸이 정해지지 않음";
+    if (meta.shown[meta.target] != null) return "답 칸이 보임";
+    return "";
+  }
+  if (meta.family === "b3s-ring") {
+    // 보이지 않는 자리를 남은 수로 모두 바꿔 넣어 보는 따로 된 검산
+    const open = meta.solution.map((_, index) => index).filter((index) => !meta.clues.includes(index));
+    const rest = range(1, 10).filter((value) => !meta.clues.some((index) => meta.solution[index] === value));
+    let count = 0;
+    const ring = meta.solution.map((value, index) => (meta.clues.includes(index) ? value : null));
+    const used = new Set();
+    const walk = (k) => {
+      if (count > 1) return;
+      if (k === open.length) {
+        if (range(0, 4).every((i) => ring[2 * i] + ring[2 * i + 1] + ring[(2 * i + 2) % 10] === meta.lineSum)) count += 1;
+        return;
+      }
+      for (const value of rest) { if (used.has(value)) continue; used.add(value); ring[open[k]] = value; walk(k + 1); used.delete(value); }
+    };
+    walk(0);
+    return count === 1 ? "" : `답이 ${count}개`;
   }
   return `모르는 꼴 ${meta.family}`;
 }

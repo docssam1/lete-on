@@ -1039,9 +1039,10 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("apply-cell-code", "수를 읽거나 필요한 칸을 색칠해요", "구한 합으로 색칠 그림의 수를 읽고, 목표 수가 주어지면 필요한 열의 값을 골라 같은 규칙으로 색칠합니다.")
     ],
     "색칠한 칸의 개수만 세거나 같은 열의 값을 임의로 바꾸고, 여러 칸이 있는 열의 값을 한 번만 더하지 않았는지 확인합니다.",
-    [book3Evidence("마법카드와 마방진", 1, [2, 3])]
+    [book3Evidence("마법카드와 마방진", 1, [2])]
   ),
-  "magic-square-three-target": sourceLesson(
+  // 교재 번호 꼴 대조(2026-11-25)로 활동 2-3이 「한 줄의 합부터 구해 모두 채우기」 새 유형으로 갔다 — 수업 내용(완성된 줄로 목표 합)이 그 꼴이라 함께 옮긴다.
+  "magic-sum-then-fill-b3": sourceLesson(
     "concept:number:magic-square-target",
     [
       beat("read-three-cell-lines", "가로·세로·대각선 줄을 찾아요", "3×3 표에서 세 칸씩 이어지는 가로줄, 세로줄, 대각선을 빠짐없이 표시합니다."),
