@@ -742,18 +742,27 @@
       /* 마지막 남은 수 = 소수 */
       steps.push({ tex: `${cur}\\text{ 은 소수} \\Rightarrow \\square`, blank: cur });
 
+      /* 답은 거듭제곱 꼴(2026-11-25, 원장 「소인수분해는 거듭제곱으로 써야지」) — 60 = 2²×3×5.
+         같은 소인수는 밑 하나와 지수로 묶고, 지수가 1인 소인수는 밑만 쓴다(교과서 표기). 칸은 작은 소인수부터. */
+      const powers = [];
+      pf.forEach(p => { const last = powers[powers.length - 1]; if(last && last.p === p) last.e++; else powers.push({ p, e:1 }); });
+      const powTex = powers.map(({ e }) => e > 1 ? '\\square^{\\square}' : '\\square').join(' \\times ');
+      const powAns = [].concat(...powers.map(({ p, e }) => e > 1 ? [p, e] : [p]));
+      /* 화면 풀이(steps 위젯)도 마지막에 같은 소인수를 거듭제곱으로 묶는다 — 2×2×2 = 2^□ */
+      powers.filter(x => x.e > 1).forEach(({ p, e }) => steps.push({ tex: `${Array(e).fill(p).join(' \\times ')} = ${p}^{\\square}`, blank: e }));
+
       const largestPrime = pf[pf.length - 1];
       return {
         prompt: {
-          ko: `${n}을 소인수분해 해요`,
-          en: `Prime-factorize ${n}`,
-          zh: `对${n}进行质因数分解`
+          ko: `${NM_RNG.koJosa(n,'을','를')} 소인수분해하여 거듭제곱으로 나타내요`,
+          en: `Prime-factorize ${n} using powers`,
+          zh: `把${n}分解质因数，用乘方表示`
         },
         /* 전에는 `112 = 2×2×2×2×7` 을 그대로 찍고 답이 "가장 큰 소인수" 하나였다 —
            **문제에 답이 이미 다 적혀 있고 쓸 칸이 없었다**(2026-09-20 점검).
            이제 소인수 자리를 빈칸으로 두고 소인수 전부를 답으로 받는다. */
-        tex:        `${n} = ${pf.map(() => '\\square').join(' \\times ')}`,
-        answer:     pf.slice(),
+        tex:        `${n} = ${powTex}`,
+        answer:     powAns,
         answerType: 'steps',
         widget:     'steps',
         steps,

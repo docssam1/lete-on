@@ -95,7 +95,7 @@ const server = http.createServer((req, res) => {
       const cut = await p.evaluate(() => [...document.querySelectorAll('.nm-w2-item')].filter(e => e.scrollWidth > e.clientWidth + 3 || e.scrollHeight > e.clientHeight + 3).length);
       assert.equal(cut, 0, q + ': 칸 밖으로 넘친 문항');
       const txt = await p.evaluate(() => [...document.querySelectorAll('.nm-w2-item .nm-print-word')].map(e => e.textContent).join(' | '));
-      assert.ok(/l=en/.test(q) ? /digit after the decimal point/.test(txt) : /l=zh/.test(q) ? /小数点后第/.test(txt) : /소수점 아래 \d+번째 자리 숫자/.test(txt), q + ': 물음 글 ' + txt.slice(0, 80));
+      assert.ok(/l=en/.test(q) ? /decimal digit of/.test(txt) : /l=zh/.test(q) ? /小数点后第/.test(txt) : /소수점 아래 \d+번째 자리 숫자/.test(txt), q + ': 물음 글 ' + txt.slice(0, 80));
       if(/l=(en|zh)/.test(q)){   // 영어·중국어판 전체(안내 쪽 포함)에 한글이 남지 않는다
         const left = await p.evaluate(() => [...document.querySelectorAll('.nm-print-sheet > *')].map((e, i) => ((e.innerText || '').match(/[가-힣]+/g) || []).map(w => (i + 1) + ':' + w)).flat().slice(0, 5));
         assert.deepEqual(left, [], q + ': 남은 한국어');
