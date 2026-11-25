@@ -46,86 +46,152 @@ function book9Problem({ prompt, subtype, visual = {}, answer, solution, family, 
   };
 }
 
-const blockPartition = Object.freeze([
-  0, 0, 1, 1,
-  0, 0, 1, 1,
-  2, 2, 3, 3,
-  2, 2, 3, 3
-]);
+// 4×4 판을 네 칸짜리 조각 넷으로 나누는 모든 방법(한 번만 구해 둔다). 조각마다 groups[칸]=조각 번호.
+// 예전에는 정답이 늘 네 귀퉁이 2×2 나누기이고 오답은 한 칸만 바꾼(조각이 3칸·5칸이 되는) 것이라 읽지 않고도 골랐다
+// (1~10권 대조). 이제 정답은 합동 나누기 중에서 고르고, 오답은 정답과 조각을 많이 같이 쓰는 다른 네 칸 나누기다.
+const PIECE_SHAPES = (() => {
+  const base = [[[0,0],[1,0],[2,0],[3,0]], [[0,0],[1,0],[0,1],[1,1]], [[0,0],[1,0],[2,0],[1,1]], [[0,0],[0,1],[0,2],[1,2]], [[0,0],[1,0],[1,1],[2,1]]];
+  const seen = new Set();
+  const out = [];
+  base.forEach((shape) => {
+    let cells = shape;
+    for (let flip = 0; flip < 2; flip += 1) {
+      for (let turn = 0; turn < 4; turn += 1) {
+        cells = cells.map(([x, y]) => [y, -x]);
+        const minX = Math.min(...cells.map(([x]) => x));
+        const minY = Math.min(...cells.map(([, y]) => y));
+        const norm = cells.map(([x, y]) => [x - minX, y - minY]).sort((a, b) => a[1] - b[1] || a[0] - b[0]);
+        const key = JSON.stringify(norm);
+        if (!seen.has(key)) { seen.add(key); out.push(norm); }
+      }
+      cells = cells.map(([x, y]) => [-x, y]);
+    }
+  });
+  return out;
+})();
 
-function mutatePartition(groups, seed) {
-  const variants = [
-    [0, 1], [5, 2], [10, 1], [15, 2], [3, 0], [12, 3]
-  ];
-  const [index, replacement] = variants[seed % variants.length];
-  const result = [...groups];
-  result[index] = replacement;
-  return result;
+let fourTilingsCache = null;
+function fourByFourTilings() {
+  if (fourTilingsCache) return fourTilingsCache;
+  const tilings = [];
+  const groups = Array(16).fill(-1);
+  const place = (piece) => {
+    const first = groups.indexOf(-1);
+    if (first < 0) { tilings.push([...groups]); return; }
+    const fx = first % 4;
+    const fy = Math.floor(first / 4);
+    for (const shape of PIECE_SHAPES) {
+      const [ax, ay] = shape[0];
+      const cells = shape.map(([x, y]) => [fx + x - ax, fy + y - ay]);
+      if (cells.some(([x, y]) => x < 0 || x > 3 || y < 0 || y > 3 || groups[y * 4 + x] !== -1)) continue;
+      cells.forEach(([x, y]) => { groups[y * 4 + x] = piece; });
+      place(piece + 1);
+      cells.forEach(([x, y]) => { groups[y * 4 + x] = -1; });
+    }
+  };
+  place(0);
+  fourTilingsCache = tilings;
+  return tilings;
 }
 
-function optionSet(correct, extras = {}) {
-  const candidates = [
-    { groups: correct, correct: true },
-    { groups: mutatePartition(correct, 0), correct: false },
-    { groups: mutatePartition(correct, 1), correct: false },
-    { groups: mutatePartition(correct, 2), correct: false }
-  ].map((candidate) => ({ ...candidate, ...extras }));
-  const options = shuffle(candidates);
+function pieceSignature(cells, markerSet = new Set()) {
+  const transforms = [([x, y]) => [x, y], ([x, y]) => [x, -y], ([x, y]) => [-x, y], ([x, y]) => [-x, -y], ([x, y]) => [y, x], ([x, y]) => [y, -x], ([x, y]) => [-y, x], ([x, y]) => [-y, -x]];
+  return transforms.map((transform) => {
+    const points = cells.map((index) => [...transform([index % 4, Math.floor(index / 4)]), markerSet.has(index) ? 1 : 0]);
+    const minX = Math.min(...points.map(([x]) => x));
+    const minY = Math.min(...points.map(([, y]) => y));
+    return points.map(([x, y, m]) => [x - minX, y - minY, m]).sort((a, b) => a[0] - b[0] || a[1] - b[1] || a[2] - b[2]).map((p) => p.join(",")).join(";");
+  }).sort()[0];
+}
+const piecesOf = (groups) => [0, 1, 2, 3].map((g) => groups.map((value, index) => (value === g ? index : -1)).filter((index) => index >= 0));
+const isCongruentTiling = (groups, markers = []) => {
+  const markerSet = new Set(markers);
+  const signatures = piecesOf(groups).map((cells) => pieceSignature(cells, markerSet));
+  return signatures.every((value) => value === signatures[0]);
+};
+// 나누기마다 조각·조각 열쇠·합동 여부를 한 번만 구해 둔다
+let tilingInfoCache = null;
+function tilingInfo() {
+  if (tilingInfoCache) return tilingInfoCache;
+  tilingInfoCache = fourByFourTilings().map((groups) => {
+    const pieces = piecesOf(groups);
+    return { groups, key: groups.join(), pieces, pieceKeys: new Set(pieces.map((cells) => cells.join(","))), congruent: isCongruentTiling(groups) };
+  });
+  return tilingInfoCache;
+}
+const congruentTilings = () => tilingInfo().filter((item) => item.congruent).map((item) => item.groups);
+// 조건(cellsOk: 조각 칸 목록 → 참/거짓, 모양 조건은 congruentOnly)에 맞는 나누기 수
+function validTilings(cellsOk, markers = null) {
+  return tilingInfo().filter((item) => item.congruent && (!markers || isCongruentTiling(item.groups, markers)) && item.pieces.every(cellsOk));
+}
+
+// 정답 나누기 + 조건에 맞지 않는 오답 셋 — 정답과 같은 조각을 많이 쓰는 것, 모양이 모두 같은 것부터
+function partitionOptions(correct, isValid) {
+  const correctInfo = tilingInfo().find((item) => item.key === correct.join());
+  const pool = tilingInfo().filter((item) => item.key !== correctInfo.key && !isValid(item))
+    .map((item) => ({ item, near: item.pieces.filter((cells) => correctInfo.pieceKeys.has(cells.join(","))).length + (item.congruent ? 1.5 : 0) + Math.random() * 1.2 }))
+    .sort((a, b) => b.near - a.near);
+  const wrong = pool.slice(0, 3).map(({ item }) => ({ groups: item.groups, correct: false }));
+  const options = shuffle([{ groups: correct, correct: true }, ...wrong]);
   const correctIndex = options.findIndex((candidate) => candidate.correct);
   return { options, correctIndex, answer: labels[correctIndex] };
 }
 
 function latinSquareCongruentPartitionBook9({ difficulty = 2 }) {
-  const base = [
-    1, 2, 3, 4,
-    3, 4, 1, 2,
-    2, 1, 4, 3,
-    4, 3, 2, 1
-  ];
-  const shift = randomInt(0, 3);
-  const values = base.map((value) => ((value + shift - 1) % 4) + 1);
-  const choice = optionSet(blockPartition);
+  const correct = sample(congruentTilings());
+  const values = Array(16).fill(0);
+  piecesOf(correct).forEach((cells) => shuffle([1, 2, 3, 4]).forEach((value, index) => { values[cells[index]] = value; }));
+  const ok = (cells) => cells.map((index) => values[index]).sort().join() === "1,2,3,4";
+  if (validTilings(ok).length !== 1) return latinSquareCongruentPartitionBook9({ difficulty });
+  const choice = partitionOptions(correct, (item) => item.congruent && item.pieces.every(ok));
   return book9Problem({
     prompt: "각 조각에 1, 2, 3, 4가 하나씩 들어가도록 모양과 크기가 같은 네 조각으로 바르게 나눈 것을 고르세요.",
     subtype: "partition-choice", visual: { rows: 4, cols: 4, values, options: choice.options },
     answer: choice.answer,
-    solution: `${choice.answer}은 네 조각의 모양과 크기가 같고, 각 조각에 1부터 4까지가 한 번씩 들어갑니다.`,
-    family: "latin-partition-b9", meta: { difficulty, rows: 4, cols: 4, values, correctGroups: [...blockPartition], options: choice.options, correctIndex: choice.correctIndex }
+    solution: `${choice.answer}은 네 조각의 모양과 크기가 같고, 각 조각에 1부터 4까지가 한 번씩 들어갑니다. 다른 나누기는 모양이 다르거나 같은 수가 두 번 든 조각이 있습니다.`,
+    family: "latin-partition-b9", meta: { difficulty, rows: 4, cols: 4, values, correctGroups: [...correct], options: choice.options, correctIndex: choice.correctIndex }
   });
 }
 
 function equalSumCongruentPartitionBook9({ difficulty = 2 }) {
   const target = randomInt(difficulty === 1 ? 12 : 18, difficulty === 3 ? 40 : 30);
-  const values = [];
-  for (let piece = 0; piece < 4; piece += 1) {
+  const correct = sample(congruentTilings());
+  const values = Array(16).fill(0);
+  for (const cells of piecesOf(correct)) {
     const a = randomInt(1, Math.floor(target / 4));
     const b = randomInt(1, Math.floor(target / 4));
     const c = randomInt(1, Math.floor(target / 4));
     const d = target - a - b - c;
-    if (d < 1) return equalSumCongruentPartitionBook9({ difficulty });
-    values.push(a, b, c, d);
+    if (d < 1 || d > 9 + Math.floor(target / 4)) return equalSumCongruentPartitionBook9({ difficulty });
+    shuffle([a, b, c, d]).forEach((value, index) => { values[cells[index]] = value; });
   }
-  const board = [values[0], values[1], values[4], values[5], values[2], values[3], values[6], values[7], values[8], values[9], values[12], values[13], values[10], values[11], values[14], values[15]];
-  const choice = optionSet(blockPartition);
+  const ok = (cells) => sum(cells.map((index) => values[index])) === target;
+  if (validTilings(ok).length !== 1) return equalSumCongruentPartitionBook9({ difficulty });
+  const choice = partitionOptions(correct, (item) => item.congruent && item.pieces.every(ok));
   return book9Problem({
     prompt: "모양과 크기가 같은 네 조각에 들어 있는 수의 합도 모두 같도록 바르게 나눈 것을 고르세요.",
-    subtype: "partition-choice", visual: { rows: 4, cols: 4, values: board, options: choice.options },
+    subtype: "partition-choice", visual: { rows: 4, cols: 4, values, options: choice.options },
     answer: choice.answer,
-    solution: `${choice.answer}은 네 조각이 모두 2×2 모양이고, 각 조각의 수의 합이 ${target}으로 같습니다.`,
-    family: "equal-sum-partition-b9", meta: { difficulty, target, values: board, correctGroups: [...blockPartition], options: choice.options, correctIndex: choice.correctIndex }
+    solution: `16칸의 수를 모두 더하면 ${target * 4}이므로 한 조각의 합은 ${target * 4}÷4=${target}입니다. ${choice.answer}은 네 조각의 모양이 같고 조각마다 수의 합이 ${target}입니다.`,
+    family: "equal-sum-partition-b9", meta: { difficulty, target, values, correctGroups: [...correct], options: choice.options, correctIndex: choice.correctIndex }
   });
 }
 
 function markerPartitionProblem(difficulty, icon, family) {
-  const relativeCell = sample([0, 1, 4, 5]);
-  const markerCells = [relativeCell, relativeCell + 2, relativeCell + 8, relativeCell + 10];
-  const choice = optionSet(blockPartition);
+  const correct = sample(congruentTilings());
+  const pieces = piecesOf(correct);
+  const first = sample(pieces[0]);
+  const wanted = pieceSignature(pieces[0], new Set([first]));
+  const markerCells = [first, ...pieces.slice(1).map((cells) => sample(cells.filter((cell) => pieceSignature(cells, new Set([cell])) === wanted)))];
+  const ok = (cells) => cells.filter((cell) => markerCells.includes(cell)).length === 1;
+  if (validTilings(ok, markerCells).length !== 1) return markerPartitionProblem(difficulty, icon, family);
+  const choice = partitionOptions(correct, (item) => item.congruent && item.pieces.every(ok) && isCongruentTiling(item.groups, markerCells));
   return book9Problem({
-    prompt: `${icon}이 각 조각에 하나씩 같은 위치에 들어가도록 모양과 크기가 같은 네 조각으로 바르게 나눈 것을 고르세요.`,
+    prompt: `${icon === "★" ? "★이" : subject(icon)} 각 조각에 하나씩 같은 위치에 들어가도록 모양과 크기가 같은 네 조각으로 바르게 나눈 것을 고르세요.`,
     subtype: "partition-choice", visual: { rows: 4, cols: 4, markers: markerCells, markerIcon: icon, options: choice.options },
     answer: choice.answer,
-    solution: `${choice.answer}은 네 조각을 돌려 겹쳤을 때 모양과 ${icon}의 위치가 모두 같습니다.`,
-    family, meta: { difficulty, markerCells, correctGroups: [...blockPartition], options: choice.options, correctIndex: choice.correctIndex }
+    solution: `${choice.answer}은 네 조각을 돌리거나 뒤집어 겹쳤을 때 모양과 ${icon}의 위치가 모두 같습니다.`,
+    family, meta: { difficulty, markerCells, correctGroups: [...correct], options: choice.options, correctIndex: choice.correctIndex }
   });
 }
 
@@ -134,13 +200,14 @@ function landmarkCongruentPartitionBook9({ difficulty = 2 }) {
 }
 
 function congruentCompositePartitionBook9({ difficulty = 2 }) {
-  const choice = optionSet(blockPartition);
+  const correct = sample(congruentTilings().filter((groups) => difficulty === 1 || !/^(0,0,1,1,0,0,1,1|0,0,0,0,1,1,1,1|0,1,2,3,0,1,2,3)/.test(groups.join())));
+  const choice = partitionOptions(correct, (item) => item.congruent);
   return book9Problem({
     prompt: "점선을 따라 모양과 크기가 같은 네 조각으로 바르게 나눈 것을 고르세요.",
     subtype: "partition-choice", visual: { rows: 4, cols: 4, options: choice.options },
     answer: choice.answer,
-    solution: `${choice.answer}의 네 조각은 돌리거나 뒤집으면 모두 포개집니다.`,
-    family: "congruent-partition-b9", meta: { difficulty, correctGroups: [...blockPartition], options: choice.options, correctIndex: choice.correctIndex }
+    solution: `${choice.answer}의 네 조각은 돌리거나 뒤집으면 모두 포개집니다. 다른 나누기에는 모양이 다른 조각이 섞여 있습니다.`,
+    family: "congruent-partition-b9", meta: { difficulty, correctGroups: [...correct], options: choice.options, correctIndex: choice.correctIndex }
   });
 }
 
@@ -725,7 +792,7 @@ function preferenceCountMatrixBook9({ difficulty = 2 }) {
   const result = liked[1];
   const knownRows = shuffledRows.map((row, index) => index === target ? [items.indexOf(given)] : row.map((value, column) => value ? column : -1).filter((column) => column >= 0));
   return book9Problem({
-    prompt: `각 사람은 과일을 두 가지씩 좋아합니다. 열의 인원수와 보이는 표시를 보고 ${subject(names[target])} ${given}과 함께 좋아하는 과일을 구하세요.`,
+    prompt: `각 사람은 과일을 두 가지씩 좋아합니다. 열의 인원수와 보이는 표시를 보고 ${subject(names[target])} ${and(given)} 함께 좋아하는 과일을 구하세요.`,
     subtype: "logic-matrix", visual: { rowLabels: names, columnLabels: items, knownRows, totals }, answer: result,
     solution: `열마다 필요한 표시 수를 채우면 ${names[target]}의 남은 표시는 ${result} 칸에 들어갑니다.`,
     family: "preference-matrix-b9", meta: { difficulty, names, items, rows: shuffledRows, totals, target, given, knownRows, result }

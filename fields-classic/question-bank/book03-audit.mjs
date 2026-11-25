@@ -4,6 +4,7 @@ import { GENERATORS } from "./generators.js";
 import { book03Markup } from "./book03-renderers.js";
 import { verifyBook03Structure, BOOK03_STRUCTURE_TYPE_ROWS } from "./book03-structure-generators.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
+import { mixed } from "./math-markup.js";
 
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
 const book = CURRICULUM.find((item) => item.id === "book-03");
@@ -102,7 +103,7 @@ function validate(type, problem, difficulty) {
         }, 0));
         assert(meta.connected === true, id, difficulty, "unit area figure must be connected");
         assert(meta.areaTwice === shoelace, id, difficulty, "unit polygon area mismatch");
-        assert(problem.answer === (shoelace % 2 === 0 ? String(shoelace / 2) : `${Math.floor(shoelace / 2)}와 1/2`), id, difficulty, "unit polygon answer mismatch");
+        assert(problem.answer === (shoelace % 2 === 0 ? String(shoelace / 2) : mixed(Math.floor(shoelace / 2), 1, 2)), id, difficulty, "unit polygon answer mismatch");
       } else {
         assert(meta.areaTwice === meta.fullCount * 2 + meta.halfCount, id, difficulty, "unit area mismatch");
         assert(meta.halfCount % 2 === 0, id, difficulty, "fractional half cells unexpected");

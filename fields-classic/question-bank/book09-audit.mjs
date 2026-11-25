@@ -4,12 +4,15 @@ import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./s
 import { GENERATORS } from "./generators.js";
 import { book09Markup } from "./book09-renderers.js";
 import { BOOK09_UNIT_TEST_GENERATORS, BOOK09_UNIT_TEST_SPECS } from "./book09-generators.js";
+import { BOOK09_STRUCTURE_TYPE_ROWS } from "./book09-structure-generators.js";
 
 const iterations = Number(process.env.BOOK09_ITERATIONS || 1000);
 const book = CURRICULUM.find((item) => item.id === "book-09");
 const units = book?.units || [];
 const typeIds = [...new Set(units.flatMap((unit) => unit.typeIds))];
-const book09TypeIds = typeIds.filter((id) => id.endsWith("-b9"));
+// 교재 번호 꼴에 맞춘 새 유형(book09-structure-generators.js)은 아래에서 따로 다시 푼다.
+const structureTypeIds = BOOK09_STRUCTURE_TYPE_ROWS.map((row) => row.id);
+const book09TypeIds = typeIds.filter((id) => id.endsWith("-b9") && !structureTypeIds.includes(id));
 const expectedUnitCounts = [50, 36, 32, 40];
 const expectedGuideFallback = "문제에 보이는 관계를 한 단계씩 표시한 뒤 같은 규칙을 적용합니다.";
 const optionLabels = ["①", "②", "③", "④", "⑤"];
@@ -889,7 +892,8 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-09 missing");
 if (units.length !== 4) throw new Error(`book-09 unit count ${units.length}`);
-if (typeIds.length !== 69) throw new Error(`book-09 type count ${typeIds.length}`);
+structureTypeIds.forEach((typeId) => { if (!typeIds.includes(typeId)) throw new Error(`book-09 structure type not linked ${typeId}`); });
+if (typeIds.length !== 69 + structureTypeIds.length) throw new Error(`book-09 type count ${typeIds.length}`);
 if (book09TypeIds.length !== 35) throw new Error(`book-09 new type count ${book09TypeIds.length}`);
 
 let sourceQuestionCount = 0;
@@ -926,6 +930,232 @@ for (const typeId of book09TypeIds) {
       validate(generator({ difficulty }), typeId, difficulty);
       generated += 1;
     }
+  }
+}
+
+// ── 교재 번호 꼴 새 유형(book09-structure-generators.js) — 생성기 풀이와 따로 다시 푼다 ──
+const structureIterations = Number(process.env.BOOK09_STRUCTURE_ITERATIONS || Math.max(100, Math.floor(iterations / 5)));
+const area2 = (points) => Math.abs(points.reduce((acc, [x, y], i) => { const [nx, ny] = points[(i + 1) % points.length]; return acc + x * ny - nx * y; }, 0));
+const isMagicFlat = (flat, size) => {
+  const lines = [];
+  for (let r = 0; r < size; r += 1) lines.push(Array.from({ length: size }, (_, c) => r * size + c));
+  for (let c = 0; c < size; c += 1) lines.push(Array.from({ length: size }, (_, r) => r * size + c));
+  lines.push(Array.from({ length: size }, (_, i) => i * size + i), Array.from({ length: size }, (_, i) => i * size + size - 1 - i));
+  const sums = lines.map((line) => sum(line.map((i) => flat[i])));
+  return { ok: sums.every((v) => v === sums[0]), lines, S: sums[0] };
+};
+const triLinesOf = (n) => (n === 6 ? [[0, 1, 2], [2, 3, 4], [4, 5, 0]] : [[0, 1, 2, 3], [3, 4, 5, 6], [6, 7, 8, 0]]);
+const triKey = (vals) => triLinesOf(vals.length).map((l) => `${[vals[l[0]], vals[l.at(-1)]].sort((a, b) => a - b).join("-")}:${l.slice(1, -1).map((i) => vals[i]).sort((a, b) => a - b).join("-")}`).sort().join("|");
+const triBrute = new Map();
+function triangleBrute(values) {
+  const key = values.join(",");
+  if (triBrute.has(key)) return triBrute.get(key);
+  const lines = triLinesOf(values.length);
+  const bySum = new Map();
+  for (const vals of permutations(values)) {
+    const S = sum(lines[0].map((i) => vals[i]));
+    if (!lines.every((l) => sum(l.map((i) => vals[i])) === S)) continue;
+    if (!bySum.has(S)) bySum.set(S, new Set());
+    bySum.get(S).add(triKey(vals));
+  }
+  triBrute.set(key, bySum);
+  return bySum;
+}
+const triValid = (vals, S) => triLinesOf(vals.length).every((l) => sum(l.map((i) => vals[i])) === S);
+const seatGap = (n, a, b) => { const d = (((a - b) % n) + n) % n; return Math.min(d, n - d); };
+function seatOk(n, seat, c) {
+  const s = seat[c.a];
+  const t = c.b === undefined ? null : seat[c.b];
+  if (c.kind === "right") return t === (s - 1 + n) % n;
+  if (c.kind === "left") return t === (s + 1) % n;
+  if (c.kind === "notRight") return t !== (s - 1 + n) % n;
+  if (c.kind === "adjacent") return seatGap(n, s, t) === 1;
+  if (c.kind === "apart") return seatGap(n, s, t) !== 1;
+  if (c.kind === "facing") return seatGap(n, s, t) === n / 2;
+  if (c.kind === "oneBetween") return seatGap(n, s, t) === 2;
+  if (c.kind === "between") return seatGap(n, seat[c.m], s) === 1 && seatGap(n, seat[c.m], t) === 1;
+  return false;
+}
+
+function validateStructure(problem, id, difficulty) {
+  assert(problem && typeof problem.prompt === "string" && problem.prompt.length >= 12, id, difficulty, "지문 없음");
+  assert((problem.prompt.match(/\?/g) || []).length <= 1, id, difficulty, "지문 물음표 중복");
+  assert(typeof problem.answer === "string" && problem.answer.trim(), id, difficulty, "정답 없음");
+  assert(typeof problem.solution === "string" && problem.solution.length >= 12, id, difficulty, "풀이 없음");
+  const all = `${problem.prompt} ${problem.solution} ${problem.answer}`;
+  assert(!/(은\(는\)|이\(가\)|을\(를\)|와\(과\)|과\(와\)|NaN|undefined|Infinity)/.test(all), id, difficulty, "괄호 조사 또는 잘못된 값");
+  assert(!/\d\s*\/\s*\d/.test(all), id, difficulty, "빗금 분수");
+  assert(!/(FC|필즈|클래식|본책|순열|조합|제곱)/.test(all), id, difficulty, "쓰지 않는 말");
+  const markup = problem.visual?.kind === "fig" ? problem.visual.html : problem.visual?.kind === "book9" ? book09Markup(problem.visual) : "";
+  assert(markup.length > 40, id, difficulty, "그림 없음");
+  const meta = problem.meta;
+  const numeric = numericAnswer(problem);
+  switch (meta.family) {
+    case "tilted-area-b9": {
+      const { W, H, points, kind } = meta;
+      assert(points.every(([x, y]) => (x === 0 || x === W || y === 0 || y === H) && x >= 0 && x <= W && y >= 0 && y <= H), id, difficulty, "꼭짓점이 테두리 밖");
+      assert(Math.min(...points.map(([x]) => x)) === 0 && Math.max(...points.map(([x]) => x)) === W && Math.min(...points.map(([, y]) => y)) === 0 && Math.max(...points.map(([, y]) => y)) === H, id, difficulty, "둘러싼 직사각형 크기 오류");
+      const twice = area2(points);
+      assert(twice === meta.area * 2 && Math.abs(numeric - twice / 2) < 1e-9 && problem.answer === `${Number.isInteger(twice / 2) ? twice / 2 : (twice / 2).toFixed(1)}㎠`, id, difficulty, "넓이 오류");
+      assert(W * H * 2 - sum(meta.cuts.map((c) => c.legs[0] * c.legs[1])) === twice, id, difficulty, "빼는 삼각형 합 오류");
+      const k = { triangle: 3, quad: 4, parallelogram: 4, rectangle: 4, pentagon: 5 }[kind];
+      assert(points.length === k, id, difficulty, "꼭짓점 수 오류");
+      const [a, b, c, d] = points;
+      const para = k === 4 && b[0] - a[0] === c[0] - d[0] && b[1] - a[1] === c[1] - d[1];
+      const right = para && (b[0] - a[0]) * (d[0] - a[0]) + (b[1] - a[1]) * (d[1] - a[1]) === 0;
+      if (kind === "parallelogram") assert(para && !right, id, difficulty, "평행사변형 아님");
+      if (kind === "rectangle") assert(right && problem.prompt.includes(meta.square ? "정사각형" : "직사각형"), id, difficulty, "직사각형 아님");
+      if (kind === "quad") assert(!para, id, difficulty, "일반 사각형이 평행사변형");
+      if (kind === "triangle") assert(points.some(([x, y]) => (x === 0 || x === W) && (y === 0 || y === H)), id, difficulty, "삼각형 꼭짓점이 모서리에 없음");
+      return;
+    }
+    case "tilted-frame-b9": {
+      const inside = ([x, y]) => meta.outer.every((p, i) => { const q = meta.outer[(i + 1) % 4]; return (q[0] - p[0]) * (y - p[1]) - (q[1] - p[1]) * (x - p[0]) > 0; });
+      assert(meta.inner.every(inside), id, difficulty, "안쪽 정사각형이 밖으로 나감");
+      assert(numeric === (area2(meta.outer) - area2(meta.inner)) / 2, id, difficulty, "테두리 넓이 오류");
+      return;
+    }
+    case "cube-left-view-b9": {
+      const front = meta.map[0].map((_, c) => Math.max(...meta.map.map((r) => r[c])));
+      const left = meta.map.map((r) => Math.max(...r));
+      assert(same(front, meta.front) && same(left, meta.left), id, difficulty, "앞·왼쪽 옆 모양 오류");
+      const cells = [];
+      meta.map.forEach((r, i) => r.forEach((v, j) => { if (v) cells.push([i, j]); }));
+      let lo = Infinity;
+      let hi = -Infinity;
+      const cur = meta.map.map((r) => r.map(() => 0));
+      const walk = (k) => {
+        if (k === cells.length) {
+          const f = cur[0].map((_, c) => Math.max(...cur.map((r) => r[c])));
+          const l = cur.map((r) => Math.max(...r));
+          if (same(f, front) && same(l, left)) { const t = sum(cur.flat()); lo = Math.min(lo, t); hi = Math.max(hi, t); }
+          return;
+        }
+        const [i, j] = cells[k];
+        for (let h = 1; h <= Math.max(...front); h += 1) { cur[i][j] = h; walk(k + 1); }
+        cur[i][j] = 0;
+      };
+      walk(0);
+      if (meta.mode === "count") assert(lo === hi && problem.answer === `${lo}개`, id, difficulty, "개수가 하나로 정해지지 않음");
+      else assert(lo < hi && problem.answer === `최대 ${hi}개, 최소 ${lo}개`, id, difficulty, "최대·최소 오류");
+      return;
+    }
+    case "cube-four-layers-b9": {
+      assert(meta.layers.length === 4 && meta.layers.every((layer, k) => same(layer, meta.map.map((r) => r.map((v) => (v > k ? 1 : 0))))), id, difficulty, "층별 모양 오류");
+      assert(same(meta.front, frontProfile(meta.map)) && same(meta.side, sideProfile(meta.map)), id, difficulty, "앞·옆 모양 오류");
+      return;
+    }
+    case "cube-solid-top-b9": {
+      const m = meta.map;
+      assert(m.every((r, i) => r.every((v, j) => (i === 0 || v <= m[i - 1][j]) && (j === 0 || v <= r[j - 1]))), id, difficulty, "가려지는 칸이 있는 입체");
+      assert(numeric === sum(m.flat()) && same(meta.front, frontProfile(m)) && same(meta.side, sideProfile(m)), id, difficulty, "개수·모양 오류");
+      return;
+    }
+    case "magic3-givens-b9": {
+      const { ok, S } = isMagicFlat(meta.square, 3);
+      assert(ok && new Set(meta.square).size === 9 && meta.square.every((v) => v > 0) && S === meta.S && numeric === S, id, difficulty, "마방진 오류");
+      assert(meta.shown.every((v, i) => v === null || v === meta.square[i]), id, difficulty, "단서가 답과 다름");
+      // 3×3 마방진은 (가운데, u, v) 세 수로 정해진다 — 주어진 세 칸으로 셋이 하나로 정해지는지(행렬식 ≠ 0)
+      const coeff = [[1, 1, 0], [1, -1, -1], [1, 0, 1], [1, -1, 1], [1, 0, 0], [1, 1, -1], [1, 0, -1], [1, 1, 1], [1, -1, 0]];
+      const given = meta.shown.map((v, i) => (v === null ? -1 : i)).filter((i) => i >= 0);
+      assert(given.length === 3, id, difficulty, "단서 수 오류");
+      const [r1, r2, r3] = given.map((i) => coeff[i]);
+      const det = r1[0] * (r2[1] * r3[2] - r2[2] * r3[1]) - r1[1] * (r2[0] * r3[2] - r2[2] * r3[0]) + r1[2] * (r2[0] * r3[1] - r2[1] * r3[0]);
+      assert(det !== 0, id, difficulty, "단서로 마방진이 하나로 정해지지 않음");
+      return;
+    }
+    case "magic4-cross-b9": {
+      assert(isMagicFlat(meta.flat, 4).ok, id, difficulty, "4×4 마방진 아님");
+      const shared = meta.L1.filter((i) => meta.L2.includes(i));
+      assert(shared.length === 1 && shared[0] === meta.X && meta.shown[meta.X] === null, id, difficulty, "함께 쓰는 빈칸 오류");
+      assert(meta.L2.filter((i) => i !== meta.X).every((i) => meta.shown[i] === meta.flat[i]), id, difficulty, "두 번째 줄이 다 보이지 않음");
+      assert(meta.L1.filter((i) => i !== meta.X && !meta.targets.includes(i)).every((i) => meta.shown[i] === meta.flat[i]), id, difficulty, "첫 줄 단서 부족");
+      assert(numeric === sum(meta.targets.map((i) => meta.flat[i])), id, difficulty, "답 오류");
+      return;
+    }
+    case "triangle-six-minmax-b9": {
+      const bySum = triangleBrute(meta.values);
+      const sums = [...bySum.keys()].sort((a, b) => a - b);
+      assert(meta.lo === sums[0] && meta.hi === sums.at(-1) && bySum.get(meta.lo).size === 1 && bySum.get(meta.hi).size === 1, id, difficulty, "가장 작은·큰 합 오류");
+      assert(triValid(meta.loWay, meta.lo) && triValid(meta.hiWay, meta.hi), id, difficulty, "답 배치 오류");
+      return;
+    }
+    case "triangle-six-two-sums-b9": {
+      const bySum = triangleBrute(meta.values);
+      meta.sums.forEach((S, i) => assert(bySum.get(S)?.size === 1 && triValid(meta.ways[i], S), id, difficulty, `합 ${S} 배치가 하나가 아님`));
+      return;
+    }
+    case "triangle-nine-ways-b9": {
+      const bySum = triangleBrute(meta.values);
+      const keys = bySum.get(meta.S);
+      assert(keys && keys.size === meta.ways.length && meta.ways.every((w) => triValid(w, meta.S) && keys.has(triKey(w))), id, difficulty, "배치 수 오류");
+      assert(problem.prompt.includes(`${meta.ways.length}가지`), id, difficulty, "가짓수 안내 오류");
+      if (meta.want === "min") assert(meta.S === Math.min(...bySum.keys()), id, difficulty, "가장 작은 합 오류");
+      if (meta.want === "max") assert(meta.S === Math.max(...bySum.keys()), id, difficulty, "가장 큰 합 오류");
+      return;
+    }
+    case "mixed-gap-b9": {
+      const n = meta.names.length;
+      assert(meta.clues.length === n - 1, id, difficulty, "조건 수 오류");
+      const rel = Array(n).fill(null);
+      rel[meta.clues[0].y] = 0;
+      for (let guard = 0; guard < n; guard += 1) meta.clues.forEach((c) => {
+        const diff = c.up ? c.d : -c.d;
+        if (rel[c.y] !== null && rel[c.x] === null) rel[c.x] = rel[c.y] + diff;
+        if (rel[c.x] !== null && rel[c.y] === null) rel[c.y] = rel[c.x] - diff;
+      });
+      assert(rel.every((v) => v !== null), id, difficulty, "조건이 이어지지 않음");
+      assert(meta.clues.every((c) => rel[c.x] - rel[c.y] === (c.up ? c.d : -c.d)), id, difficulty, "조건끼리 어긋남");
+      const [a, b] = meta.asked;
+      assert(numeric === Math.abs(rel[a] - rel[b]) && numeric > 0, id, difficulty, "차 오류");
+      assert(!meta.clues.some((c) => (c.x === a && c.y === b) || (c.x === b && c.y === a)), id, difficulty, "묻는 두 사람이 바로 이어짐");
+      return;
+    }
+    case "value-list-mixed-b9": {
+      const holds = (vals, c) => (c.kind === "diff" ? vals[c.x] - vals[c.y] === c.d : vals[c.y] < vals[c.z] && vals[c.z] < Math.min(vals[c.u], vals[c.w]));
+      const sols = permutations(meta.values).filter((vals) => meta.clues.every((c) => holds(vals, c)));
+      assert(sols.length >= 1 && sols.every((vals) => vals[meta.target] === sols[0][meta.target]) && numeric === sols[0][meta.target], id, difficulty, "묻는 값이 하나로 정해지지 않음");
+      return;
+    }
+    case "round-table-b9": {
+      const n = meta.n;
+      const sols = permutations([...Array(n).keys()]).filter((seat) => seat[0] === 0 && meta.clues.every((c) => seatOk(n, seat, c)));
+      const answerOf = (seat) => {
+        const who = []; seat.forEach((s, p) => { who[s] = p; });
+        const t = seat[meta.target];
+        if (meta.ask === "between") return [meta.names[who[(t + 1) % n]], meta.names[who[(t - 1 + n) % n]]].sort().join(",");
+        if (meta.ask === "facing") return meta.names[who[(t + n / 2) % n]];
+        if (meta.ask === "left") return meta.names[who[(t + 1) % n]];
+        if (meta.ask === "right") return meta.names[who[(t - 1 + n) % n]];
+        return seat.join(",");
+      };
+      const answers = new Set(sols.map(answerOf));
+      assert(sols.length >= 1 && answers.size === 1, id, difficulty, `둥근 탁자 답이 하나가 아님 ${sols.length}`);
+      if (meta.ask === "fill") assert(sols.length === 1, id, difficulty, "자리가 하나로 정해지지 않음");
+      if (meta.ask === "between") assert(problem.answer.split(", ").sort().join(",") === [...answers][0], id, difficulty, "사이 답 오류");
+      else if (meta.ask !== "fill") assert(problem.answer === [...answers][0], id, difficulty, "자리 답 오류");
+      return;
+    }
+    default:
+      fail(id, difficulty, `검산 분기 없음: ${meta.family}`);
+  }
+}
+
+let structureGenerated = 0;
+for (const typeId of structureTypeIds) {
+  const type = typeById(typeId);
+  const generator = GENERATORS[type.generator];
+  assert(typeof generator === "function", typeId, 0, "생성기 없음");
+  for (const difficulty of [1, 2, 3]) {
+    const seen = new Set();
+    for (let index = 0; index < structureIterations; index += 1) {
+      const problem = generator({ difficulty });
+      assert(problem, typeId, difficulty, "문제를 만들지 못함");
+      validateStructure(problem, typeId, difficulty);
+      seen.add(problem.prompt + JSON.stringify(problem.visual));
+      structureGenerated += 1;
+    }
+    assert(seen.size >= Math.min(3, structureIterations), typeId, difficulty, `서로 다른 문제 ${seen.size}`);
   }
 }
 
@@ -968,4 +1198,4 @@ for (const question of difficultyFingerprintQuestions) {
 }
 Math.random = originalRandom;
 
-console.log(`book-09 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types (${book09TypeIds.length} new), ${generated.toLocaleString("en-US")} generated checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks, ${difficultyFingerprintChecks} difficulty fingerprints`);
+console.log(`book-09 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types (${book09TypeIds.length} new, ${structureTypeIds.length} structure), ${generated.toLocaleString("en-US")} generated checks, ${structureGenerated.toLocaleString("en-US")} structure checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks, ${difficultyFingerprintChecks} difficulty fingerprints`);
