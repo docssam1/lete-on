@@ -96,7 +96,7 @@ function tokenRow(tokens, x0, y, shapes) {
   let out = "";
   for (const t of tokens) {
     const w = tokenWidth(t);
-    out += typeof t === "number" ? glyph(shapes[t], x + w / 2, y) : text(x + w / 2, y + 6, t, 18);
+    out += typeof t === "number" ? glyph(SHAPES[shapes[t]].key, x + w / 2, y) : text(x + w / 2, y + 6, t, 18);
     x += w;
   }
   return { out, width: x - x0 };
@@ -1165,6 +1165,181 @@ function multiRowShapeCryptarithmB8({ difficulty = 2 }) {
   };
 }
 
+// ── 3단원 합차와 배수 ─────────────────────────────────
+
+const NAMES = ["도윤", "서아", "하준", "지유", "시온", "예나", "로아", "건우", "다인", "주안", "채윤", "이든"];
+const twoNames = () => shuffle(NAMES).slice(0, 2);
+const wa = (w) => `${w}${hasBatchimWord(w) ? "과" : "와"}`;
+
+// 이어진 차(가는 나보다 p개, 나는 다보다 q개 많다) → 가가 다에게 몇 개 주면 둘이 같아지나
+function chainedDifferenceEqualizeB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const [a, b, c] = shuffle(NAMES).slice(0, 3);
+    const p = randomInt(2, difficulty === 3 ? 15 : 9);
+    const q = randomInt(2, difficulty === 3 ? 15 : 9);
+    if ((p + q) % 2 || p === q) continue;
+    const give = (p + q) / 2;
+    const thing = pick(["사탕", "구슬", "딱지"]);
+    return {
+      prompt: `${iga(a)} ${b}보다 ${thing} ${p}개를 더 가지고 있고, ${iga(b)} ${c}보다 ${thing} ${q}개를 더 가지고 있습니다. ${iga(a)} ${c}에게 ${thing} 몇 개를 주면 ${wa(a)} ${c}의 ${thing} 수가 같아지는지 구하세요.`,
+      visual: { kind: "fig", html: barsSvg([[a, 0, p + q], [b, 0, q], [c, 0, 0]], "두 사람의 차"), layoutRole: "support" },
+      answer: `${give}개`,
+      solution: `${eunneun(a)} ${c}보다 ${p}+${q}=${p + q}개 많습니다. 준 만큼 한쪽은 줄고 다른 쪽은 늘어 차가 두 배로 줄어들므로 ${p + q}÷2=${give}개를 주면 됩니다.`,
+      meta: { family: "chained-difference-equalize-b8", p, q, give }
+    };
+  }
+  throw new Error("book08 chained difference generation failed");
+}
+
+// 막대: [이름, 공통 길이 표시용, 더 긴 만큼]
+function barsSvg(rows, note) {
+  const unit = 9;
+  const base = 70;
+  const maxExtra = Math.max(...rows.map((r) => r[2]));
+  const w = 70 + base + maxExtra * unit + 20;
+  const h = rows.length * 34 + 14;
+  let body = "";
+  rows.forEach(([name, , extra], i) => {
+    const y = 8 + i * 34;
+    body += text(30, y + 19, name, 15);
+    body += `<rect x="64" y="${y}" width="${base}" height="22" fill="#e3eef2" stroke="${INK}" stroke-width="1.2"/>`;
+    if (extra) body += `<rect x="${64 + base}" y="${y}" width="${extra * unit}" height="22" fill="#fbe3d6" stroke="${INK}" stroke-width="1.2"/>`;
+  });
+  return `${svgOpen(w, h, note)}${body}</svg>`;
+}
+
+// 지금 두 나이 → 몇 년 뒤 합이 S일 때 그때의 두 나이
+function ageSumAfterYearsB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const [older, younger] = pick([["형", "동생"], ["언니", "동생"], ["누나", "동생"], ["오빠", "동생"]]);
+    const y = randomInt(4, difficulty === 3 ? 16 : 11);
+    const o = y + randomInt(2, difficulty === 3 ? 9 : 6);
+    const n = randomInt(2, difficulty === 3 ? 12 : 8);
+    const sum = o + y + 2 * n;
+    if (sum === o + y) continue;
+    return {
+      prompt: `지금 ${eunneun(older)} ${o}살, ${eunneun(younger)} ${y}살입니다. 몇 년 뒤 두 사람의 나이를 더하면 ${sum}살이 됩니다. 그때 ${wa(older)} ${younger}의 나이를 각각 구하세요.`,
+      visual: { kind: "fig", html: barsSvg([[older, 0, o - y], [younger, 0, 0]], "두 사람의 나이"), layoutRole: "support" },
+      answer: `${older} ${o + n}살, ${younger} ${y + n}살`,
+      solution: `해마다 두 사람 나이의 합은 2살씩 늘어납니다. 지금 합은 ${o}+${y}=${o + y}살이므로 ${sum}−${o + y}=${sum - o - y}, ${sum - o - y}÷2=${n}년 뒤입니다. 그때 ${eunneun(older)} ${o + n}살, ${eunneun(younger)} ${y + n}살입니다. 나이 차 ${o - y}살은 그대로입니다.`,
+      meta: { family: "age-sum-after-years-b8", o, y, n, sum }
+    };
+  }
+  throw new Error("book08 age sum generation failed");
+}
+
+// 둘이 모두 T개, 많은 쪽이 g개를 주니 같아짐 → 적은 쪽의 처음 수
+function totalGiveEqualB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const [a, b] = pick([["형", "동생"], ["언니", "동생"], twoNames()]);
+    const half = randomInt(6, difficulty === 3 ? 30 : 18);
+    const g = randomInt(2, Math.min(half - 1, difficulty === 3 ? 12 : 7));
+    const total = half * 2;
+    const askA = difficulty === 3 && Math.random() < 0.5;
+    const thing = pick(["사탕", "구슬", "카드"]);
+    return {
+      prompt: `${wa(a)} ${eunneun(b)} 모두 ${thing} ${total}개를 가지고 있습니다. ${iga(a)} ${b}에게 ${thing} ${g}개를 주었더니 두 사람의 ${thing} 수가 같아졌습니다. ${iga(askA ? a : b)} 처음에 가진 ${eunneun(thing)} 몇 개인지 구하세요.`,
+      visual: { kind: "fig", html: barsSvg([[a, 0, 2 * g], [b, 0, 0]], "두 사람의 수"), layoutRole: "support" },
+      answer: `${askA ? half + g : half - g}개`,
+      solution: `주고받아도 모두 ${total}개이므로 같아진 뒤 한 사람은 ${total}÷2=${half}개입니다. ${eunneun(b)} ${g}개를 받아 ${half}개가 되었으니 처음 ${half}−${g}=${half - g}개${askA ? `, ${eunneun(a)} ${g}개를 주고 ${half}개가 되었으니 처음 ${half}+${g}=${half + g}개` : ""}입니다.`,
+      meta: { family: "total-give-equal-b8", total, g, half, askA }
+    };
+  }
+  throw new Error("book08 total give equal generation failed");
+}
+
+// 셋의 합, 한 사람의 수, 한 사람이 다른 사람에게 g개 주면 둘이 같아짐 → 준 사람의 수
+function threeTotalGiveEqualB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const [k, x, y] = shuffle(NAMES).slice(0, 3);
+    const known = randomInt(3, difficulty === 3 ? 18 : 12);
+    const g = randomInt(1, difficulty === 3 ? 8 : 5);
+    const after = randomInt(g + 2, difficulty === 3 ? 22 : 15);
+    const xv = after + g;
+    const yv = after - g;
+    if (yv <= 0 || [xv, yv].includes(known)) continue;
+    const total = known + xv + yv;
+    const cellSvg = () => {
+      const names = [k, x, y];
+      const cw = 70;
+      const w = 74 + cw * 3 + 6;
+      let body = "";
+      [["이름", ...names], ["개수", "", "", ""]].forEach((rowVals, r) => rowVals.forEach((v, c) => {
+        const xx = c === 0 ? 4 : 74 + (c - 1) * cw;
+        const ww = c === 0 ? 70 : cw;
+        body += `<rect x="${xx}" y="${4 + r * 32}" width="${ww}" height="32" fill="${r === 0 ? "#e3eef2" : "#fff"}" stroke="${INK}" stroke-width="1.1"/>`;
+        if (v) body += text(xx + ww / 2, 4 + r * 32 + 22, v, 15);
+      }));
+      return `${svgOpen(w, 72, "구슬 수 표")}${body}</svg>`;
+    };
+    return {
+      prompt: `${k}, ${x}, ${y} 세 사람이 가진 구슬은 모두 ${total}개입니다. ${eunneun(k)} 구슬 ${known}개를 가지고 있고, ${iga(x)} ${y}에게 구슬 ${g}개를 주면 ${wa(x)} ${y}의 구슬 수가 같아집니다. ${iga(x)} 가진 구슬은 몇 개인지 표를 채워 구하세요.`,
+      visual: figs(cellSvg()),
+      answer: `${xv}개`,
+      solution: `${wa(x)} ${y}의 구슬은 모두 ${total}−${known}=${xv + yv}개입니다. ${g}개를 주고 같아지면 한 사람이 ${(xv + yv)}÷2=${after}개이므로 ${eunneun(x)} ${after}+${g}=${xv}개, ${eunneun(y)} ${yv}개입니다.`,
+      meta: { family: "three-total-give-equal-b8", total, known, g, xv, yv }
+    };
+  }
+  throw new Error("book08 three total give equal generation failed");
+}
+
+// 두 사람의 수를 알 때, 한쪽이 몇 개를 주어야 다른 쪽이 그 몇 배가 되는가
+function transferForMultipleB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 400; attempt += 1) {
+    const [a, b] = twoNames();
+    const k = difficulty === 1 ? 2 : pick([2, 3, 4]);
+    const aAfter = randomInt(3, difficulty === 3 ? 12 : 8);
+    const moved = randomInt(2, difficulty === 3 ? 10 : 7);
+    const aStart = aAfter + moved;
+    const bStart = k * aAfter - moved;
+    if (bStart <= 2 || bStart === aStart) continue;
+    const total = aStart + bStart;
+    return {
+      prompt: `${iga(a)} 구슬 ${aStart}개, ${iga(b)} 구슬 ${bStart}개를 가지고 있습니다. ${iga(a)} ${b}에게 구슬 몇 개를 주어야 ${iga(b)} 가진 구슬이 ${a}의 ${k}배가 되는지 구하세요.`,
+      visual: { kind: "fig", html: unitsSvg(a, b, k), layoutRole: "support" },
+      answer: `${moved}개`,
+      solution: `주고받아도 두 사람의 구슬은 모두 ${aStart}+${bStart}=${total}개입니다. 준 뒤 ${eulreul(a)} 한 묶음으로 보면 ${eunneun(b)} ${k}묶음이니 모두 ${k + 1}묶음이고, 한 묶음은 ${total}÷${k + 1}=${aAfter}개입니다. ${eunneun(a)} ${aStart}개에서 ${aAfter}개가 되었으므로 ${aStart}−${aAfter}=${moved}개를 주었습니다.`,
+      meta: { family: "transfer-for-multiple-b8", aStart, bStart, k, moved, aAfter }
+    };
+  }
+  throw new Error("book08 transfer for multiple generation failed");
+}
+
+function unitsSvg(a, b, k) {
+  const w = 90 + (k + 1) * 34 + 80;
+  let body = text(36, 28, a, 15) + `<circle cx="96" cy="23" r="13" fill="#fff" stroke="${INK}" stroke-width="1.3"/>`;
+  body += text(36, 68, b, 15);
+  for (let i = 0; i < k; i += 1) body += `<circle cx="${96 + i * 32}" cy="63" r="13" fill="#fff" stroke="${INK}" stroke-width="1.3"/>`;
+  const bx = 96 + k * 32 + 6;
+  body += `<path d="M${bx} 12 Q${bx + 10} 12 ${bx + 10} 24 L${bx + 10} 38 L${bx + 16} 43 L${bx + 10} 48 L${bx + 10} 62 Q${bx + 10} 74 ${bx} 74" fill="none" stroke="${INK}" stroke-width="1.2"/>`;
+  body += text(bx + 44, 48, "합: □", 15);
+  return `${svgOpen(w, 86, "준 뒤 묶음")}${body}</svg>`;
+}
+
+// ○ + ◇ = 합, ○ − ◇ = 차 — 여러 묶음
+function shapeSumDifferenceB8({ difficulty = 2 }) {
+  const parts = difficulty === 1 ? 2 : 4;
+  const made = [];
+  while (made.length < parts) {
+    const small = randomInt(2, difficulty === 3 ? 30 : 18);
+    const big = small + randomInt(1, difficulty === 3 ? 24 : 14);
+    if (made.some((m) => m.big === big && m.small === small)) continue;
+    made.push({ big, small, sum: big + small, diff: big - small });
+  }
+  const [s1, s2] = shuffle([0, 3, 1, 5]).slice(0, 2);
+  const sh = [s1, s2];
+  const rowsOf = (m) => [[0, "+", 1, "=", String(m.sum)], [0, "−", 1, "=", String(m.diff)]];
+  const tag = (i) => `(${i + 1}) `;
+  const ch = (s) => SHAPES[sh[s]].ch;
+  return {
+    prompt: `같은 모양은 같은 수를 나타냅니다. ${ch(0)}, ${shapeIga(sh[1])} 나타내는 수를 각각 구하세요.`,
+    visual: figs(...made.map((m) => equationsSvg(rowsOf(m), sh, "합과 차"))),
+    answer: made.map((m, i) => `${tag(i)}${ch(0)}=${m.big}, ${ch(1)}=${m.small}`).join(" · "),
+    solution: made.map((m, i) => `${tag(i)}합에 차를 더하면 ${ch(0)} 두 개가 되므로 ${ch(0)}=(${m.sum}+${m.diff})÷2=${m.big}, ${ch(1)}=${m.sum}−${m.big}=${m.small}입니다.`).join(" "),
+    meta: { family: "shape-sum-difference-b8", parts: made }
+  };
+}
+
 // ── 4단원 거꾸로 생각하기 ─────────────────────────────
 
 function flowSvg(steps, final) {
@@ -1347,6 +1522,12 @@ export const BOOK08_STRUCTURE_GENERATORS = {
   shapeResultCryptarithmB8,
   repeatedAddendAllB8,
   multiRowShapeCryptarithmB8,
+  chainedDifferenceEqualizeB8,
+  ageSumAfterYearsB8,
+  totalGiveEqualB8,
+  threeTotalGiveEqualB8,
+  transferForMultipleB8,
+  shapeSumDifferenceB8,
   reverseNumberStepsB8,
   reverseBusStopsB8,
   reverseFloorMovesB8,
@@ -1379,6 +1560,12 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
   row("shape-result-cryptarithm-b8", "number", "복면산", "결과까지 모양인 두 자리 덧셈 복면산", "shapeResultCryptarithmB8", ["결과도 모양", "같은 숫자로 된 수"]),
   row("repeated-addend-all-b8", "number", "복면산", "같은 두 자리 모양 수를 여러 번 더한 복면산의 답 모두", "repeatedAddendAllB8", ["여러 번 더하기", "답 모두 찾기"]),
   row("multi-row-shape-b8", "number", "복면산", "여러 줄을 더한 모양 복면산", "multiRowShapeCryptarithmB8", ["여러 줄 덧셈", "모양 복면산"]),
+  row("chained-difference-equalize-b8", "number", "주고받기", "이어진 두 차로 양 끝 두 사람을 같게 만들기", "chainedDifferenceEqualizeB8", ["이어진 차", "같아지게 주기"]),
+  row("age-sum-after-years-b8", "number", "합과 차", "몇 년 뒤 나이의 합으로 그때 나이 구하기", "ageSumAfterYearsB8", ["나이의 합", "몇 년 뒤"]),
+  row("total-give-equal-b8", "number", "주고받기", "전체 수와 준 수로 같아지기 전 수 구하기", "totalGiveEqualB8", ["합", "주고 같아짐", "처음 수"]),
+  row("three-total-give-equal-b8", "number", "주고받기", "세 사람의 합과 주고 같아지는 조건으로 표 채우기", "threeTotalGiveEqualB8", ["세 사람의 합", "주고 같아짐", "표 채우기"]),
+  row("transfer-for-multiple-b8", "number", "합과 배수", "몇 개를 주어야 몇 배가 되는지 구하기", "transferForMultipleB8", ["몇 배가 되게 주기", "합과 배수"]),
+  row("shape-sum-difference-b8", "number", "합과 차", "두 모양의 합과 차로 각 수 구하기", "shapeSumDifferenceB8", ["합과 차", "모양 식"]),
   row("reverse-number-steps-b8", "number", "거꾸로 생각하기", "세 번 더하고 뺀 수를 거꾸로 풀기", "reverseNumberStepsB8", ["거꾸로 계산", "어떤 수"]),
   row("reverse-bus-stops-b8", "number", "거꾸로 생각하기", "두 정류장에서 내리고 탄 승객 거꾸로 풀기", "reverseBusStopsB8", ["버스 승객", "거꾸로 계산"]),
   row("reverse-floor-moves-b8", "number", "거꾸로 생각하기", "계단을 오르내린 뒤의 층에서 처음 층 찾기", "reverseFloorMovesB8", ["층 오르내리기", "거꾸로 계산"]),
@@ -1406,6 +1593,12 @@ export const BOOK08_STRUCTURE_GUIDES = {
   "shape-result-cryptarithm-b8": "두 자리 수 둘의 합의 맨 앞자리는 1이므로 그 모양부터 정하고 일의 자리부터 맞춥니다.",
   "repeated-addend-all-b8": "같은 수를 여러 번 더한 것은 그 수의 몇 배이므로, 몇 배 한 결과가 모양에 맞는 경우를 빠짐없이 찾습니다.",
   "multi-row-shape-b8": "일의 자리에 같은 모양이 몇 번 더해지는지 세어 끝자리가 맞는 숫자를 찾고 받아올림을 넘깁니다.",
+  "chained-difference-equalize-b8": "양 끝 두 사람의 차는 두 차를 더한 것이고, 준 만큼 차가 두 배로 줄어드니 반만 주면 됩니다.",
+  "age-sum-after-years-b8": "해마다 두 사람 나이의 합은 2살씩 늘어나므로 늘어난 합을 2로 나누어 몇 년 뒤인지 찾습니다.",
+  "total-give-equal-b8": "주고받아도 전체는 그대로이니 같아진 수는 전체의 반이고, 받은 쪽은 받은 만큼 빼서 처음 수를 찾습니다.",
+  "three-total-give-equal-b8": "아는 사람의 수를 전체에서 빼 두 사람의 합을 구하고, 주고 같아진 수에서 거꾸로 처음 수를 찾습니다.",
+  "transfer-for-multiple-b8": "주고받아도 합은 그대로이니, 준 뒤의 적은 쪽을 한 묶음으로 보고 합을 묶음 수로 나눕니다.",
+  "shape-sum-difference-b8": "합과 차를 더하면 큰 수가 두 개, 합에서 차를 빼면 작은 수가 두 개입니다.",
   "reverse-number-steps-b8": "마지막 수에서 거꾸로, 더한 것은 빼고 뺀 것은 더해 처음 수로 돌아갑니다.",
   "reverse-bus-stops-b8": "마지막 승객 수에서 탄 사람은 빼고 내린 사람은 더하며 정류장을 거꾸로 지나갑니다.",
   "reverse-floor-moves-b8": "도착한 층에서 올라간 만큼 내려가고 내려간 만큼 올라가며 거꾸로 따라갑니다.",
@@ -1447,6 +1640,18 @@ export const BOOK08_STRUCTURE_REMAPS = [
   ["book-08", 2, "practice", 1, [14], "shape-result-cryptarithm-b8"],
   ["book-08", 2, "practice", 1, [15, 16], "all-shape-cryptarithm-b8"],
   ["book-08", 2, "advanced", 1, [2], "repeated-addend-all-b8"],
+  // 3단원 — 이어진 차, 몇 년 뒤 나이의 합, 합과 준 수, 세 사람 표, 몇 배가 되게 주기, 모양 합과 차
+  ["book-08", 3, "activity", 1, [2], "chained-difference-equalize-b8"],
+  ["book-08", 3, "practice", 1, [2], "chained-difference-equalize-b8"],
+  ["book-08", 3, "activity", 1, [4], "shape-sum-difference-b8"],
+  ["book-08", 3, "practice", 1, [4], "shape-sum-difference-b8"],
+  ["book-08", 3, "check", 1, [2], "age-sum-after-years-b8"],
+  ["book-08", 3, "practice", 1, [8], "age-sum-after-years-b8"],
+  ["book-08", 3, "check", 1, [3], "total-give-equal-b8"],
+  ["book-08", 3, "practice", 1, [9], "total-give-equal-b8"],
+  ["book-08", 3, "check", 1, [4], "three-total-give-equal-b8"],
+  ["book-08", 3, "practice", 1, [10], "three-total-give-equal-b8"],
+  ["book-08", 3, "advanced", 1, [3, 4], "transfer-for-multiple-b8"],
   // 4단원 — 세·네 단계 거꾸로 풀기, 가진 만큼 준 뒤 「둘 다 N」
   ["book-08", 4, "activity", 1, [1], "reverse-bus-stops-b8"],
   ["book-08", 4, "activity", 1, [2], "reverse-floor-moves-b8"],

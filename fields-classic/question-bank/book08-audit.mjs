@@ -444,7 +444,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 94) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 100) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -664,6 +664,33 @@ function validateStructure(problem, id, difficulty) {
       assert(numeric === meta.first, id, difficulty, "가진 만큼 주기 답 오류");
       return;
     }
+    case "chained-difference-equalize-b8": {
+      // 다를 0으로 두고 가 = p+q, 다 = 0 → give개를 주면 같아지는지
+      const a = meta.p + meta.q;
+      assert(a - meta.give === meta.give && numeric === meta.give, id, difficulty, "이어진 차 같게 만들기 오류");
+      return;
+    }
+    case "age-sum-after-years-b8":
+      assert(meta.o + meta.n + meta.y + meta.n === meta.sum && problem.answer.includes(`${meta.o + meta.n}살`) && problem.answer.includes(`${meta.y + meta.n}살`), id, difficulty, "몇 년 뒤 나이 오류");
+      return;
+    case "total-give-equal-b8": {
+      const b = meta.half - meta.g;
+      const a = meta.total - b;
+      assert(a - meta.g === b + meta.g && numeric === (meta.askA ? a : b), id, difficulty, "합과 준 수 오류");
+      return;
+    }
+    case "three-total-give-equal-b8":
+      assert(meta.known + meta.xv + meta.yv === meta.total && meta.xv - meta.g === meta.yv + meta.g && numeric === meta.xv, id, difficulty, "세 사람 표 오류");
+      return;
+    case "transfer-for-multiple-b8":
+      assert((meta.bStart + meta.moved) === meta.k * (meta.aStart - meta.moved) && meta.aStart - meta.moved > 0 && numeric === meta.moved, id, difficulty, "몇 배가 되게 주기 오류");
+      return;
+    case "shape-sum-difference-b8":
+      meta.parts.forEach((m, i) => {
+        assert(m.big + m.small === m.sum && m.big - m.small === m.diff && m.small > 0, id, difficulty, "합과 차 식 오류");
+        assert(String(problem.answer).includes(`(${i + 1}) `) && String(problem.answer).includes(`=${m.big}, `), id, difficulty, "합과 차 답 오류");
+      });
+      return;
     default:
       fail(id, difficulty, "새 유형 검산 분기 없음: " + meta.family);
   }
