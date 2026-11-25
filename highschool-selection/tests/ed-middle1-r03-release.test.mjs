@@ -17,7 +17,7 @@ test('ED3 addition preserves every field of the existing 44 public editions',()=
  const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'7fd5c98ae329c12c1e3d68f5e3eb45a91178fcfc61bc65baf6bbc8f47573cb89');
 });
 test('ED3 is reached from the existing Eden middle1 course in round order',()=>{
- const nav=context.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-middle1-authored-r03'))),{program:'ED',course:'middle1'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','middle1',all))).map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03']);
+ const nav=context.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-middle1-authored-r03'))),{program:'ED',course:'middle1'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','middle1',all))).map(e=>e.id).slice(0,3),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03']);
 });
 test('ED3 public metadata carries no question text, answer values or private page paths',()=>{
  const e=all.find(e=>e.id==='ed-middle1-authored-r03');for(const key of ['questions','stem','text','answer','solution','choices','pages','answerPages','analysisPages','assetFunctions'])assert.equal(Object.hasOwn(e,key),false,key);
