@@ -2,6 +2,7 @@ import { TEXTBOOK_REMAPS } from "./textbook-remaps.js";
 import { CURRICULUM, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { BOOK01_GENERATORS, BOOK01_INTERNALS } from "./book01-generators.js";
+import { BOOK01_STRUCTURE_GENERATORS } from "./book01-structure-generators.js";
 import { book01Markup } from "./book01-renderers.js";
 
 const iterations = Math.max(1, Number(process.argv[2] || 1000));
@@ -26,8 +27,9 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-assert(typeIds.length === 49, `expected 49 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 49, "duplicate type in book-01 curriculum");
+// 49 + 교재 번호 꼴에 맞춘 새 유형 23(book01-structure-generators.js, 2026-11-25)
+assert(typeIds.length === 72, `expected 72 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 72, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
@@ -228,7 +230,7 @@ function validateNewProblem(typeId, problem) {
 
 let generated = 0;
 let minimumVariants = Infinity;
-const newGeneratorNames = new Set(Object.keys(BOOK01_GENERATORS));
+const newGeneratorNames = new Set([...Object.keys(BOOK01_GENERATORS), ...Object.keys(BOOK01_STRUCTURE_GENERATORS)]);
 for (const typeId of typeIds) {
   const type = typeById(typeId);
   const generator = GENERATORS[type.generator];

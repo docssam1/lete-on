@@ -4170,7 +4170,8 @@ function sourceTwoDigitSumDifference({ difficulty = 2 }) {
   const choices = [];
   const minTens = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
   for (let tens = minTens; tens <= 9; tens += 1) {
-    for (let ones = 0; ones < tens; ones += 1) {
+    // 일의 자리 0은 뺀다(합과 차가 같아져 조건 하나가 남는 꼴이 되고, 교재 두 자리 수 조건 문항에는 없다 — 1권 대조 2026-11-25).
+    for (let ones = 1; ones < tens; ones += 1) {
       if (difficulty === 1 && ones > 5) continue;
       choices.push({ tens, ones });
     }
