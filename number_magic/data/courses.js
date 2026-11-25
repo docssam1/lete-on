@@ -315,16 +315,22 @@ const COURSE_SPEC = [
       → 최대공약수·최소공배수 → 정수·유리수 덧뺄셈 순서를 따른다. */
    /* Book 1-1A p.4: prime/composite → powers → factor/prime factor → factorization
       → GCD/LCM → signed addition/subtraction. Branch ids 4~6 are pinned on purpose. */
-   drills:['DV8@4','DV8@5','DV8@6','DV8@1','DV8@2','DV8@3','DV7@2','DV7@3','DV7@2','DV7@3',
-     'MD1','MD82','MD2','MD1@2','MD82@2','MD2@2','MD3','MD1@3','MD82@3','MD2@3',
-     'MD3@2','MD1@4','MD2@4','MD3@3','MD2@4','MD3@3','MD2@5'],
+   /* 2026-11-25 디딤돌 개념연산 중1-1A 44유형 대조로 빠진 유형을 차례 자리에 넣었다(원장 「시중 교재와 너무 차이」):
+      나눗셈 소인수분해(DV8@7)·제곱인 수(@8) · 소인수분해·나눗셈으로 최대공약수/최소공배수(DV7@4~7)·관계(@8) ·
+      부호(MD1@5)·정수/유리수 분류(@6·7)·부등호(@8)·절댓값의 성질(@2) · 덧셈 법칙(MD2@6)·관계(@7)·절댓값 두 수(@8)·
+      소수 섞인 유리수(MD3@4). 같은 단계를 두 번 싣던 자리(DV7@2·3, MD2@4, MD3@3)는 새 유형이 받는다. */
+   drills:['DV8@4','DV8@5','DV8@6','DV8@1','DV8@7','DV8@2','DV8@8','DV8@3',
+     'DV7@2','DV7@4','DV7@6','DV7@3','DV7@5','DV7@7','DV7@8',
+     'MD1@5','MD1@6','MD1@7','MD1','MD82','MD1@2','MD1@3','MD1@8','MD82@2',
+     'MD2','MD2@2','MD2@6','MD3','MD82@3','MD2@3','MD2@7','MD3@2','MD1@4','MD2@4','MD3@3','MD3@4','MD2@8','MD2@5'],
    minSessions:15, magic:[[],[],[],['M-01'],['M-82'],['M-02'],['M-03']],
    /* MD89(정수의 활용 — 기온·해발과 해저·수위)는 이 과정의 적용 회차다(2026-09-25). */
-   creative:['DV7@1','MD89@1','MD3@3','MD89@2','MD82@3','MD89@3']},
+   creative:['DV7@1','DV7@9','MD89@1','DV7@10','MD3@3','MD89@2','MD82@3','MD89@3']},
  /* 30 — 중1-1A의 정수·유리수 곱나눗셈과 거듭제곱을 마친 뒤 31에서 문자식으로 넘어간다. */
  {id:30, tier:'middle1', title:{ko:'부호의 규칙과 유리수의 곱셈·나눗셈',en:'Signs & Rational Multiplication',zh:'符号与有理数乘除'},
-   drills:['MD4','MD5','MD6','MD4@2','MD5@2','MD6@2','MD4@3','MD5@3','MD6@3','MD4@4','MD5@4','MD4@5',
-     'MD7','MD7@2','MD7@3','MD7@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-07']],
+   /* 2026-11-25 곱셈 법칙(MD4@6)·분배법칙(@7)·역수(MD7@5)·거듭제곱과 괄호가 있는 혼합 계산(MD6@4)을 교재 차례 자리에 */
+   drills:['MD4','MD4@6','MD5','MD6','MD4@2','MD5@2','MD6@2','MD4@3','MD4@7','MD5@3','MD6@3','MD4@4','MD5@4','MD4@5',
+     'MD7@5','MD7','MD7@2','MD7@3','MD7@4','MD6@4'], minSessions:10, magic:[['M-04'],['M-05'],['M-06'],['M-07']],
    creative:['MD6@3','MD7@3','MD7@4']},
  /* 31 — 중1-1B의 문자식 → 일차방정식 → 활용 → 좌표·비례 그래프 순서.
     MD51의 값 계산 뒤에 MD69의 그래프가 이어진다. */
@@ -569,7 +575,7 @@ const COURSE_SPEC = [
 const APPLY_THREADS = { WP1:1, WP2:1, WP3:1, WP4:1, WP5:1, WP6:1, WP7:1, WP8:1, WP9:1, WP10:1,
   MD70:1, MD71:1, MD72:1, MD76:1, MD77:1, MD89:1, MD90:1 };
 /* 스레드 전체가 아니라 그 레벨만 적용인 것 — params.mode 로 확인했다 */
-const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1 };
+const APPLY_LEVELS = { 'MD19@4':1, 'MD19@5':1, 'MD11@5':1, 'DV7@9':1, 'DV7@10':1 };
 /* 창의수연 전략 유닛(A·B·C·H)에 걸리지 않았지만 이름 그대로 전략인 드릴 */
 /* SB5(더 빼고 돌려받기)는 초급 F-2 이사시켜 빼기(A-23)를 통합한 전략이다(설계 §2-2 M3 ③, 2026-09-26 추가) */
 const STRATEGY_THREADS = { AD8:1, AD9:1, SB5:1, DC6:1, NL5:1, NL11:1, NL12:1, ML10:1 };
@@ -790,12 +796,17 @@ function planCounts(ss, tier, maxLevel){
   if(DAILY_MIN_TIERS[tier]){
     const days = Math.max(1, Math.ceil(total() / 600));
     const count = () => [...ss.school, ...ss.strategy.practice, ...ss.application].reduce((a, d) => a + d.count, 0);
-    /* 같은 스레드의 여러 레벨(ML3 L4·L5 — 곱셈구구 같은 단)은 서로 같은 문제를 낼 수 있어, 한 회차 안 그 스레드의 합도 36까지만 */
+    /* 같은 스레드의 여러 레벨(ML3 L4·L5 — 곱셈구구 같은 단)은 서로 같은 문제를 낼 수 있어, 한 회차 안 그 스레드의 합도 42까지만(문장제 6 포함) */
     const threadSum = t => [...ss.school, ...ss.strategy.practice, ...ss.application].filter(x => x.t === t).reduce((a, x) => a + x.count, 0);
-    const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 36;
+    /* 쉬운 유형은 어려운 유형보다 많아지지 않게(check-session-roles 「어려운 유형이 쉬운 유형보다 적게」) */
+    const hardMin = () => { const h = own.filter(d => d.difficulty === 'hard'); return h.length ? Math.min(...h.map(d => d.count)) : Infinity; };
+    const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 42 && !(d.difficulty === 'easy' && d.count + 6 > hardMin());
+    /* 그래도 모자라면 복습 칸을 18까지 늘린다 — 교과·적용·독셈이 모두 상한에 막힌 회차(과정 26~28 등) */
+    const reviews = ss.school.filter(d => d.review);
     for(let guard = 0; guard < 60 && count() < DAILY_MIN * days; guard++){
       const c = own.slice().sort((a, b) => a.count - b.count || (b.difficulty === 'hard') - (a.difficulty === 'hard')).find(room)
-        || more.slice().sort((a, b) => a.count - b.count).find(room);
+        || more.slice().sort((a, b) => a.count - b.count).find(room)
+        || reviews.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(18, cap(d)) && threadSum(d.t) + 6 <= 42);
       if(!c) break; c.count += 6;
     }
     ss.studyDays = days;
