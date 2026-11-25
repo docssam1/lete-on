@@ -1,3 +1,13 @@
+## 2026-11-25 — Windows E: 증거 감사 27개 결과 반영 (Claude Code / Opus 5.5, Mac)
+
+- Windows Codex가 기준 커밋 4470876e9로 27개 실행: 20개 통과, 7개 실패(결과: Drive 코딩관련/windows-audit-result-codex-20261125.txt).
+- 실패 원인과 조치:
+  - 줄바꿈 차이 4개(border-mission3-contracts, stair-mission1-contracts, t-pattern-example2-contracts, pentacube-mission4-renderer-compatibility): Windows git이 CRLF로 받아 파일 해시가 달라졌을 뿐 코드는 그대로(Mac LF 해시 = 기준값). 저장소 안 글자 파일은 LF로 맞춘 뒤 해시하도록 감사를 고침(증거 폴더 파일은 원래 바이트).
+  - 의도한 변경 1개(colored-cut-mission1-questions): 2026-11-23 원문 복원(8ea552f6f)으로 variant 0 보통 난이도 문장만 바뀌어 E: 기준값(d90a4b…)과 달랐다. 그 한 칸만 바뀐 뒤 값(ddab0f…, Windows·Mac 같음)으로 대조하고 나머지 8칸은 보존 확인.
+  - 낡은 기대 1개(plane-cut-questions): Mission 3-1은 2026-10-15에 층별 단면 생성기로 공개되었는데 감사가 아직 잠김을 기대했다. 3-1은 layer-cut 생성기 공개, plane-cut 미등록을 확인하도록 고침.
+  - 증거 없음 1개(stack-operation-learner): 예전 Windows 작업본의 source-6-2-stack-operation-review.html을 Windows에서도 찾지 못함. 저장소에 없는 파일이라 그대로 남김.
+- 위 6개 감사는 E: 증거가 있어야 실행되므로 Windows에서 다시 실행해 확인해야 한다(지시서 Drive 코딩관련/황소문제은행_Windows감사_Codex지시서_20261125.md의 재실행 절).
+
 ## 2026-11-25 — 앱 전체 감사 일괄 점검, 4-2 삼각형 이름표 겹침 수정 (Claude Code / Opus 5.5, Mac)
 
 - main(102adb457)에서 JS 감사 1,342개를 모두 실행: 1,309개 통과. 실패 33개 중 27개는 Windows E: 증거가 필요한 기존 감사(사용자 결정으로 건너뜀). 나머지 중 4개(stack-assets-live·stack-renderer-live는 HSE_STACK_REVIEW_URL, 5-2 rounding-e2-browser는 고정 포트 8909 서버, four-vertex-cut-questions는 출력 폴더 이름 four-vertex-wrapper)는 환경을 맞춰 다시 실행해 통과. polycube-helper-compatibility는 변경 전 기준(before.json, --checkpoint)과 비교하는 도구라 기준 없이는 실행되지 않는다.
