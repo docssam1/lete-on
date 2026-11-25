@@ -1,5 +1,15 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
-import { applyTextbookRemaps } from "./textbook-remaps.js?v=20261125b";
+import { applyTextbookRemaps, TEXTBOOK_REMAPS } from "./textbook-remaps.js?v=20261125b";
+import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125c";
+import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125c";
+import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125c";
+import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125c";
+import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125d";
+import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125c";
+import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125c";
+import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125c";
+import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125c";
+import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125c";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124h";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261124h";
@@ -1006,7 +1016,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "height-order": Object.freeze(["g1-height-order-four", "g1-summer-height-order-five"]),
   "multi-person-transfer": Object.freeze(["g1-fall-three-person-total-transfer"]),
   "cryptarithm": Object.freeze(["two-digit-letter-cryptarithm", "diagnostic-two-digit-cryptarithm", "vertical-shape-cryptarithm-values"]),
-  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-mixed-operation-grid"]),
+  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-card-list-network-b5"]),
   "rod-length-ratio": Object.freeze(["g1-rod-ratio-total", "rod-ratio-total-book3", "rod-comparison-total-unit-test"]),
   "colored-triangle-difference": Object.freeze(["g1-triangle-color-difference", "g1-summer-triangular-color-difference"]),
   "polygon-stone-rearrangement": Object.freeze(["g1-polygon-stone-rearrangement", "polygon-border-shape-conversion-b7"]),
@@ -1024,7 +1034,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),
   "venn-count": Object.freeze(["set-union-count", "neither-set-count", "venn-neither-b7"]),
   "congruent-partition": Object.freeze(["congruent-equal-sum-partition-draw", "symbol-balanced-congruent-partition", "star-congruent-partition-draw-book4"]),
-  "calendar-weekday-sum": Object.freeze(["calendar-all-weekday-sum", "calendar-same-weekday-sum", "calendar-weekday-sum-year-boundary-book5"]),
+  "calendar-weekday-sum": Object.freeze(["calendar-all-weekday-sum", "calendar-ordinal-pair-sum-weekday-b5", "calendar-weekday-sum-year-boundary-book5"]),
   "custom-operation": Object.freeze(["two-custom-operations"]),
   "operator-insertion": Object.freeze(["plus-minus-multi-target", "number-card-plus-minus"]),
   "function-machine": Object.freeze(["two-function-machine-chain", "g1-fall-linear-input-output-table"]),
@@ -1138,6 +1148,18 @@ Object.assign(TYPES.find((item) => item.id === "cryptarithm-multi-symbol-carry")
 Object.assign(TYPES.find((item) => item.id === "subtract-to-repeated-number-b8"), {
   label: "두 자리 도형 수에서 한 자리 도형 수를 빼 반복수 만들기"
 });
+
+// 1과정 권마다 교재 번호 꼴에 맞춘 새 유형(bookNN-structure-generators.js, 1~10권 전체 대조 2026-11-25).
+TYPES.push(...BOOK01_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 1권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK02_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 2권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK03_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 3권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK04_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 4권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK05_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 5권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK06_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 6권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK07_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 7권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK08_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK09_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 교재 번호별 대조", ...rest })));
+TYPES.push(...BOOK10_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 교재 번호별 대조", ...rest })));
 
 // 2과정 G1 유형(course2-g1-generators.js). 문제은행 유형 고르기에도 「2과정 G1」 출처로 함께 보인다.
 TYPES.push(...COURSE2_G1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G1 · 문제 번호별 대조" })));
@@ -2032,6 +2054,16 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "most-frequent-digit-b10": "각 숫자가 일·십·백의 자리에 나타나는 횟수를 따로 세어 더합니다.",
   "digit-occurrence-range-b10": "목표 숫자가 각 자리에 오는 수를 세고 두 자리에 함께 오는 수도 확인합니다.",
   "positive-range-number-digit-count-b10": "한 자리·두 자리·세 자리 구간으로 나누어 쓰인 숫자 수를 더합니다.",
+  ...BOOK01_STRUCTURE_GUIDES,
+  ...BOOK02_STRUCTURE_GUIDES,
+  ...BOOK03_STRUCTURE_GUIDES,
+  ...BOOK04_STRUCTURE_GUIDES,
+  ...BOOK05_STRUCTURE_GUIDES,
+  ...BOOK06_STRUCTURE_GUIDES,
+  ...BOOK07_STRUCTURE_GUIDES,
+  ...BOOK08_STRUCTURE_GUIDES,
+  ...BOOK09_STRUCTURE_GUIDES,
+  ...BOOK10_STRUCTURE_GUIDES,
   ...COURSE2_G1_GUIDES,
   ...COURSE2_G2_GUIDES,
   ...COURSE2_G3_GUIDES,
@@ -4525,7 +4557,19 @@ export const CURRICULUM = [
   };
 });
 // 교재 번호마다 그 문제 꼴에 맞는 유형으로 다시 잇는다(원장 2026-11-25, 원본 N30 대조) — textbook-remaps.js
-applyTextbookRemaps(CURRICULUM);
+applyTextbookRemaps(CURRICULUM, [
+  ...TEXTBOOK_REMAPS,
+  ...BOOK01_STRUCTURE_REMAPS,
+  ...BOOK02_STRUCTURE_REMAPS,
+  ...BOOK03_STRUCTURE_REMAPS,
+  ...BOOK04_STRUCTURE_REMAPS,
+  ...BOOK05_STRUCTURE_REMAPS,
+  ...BOOK06_STRUCTURE_REMAPS,
+  ...BOOK07_STRUCTURE_REMAPS,
+  ...BOOK08_STRUCTURE_REMAPS,
+  ...BOOK09_STRUCTURE_REMAPS,
+  ...BOOK10_STRUCTURE_REMAPS,
+]);
 
 // ── 2과정 G1 「돌리기와 뒤집기」 본책(N30 신판) — 1과정과 같은 꼴(원장 2026-11-16 「1과정에 비해 너무 조잡스러워 … 교재 인쇄도 없고 흐름도 달라」 → 한 권 시범).
 // 본책 172문항을 번호마다 유형 하나에 잇는다. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형, 나머지는 2과정 G1 생성기(course2-g1-generators.js).
