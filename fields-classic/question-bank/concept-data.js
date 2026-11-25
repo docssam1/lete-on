@@ -502,8 +502,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ],
     "도형 전체를 밀거나 회전 방향을 반대로 잡지 않았는지 확인합니다.",
     [
-      evidence("도형 움직이기", 1, [2, 3, 5, 6]),
-      book4Evidence("도형 분할과 움직이기", 2, [1])
+      evidence("도형 움직이기", 1, [2, 3, 5, 6])
     ]
   ),
   "fold-cut-shape-choice": Object.freeze({
@@ -635,8 +634,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ],
     "숫자 모양을 외워서 바꾸거나 막대 하나만 따로 움직이지 않았는지 확인합니다.",
     [
-      evidence("도형 움직이기", 2, [1, 2]),
-      book4Evidence("도형 분할과 움직이기", 2, [2])
+      evidence("도형 움직이기", 2, [1, 2])
     ]
   ),
   "digital-two-digit-transform": Object.freeze({
@@ -1104,16 +1102,6 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "조각을 늘리거나 줄여 맞추거나, 돌린 뒤 칸 수와 연결 모양을 확인하지 않았는지 살펴봅니다.",
     [book4Evidence("도형 분할과 움직이기", 1, [2])]
   ),
-  "rotational-partition-two": sourceLesson(
-    "concept:geometry:rotational-congruent-partition",
-    [
-      beat("read-whole-two-parts", "전체와 두 조각을 확인해요", "나눌 전체 도형과 같은 칸 수의 두 조각이 필요한지 살펴봅니다."),
-      beat("draw-two-partition-lines", "선을 그어 두 조각으로 나눠요", "도형 안에 직접 선을 그어 빈틈과 겹침 없이 같은 칸 수와 연결 모양이 되게 합니다."),
-      beat("rotate-and-overlay-two", "돌려 포개어 확인해요", "두 조각을 돌려 서로 포개지는지 보고 전체를 빠짐없이 덮는지 확인합니다.")
-    ],
-    "두 조각의 칸 수만 맞추고 연결 모양이나 빈틈과 겹침을 확인하지 않았는지 살펴봅니다.",
-    [book4Evidence("도형 분할과 움직이기", 1, [4])]
-  ),
   "rotational-partition-four": sourceLesson(
     "concept:geometry:rotational-congruent-partition",
     [
@@ -1204,7 +1192,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "한 단계의 전체 나무만 보고 새로 늘어난 수를 세지 않거나, 늘어나는 묶음의 순서를 바꾸지 않았는지 확인합니다.",
     [book4Evidence("색종이 접기와 쌓기나무", 2, [2])]
   ),
-  "shape-difference-chain": sourceLesson(
+  "shape-difference-tree-b4": sourceLesson(
     "concept:number:chained-difference-addition",
     [
       beat("set-difference-direction", "차의 방향을 맞춰요", "두 양을 비교할 때 어느 쪽에서 어느 쪽을 빼는지 화살표로 표시합니다."),
@@ -1214,14 +1202,14 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "차의 앞뒤 방향을 바꾸거나 이어지지 않는 차를 더하고, 처음과 끝의 차로 검산하지 않았는지 확인합니다.",
     [book4Evidence("양팔저울과 비교하기", 1, [1, 2, 3, 4])]
   ),
-  "balance-unit-ratio": sourceLesson(
+  "mixed-pan-balance-two-b4": sourceLesson(
     "concept:number:balance-equivalence-multiplicative-chain",
     [
       beat("read-level-scales", "수평 저울을 읽어요", "양팔이 수평인 저울에서 양쪽 묶음이 같은 무게라는 뜻을 확인합니다."),
       beat("substitute-equal-groups", "같은 묶음을 차례로 바꿔요", "저울에서 같은 무게인 묶음을 다음 저울의 같은 자리 묶음으로 차례로 치환합니다."),
-      beat("multiply-unit-ratios", "배수를 이어 곱해요", "각 치환에서 몇 배가 되는지 순서대로 곱하고 마지막 저울도 수평인지 확인합니다.")
+      beat("remove-same-items", "같은 물건을 덜어 내요", "바꾸어 넣은 뒤 양쪽에 같은 물건이 있으면 같은 개수만큼 덜어 내고, 남은 두 가지 물건의 개수로 같은 무게를 읽습니다.")
     ],
-    "수평 저울의 양쪽이 같은 무게라는 조건을 놓치거나, 배수를 더하고 곱해야 할 관계를 바꾸지 않았는지 확인합니다.",
+    "수평 저울의 양쪽이 같은 무게라는 조건을 놓치거나, 한쪽에서만 물건을 덜어 내지 않았는지 확인합니다.",
     [book4Evidence("양팔저울과 비교하기", 2, [1, 2, 3, 4])]
   ),
   "directional-seat-placement": sourceLesson(
