@@ -169,12 +169,20 @@
       if (currentGeneration === generation) { loadingTask = null; $("book-open").disabled = false; }
     }
   }
+  async function sourceForEditing() {
+    if (!selected) throw new Error("no-paper");
+    const identity = selected;
+    if (!pdf) await openBook();
+    if (!pdf || selected !== identity) throw new Error("changed-paper");
+    host.dataset.renderState = "ready";
+    return { document: pdf, title: selected.title, program: selected.programId, year: selected.year, form: selected.form, language: selected.language || "en", url: selected.url };
+  }
   function selectPaper(config) {
     const library = window.GFIELDAMCOriginalPaperLibrary;
     const valid = config && library && library.formsFor(config.programId, config.year).includes(config.form);
     const requestedLanguage = config && config.language || "en";
     const requestedVersion = valid && window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(config.programId, config.year, config.form, requestedLanguage, library);
-    const language = requestedVersion && requestedVersion.status === "available" ? requestedLanguage : "en";
+    const language = requestedVersion && requestedVersion.status === "available" && requestedVersion.format !== "editable" ? requestedLanguage : "en";
     const version = valid && window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(config.programId, config.year, config.form, language, library);
     const key = valid ? [config.grade, config.programId, config.year, config.form, language].join(":") : "";
     if (selected && selected.key === key) return;
@@ -207,7 +215,7 @@
   function selectLanguage(language) {
     if (!selected) return false;
     const version = window.GFIELDPaperLanguages && window.GFIELDPaperLanguages.versionFor(selected.programId, selected.year, selected.form, language, window.GFIELDAMCOriginalPaperLibrary);
-    if (!version || version.status !== "available") return false;
+    if (!version || version.status !== "available" || version.format === "editable") return false;
     if (selected.language === language) return true;
     saveDraft(); selectPaper(Object.assign({}, selected, { language: language })); marksReady(); if (!opened) openBook();
     return true;
@@ -315,5 +323,5 @@
   $("book-print-form").addEventListener("submit", printPages);
   document.addEventListener("gfield:paper-marks-ready", marksReady);
   window.addEventListener("resize", function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(function () { if (pdf && $("book-zoom").value === "fit") renderPage(); }, 150); });
-  window.GFIELDPaperBookReader = Object.freeze({ selectPaper: selectPaper, selectLanguage: selectLanguage, currentLanguage: function () { return selected && selected.language || "en"; }, setGradeContext: setGradeContext, parsePages: parsePages });
+  window.GFIELDPaperBookReader = Object.freeze({ refreshView: function () { if (pdf) renderPage(); }, sourceForEditing: sourceForEditing, selectPaper: selectPaper, selectLanguage: selectLanguage, currentLanguage: function () { return selected && selected.language || "en"; }, setGradeContext: setGradeContext, parsePages: parsePages });
 })();

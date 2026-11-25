@@ -10,6 +10,8 @@
   <link rel="stylesheet" href="./academy-ui.css">
   <link rel="stylesheet" href="./competition-paper-review.css?v=20261123-4">
   <link rel="stylesheet" href="./shared/paper-book-reader.css?v=20261117-1">
+  <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
+  <link rel="stylesheet" href="./shared/paper-editions.css?v=20261126-1">
   <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
   <link rel="stylesheet" href="./shared/paper-learning-profile.css?v=20261117-1">
   <link rel="stylesheet" href="./shared/paper-score-overview.css?v=20261117-1">
@@ -28,6 +30,7 @@
 <div class="original-exam-bar"><div><strong id="original-exam-heading" tabindex="-1">기출시험</strong><span id="original-exam-format"></span></div><output id="original-exam-clock" role="timer" aria-live="off"></output><button id="original-exam-start" type="button" disabled>시험 시작</button></div><p id="original-exam-status" role="status" aria-live="polite"></p>
 </section>
 <section id="paper-book" class="paper-book" aria-labelledby="paper-book-title" hidden>
+  <div id="paper-edition-switch" class="paper-edition-switch" role="group" aria-label="시험지 형식"><button id="edition-original" type="button" aria-pressed="true">원본형</button><button id="edition-edited" type="button" aria-pressed="false">편집형</button></div>
   <header class="paper-book-heading"><div><h3 id="paper-book-title" tabindex="-1">원본 시험지</h3><p id="book-identity"></p></div><button id="book-open" type="button">시험지 펼쳐보기</button></header>
   <p id="book-status" class="book-status" role="status" aria-live="polite">시험지를 펼치면 이곳에서 읽을 수 있어요.</p>
   <div id="book-tools" class="book-tools" hidden>
@@ -37,6 +40,11 @@
     <button id="book-answer-jump" type="button">답안 입력</button>
   </div>
   <div id="book-viewport" class="book-viewport" tabindex="0" aria-label="시험지 읽기" hidden><div id="book-sheet" class="book-sheet"></div></div>
+  <section id="paper-edited-panel" hidden aria-label="편집형 시험지">
+    <div class="edited-paper-controls"><div id="edited-density" role="group" aria-label="쪽당 문항 수"><button type="button" data-edited-density="2" aria-pressed="true">한 쪽 2문항</button><button type="button" data-edited-density="3" aria-pressed="false">한 쪽 3문항</button></div><div id="edited-kind" role="group" aria-label="문제지와 해설지"><button id="edited-questions" type="button" aria-pressed="true">문제지</button><button id="edited-solutions" type="button" disabled>해설 · 준비 중</button></div><button id="edited-zoom" type="button" aria-pressed="false">크게 보기</button><button id="edited-print" type="button" disabled>편집형 인쇄</button></div>
+    <p id="edited-paper-status" role="status" aria-live="polite"></p><div id="edited-paper-pages" data-content-original></div>
+    <details id="edited-import-options"><summary>번역·해설 원고 불러오기</summary><p id="edited-import-description">선택한 연도·회차의 번역·해설 파일을 불러옵니다. 자료는 이 화면에서만 사용하며 서버에 전송하지 않습니다.</p><label id="edited-import-label" for="edited-import-file">원고 파일 (JSON)</label><input id="edited-import-file" type="file" accept="application/json,.json"><p id="edited-import-status" role="status" aria-live="polite"></p></details>
+  </section>
   <p id="book-render-error" class="book-render-error" role="alert" hidden></p>
   <p class="book-source-note"><a id="book-source" target="_blank" rel="noopener noreferrer">원본 제공처에서 열기 ↗</a><button id="book-retry" type="button" hidden>다시 불러오기</button></p>
 </section>
@@ -110,13 +118,17 @@
   <script src="./shared/paper-concept-labels.js?v=20261116-1"></script>
   <script src="./shared/paper-learning-profile.js?v=20261116-1"></script>
   <script src="./shared/paper-learning-profile-ui.js?v=20261117-1"></script>
-  <script src="./competition/amc-paper-languages.js?v=20261123-1"></script>
-  <script src="./shared/paper-book-reader.js?v=20261123-3"></script>
+  <script src="./competition/amc-paper-languages.js?v=20261126-1"></script>
+  <script src="./shared/paper-book-reader.js?v=20261126-1"></script>
   <script src="./competition/amc-study-paper-manifest.js?v=20261123-1"></script>
   <script src="./shared/paper-study-state.js?v=20261123-1"></script>
   <script src="./competition-paper-review.js?v=20261123-4"></script>
   <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
   <script src="./shared/paper-choice-buttons.js?v=20261123-1"></script>
-  <script src="./shared/original-paper-exam.js?v=20261123-1"></script>
+  <script src="./shared/math-inline.js?v=20261126-1"></script>
+  <script src="./competition/paper-edition-catalog.js?v=20261126-1"></script>
+  <script src="./shared/paper-edition-layout.js?v=20261126-1"></script>
+  <script src="./shared/paper-editions.js?v=20261126-1"></script>
+  <script src="./shared/original-paper-exam.js?v=20261126-1"></script>
 </body>
 </html>

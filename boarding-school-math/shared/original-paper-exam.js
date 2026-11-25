@@ -21,8 +21,8 @@
   function apply() {
     const paper = identity(), c = copy(), running = isRunning();
     panel.hidden = !paper; if (!paper) return;
-    panel.querySelectorAll('[data-paper-language]').forEach(function(button){const version=window.GFIELDPaperLanguages.versionFor(paper.program,paper.year,paper.form,button.dataset.paperLanguage,library);button.disabled=running||!version||version.status!=="available";button.setAttribute("aria-pressed",String(button.dataset.paperLanguage===window.GFIELDPaperBookReader.currentLanguage()));});
-    $("paper-language-label").textContent = c.language; panel.querySelector('[data-paper-language="ko"]').textContent = c.ko; panel.querySelector('[data-paper-language="zh-Hans"]').textContent = c.zh;
+    panel.querySelectorAll('[data-paper-language]').forEach(function(button){const version=window.GFIELDPaperLanguages.versionFor(paper.program,paper.year,paper.form,button.dataset.paperLanguage,library);button.disabled=running||!version||version.status!=="available";button.setAttribute("aria-pressed",String(button.dataset.paperLanguage===(window.GFIELDPaperEditions?window.GFIELDPaperEditions.currentLanguage():window.GFIELDPaperBookReader.currentLanguage())));});
+    $("paper-language-label").textContent = c.language; ['ko','zh-Hans'].forEach(function(lang){const version=window.GFIELDPaperLanguages.versionFor(paper.program,paper.year,paper.form,lang,library),text=lang==='ko'?c.ko:c.zh;panel.querySelector('[data-paper-language="'+lang+'"]').textContent=version&&version.status==='available'?text.split(' · ')[0]:text;});
     $("original-exam-heading").textContent = c.title; $("original-exam-format").textContent = paper.format.itemCount + " " + c.items + " · " + paper.format.durationMinutes + " " + c.minutes;
     $("original-exam-start").textContent = isSubmitted() ? c.again : c.start;
     $("original-exam-start").disabled = running || $("paper-book").dataset.renderState !== "ready";
@@ -43,8 +43,9 @@
   }
   function finish() { if (!isRunning()) return; active = Object.assign({},active,{status:"submitted",submittedAt:Math.min(Date.now(),active.deadline)}); write(); clearInterval(interval); apply(); }
   $("original-exam-start").addEventListener("click",start);
-  panel.querySelectorAll('[data-paper-language]').forEach(function(button){button.addEventListener("click",function(){if(!isRunning()&&window.GFIELDPaperBookReader.selectLanguage(button.dataset.paperLanguage)){const url=new URL(location.href);url.searchParams.set("paperLanguage",button.dataset.paperLanguage);history.replaceState(null,"",url);apply();}});});
+  panel.querySelectorAll('[data-paper-language]').forEach(function(button){button.addEventListener("click",function(){if(!isRunning()&&(window.GFIELDPaperEditions?window.GFIELDPaperEditions.selectLanguage(button.dataset.paperLanguage):window.GFIELDPaperBookReader.selectLanguage(button.dataset.paperLanguage))){const url=new URL(location.href);url.searchParams.set("paperLanguage",button.dataset.paperLanguage);history.replaceState(null,"",url);apply();}});});
   document.addEventListener("gfield:paper-marks-ready",sync);
+  document.addEventListener("gfield:paper-edition-language",apply);
   new MutationObserver(apply).observe($("paper-book"),{attributes:true,attributeFilter:["data-render-state"]});
   let language=document.documentElement.lang;new MutationObserver(function(){if(language!==document.documentElement.lang){language=document.documentElement.lang;apply();}}).observe(document.documentElement,{attributes:true,attributeFilter:["lang"]});
   window.GFIELDOriginalPaperExam=Object.freeze({isRunning, isSubmitted, start, finish});sync();
