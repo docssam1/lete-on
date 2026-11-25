@@ -19,7 +19,13 @@ test('entry and round cards distinguish R2 gap from R1 official rest',()=>{
 
 test("entry script invalidates the previous timing formatter cache",()=>{
  const html=fs.readFileSync(path.join(root,"public/exam-entry.html"),"utf8");
- assert.match(html,/exams\/app\.js\?v=won-middle22-r04-20261116/);
+ const version=html.match(/exams\/app\.js\?v=([^"\s]+)/)?.[1];
+ assert.ok(version);
+ assert.notEqual(version,'won-middle22-r04-20261116');
+ for(const source of ['data/available-mocks.js','promo/course-navigation.js']){
+  assert.ok(html.includes(source+'?v='+version),source);
+ }
+ assert.ok(promo.includes('data/available-mocks.js?v='+version));
 });
 
 test('third round uses the same confirmed clock window without changing the first two editions',()=>{

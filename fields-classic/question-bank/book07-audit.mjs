@@ -338,7 +338,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-07 missing");
 if (units.length !== 4) throw new Error(`book-07 unit count ${units.length}`);
-if (typeIds.length !== 72) throw new Error(`book-07 type count ${typeIds.length}`);
+if (typeIds.length !== 75) throw new Error(`book-07 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-07 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-07 unit test number ${question.number}, expected ${index + 1}`);

@@ -1,6 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261125a";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261125b";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { GENERATORS } from "./generators.js?v=20261124h";
+import { GENERATORS } from "./generators.js?v=20261125b";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -3293,6 +3293,7 @@ function visualMarkup(visual) {
   if (visual.kind === "book10") return `<div class="visual book10-visual">${book10Markup(visual)}</div>`;
   // 2과정(course2-g1-generators.js): 생성기가 그림(SVG)과 보기 목록을 html로 만든다
   if (visual.kind === "c2") return `<div class="visual c2-visual">${visual.html}</div>`;
+  if (visual.kind === "shape-matrix") return `<div class="visual shape-matrix-visual">${visual.html}</div>`;
   if (visual.kind.startsWith("g1-")) return `<div class="visual g1-source-visual">${g1SourceMarkup(visual)}</div>`;
   if (visual.kind === "hidden-card-conditions") return `<div class="visual hidden-card-visual">${hiddenCardConditionsMarkup(visual)}</div>`;
   if (visual.kind === "shape-matrix-rule") return `<div class="visual shape-matrix-visual">${shapeMatrixRuleMarkup(visual)}</div>`;

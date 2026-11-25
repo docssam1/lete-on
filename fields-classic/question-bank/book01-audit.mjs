@@ -1,3 +1,4 @@
+import { TEXTBOOK_REMAPS } from "./textbook-remaps.js";
 import { CURRICULUM, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { BOOK01_GENERATORS, BOOK01_INTERNALS } from "./book01-generators.js";
@@ -25,8 +26,8 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-assert(typeIds.length === 43, `expected 43 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 43, "duplicate type in book-01 curriculum");
+assert(typeIds.length === 49, `expected 49 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 49, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
@@ -48,9 +49,12 @@ for (const [unitIndex, unit] of book.units.entries()) {
 }
 assert(sourceQuestionCount === 163, `expected 163 source questions, got ${sourceQuestionCount}`);
 
+// 원본 대조로 다른 권 유형에 옮긴 번호(textbook-remaps.js)는 그 표가 근거다.
+const remappedIds = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-01").map((row) => row[5]));
 for (const typeId of typeIds) {
   const type = typeById(typeId);
   assert(type, `unknown type ${typeId}`);
+  if (remappedIds.has(typeId) && !type.textbookSource?.includes("1과정 1권")) continue;
   assert(type.sourceMatched, `${typeId}: sourceMatched missing`);
   assert(type.textbookSource?.includes("1과정 1권"), `${typeId}: Book 1 source label missing`);
   assert(type.generator && GENERATORS[type.generator], `${typeId}: generator missing`);

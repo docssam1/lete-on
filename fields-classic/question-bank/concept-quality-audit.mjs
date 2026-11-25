@@ -21,10 +21,10 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 444, `expected 444 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 491, `expected 491 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 521, `expected 521 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 590, `expected 590 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 86, `expected 86 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 85, `expected 85 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -59,8 +59,7 @@ const expectedPilot = Object.freeze({
   }),
   "fold-cut-unfold-one-draw": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
-    sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-04"])
+    placementBooks: Object.freeze(["book-01", "book-04"])
   }),
   "fold-number-grid-one": Object.freeze({
     conceptId: "concept:geometry:folded-number-cut-sum",
@@ -75,7 +74,7 @@ const expectedPilot = Object.freeze({
   "fold-number-grid-two-diagonal": Object.freeze({
     conceptId: "concept:geometry:folded-number-cut-sum",
     sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-04"])
+    placementBooks: Object.freeze(["book-01", "book-04"])
   }),
   "cube-count-solid": Object.freeze({
     conceptId: "concept:geometry:cube-column-total-count",
@@ -85,12 +84,12 @@ const expectedPilot = Object.freeze({
   "cube-minimum-from-solid": Object.freeze({
     conceptId: "concept:geometry:cube-minimum-visible-support",
     sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-04"])
+    placementBooks: Object.freeze(["book-04", "book-09"])
   }),
-  "cube-step-sequence": Object.freeze({
+  "cube-triangular-wall-growth": Object.freeze({
     conceptId: "concept:pattern:triangular-stair-cumulative-growth",
     sourceBookId: "book-04",
-    placementBooks: Object.freeze(["book-04"])
+    placementBooks: Object.freeze(["book-04", "book-05"])
   }),
   "shape-difference-chain": Object.freeze({
     conceptId: "concept:number:chained-difference-addition",
@@ -108,10 +107,6 @@ const expectedPilot = Object.freeze({
     placementBooks: Object.freeze(["book-04"])
   }),
   "fold-cut-shape-choice": Object.freeze({
-    conceptId: "concept:geometry:fold-reflection-unfold",
-    placementBooks: Object.freeze(["book-01"])
-  }),
-  "fold-cut-shape-choice-one": Object.freeze({
     conceptId: "concept:geometry:fold-reflection-unfold",
     placementBooks: Object.freeze(["book-01"])
   }),
@@ -155,11 +150,11 @@ const expectedPilot = Object.freeze({
     conceptId: "concept:number:shared-junction-equal-sum",
     placementBooks: Object.freeze(["book-01"])
   }),
-  "gakuro-card-rectangle-placement": Object.freeze({
+  "gakuro-card-irregular-placement": Object.freeze({
     conceptId: "concept:number:row-column-sum-constraints",
     placementBooks: Object.freeze(["book-01"])
   }),
-  "gakuro-grid-sum": Object.freeze({
+  "gakuro-grid-irregular-sum": Object.freeze({
     conceptId: "concept:number:row-column-sum-constraints",
     placementBooks: Object.freeze(["book-01"])
   }),
@@ -190,10 +185,15 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "shape-sum-table": Object.freeze({
+  "shape-matrix-2x2-set": Object.freeze({
     conceptId: "concept:number:shape-sum-matrix-elimination",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
+  }),
+  "shape-matrix-3x3-pair": Object.freeze({
+    conceptId: "concept:number:shape-sum-matrix-elimination",
+    sourceBookId: "book-02",
+    placementBooks: Object.freeze(["book-02", "book-08"])
   }),
   "equalize-transfer": Object.freeze({
     conceptId: "concept:number:transfer-equalization",
@@ -283,7 +283,7 @@ const expectedPilot = Object.freeze({
   "equal-partition-drawing": Object.freeze({
     conceptId: "concept:geometry:equal-partition-construction",
     sourceBookId: "book-03",
-    placementBooks: Object.freeze(["book-03"])
+    placementBooks: Object.freeze(["book-03", "book-09"])
   }),
   "folded-strip-length": Object.freeze({
     conceptId: "concept:geometry:folded-strip-total-length",
@@ -360,17 +360,12 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
   }),
-  "calendar-cross-month-weekday": Object.freeze({
+  "calendar-special-date-offset-book5": Object.freeze({
     conceptId: "concept:pattern:calendar-seven-day-cycle",
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
   }),
   "shortest-path-rectangle": Object.freeze({
-    conceptId: "concept:logic:shortest-path-branch-count",
-    sourceBookId: "book-05",
-    placementBooks: Object.freeze(["book-05"])
-  }),
-  "shortest-path-irregular-grid": Object.freeze({
     conceptId: "concept:logic:shortest-path-branch-count",
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
@@ -400,7 +395,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
   }),
-  "symbol-multiplication-chain": Object.freeze({
+  "symbol-zero-one-network-book5": Object.freeze({
     conceptId: "concept:number:symbol-product-equation-chain",
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
@@ -444,12 +439,12 @@ const expectedPilot = Object.freeze({
 assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expectedPilot).sort().join(","), "pilot type set changed");
 
 const expectedBook04ConceptTypes = Object.freeze([
-  "tetromino-family-choice", "tetromino-square-composition", "rotational-partition-two",
-  "rotational-partition-four", "shape-quarter-half-turn", "digital-digit-transform",
-  "digital-grid-transform", "fold-cut-unfold-one-draw", "fold-number-grid-one",
-  "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal", "cube-count-solid",
-  "cube-minimum-from-solid", "cube-step-sequence", "shape-difference-chain", "balance-unit-ratio",
-  "person-item-logic", "directional-seat-placement"
+  "balance-unit-ratio", "circular-seat-blank-book4", "cube-count-solid", "cube-minimum-from-solid",
+  "cube-triangular-wall-growth", "digital-digit-transform", "digital-grid-transform", "digital-grid-upright-after-moves",
+  "digital-transform-board-sum", "directional-landmark-placement-book4", "directional-seat-placement", "fold-cut-unfold-one-draw",
+  "fold-number-grid-one", "fold-number-grid-two-diagonal", "fold-number-grid-two-orthogonal", "person-item-logic",
+  "rotational-partition-four", "rotational-partition-two", "shape-difference-chain", "shape-quarter-half-turn",
+  "tetromino-family-choice", "tetromino-square-composition"
 ].sort());
 const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04").units.flatMap((unit) =>
   Object.entries(unit.typeStudyRefs || {})
@@ -459,12 +454,12 @@ const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04"
 assert(JSON.stringify(actualBook04ConceptTypes) === JSON.stringify(expectedBook04ConceptTypes),
   `Book 4 concept typeStudyRefs changed: expected ${expectedBook04ConceptTypes.join(",")}, got ${actualBook04ConceptTypes.join(",")}`);
 const expectedBook05ConceptTypes = Object.freeze([
-  "sequential-path-number-grid", "diagonal-fill-number-grid", "calendar-month-position",
-  "calendar-cross-month-weekday", "shortest-path-rectangle", "shortest-path-irregular-grid",
-  "digit-card-number-enumeration", "digit-card-ranked-number", "multiplication-table-pattern",
-  "product-cycle-completion", "symbol-product-pair", "symbol-multiplication-chain",
-  "symbol-mixed-operation-grid", "handshake-pair-count", "pair-selection-count",
-  "complete-graph-segment-count", "inverse-pair-count", "square-number-odd-sum", "pascal-row-sum"
+  "calendar-month-position", "calendar-special-date-offset-book5", "calendar-weekday-list-ordinal-book5", "complete-graph-segment-count",
+  "diagonal-fill-number-grid", "digit-card-number-enumeration", "digit-card-ranked-number", "handshake-pair-count",
+  "inverse-pair-count", "multiplication-table-pattern", "pair-selection-count", "pascal-row-sum",
+  "product-cycle-completion", "row-major-grid-two-target-sum-book5", "sequential-path-number-grid", "shortest-path-rectangle",
+  "square-number-odd-sum", "square-product-cycle-fill-book5", "symbol-cross-network-book5", "symbol-mixed-operation-grid",
+  "symbol-product-pair", "symbol-square-product-network-book5", "symbol-zero-one-network-book5"
 ].sort());
 const actualBook05ConceptTypes = CURRICULUM.find((book) => book.id === "book-05").units.flatMap((unit) =>
   Object.entries(unit.typeStudyRefs || {})
@@ -582,8 +577,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 86, `expected 86 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 358, `expected 358 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 85, `expected 85 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 436, `expected 436 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

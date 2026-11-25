@@ -214,7 +214,10 @@ function run() {
         const catalog = { window: {} }; vm.runInNewContext(code("source-inventory-grade6.js"), catalog);
         for (const sourceItemId of missionIds.slice(1)) {
           const item = catalog.window.HSE_SOURCE_INVENTORY_GRADE6.items.find(t => t.sourceItemId === sourceItemId);
-          assert(item); assert.equal(item.reviewLocked, true); assert.equal(item.generatorKey, "");
+          assert(item);
+          // 2026-11-25: Mission 3-1은 2026-10-15에 층별 단면 생성기(layer-cut)로 공개되었다. plane-cut 생성기에는 여전히 등록되지 않아야 한다.
+          if (sourceItemId === "6-2-u3-e4-mission-3-1") { assert.equal(item.reviewLocked, false); assert.equal(item.generatorKey, "sourceGrade6SecondSpaceE4LayerSectionAndCount"); }
+          else { assert.equal(item.reviewLocked, true); assert.equal(item.generatorKey, ""); }
         }
       });
       for (const value of [-1, 1.5, "0", NaN, Infinity, null, Number.MAX_SAFE_INTEGER + 1]) {

@@ -1,3 +1,5 @@
+import { TEXTBOOK_REMAPS } from "./textbook-remaps.js";
+const REMAPPED = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-08").map((row) => row[5]));
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 import { GENERATORS } from "./generators.js";
 import { BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js";
@@ -441,7 +443,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 51) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 70) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -476,7 +478,8 @@ for (const typeId of typeIds) {
     for (let index = 0; index < iterations; index += 1) {
       const problem = generator({ difficulty });
       // 5권에서 이미 검산된 공용 곱셈 매트릭스 두 유형은 해당 권 감사에서 확인한다.
-      if (problem.visual?.kind === "book8") validate(problem, typeId, difficulty);
+      // 권별 테스트용 유형을 교재 번호에 빌려 쓴 것(textbook-remaps.js)은 아래 권별 테스트 검산이 맡는다.
+      if (problem.visual?.kind === "book8" && !(REMAPPED.has(typeId) && typeId.startsWith("unit-test-book08-"))) validate(problem, typeId, difficulty);
       generated += 1;
     }
   }
