@@ -1,5 +1,6 @@
 @import url("./math-inline.css?v=20261103-2");
-@font-face{font-family:'GFIELD Worksheet Sans';font-style:normal;font-weight:100 700;font-display:swap;src:url('../../fields-classic/question-bank/assets/fonts/pretendard-var.woff2') format('woff2')}
+@font-face{font-family:'GFIELD Worksheet Sans';font-style:normal;font-weight:400;font-display:swap;src:url('./fonts/gfield-print-sans-400.woff2') format('woff2')}
+@font-face{font-family:'GFIELD Worksheet Sans';font-style:normal;font-weight:700;font-display:swap;src:url('./fonts/gfield-print-sans-700.woff2') format('woff2')}
 @font-face{font-family:'GFIELD Worksheet Serif';font-style:normal;font-weight:400;font-display:swap;src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-400-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
 @font-face{font-family:'GFIELD Worksheet Serif';font-style:normal;font-weight:400;font-display:swap;src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2') format('woff2');unicode-range:U+1100-11FF,U+3130-318F,U+AC00-D7AF}
 @font-face{font-family:'GFIELD Worksheet Serif';font-style:normal;font-weight:600;font-display:swap;src:url('../../fields-classic/question-bank/assets/fonts/noto-serif-kr-latin-600-normal.woff2') format('woff2');unicode-range:U+0000-00FF,U+0131,U+0152-0153,U+02BB-02BC,U+02C6,U+02DA,U+02DC,U+2000-206F,U+20AC,U+2122,U+2191,U+2193,U+2212,U+2215,U+FEFF,U+FFFD}
