@@ -934,6 +934,8 @@
     const requestedQuestions = state.questions;
     try {
       try { if (document.fonts?.ready) await document.fonts.ready; } catch (error) {}
+      // 인쇄 명조(print-typography.css)는 인쇄할 때만 쓰여 미리 받아 두지 않으면 대체 글꼴로 찍힐 수 있다. 굵기 3개를 먼저 받는다(최대 6초).
+      try { if (document.fonts?.load) await Promise.race([Promise.all(["400", "600", "700"].map(weight => document.fonts.load(`${weight} 16px "HSE Print Serif"`, "가㉠1"))), new Promise(resolve => setTimeout(resolve, 6000))]); } catch (error) {}
       if (mode === "problem") await rebalanceAllPrintPages();
       const images = [$("problemView"), $("solutionView"), $("answerKeyView")].filter(view => !view.hidden).flatMap(view => [...view.querySelectorAll("img")]);
       await Promise.all(images.map(image => image.decode()));

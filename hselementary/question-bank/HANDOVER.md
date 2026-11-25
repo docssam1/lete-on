@@ -1,3 +1,14 @@
+## 2026-11-25 — A4 인쇄 글꼴 명조로 통일 (Claude Code / Opus 5.5, Mac)
+
+- 근거: Windows Codex 글꼴 실측(Drive 코딩관련/황소문제은행_글꼴표시_Windows실측_20261125.md). 인쇄 기본 글꼴이 Pretendard이고 명조는 문항별로만 지정되어, 바깥 .question-prompt는 명조인데 안쪽 <p>·SVG는 Pretendard였고, ㉮·㉯는 Windows에서 Malgun Gothic으로 그려졌다.
+- 사용자 결정: "인쇄 전부 명조"(화면 글꼴은 그대로).
+- print-typography.css(새 파일, index.html 마지막 스타일): 인쇄 때만 #problemView·#solutionView·#answerKeyView의 문항 상자와 그 안 모든 글자(분수·치수·SVG text 포함)를 "HSE Print Serif"(저장소 fields-classic/…/noto-serif-kr-korean-400/600/700.woff2, unicode-range 없이) → Noto Serif KR → Pretendard → Batang으로 맞춘다. 한글 파일에 숫자·영문·㉠~㉰·×·÷·°·²가 들어 있고, ①·□·○·△·★·→는 저장소 Pretendard가 이어 받아 기기마다 같다(∠만 시스템 명조).
+- 예외(바꾸지 않음): 고정폭으로 자리를 맞추는 .long-operation·.source-division-work·.equation-boxes·.digital-number, 글자 모양이 조건인 5-2 3단원 돌린 숫자·글자 5문항(e7-example-7-3, e7-mission-1, e8-mission-5 원문, rotated-addition, letter-rotation)의 SVG. Noto Serif KR에는 tabular-nums가 없다.
+- app.js printWorksheet: 인쇄 명조는 인쇄 때만 쓰이므로 window.print 전에 굵기 3개를 document.fonts.load로 받는다(최대 6초). 쪽 보정 측정 틀은 인쇄 규칙을 그대로 옮겨 같은 글꼴로 잰다.
+- 확인: CDP CSS.getPlatformFontsForNode로 68개 유형(학기·단원마다 1개 + 무작위 31개) × 문제·풀이·빠른 정답의 실제 렌더 글꼴을 모음. 본문·분수·도형 글자는 모두 Noto Serif KR, 그 밖은 위 기호만 Pretendard(∠ 1건 AppleMyungjo). 4-2-u4-t2-7·6-2-u4-e2-mission-3·6-2-u3-e1-example-2 PDF 확인.
+- 캐시: print-typography.css?v=20261125-print-serif, app.js?v=20261125-print-serif.
+- **미완(병합 전 필수)**: 인쇄 관련 감사 681개 중 662개 통과, 19개 실패(stack-assets-live·stack-renderer-live 2개는 기존 환경 문제). 명조로 글자 폭이 달라져 생긴 것으로 보이는 17개: grade52-three-figure-labels-audit.cjs source-4-2-line-graph-1-browser-audit.js source-4-2-perpendicular-parallel-browser-audit.js source-6-2-fraction-division-e4-example3-browser-audit.js source-4-2-line-graph-2-browser-audit.js source-6-2-fraction-division-e4-example4-browser-audit.js mixed-worksheet-layout-browser-audit.js source-4-2-parallel-angle-browser-audit.js source-5-2-u3-page34-mixed-browser-audit.js source-5-2-u5-check113-four-up-browser-audit.cjs source-5-2-u5-p113-q47-band-browser-audit.cjs source-6-1-prisms-pyramids-e2-browser-audit.js source-6-2-fraction-division-e2-mission5-browser-audit.js source-6-2-fraction-division-e4-exploration-browser-audit.js source-6-1-prisms-pyramids-e3-browser-audit.js source-6-2-fraction-division-e3-example4-browser-audit.js source-6-2-fraction-division-e4-example2-browser-audit.js. 원인 확인·수정 후 다시 돌리고 PR·병합한다.
+
 ## 2026-11-25 — 여러 학년·학기·단원 함께 고르기, 여러 난이도 섞기, 문항 수 넓힘 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 요청(MathFlat 화면 참고): "여러 학년 학기 여러 단원도 선택 가능해야 돼, 난이도도", "문제 수도 다양하게".
