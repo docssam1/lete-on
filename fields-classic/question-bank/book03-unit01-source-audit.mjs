@@ -1,5 +1,8 @@
 import { GENERATORS } from "./generators.js";
 import { CURRICULUM, typeById } from "./source-data.js";
+import { BOOK03_STRUCTURE_TYPE_ROWS } from "./book03-structure-generators.js";
+// 교재 번호 꼴 새 유형(book03-structure-generators.js)은 book03-audit.mjs가 따로 검산한다(2026-11-25).
+const STRUCTURE_IDS = new Set(BOOK03_STRUCTURE_TYPE_ROWS.map((row) => row.id));
 import { mixed } from "./math-markup.js";
 import {
   partitionGeometryForAudit,
@@ -189,7 +192,7 @@ function unit01FromCurriculum() {
   assert(book, "book-03 missing from curriculum");
   const unit = book.units?.[0];
   assert(unit?.label === "단위넓이와 분수", `unexpected book03 unit01 label: ${unit?.label}`);
-  return unit.typeIds;
+  return unit.typeIds.filter((id) => !STRUCTURE_IDS.has(id));
 }
 
 function generate(typeId, difficulty) {
