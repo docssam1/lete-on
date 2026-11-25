@@ -188,6 +188,10 @@ jobs:
           # Retried runs retain earlier artifacts; deploy only this attempt's file.
           name: github-pages-${{ github.run_id }}-${{ github.run_attempt }}
           path: _site
+      # The upload can finalize before Pages' artifact listing sees this attempt.
+      # Runs 45607390316/1 and /2 uploaded successfully but immediate lookup missed it.
+      - name: Allow the uploaded Pages artifact to become discoverable
+        run: sleep 20
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
