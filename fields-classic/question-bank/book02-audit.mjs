@@ -122,6 +122,125 @@ function countOrderings(symbols, relations) {
   return count;
 }
 
+// 교재 번호 꼴에 맞춘 새 유형(book02-structure-generators.js, 이름 끝 -b2) — 생성기와 따로 다시 풀어 본다.
+function structureSudokuCount(puzzle, size, regions) {
+  const units = [];
+  for (let r = 0; r < size; r += 1) units.push(Array.from({ length: size }, (_, c) => r * size + c));
+  for (let c = 0; c < size; c += 1) units.push(Array.from({ length: size }, (_, r) => r * size + c));
+  if (regions) {
+    const groups = new Map();
+    regions.forEach((g, i) => { if (!groups.has(g)) groups.set(g, []); groups.get(g).push(i); });
+    units.push(...groups.values());
+  }
+  const work = [...puzzle];
+  let count = 0;
+  const walk = () => {
+    if (count > 1) return;
+    const i = work.indexOf(0);
+    if (i < 0) { count += 1; return; }
+    for (let v = 1; v <= size; v += 1) {
+      if (units.some((u) => u.includes(i) && u.some((j) => work[j] === v))) continue;
+      work[i] = v;
+      walk();
+      work[i] = 0;
+    }
+  };
+  walk();
+  return count;
+}
+
+function validateStructureB2(id, problem, difficulty) {
+  const meta = problem.meta || {};
+  const html = problem.visual?.html || "";
+  assert(problem.visual?.kind === "fig" && html.includes("<svg"), id, difficulty, "fig svg missing");
+  assert(!/\d\/\d/.test(`${problem.prompt}${problem.solution}`), id, difficulty, "slash fraction in text");
+  if (id.startsWith("shape-")) {
+    // 카드에서 서로 다른 수를 모양마다 넣는 모든 경우 중 식이 모두 맞는 것은 하나뿐
+    const shapes = Object.keys(meta.values);
+    const sum = (side, assign) => side.reduce((t, s) => t + assign[s], 0);
+    let count = 0;
+    let found = null;
+    const assign = {};
+    const walk = (i, used) => {
+      if (count > 1) return;
+      if (i === shapes.length) {
+        if (meta.equations.every((eq) => sum(eq.left, assign) === sum(eq.right, assign))) { count += 1; found = { ...assign }; }
+        return;
+      }
+      for (const v of meta.cards) {
+        if (used.has(v)) continue;
+        assign[shapes[i]] = v;
+        used.add(v);
+        walk(i + 1, used);
+        used.delete(v);
+      }
+    };
+    walk(0, new Set());
+    assert(count === 1, id, difficulty, "shape equations not unique");
+    assert(Number(problem.answer) === found[meta.target], id, difficulty, "shape equation answer mismatch");
+    return;
+  }
+  if (id.startsWith("balance-")) {
+    const w = meta.weights;
+    for (const scale of meta.scales) {
+      const side = (items) => items.reduce((t, s) => t + w[s], 0);
+      assert(side(scale.left) === side(scale.right), id, difficulty, "scale not level");
+    }
+    // 아는 무게 하나에서 시작해 저울마다 모르는 물건이 한 가지씩이면 모두 정해진다
+    const known = new Set([meta.given || Object.keys(w).sort((a, b) => w[a] - w[b])[0]]);
+    let moved = true;
+    while (moved) {
+      moved = false;
+      for (const scale of meta.scales) {
+        const unknown = new Set([...scale.left, ...scale.right].filter((s) => !known.has(s)));
+        if (unknown.size === 1) { known.add([...unknown][0]); moved = true; }
+      }
+    }
+    assert(known.size === Object.keys(w).length, id, difficulty, "balance chain not solvable");
+    if (id.endsWith("order-b2")) {
+      const order = Object.keys(w).sort((a, b) => w[b] - w[a]);
+      assert(new Set(Object.values(w)).size === order.length, id, difficulty, "equal weights in order problem");
+      assert(problem.answer === order.join(" > "), id, difficulty, "balance order mismatch");
+    } else if (id.startsWith("balance-count")) {
+      assert(numberFrom(problem.answer) === w[meta.target] / w[meta.per], id, difficulty, "balance count mismatch");
+    } else {
+      assert(numberFrom(problem.answer) === w[meta.target], id, difficulty, "balance weight mismatch");
+    }
+    return;
+  }
+  if (id.startsWith("sudoku-fill-")) {
+    assert(problem.responseKind === "visual-fill" && problem.answerVisual?.html?.includes("<svg"), id, difficulty, "sudoku fill answer visual missing");
+    for (const board of meta.boards) {
+      assert(structureSudokuCount(board.puzzle, meta.size, board.regions) === 1, id, difficulty, "sudoku fill not unique");
+      assert(board.puzzle.every((v, i) => !v || v === board.solution[i]), id, difficulty, "sudoku clue mismatch");
+      assert(board.puzzle.some((v) => !v), id, difficulty, "sudoku has no blank");
+    }
+    return;
+  }
+  if (id === "four-node-relation-b2") {
+    const v = meta.items[3];
+    const test = (x) => {
+      if (meta.rule.startsWith("sum-")) {
+        const pos = meta.rule.slice(4);
+        return x[pos] === ["top", "right", "bottom", "left"].filter((p) => p !== pos).reduce((t, p) => t + x[p], 0);
+      }
+      if (meta.rule === "product-cross") return x.top * x.bottom === x.left * x.right;
+      const pairs = { "pair-topbottom": ["top", "bottom", "left", "right"], "pair-topright": ["top", "right", "bottom", "left"], "pair-topleft": ["top", "left", "right", "bottom"] }[meta.rule];
+      return x[pairs[0]] + x[pairs[1]] === x[pairs[2]] + x[pairs[3]];
+    };
+    assert(meta.items.every(test), id, difficulty, "four node rule mismatch");
+    assert(Number(problem.answer) === v[meta.blank], id, difficulty, "four node answer mismatch");
+    return;
+  }
+  if (id === "digit-pair-two-results-b2") {
+    const [a, b] = meta.pairs[3];
+    assert(problem.answer === `㉠ ${meta.values[3][0]}, ㉡ ${meta.values[3][1]}` && meta.answer[0] === meta.values[3][0], id, difficulty, "digit pair answer mismatch");
+    assert(a !== b, id, difficulty, "digit pair same digits");
+    return;
+  }
+  fail(id, difficulty, "validator missing");
+}
+
 function validate(type, problem, difficulty) {
   const { id } = type;
   const meta = problem.meta || {};
@@ -134,6 +253,7 @@ function validate(type, problem, difficulty) {
   assert(typeof problem.solution === "string" && problem.solution.trim(), id, difficulty, "solution missing");
   assert(!/undefined|NaN|\[object Object\]/.test(`${problem.prompt}${problem.answer}${problem.solution}`), id, difficulty, "invalid text token");
   validateKoreanSurface(problem, id, difficulty);
+  if (id.endsWith("-b2")) return validateStructureB2(id, problem, difficulty);
 
   if (id.startsWith("equal-partition-")) {
     assert(meta.top === meta.parts * meta.part, id, difficulty, "partition total mismatch");
@@ -311,7 +431,7 @@ function validate(type, problem, difficulty) {
 }
 
 assert(book, "book-02", 0, "curriculum book missing");
-assert(typeIds.length === 50, "book-02", 0, `expected 50 types, got ${typeIds.length}`);
+assert(typeIds.length === 65, "book-02", 0, `expected 65 types, got ${typeIds.length}`);
 assert(new Set(typeIds).size === typeIds.length, "book-02", 0, "duplicate type id");
 assert(types.every(Boolean), "book-02", 0, "unknown type id");
 const remappedIds = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-02").map((row) => row[5]));

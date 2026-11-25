@@ -822,9 +822,9 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("verify-balance-order", "모든 저울로 순서를 확인해요", "만든 순서를 각 저울에 다시 대입해 어느 관계도 거꾸로 되지 않는지 확인합니다.")
     ],
     "접시의 높이를 반대로 읽거나 서로 이어지지 않은 비교를 바로 순서로 정하지 않았는지 확인합니다.",
-    [book2Evidence("양팔저울", 1, [1, 2, 3, 4])]
+    [book2Evidence("양팔저울", 1, [1])]
   ),
-  "distinct-shape-value-equation": sourceLesson(
+  "shape-value-chain-cards-b2": sourceLesson(
     "concept:number:distinct-symbol-equation-chain",
     [
       beat("solve-repeated-symbol", "같은 도형 식부터 풀어요", "한 도형이 여러 번 더해진 식에서 그 도형 하나의 값을 먼저 구합니다."),
@@ -884,16 +884,6 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "테두리 네 변의 모서리를 두 번 세거나 안쪽 칸까지 테두리로 세지 않았는지 확인합니다.",
     [book2Evidence("규칙찾기와 수열", 2, [4])]
   ),
-  "four-number-center-rule": sourceLesson(
-    "concept:number:four-outer-center-operation",
-    [
-      beat("compare-outer-center-examples", "완성된 그림을 비교해요", "앞의 그림마다 바깥 네 수와 가운데 수가 어떻게 연결되는지 계산을 여러 가지로 시도합니다."),
-      beat("confirm-one-center-rule", "모두 맞는 약속 하나를 정해요", "한 그림에만 맞는 계산은 지우고 모든 완성 그림에 같은 순서로 맞는 계산을 남깁니다."),
-      beat("apply-center-rule", "마지막 그림에 적용해요", "정한 계산 순서에 마지막 바깥 네 수를 넣어 가운데 수를 구하고 보기에도 다시 적용합니다.")
-    ],
-    "첫 번째 그림 하나에만 맞는 계산을 약속으로 정하거나 덧셈과 뺄셈의 순서를 바꾸지 않았는지 확인합니다.",
-    [book2Evidence("약속과 스도쿠", 1, [1])]
-  ),
   "number-grid-row-rule": sourceLesson(
     "concept:number:uniform-row-operation",
     [
@@ -914,7 +904,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "두 숫자를 더한 값을 두 자리 수로 잘못 읽거나 십의 자리와 일의 자리를 바꾸지 않았는지 확인합니다.",
     [book2Evidence("약속과 스도쿠", 1, [2, 3])]
   ),
-  "sudoku-three-row-column": sourceLesson(
+  "sudoku-fill-three-row-column-b2": sourceLesson(
     "concept:logic:latin-row-column-three",
     [
       beat("list-three-candidates", "1·2·3 후보를 적어요", "빈칸마다 들어갈 수 있는 1, 2, 3을 준비하고 같은 줄에 이미 있는 수를 지웁니다."),
@@ -924,7 +914,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "가로줄만 보고 수를 넣거나 같은 세로줄에 같은 수를 두 번 쓰지 않았는지 확인합니다.",
     [book2Evidence("약속과 스도쿠", 2, [1])]
   ),
-  "sudoku-four-square-region": sourceLesson(
+  "sudoku-fill-four-square-pair-b2": sourceLesson(
     "concept:logic:latin-row-column-region-four",
     [
       beat("list-four-candidates", "1부터 4까지 후보를 적어요", "빈칸마다 1, 2, 3, 4 가운데 가로줄과 세로줄에 없는 수를 남깁니다."),
