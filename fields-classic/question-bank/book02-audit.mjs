@@ -217,6 +217,49 @@ function validateStructureB2(id, problem, difficulty) {
     }
     return;
   }
+  if (id.endsWith("-sequence-b2")) {
+    // 빈칸 값은 그 자리의 수, 수열은 묶음·가닥 규칙을 그대로 따른다
+    for (const part of meta.parts) {
+      assert(part.blanks.every((i, k) => part.full[i] === part.answers[k]), id, difficulty, "sequence blank answer mismatch");
+      const [kind, a, b, c] = part.rule.split(":");
+      const f = part.full;
+      if (kind === "triple") f.forEach((v, i) => assert(v === f[0] + Math.floor(i / 3) * Number(b) + (i % 3) * Number(a), id, difficulty, "triple rule broken"));
+      if (kind === "two") f.forEach((v, i) => assert(i < 2 || v - f[i - 2] === (i % 2 ? Number(b) : Number(a)), id, difficulty, "two-strand rule broken"));
+      if (kind === "double") {
+        const strands = [f.filter((_, i) => i % 2 === 0), f.filter((_, i) => i % 2 === 1)];
+        const ok = strands.some((x) => x.every((v, i) => !i || v === x[i - 1] * 2)) && strands.some((x) => x.every((v, i) => !i || v - x[i - 1] === Number(a)));
+        assert(ok, id, difficulty, "doubling rule broken");
+      }
+    }
+    assert(String(problem.answer).includes(String(meta.parts[0].answers[0])), id, difficulty, "sequence answer text");
+    return;
+  }
+  if (id === "diagonal-band-stone-growth-b2") {
+    const side = meta.startSide + meta.target - 1;
+    const black = meta.offsets.reduce((t, o) => t + side - Math.abs(o), 0);
+    assert(black === meta.black && side * side - black === meta.white, id, difficulty, "diagonal stone count mismatch");
+    assert(numberFrom(problem.answer) === (meta.askWhite ? meta.white : meta.black), id, difficulty, "diagonal answer mismatch");
+    return;
+  }
+  if (id === "alternating-run-stone-total-b2") {
+    let black = 0;
+    let white = 0;
+    for (let run = meta.startRun, i = 0, left = meta.total; left > 0; run += 1, i += 1) {
+      const n = Math.min(run, left);
+      if ((i % 2 === 0) === meta.firstBlack) black += n; else white += n;
+      left -= n;
+    }
+    assert(black === meta.black && white === meta.white && black !== white, id, difficulty, "run count mismatch");
+    assert(problem.answer === `${black > white ? "검은 돌" : "흰 돌"}, ${Math.abs(black - white)}개`, id, difficulty, "run answer mismatch");
+    return;
+  }
+  if (id === "branching-segment-growth-b2" || id === "nested-circle-doubling-b2") {
+    const k = meta.branches || meta.k;
+    const total = (k ** meta.target - 1) / (k - 1);
+    const newest = k ** (meta.target - 1);
+    assert(numberFrom(problem.answer) === (meta.askNew || meta.askSmall ? newest : total), id, difficulty, "doubling growth mismatch");
+    return;
+  }
   if (id === "four-node-relation-b2") {
     const v = meta.items[3];
     const test = (x) => {
@@ -431,7 +474,7 @@ function validate(type, problem, difficulty) {
 }
 
 assert(book, "book-02", 0, "curriculum book missing");
-assert(typeIds.length === 65, "book-02", 0, `expected 65 types, got ${typeIds.length}`);
+assert(typeIds.length === 72, "book-02", 0, `expected 72 types, got ${typeIds.length}`);
 assert(new Set(typeIds).size === typeIds.length, "book-02", 0, "duplicate type id");
 assert(types.every(Boolean), "book-02", 0, "unknown type id");
 const remappedIds = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-02").map((row) => row[5]));

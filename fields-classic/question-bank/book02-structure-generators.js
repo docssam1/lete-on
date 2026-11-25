@@ -1164,6 +1164,303 @@ function digitPairTwoResults({ difficulty = 2 }) {
   return null;
 }
 
+// ── 3단원 「규칙찾기와 수열」 ────────────────────────────────────────
+
+// 수열 한 줄(빈칸은 색칠한 칸, 끝은 「…」)
+function sequenceRowSvg(items, label) {
+  const cw = 34;
+  const gap = 5;
+  const left = label ? 34 : 2;
+  const width = left + items.length * (cw + gap) + 22;
+  let body = label ? text(4, 23, label, { size: 15, weight: 700, anchor: "start" }) : "";
+  items.forEach((v, i) => {
+    const x = left + i * (cw + gap);
+    const blank = v === null;
+    body += `<rect x="${x}" y="4" width="${cw}" height="28" rx="3" style="fill:${blank ? "#f6e4a8" : "#fff"};stroke:${LINE};stroke-width:1.2"/>`;
+    if (!blank) body += text(x + cw / 2, 24, v, { size: String(v).length > 2 ? 14 : 16 });
+  });
+  body += text(left + items.length * (cw + gap) + 8, 24, "…", { size: 16 });
+  return svgWrap(width, 36, body, "수열");
+}
+
+function sequenceProblem(parts, intro) {
+  const labels = parts.length > 1 ? parts.map((_, i) => `(${i + 1})`) : [""];
+  return {
+    prompt: `${intro} 규칙을 찾아 색칠된 빈칸에 알맞은 수를 구하세요.`,
+    visual: { kind: "fig", html: parts.map((p, i) => sequenceRowSvg(p.items, labels[i])).join("") },
+    answer: parts.map((p, i) => `${labels[i] ? `${labels[i]} ` : ""}${p.answers.join(", ")}`).join(", "),
+    solution: parts.map((p, i) => `${labels[i] ? `${labels[i]} ` : ""}${p.say} 그래서 빈칸은 ${p.answers.join(", ")}입니다.`).join(" "),
+    meta: { parts: parts.map((p) => ({ full: p.full, blanks: p.blanks, answers: p.answers, rule: p.rule })) }
+  };
+}
+
+function withBlanks(full, positions) {
+  return { items: full.map((v, i) => (positions.includes(i) ? null : v)), answers: positions.map((i) => full[i]), blanks: positions, full };
+}
+
+// 세 개씩 묶음: 묶음 안에서는 같은 수만큼 줄거나 늘고, 다음 묶음은 첫 수가 일정하게 바뀐다
+function tripleGroupPart(difficulty) {
+  for (let t = 0; t < 50; t += 1) {
+    const inner = pick(difficulty === 1 ? [-1, 1] : [-1, -2, 1, 2, 3]);
+    const shift = pick(difficulty === 1 ? [3, 4, 5] : [1, 2, 3, 4, 5, 6, -1]);
+    if (shift === inner) continue;
+    const start = randomInt(inner < 0 ? 6 : 1, inner < 0 ? 15 : 9);
+    const full = [];
+    for (let g = 0; g < 4; g += 1) for (let k = 0; k < 3; k += 1) full.push(start + g * shift + k * inner);
+    if (full.some((v) => v <= 0 || v > 60)) continue;
+    // 빈칸은 셋째 묶음 뒤에 하나(어려우면 둘)
+    const positions = difficulty === 3 ? [randomInt(9, 11), randomInt(6, 8)].sort((a, b) => a - b) : [randomInt(9, 11)];
+    const part = withBlanks(full, positions);
+    part.say = `세 개씩 묶으면 묶음 안에서는 ${Math.abs(inner)}씩 ${inner < 0 ? "작아지고" : "커지고"}, 묶음의 첫 수는 ${Math.abs(shift)}씩 ${shift < 0 ? "작아집니다" : "커집니다"}(${[0, 3, 6].map((i) => full[i]).join(", ")}, …).`;
+    part.rule = `triple:${inner}:${shift}`;
+    return part;
+  }
+  return null;
+}
+
+// 확인 1-2 · 연습 7: 세 개씩 묶음 수열 두 줄
+function groupedTripleSequence({ difficulty = 2 }) {
+  const parts = [tripleGroupPart(difficulty), tripleGroupPart(difficulty)];
+  if (parts.some((p) => !p) || parts[0].rule === parts[1].rule) return null;
+  return sequenceProblem(parts, "다음은 어떤 규칙에 따라 수를 늘어놓은 것입니다.");
+}
+
+// 확인 1-3: (1) 세 수 묶음이 하나씩 밀려 나가는 수열 (2) 수 n을 n번(또는 같은 횟수씩) 되풀이하는 수열
+function slidingAndRepeatSequence({ difficulty = 2 }) {
+  const size = difficulty === 1 ? 3 : pick([3, 4]);
+  const start = randomInt(1, 4);
+  const slide = [];
+  for (let g = 0; g < 4; g += 1) for (let k = 0; k < size; k += 1) slide.push(start + g + k);
+  const first = withBlanks(slide, [randomInt(size * 2, size * 3 - 1)]);
+  first.say = `${size}개씩 묶으면 (${slide.slice(0, size).join(", ")}), (${slide.slice(size, size * 2).join(", ")}), …처럼 묶음마다 모든 수가 1씩 커집니다.`;
+  first.rule = `slide:${size}`;
+  const base = randomInt(1, difficulty === 3 ? 3 : 2);
+  const sameTimes = difficulty >= 2 && Math.random() < 0.4 ? pick([2, 3]) : 0;
+  const numStep = sameTimes ? pick([1, 2]) : 1;
+  const repeat = [];
+  for (let n = base, j = 0; repeat.length < 16; n += numStep, j += 1) {
+    const times = sameTimes || j + 1;
+    for (let k = 0; k < times && repeat.length < 16; k += 1) repeat.push(n);
+  }
+  // 빈칸 둘: 반복이 바뀌는 언저리 하나와 그 뒤 하나
+  const from = 8;
+  const a = randomInt(from, 11);
+  const b = randomInt(a + 2, 14);
+  const second = withBlanks(repeat, [a, b]);
+  second.say = sameTimes
+    ? `같은 수를 ${sameTimes}번씩 쓰고, 다음 수는 ${numStep}만큼 큽니다.`
+    : base === 1 ? "1은 1번, 2는 2번, 3은 3번처럼 수를 그 수만큼 씁니다." : `${eun(base)} 1번, ${eun(base + 1)} 2번, ${eun(base + 2)} 3번처럼 한 번씩 더 많이 씁니다.`;
+  second.rule = `repeat:${base}:${sameTimes}:${numStep}`;
+  return sequenceProblem([first, second], "다음은 어떤 규칙에 따라 수를 늘어놓은 것입니다.");
+}
+
+// 확인 1-1: 두 수열이 번갈아 놓인 수열 — 한 줄은 한 가닥이 두 배씩, 다른 줄은 두 가닥이 다른 수만큼 커짐
+function interleavedDoublingSequence({ difficulty = 2 }) {
+  // (1) 한 가닥은 일정하게 커지고, 다른 가닥은 두 배씩
+  const addStart = randomInt(1, 5);
+  const addStep = pick([1, 2, 3]);
+  const dblStart = pick([1, 2, 3]);
+  const doubleOdd = Math.random() < 0.4; // 두 배 가닥이 홀수 번째(1·3·5번째)
+  const firstSeq = [];
+  for (let i = 0; i < 12; i += 1) {
+    const k = Math.floor(i / 2);
+    const isDouble = (i % 2 === 0) === doubleOdd;
+    firstSeq.push(isDouble ? dblStart * 2 ** k : addStart + k * addStep);
+  }
+  if (firstSeq.some((v) => v > 200)) return null;
+  const posA = [randomInt(8, 10)];
+  if (difficulty === 3) posA.push(11);
+  const p1 = withBlanks(firstSeq, posA);
+  p1.say = `${doubleOdd ? "짝수" : "홀수"} 번째 수는 ${addStep}씩 커지고, ${doubleOdd ? "홀수" : "짝수"} 번째 수는 앞의 수를 두 번 더한 수(두 배)가 됩니다.`;
+  p1.rule = `double:${addStep}`;
+  // (2) 두 가닥이 다른 수만큼 커짐
+  const s1 = randomInt(2, 6);
+  const d1 = pick([2, 3, 4]);
+  const d2 = pick([3, 4, 5].filter((d) => d !== d1));
+  const s2 = s1 + randomInt(1, 3);
+  const two = [];
+  for (let i = 0; i < 12; i += 1) two.push(i % 2 === 0 ? s1 + (i / 2) * d1 : s2 + ((i - 1) / 2) * d2);
+  const p2 = withBlanks(two, [randomInt(7, 10)]);
+  p2.say = `홀수 번째 수는 ${d1}씩, 짝수 번째 수는 ${d2}씩 커집니다.`;
+  p2.rule = `two:${d1}:${d2}`;
+  return sequenceProblem([p1, p2], "다음은 두 수열을 번갈아 늘어놓은 것입니다.");
+}
+
+// ── 3단원 그림 수열 ──
+
+function stageTableSvg(rowLabel, values, count) {
+  const cw = 44;
+  const head = 96;
+  const width = head + count * cw + 4;
+  let body = "";
+  const cellRow = (y, label, getter, fill) => {
+    body += `<rect x="2" y="${y}" width="${head}" height="30" style="fill:${fill};stroke:${LINE};stroke-width:1.1"/>${text(2 + head / 2, y + 20, label, { size: 14 })}`;
+    for (let i = 0; i < count; i += 1) {
+      const v = getter(i);
+      body += `<rect x="${2 + head + i * cw}" y="${y}" width="${cw}" height="30" style="fill:${fill};stroke:${LINE};stroke-width:1.1"/>`;
+      if (v != null) body += text(2 + head + i * cw + cw / 2, y + 20, v, { size: 15 });
+    }
+  };
+  cellRow(2, "순서", (i) => i + 1, SOFT);
+  cellRow(32, rowLabel, (i) => (i < values.length ? values[i] : null), "#fff");
+  return svgWrap(width, 64, body, `${rowLabel} 표`);
+}
+
+function treeSvg(stage, branches) {
+  const size = 120;
+  let body = "";
+  const draw = (x, y, angle, len, depth) => {
+    const x2 = x + Math.cos(angle) * len;
+    const y2 = y + Math.sin(angle) * len;
+    body += `<line x1="${x.toFixed(1)}" y1="${y.toFixed(1)}" x2="${x2.toFixed(1)}" y2="${y2.toFixed(1)}" style="stroke:#3b5b4c;stroke-width:1.6;stroke-linecap:round"/>`;
+    if (depth >= stage) return;
+    const spread = branches === 2 ? [-0.62, 0.62] : [-0.85, 0, 0.85];
+    spread.forEach((d) => draw(x2, y2, angle + d, len * 0.62, depth + 1));
+  };
+  draw(size / 2, size - 8, -Math.PI / 2, 34, 1);
+  return size ? svgWrap(size, size, body, `${stage}번째 그림`) : "";
+}
+
+function nestedCircleSvg(stage, k) {
+  const R = 52;
+  let body = "";
+  const draw = (cx, cy, r, depth) => {
+    body += `<circle cx="${cx.toFixed(2)}" cy="${cy.toFixed(2)}" r="${r.toFixed(2)}" style="fill:none;stroke:#3b5b4c;stroke-width:${depth === 1 ? 1.4 : 1}"/>`;
+    if (depth >= stage) return;
+    const rr = r / k;
+    for (let i = 0; i < k; i += 1) draw(cx - r + rr + i * 2 * rr, cy, rr, depth + 1);
+  };
+  draw(R + 3, R + 3, R, 1);
+  return svgWrap(R * 2 + 6, R * 2 + 6, body, `${stage}번째 모양`);
+}
+
+function captioned(svg, caption) {
+  return `<figure style="margin:0;display:flex;flex-direction:column;align-items:center;gap:4px">${svg}<figcaption style="font-size:14px">${caption}</figcaption></figure>`;
+}
+
+const ORD = ["첫", "두", "세", "네", "다섯"];
+
+// 연습 17: 끝마다 가지를 쳐 나가는 선분(가지 수는 2 또는 3)
+function branchingSegmentGrowth({ difficulty = 2 }) {
+  const branches = difficulty === 3 ? pick([2, 3]) : 2;
+  const target = branches === 2 ? randomInt(difficulty === 1 ? 4 : 5, difficulty === 1 ? 6 : 7) : randomInt(4, 5);
+  const total = (n) => (branches ** n - 1) / (branches - 1);
+  const shown = branches === 2 ? 4 : 3;
+  const html = [...Array.from({ length: shown }, (_, i) => captioned(treeSvg(i + 1, branches), `${ORD[i]} 번째`)), stageTableSvg("선분의 개수", [1, total(2)], target)].join("");
+  const new_ = (n) => branches ** (n - 1);
+  const adds = Array.from({ length: target }, (_, i) => new_(i + 1));
+  const askNew = Math.random() < 0.35;
+  const answer = askNew ? new_(target) : total(target);
+  return {
+    prompt: askNew
+      ? `다음과 같은 규칙으로 선을 그려 나갈 때, ${target}번째 그림에서 새로 그린 선분은 몇 개인지 구하세요.`
+      : `다음과 같은 규칙으로 선을 그려 나갈 때, ${target}번째 그림에는 선분이 모두 몇 개 있는지 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${answer}개`,
+    solution: askNew
+      ? `새로 그리는 선분은 앞에서 새로 그린 선분의 끝마다 ${branches}개씩이므로 ${adds.join(", ")}개로 ${branches}배씩 늘어납니다. 그래서 ${target}번째 그림에서 새로 그린 선분은 ${answer}개입니다.`
+      : `새로 그리는 선분은 앞에서 새로 그린 선분의 끝마다 ${branches}개씩이므로 ${adds.join(", ")}개씩 늘어납니다. 모두 더하면 ${adds.join(" + ")} = ${answer}개입니다.`,
+    meta: { branches, target, askNew, answer }
+  };
+}
+
+// 도전 2: 큰 원 안에 작은 원을 그려 넣는 모양 — 가장 작은 원마다 안에 원을 k개씩
+function nestedCircleDoubling({ difficulty = 2 }) {
+  const k = difficulty === 3 ? pick([2, 3]) : 2;
+  const target = k === 2 ? randomInt(difficulty === 1 ? 4 : 5, 6) : randomInt(4, 5);
+  const total = (n) => (k ** n - 1) / (k - 1);
+  const shown = k === 2 ? 4 : 3;
+  const html = [...Array.from({ length: shown }, (_, i) => captioned(nestedCircleSvg(i + 1, k), `${ORD[i]} 번째`)), stageTableSvg("원의 개수", [1, total(2)], target)].join("");
+  const adds = Array.from({ length: target }, (_, i) => k ** i);
+  const askSmall = Math.random() < 0.35;
+  const answer = askSmall ? adds.at(-1) : total(target);
+  return {
+    prompt: askSmall
+      ? `다음과 같은 규칙으로 큰 원 안에 작은 원을 그립니다. ${target}번째 모양에서 가장 작은 원은 몇 개인지 구하세요.`
+      : `다음과 같은 규칙으로 큰 원 안에 작은 원을 그립니다. ${target}번째 모양에서 찾을 수 있는 원은 모두 몇 개인지 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${answer}개`,
+    solution: askSmall
+      ? `두 번째부터는 가장 작은 원마다 그 안에 원을 ${k}개씩 그리므로 가장 작은 원은 ${adds.join(", ")}개로 ${k}배씩 늘어납니다. 그래서 ${target}번째 모양의 가장 작은 원은 ${answer}개입니다.`
+      : `두 번째부터는 가장 작은 원마다 그 안에 원을 ${k}개씩 그리므로 새로 생기는 원은 ${adds.join(", ")}개입니다. 그래서 ${target}번째 모양의 원은 ${adds.join(" + ")} = ${answer}개입니다.`,
+    meta: { k, target, askSmall, answer }
+  };
+}
+
+// 연습 14: 정사각형 판의 대각선 띠는 검은 돌, 나머지는 흰 돌. 단계마다 한 변이 1개씩 늘어난다.
+function diagonalBandStoneGrowth({ difficulty = 2 }) {
+  const offsets = pick(difficulty === 1 ? [[0], [0, 1]] : [[0, 1], [0, -1], [-1, 0, 1], [0, 1, 2]]);
+  const startSide = randomInt(2, 3) + (offsets.length === 3 ? 1 : 0);
+  const target = randomInt(4, difficulty === 3 ? 7 : 6);
+  const askWhite = Math.random() < 0.6;
+  const sideAt = (n) => startSide + n - 1;
+  const blackAt = (n) => offsets.reduce((t, o) => t + sideAt(n) - Math.abs(o), 0);
+  const whiteAt = (n) => sideAt(n) ** 2 - blackAt(n);
+  const isBlack = (r, c) => offsets.includes(r - c);
+  const board = (n) => {
+    const s = sideAt(n);
+    const step = 15;
+    let body = "";
+    for (let r = 0; r < s; r += 1) for (let c = 0; c < s; c += 1) {
+      body += `<circle cx="${8 + c * step}" cy="${8 + r * step}" r="6.3" style="fill:${isBlack(r, c) ? "#1f1f1f" : "#fff"};stroke:#1f1f1f;stroke-width:1"/>`;
+    }
+    return svgWrap(s * step + 2, s * step + 2, body, `${n}단계 바둑돌`);
+  };
+  const html = [1, 2, 3].map((n) => captioned(board(n), `${n}단계`)).join("");
+  const s = sideAt(target);
+  const answer = askWhite ? whiteAt(target) : blackAt(target);
+  const blackLines = offsets.map((o) => s - Math.abs(o));
+  return {
+    prompt: `다음과 같은 규칙으로 검은 바둑돌과 흰 바둑돌을 늘어놓았습니다. ${target}단계에서 ${askWhite ? "흰" : "검은"} 바둑돌은 몇 개인지 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${answer}개`,
+    solution: `단계마다 한 줄에 놓이는 돌이 1개씩 늘어나므로 ${target}단계는 한 줄에 ${s}개씩 ${s}줄, 모두 ${s * s}개입니다. 검은 돌은 ${blackLines.length === 1 ? `비스듬한 한 줄에 ${blackLines[0]}개` : `비스듬한 줄마다 ${blackLines.join(", ")}개이므로 ${blackLines.join(" + ")} = ${blackAt(target)}개`}${askWhite ? `이고, 흰 돌은 ${s * s} - ${blackAt(target)} = ${whiteAt(target)}개` : ""}입니다.`,
+    meta: { offsets, startSide, target, askWhite, black: blackAt(target), white: whiteAt(target), answer }
+  };
+}
+
+// 도전 1: 검은 돌·흰 돌을 1개, 2개, 3개 … 씩 번갈아 늘어놓은 줄에서 모두 N개일 때 어느 색이 몇 개 더 많은지
+function alternatingRunStoneTotal({ difficulty = 2 }) {
+  for (let t = 0; t < 50; t += 1) {
+    const firstBlack = Math.random() < 0.6;
+    const startRun = difficulty === 1 ? pick([1, 2]) : difficulty === 2 ? pick([1, 2, 2]) : pick([2, 3]);
+    const total = randomInt(difficulty === 1 ? 15 : 25, difficulty === 3 ? 60 : 45);
+    let black = 0;
+    let white = 0;
+    const runs = [];
+    let left = total;
+    for (let run = startRun, i = 0; left > 0; run += 1, i += 1) {
+      const n = Math.min(run, left);
+      const isBlack = (i % 2 === 0) === firstBlack;
+      if (isBlack) black += n; else white += n;
+      runs.push({ n, isBlack, full: n === run });
+      left -= n;
+    }
+    if (black === white) continue;
+    // 마지막 묶음이 다 채워지지 않은 경우를 섞는다
+    if (difficulty >= 2 && runs.at(-1).full && Math.random() < 0.6) continue;
+    const stones = [];
+    for (let run = startRun, i = 0; stones.length < 15; run += 1, i += 1) {
+      const isBlack = (i % 2 === 0) === firstBlack;
+      for (let k = 0; k < run && stones.length < 15; k += 1) stones.push(isBlack);
+    }
+    const step = 19;
+    let body = stones.map((b, i) => `<circle cx="${10 + i * step}" cy="11" r="8" style="fill:${b ? "#1f1f1f" : "#fff"};stroke:#1f1f1f;stroke-width:1"/>`).join("");
+    body += text(10 + stones.length * step + 4, 16, "…", { size: 16, anchor: "start" });
+    const more = black > white ? "검은 돌" : "흰 돌";
+    const diff = Math.abs(black - white);
+    const runText = runs.map((r) => `${r.isBlack ? "검" : "흰"}${r.n}`).join(", ");
+    return {
+      prompt: `흰 바둑돌과 검은 바둑돌을 다음과 같이 규칙을 정하여 늘어놓았습니다. 늘어놓은 바둑돌이 모두 ${total}개라면 검은 돌과 흰 돌 중에서 어느 돌이 몇 개 더 많은지 구하세요.`,
+      visual: { kind: "fig", html: svgWrap(stones.length * step + 28, 22, body, "바둑돌 줄") },
+      answer: `${more}, ${diff}개`,
+      solution: `같은 색 돌이 ${startRun}개, ${startRun + 1}개, ${startRun + 2}개, …처럼 하나씩 더 많이 놓이고 색이 번갈아 바뀝니다. ${total}개까지 묶음을 적으면 ${runText}(마지막 묶음은 ${runs.at(-1).full ? "다 채워짐" : "모자란 만큼만"})입니다. 검은 돌 ${black}개, 흰 돌 ${white}개이므로 ${more}이 ${diff}개 더 많습니다.`,
+      meta: { firstBlack, startRun, total, black, white, answer: { more, diff } }
+    };
+  }
+  return null;
+}
+
 export const BOOK02_STRUCTURE_GENERATORS = {
   shapeValueChainCardsB2: shapeValueChainCards,
   shapeValueManyCardsB2: shapeValueManyCards,
@@ -1179,7 +1476,14 @@ export const BOOK02_STRUCTURE_GENERATORS = {
   sudokuFillFourSquarePairB2: sudokuFillFourSquarePair,
   sudokuFillFourIrregularB2: sudokuFillFourIrregular,
   fourNodeRelationB2: fourNodeRelation,
-  digitPairTwoResultsB2: digitPairTwoResults
+  digitPairTwoResultsB2: digitPairTwoResults,
+  groupedTripleSequenceB2: groupedTripleSequence,
+  slidingAndRepeatSequenceB2: slidingAndRepeatSequence,
+  interleavedDoublingSequenceB2: interleavedDoublingSequence,
+  branchingSegmentGrowthB2: branchingSegmentGrowth,
+  nestedCircleDoublingB2: nestedCircleDoubling,
+  diagonalBandStoneGrowthB2: diagonalBandStoneGrowth,
+  alternatingRunStoneTotalB2: alternatingRunStoneTotal
 };
 const row = (id, domain, middle, label, generator, catalogGroup, catalogStrategy, searchAliases) => ({ id, domain, middle, label, generator, catalogGroup, catalogStrategy, searchAliases });
 
@@ -1194,6 +1498,14 @@ export const BOOK02_STRUCTURE_TYPE_ROWS = [
   row("shape-value-chain-cards-b2", "number", "도형이 나타내는 수", "이어진 숫자 카드와 도형 식으로 도형의 수 구하기", "shapeValueChainCardsB2", "도형이 나타내는 수와 식", "같은 모양 둘의 합부터 카드로 맞춰 보기", ["도형 식", "숫자 카드", "서로 다른 수"]),
   row("shape-value-many-cards-b2", "number", "도형이 나타내는 수", "띄엄띄엄 숫자 카드 여러 장과 도형 식", "shapeValueManyCardsB2", "도형이 나타내는 수와 식", "같은 모양 둘의 합이 되는 카드 짝 찾기", ["도형 식", "숫자 카드", "서로 다른 수"]),
   row("shape-ratio-equation-b2", "number", "도형이 나타내는 수", "같은 모양 여러 개 = 다른 모양 여러 개 식으로 도형의 수 구하기", "shapeRatioEquationB2", "도형이 나타내는 수와 식", "같은 모양끼리 같은 줄에서 카드 짝을 먼저 찾기", ["도형 식", "숫자 카드", "서로 다른 수", "몇 개 = 몇 개"]),
+  // 3단원 규칙찾기와 수열
+  row("interleaved-doubling-sequence-b2", "pattern", "수열", "한 가닥이 두 배씩 커지는 번갈아 놓인 수열", "interleavedDoublingSequenceB2", "번갈아 놓인 수열", "홀수 번째와 짝수 번째를 따로 떼어 보기", ["수열", "징검다리 수열", "두 배"]),
+  row("grouped-triple-sequence-b2", "pattern", "수열", "세 개씩 묶으면 규칙이 보이는 수열 두 줄", "groupedTripleSequenceB2", "묶어서 보는 수열", "세 개씩 묶어 묶음 안과 묶음 사이를 따로 보기", ["수열", "묶음", "세 개씩"]),
+  row("sliding-repeat-sequence-b2", "pattern", "수열", "묶음이 밀려 나가는 수열과 같은 수를 되풀이하는 수열", "slidingAndRepeatSequenceB2", "묶어서 보는 수열", "같은 수가 몇 번씩 나오는지 세어 묶기", ["수열", "묶음", "되풀이"]),
+  row("diagonal-band-stone-growth-b2", "pattern", "바둑돌 규칙", "정사각형 판의 비스듬한 줄 바둑돌 개수", "diagonalBandStoneGrowthB2", "늘어나는 바둑돌", "전체 돌에서 비스듬한 줄의 돌을 빼기", ["바둑돌", "대각선", "단계"]),
+  row("alternating-run-stone-total-b2", "pattern", "바둑돌 규칙", "하나씩 더 많이 번갈아 놓은 두 색 바둑돌의 개수 차", "alternatingRunStoneTotalB2", "늘어나는 바둑돌", "같은 색 묶음을 차례로 적어 전체 개수까지 세기", ["바둑돌", "번갈아", "개수 차"]),
+  row("branching-segment-growth-b2", "pattern", "선분 규칙", "끝마다 가지를 쳐 나가는 선분의 개수", "branchingSegmentGrowthB2", "가지 치는 그림", "새로 그린 선분이 몇 배씩 느는지 보고 더하기", ["선분", "가지", "두 배"]),
+  row("nested-circle-doubling-b2", "geometry", "도형 개수 규칙", "가장 작은 원마다 원을 그려 넣는 모양의 원 개수", "nestedCircleDoublingB2", "가지 치는 그림", "새로 생기는 원이 몇 배씩 느는지 보고 더하기", ["원", "겹친 원", "두 배"]),
   // 4단원 약속
   row("four-node-relation-b2", "number", "수 사이의 약속", "가운데 없이 놓인 네 수의 규칙으로 빈칸 구하기", "fourNodeRelationB2", "네 수 사이의 약속", "보기 그림마다 합을 견주어 규칙 찾기", ["약속", "규칙", "네 수"]),
   row("digit-pair-two-results-b2", "number", "수 사이의 약속", "두 수로 만든 두 결과의 약속으로 ㉠·㉡ 구하기", "digitPairTwoResultsB2", "두 자리 수를 만드는 약속", "두 수로 만든 두 자리 수와 두 수의 계산을 따로 찾기", ["약속", "두 자리 수", "규칙"]),
@@ -1214,6 +1526,13 @@ export const BOOK02_STRUCTURE_GUIDES = {
   "shape-value-chain-cards-b2": "같은 모양 둘을 더한 식부터 카드를 넣어 보고, 될 수 있는 수만 남겨 다음 식으로 좁힙니다.",
   "shape-value-many-cards-b2": "같은 모양 둘을 더한 식마다 카드 짝을 찾고, 여러 식에 함께 맞는 수만 남깁니다.",
   "shape-ratio-equation-b2": "같은 모양 몇 개와 다른 모양 몇 개가 같은 식에서 카드 짝을 먼저 찾고, 나머지 식에 차례로 넣습니다.",
+  "interleaved-doubling-sequence-b2": "홀수 번째 수와 짝수 번째 수를 따로 떼어 적고, 한 가닥은 같은 수만큼 커지는지 두 배씩 커지는지 봅니다.",
+  "grouped-triple-sequence-b2": "세 개씩 묶어 묶음 안에서 얼마씩 변하는지, 묶음의 첫 수가 얼마씩 변하는지 따로 찾습니다.",
+  "sliding-repeat-sequence-b2": "몇 개씩 묶이는지 먼저 찾고, 묶음마다 수가 어떻게 바뀌는지 또는 같은 수가 몇 번씩 나오는지 셉니다.",
+  "diagonal-band-stone-growth-b2": "그 단계의 한 줄 돌 수로 전체 돌 수를 구하고, 비스듬한 줄의 검은 돌을 세어 뺍니다.",
+  "alternating-run-stone-total-b2": "같은 색 묶음을 1개, 2개, 3개 …로 차례로 적어 전체 개수가 될 때까지 더하고, 마지막 묶음은 남은 만큼만 셉니다.",
+  "branching-segment-growth-b2": "새로 그린 선분의 끝마다 가지가 몇 개씩 생기는지 보고, 새로 생긴 선분 수를 차례로 더합니다.",
+  "nested-circle-doubling-b2": "가장 작은 원마다 안에 원이 몇 개씩 생기는지 보고, 새로 생긴 원 수를 차례로 더합니다.",
   "four-node-relation-b2": "보기 그림마다 한 수가 나머지의 합인지, 마주 보는 두 수의 합이 같은지 견주어 규칙을 찾습니다.",
   "digit-pair-two-results-b2": "두 수로 두 자리 수를 만들어 가운데 칸과 견주고, 아래 칸은 두 수의 계산으로 따로 찾습니다.",
   "sudoku-fill-three-row-column-b2": "가로줄과 세로줄에서 이미 있는 수를 빼면 하나만 남는 칸부터 채웁니다.",
@@ -1242,6 +1561,15 @@ export const BOOK02_STRUCTURE_REMAPS = [
   [B, 2, "check", 2, [1, 2, 3, 4], "shape-ratio-equation-b2"],
   [B, 2, "practice", 1, [10, 13, 14, 15, 16, 17, 18], "shape-ratio-equation-b2"],
   [B, 2, "advanced", 1, [3, 4], "shape-ratio-equation-b2"],
+  // 3단원 규칙찾기와 수열
+  [B, 3, "check", 1, [1], "interleaved-doubling-sequence-b2"],
+  [B, 3, "check", 1, [2], "grouped-triple-sequence-b2"],
+  [B, 3, "practice", 1, [7], "grouped-triple-sequence-b2"],
+  [B, 3, "check", 1, [3], "sliding-repeat-sequence-b2"],
+  [B, 3, "practice", 1, [14], "diagonal-band-stone-growth-b2"],
+  [B, 3, "practice", 1, [17], "branching-segment-growth-b2"],
+  [B, 3, "advanced", 1, [1], "alternating-run-stone-total-b2"],
+  [B, 3, "advanced", 1, [2], "nested-circle-doubling-b2"],
   // 4단원 약속
   [B, 4, "activity", 1, [1], "four-node-relation-b2"],
   [B, 4, "check", 1, [4], "four-node-relation-b2"],
