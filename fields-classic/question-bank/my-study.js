@@ -1,4 +1,4 @@
-import { GM_PATH as CURRICULUM, typeById } from "./source-data.js?v=20261125d";
+import { GM_PATH as CURRICULUM, typeById } from "./source-data.js?v=20261125h";
 import { loadRecords, weekRate, loggedIn, logout } from "./study-progress.js?v=20261117a";
 import { planStatus, planLine } from "./study-plan.js?v=20261124j";
 

@@ -2,6 +2,7 @@ import { TEXTBOOK_REMAPS } from "./textbook-remaps.js";
 const REMAPPED = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-03").map((row) => row[5]));
 import { GENERATORS } from "./generators.js";
 import { book03Markup } from "./book03-renderers.js";
+import { verifyBook03Structure, BOOK03_STRUCTURE_TYPE_ROWS } from "./book03-structure-generators.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
@@ -352,6 +353,12 @@ function validate(type, problem, difficulty) {
       return;
     }
     default:
+      // 교재 번호 꼴에 맞춘 새 생성기(book03-structure-generators.js)는 그 모듈의 독립 검산으로 다시 푼다.
+      if (String(meta.family || "").startsWith("b3s-")) {
+        const why = verifyBook03Structure(problem);
+        assert(!why, id, difficulty, `structure check: ${why}`);
+        return;
+      }
       break;
   }
 
@@ -380,7 +387,10 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-03 missing");
 if (units.length !== 4) throw new Error(`book-03 unit count ${units.length}`);
-if (typeIds.length !== 54) throw new Error(`book-03 type count ${typeIds.length}`);
+// 54 = 원래 유형, 그 위에 교재 번호 꼴에 맞춘 새 유형(book03-structure-generators.js)이 모두 단원에 이어져 있어야 한다.
+const structureTypeIds = BOOK03_STRUCTURE_TYPE_ROWS.map((row) => row.id);
+structureTypeIds.forEach((typeId) => { if (!typeIds.includes(typeId)) throw new Error(`book-03 structure type not linked ${typeId}`); });
+if (typeIds.length !== 54 + structureTypeIds.length) throw new Error(`book-03 type count ${typeIds.length}`);
 
 const unitTestQuestions = book.source?.unitTestQuestions || [];
 const expectedReadyQuestions = Array.from({ length: 25 }, (_, index) => index + 1);
