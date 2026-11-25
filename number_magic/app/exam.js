@@ -1179,7 +1179,7 @@
   .nm-mn-fill .nm-w2-tex { font-size:calc(16px * var(--ws-fs, 1)); }
   /* 긴 식은 「=」 앞에서만 줄을 바꾼다 — 아무 데서나 꺾여 □ 하나만 다음 줄로 떨어졌다(2026-11-23). */
   /* 줄이 바뀌면 줄 사이를 띄운다(원장 2026-11-23 「식과 식 줄 바뀜 시 간격을 둬」) */
-  .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:center; column-gap:.3em; row-gap:.45em; min-width:0; max-width:100%; }
+  .nm-tex-chain { display:inline-flex; flex-wrap:wrap; align-items:baseline; column-gap:.3em; row-gap:.45em; min-width:0; max-width:100%; }
   .nm-tex-groups { column-gap:.7em; }
   .nm-tex-chain > .nm-w2-tex { min-width:0; }
   .nm-tex-lines { display:inline-flex; flex-direction:column; align-items:flex-start; row-gap:.45em; min-width:0; max-width:100%; }
@@ -2622,6 +2622,21 @@ function getAmount(){
   if(window.NM_WS_AMOUNT != null) return normAmount(window.NM_WS_AMOUNT);
   try{ return normAmount(localStorage.getItem(AMOUNT_KEY)); }catch(e){ return 1; }
 }
+/* 과정 점검 회차도 하루 20문항(2026-11-25, 원장 「하루에 20문항씩은 공부해야지」) — 점검 회차는 3일(10분 × 3)이라 60문항.
+   과정이 배운 스레드가 하나뿐이면 점검이 8문항 한 장으로 끝났다(과정 22). 모자라면 그 과정에서 실제로 푼 같은 스레드의
+   다른 레벨을 점검에 더하고(배운 것만), 그래도 모자라면 항목마다 2씩 늘린다(항목당 36까지). 앱 안의 과정 점검(pool)은 그대로다. */
+const TEST_MIN = 60;
+function testPool(course, session){
+  const pool = (session.pool || []).map(d => ({...d}));
+  const sum = () => pool.reduce((a, d) => a + d.n, 0);
+  if(sum() >= TEST_MIN) return pool;
+  const threads = new Set(pool.map(d => d.t)), have = new Set(pool.map(d => d.t + '@' + d.lv));
+  (course.sessions || []).forEach(s => { if(s.test) return; (s.school || s.drills || []).forEach(d => {
+    const k = d.t + '@' + d.lv; if(sum() >= TEST_MIN || d.review || !threads.has(d.t) || have.has(k)) return; have.add(k); pool.push({t:d.t, lv:d.lv, n:8}); }); });
+  for(let g = 0; g < 200 && sum() < TEST_MIN; g++){
+    const d = pool.slice().sort((a, b) => a.n - b.n).find(x => x.n + 2 <= 36); if(!d) break; d.n += 2; }
+  return pool;
+}
 function withAmount(amount, render){ const before=amountOverride; amountOverride=normAmount(amount); try{return render();}finally{amountOverride=before;} }
 function setAmount(v){ try{ localStorage.setItem(AMOUNT_KEY, String(normAmount(v))); }catch(e){} }
 function scaleCount(d, count){
@@ -3183,11 +3198,11 @@ function weeklyCoverHtml(cv, rounds, totalCount, extra){
       (cv.extensionGrades||[]).map(g=>'중'+g).join('·')+' 선택 심화 12묶음 · 표준 6주 · 기본 포함 총 16주',
       (cv.extensionGrades||[]).map(g=>'Grade '+(+g+6)).join(' / ')+' optional extension · 12 bundles · 6 standard weeks · 16 weeks including core',
       (cv.extensionGrades||[]).map(g=>'初'+g).join('·')+'选学进阶12组 · 标准6周 · 含基础共16周')
-      :cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 10분으로 연산 공부','Arithmetic practice in 10 minutes a day','每天10分钟，练习计算'))}</p>
+      :cv.compactMiddle?lk('중등 연산 · 같은 20묶음, 주 1회 20주 · 주 2회 10주','Middle school arithmetic · the same 20 bundles, 20 weeks at once a week or 10 at twice','初中运算 · 相同20组，每周一次20周，每周两次10周'):cv.compactHigh?lk('주 2회, 12주에 이어 가는 고등 연산','High school arithmetic over 12 weeks at two lessons a week','每周两课，12周高中运算'):lk('하루 20문항으로 연산 공부','Arithmetic practice, 20 problems a day','每天20题，练习计算'))}</p>
     <div class="nm-cv-rule"></div>
     <p class="nm-cvw-course">${cv.name ? `<b>${esc(cv.name)}</b> · ` : ''}${cv.courseNum ? esc(lk(`과정 ${cv.courseNum}`, `Course ${cv.courseNum}`, `课程 ${cv.courseNum}`)) + ' · ' : ''}${esc(cv.courseTitle||'')}</p>
   </div>
-  ${cv.studyDays > 1 ? `<p class="nm-cvw-daily">${esc(cv.compactHigh?lk(`이번 수업 약 ${cv.lessonMinutes}분 · ${cv.studyDays}일로 나누기 · 주 5일이면 하루 약 ${Math.ceil(cv.weeklyMinutes/5)}분`, `This lesson: about ${cv.lessonMinutes} min across ${cv.studyDays} days · about ${Math.ceil(cv.weeklyMinutes/5)} min/day over 5 days a week`, `本课约${cv.lessonMinutes}分钟，分${cv.studyDays}天 · 每周5天则每天约${Math.ceil(cv.weeklyMinutes/5)}分钟`):lk(`하루 10분씩 나눠 풀어도 좋아요 · ${cv.studyDays}일 학습`, `You can split this into about 10 minutes a day · ${cv.studyDays} days`, `也可以每天学约10分钟 · 共${cv.studyDays}天`))}</p>` : ''}
+  ${cv.studyDays > 1 ? `<p class="nm-cvw-daily">${esc(cv.compactHigh?lk(`이번 수업 약 ${cv.lessonMinutes}분 · ${cv.studyDays}일로 나누기 · 주 5일이면 하루 약 ${Math.ceil(cv.weeklyMinutes/5)}분`, `This lesson: about ${cv.lessonMinutes} min across ${cv.studyDays} days · about ${Math.ceil(cv.weeklyMinutes/5)} min/day over 5 days a week`, `本课约${cv.lessonMinutes}分钟，分${cv.studyDays}天 · 每周5天则每天约${Math.ceil(cv.weeklyMinutes/5)}分钟`):lk(`하루 약 ${Math.round(totalCount/cv.studyDays)}문항씩 · ${cv.studyDays}일 학습`, `About ${Math.round(totalCount/cv.studyDays)} problems a day · ${cv.studyDays} days`, `每天约${Math.round(totalCount/cv.studyDays)}题 · 共${cv.studyDays}天`))}</p>` : ''}
   <table class="nm-cvw-toc">
     <thead><tr><th>${esc(lk('하루','Day','天'))}</th><th></th><th>${esc(lk('유형','Type','题型'))}</th><th>${esc(lk('문항','Items','题数'))}</th><th>${esc(lk('쪽','Page','页'))}</th><th>${esc(lk('완료','Done','完成'))}</th></tr></thead>
     <tbody>${rows.join('')}</tbody>
@@ -4863,6 +4878,7 @@ function trainTexDisplay(tex){
    화면에서 display:none 이라 getBoundingClientRect 가 전부 0 이다. 둘 다 순서를 못 준다.
    그래서 순번을 tex 에 직접 실어 보낸다(\htmlClass — renderKaTeX 의 trust:true 필요.
    우리가 만든 tex 만 그리므로 안전하고, trust 가 없으면 클래스만 조용히 빠진다). */
+const WRITE_BOX_EXP = '\\kern{0.12em}\\boxed{\\rule[-0.3em]{0pt}{1.3em}\\kern{0.25em}\\phantom{0}\\kern{0.25em}}';
 const WRITE_BOX_ROOM = '{\\vphantom{\\rule[-0.9em]{0pt}{2.9em}}' + WRITE_BOX + '}';
 const WB_ORDER = ['①','②','③','④','⑤','⑥'];   /* 이 글자는 CSS(.nm-wb*::before)에도 같은 순서로 있다 */
 function writeBoxFrac(i){
@@ -4895,7 +4911,10 @@ function texDisplay(tex, bigBox){
      이미 분명하고, 상자를 키우면 줄 높이만 늘어 인쇄 배치가 흔들린다. */
   const isFrac = hasNumberedBlanks({ tex: src }),innerBlank=fractionContainsBlank(src);
   let k = 0;
-  const t = src.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : W2_YOUNG ? WRITE_BOX_YOUNG : bigBox === true ? WRITE_BOX_BIG : WRITE_BOX);
+  /* 지수 자리의 빈칸(2^□)은 작은 칸(2026-11-25) — 큰 쓰기 칸을 위첨자에 넣으면 칸이 줄 위로 솟고 앞의 「= 7」이 아래로 밀렸다
+     (DV8 L5 거듭제곱 · 소인수분해 거듭제곱 꼴). 위첨자 안이라 KaTeX가 0.7배로 줄인 위에서도 손글씨 한 자는 들어간다. */
+  const src2 = src.replace(/\^\{\s*\\square\s*\}/g, '^{' + WRITE_BOX_EXP + '}');
+  const t = src2.replace(/\\square/g, () => isFrac ? writeBoxFrac(k++) : innerBlank ? WRITE_BOX_ROOM : W2_YOUNG ? WRITE_BOX_YOUNG : bigBox === true ? WRITE_BOX_BIG : WRITE_BOX);
   return /\\frac|\\sqrt|\^|_/.test(t) ? '\\displaystyle ' + t : t;
 }
 
@@ -7820,17 +7839,39 @@ ${rounds.filter(r=>r.drawing).map(r=>`<div class="nm-print-answer-key nm-draw-an
     });
     let current=answerRoot,sectionCount=0;
     const pages=[answerRoot];
-    answerSections.forEach(section=>{
-      current.insertBefore(section,current.lastElementChild);
-      if(current.scrollHeight>current.clientHeight+1&&sectionCount){
-        const next=answerRoot.cloneNode(false);
-        next.classList.add('nm-answer-continuation');
-        next.append(answerHead.cloneNode(true),answerFoot.cloneNode(true));
-        current.after(next);next.insertBefore(section,next.lastElementChild);
-        current=next;pages.push(next);sectionCount=0;
+    const over=()=>current.scrollHeight>current.clientHeight+1;
+    const newPage=()=>{
+      const next=answerRoot.cloneNode(false);
+      next.classList.add('nm-answer-continuation');
+      next.append(answerHead.cloneNode(true),answerFoot.cloneNode(true));
+      current.after(next);current=next;pages.push(next);sectionCount=0;
+    };
+    /* 한 유형의 답이 한 쪽보다 길면(2026-11-25 하루 20문항으로 한 유형이 36문항까지 늘었다) 그 유형의 마지막 답 격자를
+       뒤에서부터 덜어 다음 쪽에 같은 머리말로 잇는다 — 예전에는 그 쪽이 아래로 넘쳤다. */
+    const splitSection=section=>{
+      const head=section.querySelector(':scope > .nm-ak-subhead'),rest=section.cloneNode(false);
+      if(head)rest.append(head.cloneNode(true));
+      /* 답 줄이 섹션 바로 아래 조각(.nm-ak-page 등)으로 놓인 꼴은 그 조각을, 아니면 마지막 답 격자의 칸을 덜어낸다 */
+      const parts=[...section.children].filter(el=>el!==head);
+      if(parts.length>=2){
+        const moved=[];
+        while(over()&&parts.length-moved.length>1){const el=parts[parts.length-1-moved.length];moved.unshift(el);el.remove();}
+        moved.forEach(el=>rest.append(el));
+        if(moved.length)return rest;
       }
+      const grids=section.querySelectorAll('.nm-ak-grid'),grid=grids[grids.length-1];
+      if(!grid||grid.children.length<2)return null;
+      const tail=grid.cloneNode(false);rest.append(tail);
+      while(over()&&grid.children.length>1)tail.prepend(grid.lastElementChild);
+      return tail.children.length?rest:null;
+    };
+    const place=section=>{
+      current.insertBefore(section,current.lastElementChild);
+      if(over()&&sectionCount){newPage();current.insertBefore(section,current.lastElementChild);}
       sectionCount++;
-    });
+      if(over()){const rest=splitSection(section);if(rest){newPage();place(rest);}}
+    };
+    answerSections.forEach(place);
     if(!opts.pacing){
       const count=totalPages+pages.length-1;
       sheet.querySelectorAll('.nm-w2-pg').forEach(el=>{el.textContent=el.textContent.replace(/\/\s*\d+$/, '/ '+count);});
@@ -9722,7 +9763,7 @@ ${round.html}
     /* 세 층 순서(2026-09-25): 교과 → 마법 노트 → 창의 전략 → 적용·문장제 → 심화.
        시드는 예전처럼 drills·creative 배열의 원래 자리 번호로 만든다 — 층을 나눠도 같은 주의
        같은 칸은 같은 문항이 나온다(이미 받은 학습지 링크와 PDF 가 달라지지 않게). */
-    const R = session.test ? {school:(session.pool||[]).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,seed:seedOf(seedWeek,i),topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+thName(d.t,d.lv)})),strategy:[],application:[],stretch:[]}
+    const R = session.test ? {school:testPool(course,session).map((d,i)=>({thread:d.t,level:d.lv,n:d.n,count:d.n,threadMix:[{t:d.t,lv:d.lv}],noTeach:true,seed:seedOf(seedWeek,i),topicName:lk('과정 점검 · ','Course check · ','课程检查 · ')+thName(d.t,d.lv)})),strategy:[],application:[],stretch:[]}
       : withAmount(amount, () => sessionRoleItems(course, session, (p, i) => seedOf(seedWeek + p, i)));
     const items = R.school.slice();
     /* 마법 노트(2026-09-18, 원장 "교과 연산 사이에 매직 오브 넘버스 개념 넣었어?") — 그 세션의 마법 유닛
@@ -9775,7 +9816,7 @@ ${round.html}
       : amount > 1 ? lk(`많은 연습량 ${amount}배`, `More practice · ${amount}×`, `加量练习 ${amount}倍`) : '';
     const cover = { name, weekLabel, courseNum: course.order, courseTitle: title, k, cadence: cad, code: wsId, amount, amountLabel,
       stage: stage ? (stage.name.ko || '') : '',
-      studyDays: c==='C0'?3:Math.max(1, Math.ceil((session.minutes || 30) / 10)),
+      studyDays: c==='C0'?3:session.studyDays||Math.max(1, Math.ceil((session.minutes || 30) / 10)),
       sessionIdx: (opts.sessionIdx != null && isFinite(+opts.sessionIdx)) ? Math.max(0, Math.floor(+opts.sessionIdx)) : null };
     const units = [].concat.apply([], (session.magic || []))
       .concat([].concat.apply([], course.sessions.filter(s => !s.test).map(s => [].concat.apply([], s.magic || []))))

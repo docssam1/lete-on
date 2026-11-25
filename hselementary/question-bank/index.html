@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
   <meta name="theme-color" content="#f3f5f4">
   <title>LETE-ON | 황소 초등 문제은행</title>
-  <link rel="stylesheet" href="./styles.css?v=20261125-e3-edges">
+  <link rel="stylesheet" href="./styles.css?v=20261125-multi-select2">
   <link rel="stylesheet" href="./worksheet-tools.css?v=bank-20261015j">
   <link rel="stylesheet" href="./typography.css?v=bank-20260924a">
   <link rel="stylesheet" href="./source-5-2-u3-page25-mission2-copy-synthetic.css?v=grade52-u3-mission23-copy-20261030">
@@ -233,6 +233,8 @@
             <button type="button" class="segment is-active" data-term="1">1학기</button>
             <button type="button" class="segment" data-term="2">2학기</button>
           </div>
+          <div class="filter-caption">함께 고르기</div>
+          <div class="semester-chips" id="semesterPicker" role="group" aria-label="여러 학년·학기를 함께 보기"></div>
         </div>
 
         <div class="selector-layout">
@@ -276,10 +278,15 @@
                   <button type="button" data-count="8">8</button>
                   <button type="button" data-count="12" class="is-active">12</button>
                   <button type="button" data-count="20">20</button>
+                  <button type="button" data-count="25">25</button>
                   <button type="button" data-count="30">30</button>
                   <button type="button" data-count="40">40</button>
+                  <button type="button" data-count="50">50</button>
+                  <button type="button" data-count="75">75</button>
+                  <button type="button" data-count="100">100</button>
                 </div>
-                <label class="count-input" for="questionCountInput"><span>직접 입력</span><input id="questionCountInput" class="input-number" type="number" min="1" max="120" step="1" value="12"></label>
+                <label class="count-range" for="questionCountRange"><span class="sr-only">문항 수 슬라이더</span><input id="questionCountRange" type="range" min="1" max="150" step="1" value="12"><span class="count-range-scale" aria-hidden="true"><i>1</i><i>150</i></span></label>
+                <label class="count-input" for="questionCountInput"><span>직접 입력</span><input id="questionCountInput" class="input-number" type="number" min="1" max="150" step="1" value="12"></label>
               </div>
             </div>
 
@@ -290,6 +297,7 @@
                 <button type="button" class="segment is-active" data-difficulty="0">심화 기준</button>
                 <button type="button" class="segment" data-difficulty="1">심화 어려움</button>
               </div>
+              <label class="mix-toggle" for="difficultyMixToggle"><input id="difficultyMixToggle" type="checkbox"><span>여러 난이도 섞기</span></label>
             </div>
 
             <label class="field-group" for="studentNameInput">
@@ -1024,6 +1032,6 @@
   <script defer src="./bank-access.js?v=20261117-grade-term-approval-a11y"></script>
   <script defer src="./math-notation.js?v=bank-20260827l"></script>
   <script defer src="./identity.js?v=identity-20260824a"></script>
-  <script defer src="./app.js?v=20261123-print-shortcut"></script>
+  <script defer src="./app.js?v=20261125-multi-select5"></script>
 </body>
 </html>

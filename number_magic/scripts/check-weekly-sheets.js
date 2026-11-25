@@ -54,7 +54,8 @@ server.listen(0, async () => {
       if(daily.practicePages.some(x => !x)) bad.push(`${c} k${k}: 날짜 표식이 없는 문제 쪽이 있음`);
       if(daily.coverOverflow > 3) bad.push(`${c} k${k}: 표지 일차 안내 넘침 +${Math.round(daily.coverOverflow)}px`);
       const planDays = +(daily.plan.match(/(\d+)일 학습/) || [])[1] || 0;
-      const markedDays = new Set(daily.coverDays.flatMap(x => [...x.matchAll(/(\d+)일차/g)].map(m => +m[1])));
+      /* 「1일차–3일차」처럼 한 유형이 여러 날에 걸치면 가운데 날(2일차)은 글자로 안 나온다 — 범위로 센다(2026-11-25, 하루 20문항으로 한 유형이 길어짐) */
+      const markedDays = new Set(daily.coverDays.flatMap(x => { const d = [...x.matchAll(/(\d+)일차/g)].map(m => +m[1]); if(!d.length) return []; const out = []; for(let i = Math.min(...d); i <= Math.max(...d); i++) out.push(i); return out; }));
       if(planDays && markedDays.size !== planDays) bad.push(`${c} k${k}: 표지의 날짜별 분량 ${markedDays.size}일 ≠ 안내 ${planDays}일`);
       /* 지면 넘침(2026-09-25) — 인쇄 매체·A4 폭에서 칸이 내용보다 낮거나 장이 종이보다 길면 실패.
          한 유형씩 보는 check-print-overflow 는 주간 봉투의 묶음(장 전체 글씨 밴드·독셈 띠·재도전 QR)을 못 본다. */

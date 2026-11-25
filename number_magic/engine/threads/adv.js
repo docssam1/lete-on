@@ -353,7 +353,7 @@ NM_TGEN['adv_repeatDec'] = function (params, rng) {
     return {
       prompt: {
         ko: `${n} ÷ ${d}의 소수 ${k}번째 자리 숫자는?`,
-        en: `What is the ${k}${k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th'} digit after the decimal point of ${n} ÷ ${d}?`,
+        en: `${k}${k === 1 ? 'st' : k === 2 ? 'nd' : k === 3 ? 'rd' : 'th'} decimal digit of ${n} ÷ ${d}?`,   // 한 줄에 들도록 짧게(2026-11-25, 한 쪽 16칸에서 두 줄이 넘쳤다)
         zh: `${n} ÷ ${d}的小数点后第${k}位是几？`
       },
       tex: `\\text{${n}÷${d}의 소수점 아래 ${k}번째 자리 숫자}=\\square`,

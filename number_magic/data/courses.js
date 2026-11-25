@@ -689,15 +689,15 @@ const COUNT_CAP = {
   'ML25@2':24,   // 서로 다른 문항 32
   'ML25@3':24,   // 서로 다른 문항 32
   'ML25@4':24,   // 서로 다른 문항 32
-  'ML2@1':30,   // 서로 다른 문항 34
-  'ML2@2':30,   // 서로 다른 문항 34
-  'ML2@4':30,   // 서로 다른 문항 34
-  'ML3@1':30,   // 서로 다른 문항 34
-  'ML3@2':30,   // 서로 다른 문항 34
-  'ML3@4':30,   // 서로 다른 문항 34
+  'ML2@1':24,   // 서로 다른 문항 34
+  'ML2@2':24,   // 서로 다른 문항 34
+  'ML2@4':24,   // 서로 다른 문항 34
+  'ML3@1':18,   // 서로 다른 문항 34 — 곱셈구구 단이 ML2·ML3 레벨끼리 겹쳐, 한 회차에 함께 실리면 1.25·1.5배에서 모자랐다(2026-11-25, 하루 20문항 뒤 C4-S4·S8)
+  'ML3@2':24,   // 서로 다른 문항 34
+  'ML3@4':18,   // 서로 다른 문항 34 — 곱셈구구 단이 ML2·ML3 레벨끼리 겹쳐, 한 회차에 함께 실리면 1.25·1.5배에서 모자랐다(2026-11-25, 하루 20문항 뒤 C4-S4·S8)
   'ML3@5':18,   // 서로 다른 문항 32 중 8개가 ML3@4(4·8단)와 같다(7×8·9×8 …). 과정 4 8회차는 두 레벨이 한 장에 실려 ML3@4 가 24문항을 쓰므로
                 //  ML3@5 에 남는 새 문항은 24개 — 예시·따라 풀기 4를 빼고 18(2026-10-18, check-amount-sheets C4 · main 에서도 실패하던 것)
-  'ML2@5':30,   // 3·6단 — 1.5배(36)에서 서로 다른 문항이 모자랐다(2026-10-18, check-amount-sheets C4)
+  'ML2@5':24,   // 3·6단 — 1.5배(36)에서 서로 다른 문항이 모자랐다(2026-10-18, check-amount-sheets C4)
   'ML6@1':30,   // 서로 다른 문항 34
   'ML6@4':30,   // 서로 다른 문항 34
   'NL11@1':18,   // 서로 다른 문항 24
@@ -713,6 +713,17 @@ const COUNT_CAP = {
   'NL6@1':12,   // 서로 다른 문항 16
   'NL7@1':18,   // 서로 다른 문항 24
   'SB1@1':30,   // 서로 다른 문항 36
+  /* 2026-11-25 하루 20문항으로 교과 칸이 늘면서 다시 잰 값(scripts/report-count-cap.js, 생성 20000회) */
+  'DV20@2':18,
+  'DV8@1':30,
+  'FR4@3':18,
+  'ML11@6':30,
+  'NL30@1':18,
+  'NL34@1':24,
+  'NL36@1':24,
+  'NL36@6':24,
+  'NL37@8':30,
+  'NL54@3':24,
 };
 const SESSION_SEC = 1800;
 /* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
@@ -772,8 +783,27 @@ function planCounts(ss, tier, maxLevel){
     const c = more.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(cap(d), 18));
     if(!c) break; c.count += 6;
   }
+  /* 하루 20문항(2026-11-25, 원장 「하루에 20문항씩은 공부해야지 · 구몬이나 시중 교재와 너무 차이가 나잖아」).
+     초등은 회차 시간(30분)으로 공부하는 날 수를 먼저 정하고(예전처럼 10분에 하루), 그 날 수 × 20문항이 될 때까지
+     교과부터 6씩 더한다(유형 상한 COUNT_CAP·36 안에서) — 날 수와 과정 진도는 그대로, 하루 분량만 늘어난다.
+     교과가 상한에 막히면 문장제·독셈 칸을 늘린다. 유아(과정 0)는 이미 60문항·3일이라 이 길을 타지 않는다. */
+  if(DAILY_MIN_TIERS[tier]){
+    const days = Math.max(1, Math.ceil(total() / 600));
+    const count = () => [...ss.school, ...ss.strategy.practice, ...ss.application].reduce((a, d) => a + d.count, 0);
+    /* 같은 스레드의 여러 레벨(ML3 L4·L5 — 곱셈구구 같은 단)은 서로 같은 문제를 낼 수 있어, 한 회차 안 그 스레드의 합도 36까지만 */
+    const threadSum = t => [...ss.school, ...ss.strategy.practice, ...ss.application].filter(x => x.t === t).reduce((a, x) => a + x.count, 0);
+    const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 36;
+    for(let guard = 0; guard < 60 && count() < DAILY_MIN * days; guard++){
+      const c = own.slice().sort((a, b) => a.count - b.count || (b.difficulty === 'hard') - (a.difficulty === 'hard')).find(room)
+        || more.slice().sort((a, b) => a.count - b.count).find(room);
+      if(!c) break; c.count += 6;
+    }
+    ss.studyDays = days;
+  }
   ss.minutes = Math.round(total() / 60);
 }
+const DAILY_MIN = 20;
+const DAILY_MIN_TIERS = { level1:1, level2:1, level3:1, challenge:1 };
 
 function composeSession(ss, i, spec, lists, maxLevel){
   if(ss.test) return;
