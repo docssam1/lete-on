@@ -23,6 +23,7 @@ const digitsOf = (value) => String(value).split("").map(Number);
 const BATCHIM_DIGIT = [true, true, false, true, false, false, true, true, true, false]; // 영 일 이 삼 사 오 육 칠 팔 구
 const eul = (n) => `${n}${BATCHIM_DIGIT[Math.abs(n) % 10] ? "을" : "를"}`;
 const eun = (n) => `${n}${BATCHIM_DIGIT[Math.abs(n) % 10] ? "은" : "는"}`;
+const ro = (n) => `${n}${[0, 3, 6].includes(Math.abs(n) % 10) ? "으로" : "로"}`;
 const iga = (n) => `${n}${BATCHIM_DIGIT[Math.abs(n) % 10] ? "이" : "가"}`;
 
 // ───────────────────────────── 3단원 복면산 ─────────────────────────────
@@ -281,6 +282,198 @@ const sameDigitHint = (glyph, entry) => {
   return "s" in repeated ? `${glyph[repeated.s]}${glyph[repeated.s]}는 ${glyph[repeated.s]}가 11번 있는 수입니다.` : "";
 };
 
+// ───────────────────────────── 4단원 마법카드 — 색칠한 칸으로 수 나타내기(새 배치) ─────────────────────────────
+// 칸마다 자리값이 있고, 보기 그림 몇 개로 그 값을 알아내 다른 그림을 읽거나(읽기) 주어진 수가 되게 색칠한다(색칠).
+// 배치(모눈 세로 3×2 · 가로 2×3 · 동그라미 표시 3×2 · 육각별 끝 · 오각별 끝 · 겹친 정사각형 고리)는 교재 꼴을 따르고,
+// 자리값 순서·보기 수·물을 수는 새로 뽑는다. 보기만으로 모든 칸의 값이 하나로 정해지는지(풀어 가기) 확인한다.
+
+const INK = "#5a5244";
+const LINE = "#8e816b";
+const FILL = "#f9d66c";
+const fmt = (value) => Number(value.toFixed(2));
+const pts = (list) => list.map(([x, y]) => `${fmt(x)},${fmt(y)}`).join(" ");
+const polar = (cx, cy, r, deg) => [cx + r * Math.cos((deg * Math.PI) / 180), cy + r * Math.sin((deg * Math.PI) / 180)];
+
+// 칸 목록: { poly: [[x,y]…] } 또는 { rect: [x,y,w,h], mark: "circle" } — 좌표는 100×100(또는 배치의 box) 안.
+function gridCells(rows, columns, size, mark) {
+  const cells = [];
+  for (let r = 0; r < rows; r += 1) for (let c = 0; c < columns; c += 1) cells.push({ rect: [c * size, r * size, size, size], mark, r, c });
+  return cells;
+}
+
+const CELL_LAYOUTS = {
+  grid32: { box: [60, 90], cells: () => gridCells(3, 2, 30, "fill"), rows: 3, columns: 2 },
+  grid23: { box: [90, 60], cells: () => gridCells(2, 3, 30, "fill"), rows: 2, columns: 3 },
+  circle32: { box: [60, 90], cells: () => gridCells(3, 2, 30, "circle"), rows: 3, columns: 2 },
+  hexagram: {
+    box: [100, 100],
+    cells: () => range(0, 5).map((k) => {
+      const angle = -90 + 60 * k;
+      return { poly: [polar(50, 50, 48, angle), polar(50, 50, 48 / Math.sqrt(3), angle - 30), polar(50, 50, 48 / Math.sqrt(3), angle + 30)], k };
+    }),
+    outline: () => [[-90, 30, 150], [90, 210, 330]].map((tri) => tri.map((angle) => polar(50, 50, 48, angle)))
+  },
+  pentagram: {
+    box: [100, 96],
+    cells: () => range(0, 4).map((k) => {
+      const angle = -90 + 72 * k;
+      const inner = 48 * Math.cos((72 * Math.PI) / 180) / Math.cos((36 * Math.PI) / 180);
+      return { poly: [polar(50, 52, 48, angle), polar(50, 52, inner, angle - 36), polar(50, 52, inner, angle + 36)], k };
+    }),
+    outline: () => [[0, 2, 4, 1, 3].map((k) => polar(50, 52, 48, -90 + 72 * k))]
+  },
+  nested: {
+    box: [100, 100],
+    // 겹친 정사각형 셋과 대각선 — 안쪽 네 삼각형, 가운데 고리 네 칸, 바깥 고리 네 칸
+    cells: () => {
+      const square = (half) => [[50 - half, 50 - half], [50 + half, 50 - half], [50 + half, 50 + half], [50 - half, 50 + half]];
+      const [outer, middle, inner] = [square(48), square(32), square(16)];
+      const cells = [];
+      const sides = ["위", "오른쪽", "아래", "왼쪽"];
+      for (let side = 0; side < 4; side += 1) {
+        const a = side;
+        const b = (side + 1) % 4;
+        cells.push({ poly: [[50, 50], inner[a], inner[b]], ring: 0, side: sides[side] });
+        cells.push({ poly: [inner[a], middle[a], middle[b], inner[b]], ring: 1, side: sides[side] });
+        cells.push({ poly: [middle[a], outer[a], outer[b], middle[b]], ring: 2, side: sides[side] });
+      }
+      return cells;
+    }
+  }
+};
+
+function cellFigure(layoutName, cells, on, { scale = 1, label = "", labelBelow = "", values = null } = {}) {
+  const layout = CELL_LAYOUTS[layoutName];
+  const [bw, bh] = layout.box;
+  const pad = 3;
+  const labelSpace = labelBelow ? 16 : 0;
+  const width = (bw + pad * 2) * scale;
+  const height = (bh + pad * 2 + labelSpace) * scale;
+  const parts = [];
+  cells.forEach((cell, index) => {
+    const isOn = on.includes(index);
+    if (cell.rect) {
+      const [x, y, w, h] = cell.rect;
+      const fill = cell.mark === "fill" && isOn ? FILL : "#fff";
+      parts.push(`<rect x="${x + pad}" y="${y + pad}" width="${w}" height="${h}" fill="${fill}" stroke="${LINE}" stroke-width="1.4"/>`);
+      if (cell.mark === "circle" && isOn) parts.push(`<circle cx="${x + pad + w / 2}" cy="${y + pad + h / 2}" r="${w * 0.3}" fill="none" stroke="${INK}" stroke-width="1.6"/>`);
+    } else {
+      const poly = cell.poly.map(([x, y]) => [x + pad, y + pad]);
+      parts.push(`<polygon points="${pts(poly)}" fill="${isOn ? FILL : "#fff"}" stroke="${LINE}" stroke-width="1.2"/>`);
+    }
+  });
+  if (layout.outline) layout.outline().forEach((poly) => parts.push(`<polygon points="${pts(poly.map(([x, y]) => [x + pad, y + pad]))}" fill="none" stroke="${LINE}" stroke-width="1.4"/>`));
+  if (values) cells.forEach((cell, index) => {
+    let cx; let cy;
+    if (cell.rect) { cx = cell.rect[0] + cell.rect[2] / 2; cy = cell.rect[1] + cell.rect[3] / 2; } else {
+      cx = cell.poly.reduce((sum, [x]) => sum + x, 0) / cell.poly.length;
+      cy = cell.poly.reduce((sum, [, y]) => sum + y, 0) / cell.poly.length;
+    }
+    const small = layoutName === "nested" || layoutName === "pentagram" || layoutName === "hexagram";
+    parts.push(`<text x="${fmt(cx + pad)}" y="${fmt(cy + pad + (small ? 3 : 4))}" text-anchor="middle" font-size="${small ? 8 : 11}" font-weight="700" fill="${INK}">${values[index]}</text>`);
+  });
+  if (label) parts.push(`<text x="${(bw + pad * 2) / 2}" y="${(bh + pad * 2) / 2 + 5}" text-anchor="middle" font-size="14" font-weight="800" fill="${INK}">${label}</text>`);
+  if (labelBelow) parts.push(`<text x="${(bw + pad * 2) / 2}" y="${bh + pad * 2 + 13}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}">${labelBelow}</text>`);
+  return `<svg viewBox="0 0 ${bw + pad * 2} ${bh + pad * 2 + labelSpace}" style="width:${fmt(width)}px;max-width:100%;height:auto" role="img" aria-label="색칠한 칸으로 수 나타내기">${parts.join("")}</svg>`;
+}
+
+// 자리값 정하기: 칸 하나하나가 두 배씩(1, 2, 4, …) — 차례(시작 칸·방향)를 뽑는다. 겹친 정사각형은 고리마다 1·5·25(한 고리에 네 칸).
+function cellWeights(layoutName, cells) {
+  if (layoutName === "nested") return { weights: cells.map((cell) => [1, 5, 25][cell.ring]), groups: cells.map((cell) => cell.ring), groupValues: [1, 5, 25] };
+  let order;
+  const n = cells.length;
+  if (cells[0].rect) {
+    const { rows, columns } = CELL_LAYOUTS[layoutName];
+    const columnMajor = Math.random() < 0.5;
+    const fromRight = Math.random() < 0.5;
+    const fromBottom = Math.random() < 0.5;
+    const list = [];
+    if (columnMajor) for (let c0 = 0; c0 < columns; c0 += 1) for (let r0 = 0; r0 < rows; r0 += 1) list.push([fromBottom ? rows - 1 - r0 : r0, fromRight ? columns - 1 - c0 : c0]);
+    else for (let r0 = 0; r0 < rows; r0 += 1) for (let c0 = 0; c0 < columns; c0 += 1) list.push([fromBottom ? rows - 1 - r0 : r0, fromRight ? columns - 1 - c0 : c0]);
+    order = list.map(([r, c]) => r * columns + c);
+  } else {
+    const start = randomInt(0, n - 1);
+    const step = Math.random() < 0.5 ? 1 : n - 1;
+    order = range(0, n - 1).map((index) => (start + index * step) % n);
+  }
+  const weights = [];
+  order.forEach((cellIndex, rank) => { weights[cellIndex] = 2 ** rank; });
+  return { weights, groups: range(0, n - 1), groupValues: weights };
+}
+
+// 보기만으로 모든 무리(칸 또는 고리)의 값이 하나로 풀리는지 — 모르는 것이 하나뿐인 보기부터 차례로 푼다.
+function examplesDetermine(examples, groups, groupCount) {
+  const known = new Map();
+  let progress = true;
+  while (progress) {
+    progress = false;
+    for (const example of examples) {
+      const counts = new Map();
+      example.on.forEach((cell) => counts.set(groups[cell], (counts.get(groups[cell]) || 0) + 1));
+      const unknown = [...counts.keys()].filter((group) => !known.has(group));
+      if (unknown.length !== 1) continue;
+      const rest = [...counts.entries()].filter(([group]) => known.has(group)).reduce((sum, [group, count]) => sum + known.get(group) * count, 0);
+      known.set(unknown[0], (example.value - rest) / counts.get(unknown[0]));
+      progress = true;
+    }
+  }
+  return known.size === groupCount;
+}
+
+function onCellsFor(value, weights, groups, layoutName) {
+  if (layoutName === "nested") {
+    // 고리마다 그 자리 숫자만큼 아무 칸이나 칠한다(색칠 자리는 뽑는다)
+    const digits = [value % 5, Math.floor(value / 5) % 5, Math.floor(value / 25) % 5];
+    return digits.flatMap((digit, ring) => shuffle(range(0, weights.length - 1).filter((cell) => groups[cell] === ring)).slice(0, digit)).sort((a, b) => a - b);
+  }
+  return range(0, weights.length - 1).filter((cell) => value & weights[cell]);
+}
+
+function cellCodeProblem(layoutName, { difficulty = 2 } = {}) {
+  const layout = CELL_LAYOUTS[layoutName];
+  const cells = layout.cells();
+  const { weights, groups, groupValues } = cellWeights(layoutName, cells);
+  const groupCount = groupValues.length;
+  const maximum = layoutName === "nested" ? 124 : weights.reduce((sum, value) => sum + value, 0);
+  const pieces = (value) => onCellsFor(value, weights, groups, layoutName).length;
+  for (let attempt = 0; attempt < 400; attempt += 1) {
+    const exampleCount = randomInt(5, 7);
+    const pool = range(1, maximum).filter((value) => pieces(value) <= (layoutName === "nested" ? 3 : 2));
+    const values = shuffle(pool).slice(0, exampleCount).sort((a, b) => a - b);
+    const examples = values.map((value) => ({ value, on: onCellsFor(value, weights, groups, layoutName) }));
+    if (examples.filter((example) => example.on.length >= 2).length < (difficulty === 1 ? 1 : 2)) continue;
+    if (!examplesDetermine(examples, groups, groupCount)) continue;
+    const want = difficulty === 1 ? [2, 3] : difficulty === 2 ? [3, 4] : [4, 6];
+    const targets = range(1, maximum).filter((value) => !values.includes(value) && pieces(value) >= want[0] && pieces(value) <= want[1]);
+    if (!targets.length) continue;
+    const target = sample(targets);
+    const on = onCellsFor(target, weights, groups, layoutName);
+    const mode = Math.random() < (difficulty === 1 ? 0.7 : 0.5) ? "read" : "color";
+    const exampleSvgs = examples.map((example) => cellFigure(layoutName, cells, example.on, { scale: 0.62, labelBelow: String(example.value) }));
+    const questionSvg = mode === "read"
+      ? cellFigure(layoutName, cells, on, { scale: 1.05, labelBelow: "?" })
+      : cellFigure(layoutName, cells, [], { scale: 1.05, labelBelow: String(target) });
+    const parts = on.map((cell) => weights[cell]);
+    const valueText = layoutName === "nested"
+      ? "안쪽 삼각형 한 칸은 1, 가운데 고리 한 칸은 5, 바깥 고리 한 칸은 25"
+      : `칸의 수는 ${[...weights].sort((a, b) => a - b).slice(0, -1).join(", ")}, ${ro(Math.max(...weights))} 한 칸 옮길 때마다 두 배`;
+    const sumText = `${[...parts].sort((a, b) => b - a).join(" + ")} = ${target}`;
+    const answerVisual = { kind: "fig", html: cellFigure(layoutName, cells, on, { scale: 1.05, labelBelow: String(target), values: weights }) };
+    return {
+      prompt: mode === "read"
+        ? "보기는 칸에 색칠하여 수를 나타낸 것입니다. 규칙을 찾아 「?」 그림이 나타내는 수를 구하세요."
+        : `보기는 칸에 색칠하여 수를 나타낸 것입니다. 규칙을 찾아 빈 그림이 ${target}${BATCHIM_DIGIT[target % 10] ? "이" : "가"} 되도록 색칠하세요.`,
+      visual: { kind: "fig", html: `${exampleSvgs.join("")}${questionSvg}` },
+      answer: mode === "read" ? String(target) : `${target}${BATCHIM_DIGIT[target % 10] ? "이" : "가"} 되도록 ${layoutName === "nested" ? `안쪽 ${target % 5}칸, 가운데 고리 ${Math.floor(target / 5) % 5}칸, 바깥 고리 ${Math.floor(target / 25)}칸` : [...parts].sort((a, b) => b - a).join("·") + " 칸"} 색칠`,
+      answerVisual,
+      responseKind: mode === "color" ? "drawing" : "text",
+      solution: `한 칸만 색칠한 보기와 두 칸 이상 색칠한 보기를 견주면 ${valueText}입니다. ${mode === "read" ? "색칠한 칸의 수를 더하면" : `${target}${BATCHIM_DIGIT[target % 10] ? "은" : "는"}`} ${sumText}${mode === "read" ? "입니다." : "이므로 그 칸들을 색칠합니다."}`,
+      meta: { family: "b3s-cell-code", layout: layoutName, weights, groups, examples, on, target, mode }
+    };
+  }
+  return null;
+}
+
 // ───────────────────────────── 생성기 · 유형 · 안내 · 번호 ─────────────────────────────
 
 export const BOOK03_STRUCTURE_GENERATORS = {
@@ -294,13 +487,25 @@ export const BOOK03_STRUCTURE_GENERATORS = {
   b3sCryptTwoOneTwo: cryptGenerator("two-one-two", { ask: "one", measure: (entry) => entry.rows.flat().filter((token) => "s" in token).length }),
   b3sCryptTwoTwoThree: cryptGenerator("two-two-three", { ask: "one", measure: letterCount }),
   b3sCryptThreeTwoShape: cryptGenerator("three-two-shape", { ask: "one", measure: letterCount }),
-  b3sCryptThreeTwoFour: cryptGenerator("three-two-four", { ask: "one", measure: letterCount })
+  b3sCryptThreeTwoFour: cryptGenerator("three-two-four", { ask: "one", measure: letterCount }),
+  b3sCellCodeGrid32: (options) => cellCodeProblem("grid32", options),
+  b3sCellCodeGrid23: (options) => cellCodeProblem("grid23", options),
+  b3sCellCodeCircle32: (options) => cellCodeProblem("circle32", options),
+  b3sCellCodeHexagram: (options) => cellCodeProblem("hexagram", options),
+  b3sCellCodePentagram: (options) => cellCodeProblem("pentagram", options),
+  b3sCellCodeNested: (options) => cellCodeProblem("nested", options)
 };
 
 const cryptRow = (id, label, generator, aliases = []) => ({
   id, domain: "number", middle: "복면산", label, generator,
   catalogGroup: "복면산", catalogStrategy: "받아올림 따라가기",
   searchAliases: ["복면산", "모양 덧셈", ...aliases]
+});
+
+const codeRow = (id, label, generator, aliases = []) => ({
+  id, domain: "pattern", middle: "마법카드와 도형수", label, generator,
+  catalogGroup: "마법카드와 도형수", catalogStrategy: "보기로 칸의 값 찾기",
+  searchAliases: ["도형수", "색칠한 칸", "비밀 수", ...aliases]
 });
 
 export const BOOK03_STRUCTURE_TYPE_ROWS = [
@@ -314,7 +519,13 @@ export const BOOK03_STRUCTURE_TYPE_ROWS = [
   cryptRow("crypt-two-one-two-b3", "모두 모양인 두 자리 + 한 자리 = 두 자리", "b3sCryptTwoOneTwo", ["AB+B"]),
   cryptRow("crypt-two-two-three-b3", "모두 모양인 두 자리 + 두 자리 = 세 자리", "b3sCryptTwoTwoThree", ["두 자리 + 두 자리"]),
   cryptRow("crypt-three-two-shape-b3", "모양 세 자리 + 모양 두 자리 = 숫자 하나 섞인 세 자리", "b3sCryptThreeTwoShape", ["세 자리 + 두 자리"]),
-  cryptRow("crypt-three-two-four-b3", "모두 모양인 세 자리 + 두 자리 = 네 자리", "b3sCryptThreeTwoFour", ["네 자리 결과"])
+  cryptRow("crypt-three-two-four-b3", "모두 모양인 세 자리 + 두 자리 = 네 자리", "b3sCryptThreeTwoFour", ["네 자리 결과"]),
+  codeRow("cell-code-grid32-b3", "세로 3×2 칸에 색칠해 수 나타내기", "b3sCellCodeGrid32", ["3×2 모눈"]),
+  codeRow("cell-code-grid23-b3", "가로 2×3 칸에 색칠해 수 나타내기", "b3sCellCodeGrid23", ["2×3 모눈"]),
+  codeRow("cell-code-circle32-b3", "3×2 칸에 동그라미를 그려 수 나타내기", "b3sCellCodeCircle32", ["동그라미 표시"]),
+  codeRow("cell-code-hexagram-b3", "육각별 끝 삼각형에 색칠해 수 나타내기", "b3sCellCodeHexagram", ["육각별"]),
+  codeRow("cell-code-pentagram-b3", "오각별 끝 삼각형에 색칠해 수 나타내기", "b3sCellCodePentagram", ["오각별", "별 모양"]),
+  codeRow("cell-code-nested-square-b3", "겹친 정사각형 고리에 색칠해 수 나타내기", "b3sCellCodeNested", ["고리", "겹친 정사각형"])
 ];
 
 export const BOOK03_STRUCTURE_GUIDES = {
@@ -328,7 +539,13 @@ export const BOOK03_STRUCTURE_GUIDES = {
   "crypt-two-one-two-b3": "한 자리 수를 더해 십의 자리가 바뀌었는지(받아올림) 먼저 보고 일의 자리 식을 세웁니다.",
   "crypt-two-two-three-b3": "결과의 맨 앞은 받아올림 1이고, 같은 모양이 나오는 자리끼리 받아올림을 따져 차례로 정합니다.",
   "crypt-three-two-shape-b3": "보이는 숫자 자리부터 받아올림을 정하고, 같은 모양이 몇 번 쓰였는지 보며 왼쪽으로 갑니다.",
-  "crypt-three-two-four-b3": "네 자리가 되었으니 맨 앞은 1, 세 자리 수의 백의 자리는 9입니다. 그다음 일의 자리부터 맞춥니다."
+  "crypt-three-two-four-b3": "네 자리가 되었으니 맨 앞은 1, 세 자리 수의 백의 자리는 9입니다. 그다음 일의 자리부터 맞춥니다.",
+  "cell-code-grid32-b3": "한 칸만 색칠한 보기로 칸의 수를 찾고, 두 칸짜리 보기에서 아는 칸을 빼 나머지 칸의 수를 찾습니다.",
+  "cell-code-grid23-b3": "한 칸만 색칠한 보기로 칸의 수를 찾고, 칸의 수가 두 배씩 커지는 차례를 따라 나머지 칸을 채웁니다.",
+  "cell-code-circle32-b3": "동그라미가 하나인 보기로 칸의 수를 찾고, 동그라미가 둘인 보기에서 아는 칸을 빼 나머지를 찾습니다.",
+  "cell-code-hexagram-b3": "끝 삼각형 하나만 칠한 보기부터 보고, 별을 한 바퀴 돌며 칸의 수가 두 배씩 커지는지 확인합니다.",
+  "cell-code-pentagram-b3": "끝 삼각형 하나만 칠한 보기부터 보고, 별을 한 바퀴 돌며 칸의 수가 두 배씩 커지는지 확인합니다.",
+  "cell-code-nested-square-b3": "같은 고리의 칸은 같은 수입니다. 안쪽 칸 하나의 수부터 찾고 가운데·바깥 고리 한 칸의 수를 차례로 찾습니다."
 };
 
 export const BOOK03_STRUCTURE_REMAPS = [
@@ -350,7 +567,14 @@ export const BOOK03_STRUCTURE_REMAPS = [
   ["book-03", 3, "practice", 1, [15], "crypt-two-two-three-b3"],
   ["book-03", 3, "practice", 1, [17], "crypt-ab-double-b3"],
   ["book-03", 3, "advanced", 1, [1], "crypt-three-two-four-b3"],
-  ["book-03", 3, "advanced", 1, [3], "crypt-two-one-two-b3"]
+  ["book-03", 3, "advanced", 1, [3], "crypt-two-one-two-b3"],
+  // 4단원 마법카드 — 색칠한 칸 새 배치
+  ["book-03", 4, "activity", 1, [3], "cell-code-grid32-b3"],
+  ["book-03", 4, "check", 1, [2], "cell-code-hexagram-b3"],
+  ["book-03", 4, "practice", 1, [4], "cell-code-circle32-b3"],
+  ["book-03", 4, "practice", 1, [5], "cell-code-grid23-b3"],
+  ["book-03", 4, "practice", 1, [7], "cell-code-pentagram-b3"],
+  ["book-03", 4, "advanced", 1, [4], "cell-code-nested-square-b3"]
 ];
 
 // 검사기용: 새 생성기 문항을 다른 방법으로 다시 풀어 본다. 틀리면 까닭을 글로 돌려준다(맞으면 "").
@@ -367,6 +591,16 @@ export function verifyBook03Structure(problem) {
     if (JSON.stringify(cells) !== JSON.stringify(expected)) return "그림과 식이 다름";
     const want = meta.askLetters.length === 1 ? String(meta.values[meta.askLetters[0]]) : meta.askLetters.map((index) => `${meta.glyph[index]}=${meta.values[index]}`).join(", ");
     if (problem.answer !== want) return "답이 풀이와 다름";
+    return "";
+  }
+  if (meta.family === "b3s-cell-code") {
+    const total = (on) => on.reduce((sum, cell) => sum + meta.weights[cell], 0);
+    if (meta.examples.some((example) => total(example.on) !== example.value)) return "보기 그림과 수가 다름";
+    if (total(meta.on) !== meta.target) return "물은 그림의 수가 다름";
+    if (!examplesDetermine(meta.examples, meta.groups, new Set(meta.groups).size)) return "보기만으로 칸의 수가 정해지지 않음";
+    if (meta.examples.some((example) => example.value === meta.target)) return "물은 수가 보기에 있음";
+    if (meta.layout !== "nested" && new Set(meta.weights).size !== meta.weights.length) return "칸의 수가 겹침";
+    if (meta.mode === "read" && problem.answer !== String(meta.target)) return "답이 다름";
     return "";
   }
   return `모르는 꼴 ${meta.family}`;
