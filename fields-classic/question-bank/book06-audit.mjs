@@ -1,5 +1,6 @@
 import { GENERATORS } from "./generators.js";
 import { book06Markup } from "./book06-renderers.js";
+import { BOOK06_STRUCTURE_CHECKS } from "./book06-structure-generators.js";
 import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./source-data.js";
 
 const iterations = Number.parseInt(process.argv[2] || "1000", 10);
@@ -88,8 +89,12 @@ function validateSurface(problem, id, difficulty) {
   assert(String(problem.answer ?? "").trim(), id, difficulty, "정답 없음");
   assert(problem.solution?.trim(), id, difficulty, "풀이 없음");
   assert(problem.meta?.family, id, difficulty, "검산 유형 없음");
-  assert(problem.visual?.kind === "book6", id, difficulty, "6권 전용 그림 아님");
-  assert(book06Markup(problem.visual), id, difficulty, "빈 그림");
+  // 교재 번호 꼴 생성기(book06-structure-generators.js)는 SVG·표를 바로 그린 fig 그림을 쓴다
+  if (problem.visual?.kind === "fig") assert(/<(svg|table|div)/.test(problem.visual.html || ""), id, difficulty, "빈 그림");
+  else {
+    assert(problem.visual?.kind === "book6", id, difficulty, "6권 전용 그림 아님");
+    assert(book06Markup(problem.visual), id, difficulty, "빈 그림");
+  }
   assert(!/undefined|NaN|null|\[object Object\]/.test(text), id, difficulty, "잘못된 출력 토큰");
   assert(!/퍼뮤테이션|컴비네이션|팩토리얼|제곱|\^/.test(text), id, difficulty, "아동 지문 금지 표현");
   assert(!/(몇 cm인가요\?){2}|([가-힣]+\?){2}/.test(problem.prompt), id, difficulty, "지문 중복 의심");
@@ -99,6 +104,12 @@ function validate(problem, id, difficulty) {
   validateSurface(problem, id, difficulty);
   const meta = problem.meta;
   const numeric = numericAnswer(problem);
+  const structureCheck = BOOK06_STRUCTURE_CHECKS[meta.family];
+  if (structureCheck) {
+    const message = structureCheck(problem);
+    assert(!message, id, difficulty, message || "");
+    return;
+  }
   switch (meta.family) {
     case "number-line-midpoint":
       assert((meta.left + meta.right) / 2 === meta.answer && numeric === meta.answer, id, difficulty, "중간 수 오류"); return;
@@ -313,7 +324,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-06 missing");
 if (units.length !== 4) throw new Error(`book-06 unit count ${units.length}`);
-if (typeIds.length !== 71) throw new Error(`book-06 type count ${typeIds.length}`);
+if (typeIds.length !== 94) throw new Error(`book-06 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-06 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-06 unit test number ${question.number}, expected ${index + 1}`);
