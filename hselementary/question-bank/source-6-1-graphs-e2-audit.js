@@ -37,7 +37,7 @@ const hiddenAnswer = html => {
   return match[1].split(",").map(Number);
 };
 const plain = value => String(value).replace(/,/g, "").replace(/\s/g, "");
-const answerFrom = (variant, values) => {
+const answerFrom = (variant, values, prompt = "") => {
   if (variant === 0) return `학생 수 ${values.slice(0, 4).join(", ")}명, 백분율 ${values.slice(4, 8).join(", ")}%`;
   if (variant === 1) {
     const [totalA, totalB, priceA, priceB, ...rates] = values;
@@ -64,7 +64,13 @@ const answerFrom = (variant, values) => {
     const totalA = values[0], totalB = values[1], rates = values.slice(3);
     return `${Math.abs(totalA * rates[3] / 100 - totalB * rates[7] / 100)}명`;
   }
-  if (variant === 7) return `${values[0] * values[3] / 100}명`;
+  if (variant === 7) {
+    // 2026-11-24: 띠그래프 값이 문장 조건(봄=여름×분수, 겨울=봄×2, 합 100%)을 만족하는지도 확인한다.
+    const [total, spring, summer, autumn, winter] = values;
+    const relation = String(prompt || "").match(/aria-label="(\d+)분의 (\d+)"/);
+    if (!relation || spring * Number(relation[1]) !== summer * Number(relation[2]) || winter !== 2 * spring || spring + summer + autumn + winter !== 100) return "계절 조건 불일치";
+    return `${total * autumn / 100}명`;
+  }
   if (variant === 8) {
     const essayCount = values[0] * values[1] / 100;
     const geometryCount = essayCount * values[3] / 100;
@@ -106,7 +112,7 @@ for (let variant = 0; variant < sourceIds.length; variant += 1) {
       if (!generated.answerVisual.includes(`data-source61-e2-answer-contract="${answerContracts[variant]}"`)) failures.push(`${sourceIds[variant]}: 답 계약 누락`);
       const visiblePrompt = visiblePart(generated.prompt), visibleAnswer = visiblePart(generated.answerVisual);
       if (!visibleAnswer.includes(generated.answer)) failures.push(`${sourceIds[variant]}: 답 그림 안에 최종 답 누락`);
-      if (plain(generated.answer) !== plain(answerFrom(variant, problemValues))) failures.push(`${sourceIds[variant]}: 독립 답 불일치 ${generated.answer}/${answerFrom(variant, problemValues)}`);
+      if (plain(generated.answer) !== plain(answerFrom(variant, problemValues, generated.prompt))) failures.push(`${sourceIds[variant]}: 독립 답 불일치 ${generated.answer}/${answerFrom(variant, problemValues, generated.prompt)}`);
       if (variant === 0 && !generated.prompt.includes('data-source61-graphs-e2-pictograph-quadrants="2x2"')) failures.push(`${sourceIds[variant]}: 그림그래프 2x2 계약 누락`);
       if (variant === 0) {
         const problemTable = visiblePrompt.match(/<table[^>]*data-source61-e2-summary-table="student-and-percent"[^>]*>([\s\S]*?)<\/table>/);

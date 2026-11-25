@@ -1009,7 +1009,7 @@
     if (kind === "example-1" || kind === "mission-1") {
       const facts = factorFacts(data);
       const extra = level === 0
-        ? ` 가장 짧은 변으로 가능한 길이는 ${facts.shortestCandidates.map(value => `${value}cm`).join(", ")}입니다.`
+        ? ` 가장 짧은 변으로 가능한 길이는 ${facts.shortestCandidates.map(value => `${value}cm`).join(", ")}입니다. 서로 다른 직육면체는 몇 가지인가요?`
         : level === 2
           ? " 서로 다른 직육면체의 전체 가지 수와 그중 세 변의 길이가 모두 다른 경우의 수도 차례로 구하세요."
           : " 서로 다른 직육면체는 몇 가지인가요?";
