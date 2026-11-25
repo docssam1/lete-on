@@ -1806,6 +1806,8 @@ body.as-embed.in-class{--emb:#243184;--emb-deep:#141b5d;--emb-soft:#eaf3ff;--emb
 
 /* 2과정 그림(course2-g1-generators.js) — 색은 SVG 안에 종이색으로 그려 둔다 */
 .visual.c2-visual{display:flex;justify-content:center;align-items:center}
+.visual.fig-visual{display:flex;flex-wrap:wrap;justify-content:center;align-items:center;gap:12px 22px}
+.fig-visual svg{flex:none;max-width:100%;height:auto}
 .visual.shape-matrix-visual{display:flex;justify-content:center;align-items:center}
 .shape-matrix-row{display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:14px 26px}
 .shape-matrix-row.is-set{display:grid;grid-template-columns:repeat(2,auto);justify-content:center}
