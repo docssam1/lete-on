@@ -11,7 +11,7 @@
   <link rel="stylesheet" href="./competition-paper-review.css?v=20261123-4">
   <link rel="stylesheet" href="./shared/paper-book-reader.css?v=20261117-1">
   <link rel="stylesheet" href="./shared/math-inline.css?v=20261103-2">
-  <link rel="stylesheet" href="./shared/paper-editions.css?v=20261126-2">
+  <link rel="stylesheet" href="./shared/paper-editions.css?v=20261126-4">
   <link rel="stylesheet" href="./shared/boarding-content-i18n.css?v=20261114-2">
   <link rel="stylesheet" href="./shared/paper-learning-profile.css?v=20261117-1">
   <link rel="stylesheet" href="./shared/paper-score-overview.css?v=20261117-1">
@@ -42,6 +42,7 @@
   <div id="book-viewport" class="book-viewport" tabindex="0" aria-label="시험지 읽기" hidden><div id="book-sheet" class="book-sheet"></div></div>
   <section id="paper-edited-panel" hidden aria-label="편집형 시험지">
     <div class="edited-paper-controls"><div id="edited-density" role="group" aria-label="쪽당 문항 수"><button type="button" data-edited-density="2" aria-pressed="true">한 쪽 2문항</button><button type="button" data-edited-density="3" aria-pressed="false">한 쪽 3문항</button></div><div id="edited-kind" role="group" aria-label="문제지와 해설지"><button id="edited-questions" type="button" aria-pressed="true">문제지</button><button id="edited-solutions" type="button" disabled>해설 · 준비 중</button></div><button id="edited-zoom" type="button" aria-pressed="false">크게 보기</button><button id="edited-print" type="button" disabled>편집형 인쇄</button></div>
+    <div id="edited-solution-languages" class="edited-paper-controls" role="group" aria-label="해설 언어" hidden><span id="edited-solution-language-label">해설 언어</span><button type="button" data-solution-language="ko" lang="ko">한국어</button><button type="button" data-solution-language="en" lang="en">English</button><button type="button" data-solution-language="zh-Hans" lang="zh-Hans">中文</button></div>
     <p id="edited-paper-status" role="status" aria-live="polite"></p><div id="edited-paper-pages" data-content-original></div>
     <details id="edited-import-options"><summary>번역·해설 원고 불러오기</summary><p id="edited-import-description">선택한 연도·회차의 번역·해설 파일을 불러옵니다. 자료는 이 화면에서만 사용하며 서버에 전송하지 않습니다.</p><label id="edited-import-label" for="edited-import-file">원고 파일 (JSON)</label><input id="edited-import-file" type="file" accept="application/json,.json"><p id="edited-import-status" role="status" aria-live="polite"></p></details>
   </section>
@@ -126,9 +127,9 @@
   <script src="./shared/boarding-study-return.js?v=20261114-2"></script>
   <script src="./shared/paper-choice-buttons.js?v=20261123-1"></script>
   <script src="./shared/math-inline.js?v=20261126-1"></script>
-  <script src="./competition/paper-edition-catalog.js?v=20261126-1"></script>
-  <script src="./shared/paper-edition-layout.js?v=20261126-1"></script>
-  <script src="./shared/paper-editions.js?v=20261126-3"></script>
+  <script src="./competition/paper-edition-catalog.js?v=20261126-4"></script>
+  <script src="./shared/paper-edition-layout.js?v=20261126-4"></script>
+  <script src="./shared/paper-editions.js?v=20261126-4"></script>
   <script src="./shared/original-paper-exam.js?v=20261126-1"></script>
 </body>
 </html>

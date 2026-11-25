@@ -32,5 +32,25 @@
   languages.forEach(lang=>{if(pack.items.every(i=>i.versions[lang]))available.push(lang);});if(!available.length)throw Error('incomplete-language');
   return {languages:available,solutionLanguages:available.filter(lang=>pack.items.every(i=>i.versions[lang].steps&&i.versions[lang].steps.length))};
  }
- return Object.freeze({questionMap,paginate,validatePack});
+ function validateSolutions(pack,identity,keys){
+  if(!pack||pack.schemaVersion!=='gfield-paper-solutions-v1'||pack.authorship!=='GFIELD'||pack.contentType!=='independent-mathematical-commentary'||!pack.paper||!Array.isArray(pack.items))throw Error('invalid-solutions');
+  const p=pack.paper,ref=keys.formFor(identity.program,identity.year,identity.form);
+  if(p.program!==identity.program||Number(p.year)!==identity.year||String(p.form||'')!==identity.form)throw Error('wrong-paper');
+  if(!ref||pack.items.length!==ref.itemCount)throw Error('incomplete-solutions');
+  const text=v=>typeof v==='string'&&v.trim()&&v.length<=6000;
+  for(const [i,item]of pack.items.entries()){
+   if(!item||item.number!==i+1||!text(item.result)||!item.versions)throw Error('incomplete-solutions');
+   if(!keys.accepts(keys.answerFor(p.program,p.year,p.form,item.number),item.answer))throw Error('wrong-answer-key');
+   if(item.sourceUrl!=='https://live.poshenloh.com/past-contests/'+p.program+'/'+p.year+(p.form||'')+'/problem/'+item.number)throw Error('invalid-source');
+   for(const version of Object.values(item.versions)){
+    if(!version||!text(version.title)||!text(version.check)||!Array.isArray(version.steps)||version.steps.length<2||version.steps.length>12||version.steps.some(s=>!text(s)))throw Error('invalid-solution');
+    if(version.stem!==undefined||version.choices!==undefined||version.diagram!==undefined)throw Error('solution-only');
+    if(version.grid!==undefined&&(!Array.isArray(version.grid)||version.grid.length>8||!version.grid.length||!version.grid.every(r=>typeof r==='string'&&/^[A-Z]{1,8}$/.test(r)&&r.length===version.grid[0].length)))throw Error('invalid-grid');
+   }
+  }
+  const languages=['en','ko','zh-Hans'].filter(lang=>pack.items.every(i=>i.versions[lang]));
+  if(!languages.length)throw Error('incomplete-language');
+  return {languages};
+ }
+ return Object.freeze({questionMap,paginate,validatePack,validateSolutions});
 });
