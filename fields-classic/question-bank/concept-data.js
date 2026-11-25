@@ -1220,7 +1220,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("recheck-all-seating", "모든 조건을 다시 검산해요", "완성한 자리표를 처음부터 다시 읽어 모든 사람과 방향 조건이 맞는지 확인합니다.")
     ],
     "기준 자리 없이 한 사람부터 마음대로 놓거나 대각선 자리를 위·아래·왼쪽·오른쪽으로 잘못 읽고, 마지막 검산을 빠뜨리지 않았는지 확인합니다.",
-    [book4Evidence("논리추리와 자리배치", 2, [3, 4])]
+    [book4Evidence("논리추리와 자리배치", 2, [4])]
   ),
   // 1단원 활동 1-1은 줄마다 방향을 바꾸어 쓴 넓은 수 배열(교재 대조 2026-11-25)
   "wide-snake-number-grid-b5": sourceLesson(

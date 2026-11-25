@@ -334,7 +334,7 @@ function mixedPanBalance({ difficulty = 2 } = {}, spec) {
   if (!made) return null;
   const figs = made.eqs.map((eq, i) => balanceSvg(eq, `[그림${i + 1}]`));
   return {
-    prompt: `다음 그림의 양팔저울은 모두 수평입니다. ${BAL_NAME[made.target]} 1개는 ${BAL_NAME[made.unit]} 몇 개의 무게와 같을까요?`,
+    prompt: `그림의 저울이 모두 수평으로 멈춰 있습니다. ${BAL_NAME[made.target]} 1개와 무게가 같으려면 ${josa(BAL_NAME[made.unit], "이", "가")} 몇 개 있어야 할까요?`,
     answer: `${made.ratio}개`,
     solution: balanceSolutionText(made),
     visual: { kind: "fig", html: rowWrap(figs) },
@@ -451,7 +451,7 @@ function shapeDifferenceTree({ difficulty = 2 } = {}) {
   const big = Math.max(walk.known.get(x), walk.known.get(y));
   const small = Math.min(walk.known.get(x), walk.known.get(y));
   return {
-    prompt: `다음은 동그라미, 마름모, 네모, 세모가 나타내는 수의 크기를 비교한 식입니다. ${josa(nameOf(x), "과", "와")} ${nameOf(y)}가 나타내는 수의 차를 구하세요.`,
+    prompt: `네 모양은 저마다 어떤 수를 나타냅니다. 식을 보고 ${josa(nameOf(x), "과", "와")} ${nameOf(y)}가 나타내는 두 수는 얼마나 차이가 나는지 구하세요.`,
     answer: String(tree.answer),
     solution: `${josa(nameOf(x), "을", "를")} ${base}이라고 두고 식을 따라 차례로 구합니다. ${steps.join(" ")} 따라서 ${josa(nameOf(x), "과", "와")} ${nameOf(y)}의 차는 ${big} − ${small} = ${tree.answer}입니다.`,
     visual: { kind: "fig", html: rowWrap([diffEquationSvg(tree.eqs, shapes)]) },
@@ -464,11 +464,11 @@ const josaName = (name, withBatchim, without) => (/^[㉠-㉭]$/u.test(name) ? `$
 
 // 장면: 몸무게·구슬·달리기 위치·벌레 달리기·막대 길이.
 const DIFF_SCENES = Object.freeze([
-  { id: "weight", names: ["소율", "준서", "예린", "한결", "다은", "로운", "가온", "수호"], unit: "kg", intro: (n) => `${n.join(", ")} 네 사람의 몸무게를 비교하였더니 다음과 같았습니다.`, ask: (a, b) => `${josaName(a, "과", "와")} ${b}의 몸무게는 몇 kg 차이가 나는지 구하세요.`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}kg 더 ${up ? "무겁습니다" : "가볍습니다"}.` },
-  { id: "marbles", names: ["서아", "민재", "다온", "유찬", "시우", "하린", "은호", "주아"], unit: "개", intro: (n) => `${n.join(", ")} 네 명이 가진 구슬의 개수를 비교하였더니 다음과 같았습니다.`, ask: (a, b) => `${josaName(a, "과", "와")} ${josaName(b, "이", "가")} 가진 구슬은 몇 개 차이가 나는지 구하세요.`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 구슬이 ${d}개 ${up ? "많습니다" : "적습니다"}.` },
-  { id: "race", names: ["태오", "라희", "지안", "도하", "윤슬", "이준", "채아", "건우"], unit: "m", intro: (n) => `${n.join(", ")} 네 명이 달리기를 하고 있습니다.`, ask: (a, b) => `지금 ${josaName(a, "과", "와")} ${b} 사이의 거리는 몇 m인지 구하세요.`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}m ${up ? "앞에" : "뒤에"} 있습니다.` },
-  { id: "bugs", names: ["달팽이", "무당벌레", "메뚜기", "사마귀", "풍뎅이", "애벌레"], unit: "cm", intro: (n) => `${n.slice(0, -1).join(", ")}, ${josaName(n[n.length - 1], "이", "가")} 달리기 시합을 합니다.`, ask: (a, b) => `지금 ${josaName(a, "과", "와")} ${b} 사이의 거리는 몇 cm인지 구하세요.`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}cm ${up ? "앞에" : "뒤에"} 있습니다.` },
-  { id: "sticks", names: ["㉠", "㉡", "㉢", "㉣"], fixed: true, unit: "cm", intro: () => "네 막대 ㉠, ㉡, ㉢, ㉣의 길이를 비교하였더니 다음과 같았습니다.", ask: (a, b) => `막대 ${josaName(a, "과", "와")} ${b}의 길이는 몇 cm 차이가 나는지 구하세요.`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}cm 더 ${up ? "깁니다" : "짧습니다"}.` }
+  { id: "weight", names: ["소율", "준서", "예린", "한결", "다은", "로운", "가온", "수호"], unit: "kg", intro: (n) => `${n.join(", ")} 네 사람이 서로 몸무게를 견주어 보았습니다.`, ask: (a, b) => `${josaName(a, "과", "와")} ${b}의 몸무게 차는 몇 kg일까요?`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}kg 더 ${up ? "무겁습니다" : "가볍습니다"}.` },
+  { id: "marbles", names: ["서아", "민재", "다온", "유찬", "시우", "하린", "은호", "주아"], unit: "개", intro: (n) => `${n.join(", ")} 네 명이 저마다 구슬을 모았습니다.`, ask: (a, b) => `${josaName(a, "과", "와")} ${josaName(b, "이", "가")} 모은 구슬 수의 차는 몇 개일까요?`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 구슬이 ${d}개 ${up ? "많습니다" : "적습니다"}.` },
+  { id: "race", names: ["태오", "라희", "지안", "도하", "윤슬", "이준", "채아", "건우"], unit: "m", intro: (n) => `${n.join(", ")} 네 명이 달리기를 하고 있습니다.`, ask: (a, b) => `지금 ${josaName(a, "과", "와")} ${josaName(b, "은", "는")} 몇 m 떨어져 있을까요?`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}m ${up ? "앞에" : "뒤에"} 있습니다.` },
+  { id: "bugs", names: ["달팽이", "무당벌레", "메뚜기", "사마귀", "풍뎅이", "애벌레"], unit: "cm", intro: (n) => `${n.slice(0, -1).join(", ")}, ${josaName(n[n.length - 1], "이", "가")} 나뭇가지 위에서 경주를 하고 있습니다.`, ask: (a, b) => `지금 ${josaName(a, "과", "와")} ${josaName(b, "은", "는")} 몇 cm 떨어져 있을까요?`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}cm ${up ? "앞에" : "뒤에"} 있습니다.` },
+  { id: "sticks", names: ["㉠", "㉡", "㉢", "㉣"], fixed: true, unit: "cm", intro: () => "막대 ㉠, ㉡, ㉢, ㉣을 나란히 놓고 길이를 견주어 보았습니다.", ask: (a, b) => `막대 ${josaName(a, "과", "와")} ${b}의 길이 차는 몇 cm일까요?`, clue: (l, r, d, up) => `${josaName(l, "은", "는")} ${r}보다 ${d}cm 더 ${up ? "깁니다" : "짧습니다"}.` }
 ]);
 
 function measurementTableHtml(clues, names) {
@@ -744,10 +744,10 @@ function polyominoPartition({ difficulty = 2 } = {}, specName) {
   const answerFigs = made.map((one, i) => regionSvg(one.region, { label: labels[i], tiling: one.tiling }));
   const countWord = KOR_COUNT[spec.count];
   const prompt = spec.given
-    ? `정사각형 5개를 변끼리 붙여 만든 도형을 펜토미노라고 합니다. 칸의 선을 따라 다음 도형을 위의 색칠된 펜토미노와 같은 모양 ${countWord} 조각으로 나누어 그리세요. (돌리거나 뒤집어 놓아도 됩니다.)`
+    ? `위에 색칠한 다섯 칸 조각(펜토미노)만 ${countWord} 개 써서 아래 도형을 빈틈없이 덮으려고 합니다. 조각은 돌리거나 뒤집어 놓아도 됩니다. 칸의 선을 따라 조각의 경계를 그리세요.`
     : spec.same
-      ? `정사각형 ${spec.size}개를 변끼리 붙여 만든 도형을 ${word}라고 합니다. 칸의 선을 따라 다음 도형을 모양과 크기가 같은 ${word} ${countWord} 조각으로 나누어 그리세요.`
-      : `정사각형 5개를 변끼리 붙여 만든 도형을 펜토미노라고 합니다. 칸의 선을 따라 다음 도형을 펜토미노 ${countWord} 조각으로 나누어 그리세요.`;
+      ? `작은 정사각형 ${spec.size}칸을 변끼리 이은 조각을 ${word}라고 해요. 아래 도형을 칸의 선을 따라 똑같은 모양의 ${word} ${countWord} 개로 나누어 경계를 그리세요.`
+      : `작은 정사각형 5칸을 변끼리 이은 조각을 펜토미노라고 해요. 위에 있는 펜토미노 가운데 두 개로 아래 도형을 빈틈없이 덮으려고 합니다. 칸의 선을 따라 두 조각의 경계를 그리세요.`;
   const solution = `도형의 칸은 모두 ${spec.size * spec.count}칸이므로 ${spec.size}칸짜리 조각 ${spec.count}개로 나눕니다. 이웃 칸이 하나뿐인 튀어나온 칸이나 모서리 칸부터 그 칸을 덮을 수 있는 조각을 정하면 나머지 칸이 차례로 정해집니다.${spec.regions > 1 ? " 두 도형 모두" : ""} 나누는 방법은 그림과 같이 한 가지뿐입니다.`;
   return {
     prompt,
@@ -769,6 +769,7 @@ function polyominoPartition({ difficulty = 2 } = {}, specName) {
 const ORDER_PEOPLE = Object.freeze(["가람", "나윤", "다빈", "라온", "마루", "바다", "사랑", "아린", "자율", "하람"]);
 const ORDER_LETTERS = Object.freeze(["A", "B", "C", "D", "E", "F"]);
 const ORDER_ORDINAL = Object.freeze(["", "첫", "두", "세", "네", "다섯"]);
+const ORDER_COUNT = Object.freeze(["", "한", "두", "세", "네", "다섯"]);
 
 function permutationsOf(list) {
   if (list.length < 2) return [list];
@@ -782,18 +783,21 @@ function lineClues(names, pos, n, mode) {
     const p = pos[x];
     if (mode === "line") {
       const behind = n - p;
-      out.push({ kind: "abs", who: [x], text: behind ? `${x} 뒤에는 ${behind}명이 서 있습니다.` : `${x} 뒤에는 아무도 없습니다.`, test: (q) => q[x] === p });
-      if (p > 1) out.push({ kind: "abs", who: [x], text: `${x} 앞에는 ${p - 1}명이 서 있습니다.`, test: (q) => q[x] === p });
+      out.push({ kind: "abs", who: [x], text: behind ? `${x}보다 뒤에 선 사람은 ${behind}명입니다.` : `${josa(x, "이", "가")} 맨 뒤에 서 있습니다.`, test: (q) => q[x] === p });
+      if (p > 1) out.push({ kind: "abs", who: [x], text: `${x}보다 앞에 선 사람은 ${p - 1}명입니다.`, test: (q) => q[x] === p });
     }
     for (const y of names) {
       if (x === y) continue;
       const k = pos[y] - p;
       if (mode === "line") {
-        if (k > 0) out.push({ kind: "rel", who: [x, y], text: k === 1 ? `${x} 바로 뒤에 ${josa(y, "이", "가")} 서 있습니다.` : `${x} 뒤로 ${ORDER_ORDINAL[k]} 번째에 ${josa(y, "이", "가")} 서 있습니다.`, test: (q) => q[y] - q[x] === k });
-        if (k < 0 && -k > 1) out.push({ kind: "rel", who: [x, y], text: `${x} 앞으로 ${ORDER_ORDINAL[-k]} 번째에 ${josa(y, "이", "가")} 서 있습니다.`, test: (q) => q[y] - q[x] === k });
+        if (k > 0) out.push({ kind: "rel", who: [x, y], text: k === 1 ? `${josa(y, "은", "는")} ${x} 바로 뒤에 서 있습니다.` : `${josa(y, "은", "는")} ${x}보다 ${ORDER_COUNT[k]} 자리 뒤에 서 있습니다.`, test: (q) => q[y] - q[x] === k });
+        if (k < 0 && -k > 1) out.push({ kind: "rel", who: [x, y], text: `${josa(y, "은", "는")} ${x}보다 ${ORDER_COUNT[-k]} 자리 앞에 서 있습니다.`, test: (q) => q[y] - q[x] === k });
       } else if (mode === "seat") {
-        if (k > 0) out.push({ kind: "rel", who: [x, y], text: `${x}의 오른쪽 ${ORDER_ORDINAL[k]} 번째에 ${josa(y, "이", "가")} 앉아 있습니다.`, test: (q) => q[y] - q[x] === k });
-        if (k < 0) out.push({ kind: "rel", who: [x, y], text: `${x}의 왼쪽 ${ORDER_ORDINAL[-k]} 번째에 ${josa(y, "이", "가")} 앉아 있습니다.`, test: (q) => q[y] - q[x] === k });
+        if (k > 0) out.push({ kind: "rel", who: [x, y], text: `${josa(y, "은", "는")} ${x}에서 오른쪽으로 ${ORDER_ORDINAL[k]} 번째 자리에 있습니다.`, test: (q) => q[y] - q[x] === k });
+        if (k < 0) out.push({ kind: "rel", who: [x, y], text: `${josa(y, "은", "는")} ${x}에서 왼쪽으로 ${ORDER_ORDINAL[-k]} 번째 자리에 있습니다.`, test: (q) => q[y] - q[x] === k });
+      } else if (mode === "row") {
+        if (k > 0) out.push({ kind: "ord", who: [y, x], text: `${josa(y, "은", "는")} ${x}의 오른쪽에 서 있습니다.`, test: (q) => q[y] > q[x] });
+        if (k < 0) out.push({ kind: "ord", who: [y, x], text: `${josa(y, "은", "는")} ${x}의 왼쪽에 서 있습니다.`, test: (q) => q[y] < q[x] });
       } else if (mode === "race") {
         if (p === 2 && pos[y] === 1) out.push({ kind: "abs", who: [x, y], text: `${x}보다 먼저 들어온 사람은 ${y}뿐입니다.`, test: (q) => q[x] === 2 && q[y] === 1 });
         if (k === 1) out.push({ kind: "rel", who: [x, y], text: `${josa(y, "은", "는")} ${x} 바로 다음으로 들어왔습니다.`, test: (q) => q[y] - q[x] === 1 });
@@ -819,15 +823,18 @@ function makeOrderPuzzle({ mode, n, maxClues }) {
     let ask;
     if (mode === "line") {
       const p = n % 2 ? (n + 1) / 2 : randomInt(2, n - 1);
-      ask = { pos: p, text: n % 2 && p === (n + 1) / 2 ? "가운데 서 있는 사람은 누구인지 구하세요." : `앞에서 ${ORDER_ORDINAL[p]} 번째에 서 있는 사람은 누구인지 구하세요.` };
+      ask = { pos: p, text: n % 2 && p === (n + 1) / 2 ? "줄의 한가운데에 선 사람은 누구일까요?" : `앞에서 ${ORDER_ORDINAL[p]} 번째 자리에 선 사람은 누구일까요?` };
     } else if (mode === "race") {
       const p = randomInt(2, n - 1);
-      ask = { pos: p, text: `${p}등으로 들어온 사람은 누구인지 구하세요.` };
+      ask = { pos: p, text: `${p}등은 누구일까요?` };
+    } else if (mode === "row") {
+      const p = randomInt(2, n - 1);
+      ask = { pos: p, mark: true, text: "㉠ 자리에 선 사람은 누구일까요?" };
     } else {
       const from = pick(names);
       const options = [1, 2, 3].flatMap((k) => [k, -k]).filter((k) => truth[from] + k >= 1 && truth[from] + k <= n);
       const k = pick(options);
-      ask = { from, k, pos: truth[from] + k, text: `${from}의 ${k > 0 ? "오른쪽" : "왼쪽"} ${ORDER_ORDINAL[Math.abs(k)]} 번째에는 누가 앉아 있는지 구하세요.` };
+      ask = { from, k, pos: truth[from] + k, text: `${from}에서 ${k > 0 ? "오른쪽" : "왼쪽"}으로 ${ORDER_ORDINAL[Math.abs(k)]} 번째 자리에 앉은 사람은 누구일까요?` };
     }
     const answer = names.find((x) => truth[x] === ask.pos);
     // 답인 사람의 자리를 바로 말해 주는 단서는 쓰지 않는다. 자리 단서(abs)는 하나까지.
@@ -863,29 +870,62 @@ function orderBoxesHtml(puzzle, mode) {
     boxes = `<table style="border-collapse:collapse;margin:0 auto;${FONT};font-size:14px"><tr>${Array.from({ length: n }, (_, i) => `<th style="${cellStyle};height:26px;background:#dcedf2;font-weight:600">${i + 1}등</th>`).join("")}</tr><tr>${Array.from({ length: n }, () => `<td style="${cellStyle}"></td>`).join("")}</tr></table>`;
   } else {
     const ends = mode === "line" ? ["(앞)", "(뒤)"] : ["(왼쪽)", "(오른쪽)"];
-    boxes = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;${FONT};font-size:14px;color:#2f3a40"><span>${ends[0]}</span><div style="display:flex">${Array.from({ length: n }, () => `<span style="display:inline-block;${cellStyle};margin-left:-1px"></span>`).join("")}</div><span>${ends[1]}</span></div>`;
+    const mark = (i) => (puzzle.ask.mark && puzzle.ask.pos === i + 1 ? "㉠" : "");
+    boxes = `<div style="display:flex;align-items:center;justify-content:center;gap:6px;${FONT};font-size:14px;color:#2f3a40"><span>${ends[0]}</span><div style="display:flex">${Array.from({ length: n }, (_, i) => `<span style="display:inline-flex;align-items:center;justify-content:center;${cellStyle};margin-left:-1px;font-size:16px">${mark(i)}</span>`).join("")}</div><span>${ends[1]}</span></div>`;
   }
   return `<div style="display:inline-block;max-width:100%">${list}${boxes}</div>`;
 }
 
+// 이름 목록 끝에 주격 조사(이/가)를 받침에 맞춰 붙인다.
+const listJosa = (names) => `${names.slice(0, -1).join(", ")}, ${josa(names[names.length - 1], "이", "가")}`;
+
 function orderPuzzleProblem({ difficulty = 2 } = {}, mode) {
   const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
-  const n = mode === "seat" ? (d === 1 ? 5 : 6) : 5;
+  const n = mode === "seat" ? (d === 1 ? 5 : 6) : mode === "row" ? 4 : 5;
   const puzzle = makeOrderPuzzle({ mode, n, maxClues: mode === "seat" ? 5 : 4 });
   if (!puzzle) return null;
-  const intro = mode === "line"
-    ? `${puzzle.names.join(", ")} 다섯 명이 한 줄로 서 있습니다.`
+  const intro = mode === "row"
+    ? `${listJosa(puzzle.names)} 옆으로 나란히 섰습니다.`
+    : mode === "line"
+    ? `${listJosa(puzzle.names)} 앞뒤로 한 줄을 섰습니다.`
     : mode === "seat"
-      ? `${puzzle.names.join(", ")} ${n}명이 한 줄로 나란히 앉아 있습니다.`
-      : `${puzzle.names.join(", ")} 다섯 명이 달리기 시합을 하였습니다. 결과는 다음과 같습니다.`;
+      ? `긴 의자에 ${listJosa(puzzle.names)} 한 명씩 나란히 앉았습니다.`
+      : `${listJosa(puzzle.names)} 달리기를 마쳤습니다. 들어온 순서를 알려 주는 말을 보고 답하세요.`;
   const order = [...puzzle.names].sort((a, b) => puzzle.truth[a] - puzzle.truth[b]);
-  const orderText = mode === "line" ? `앞에서부터 ${order.join(", ")}` : mode === "seat" ? `왼쪽부터 ${order.join(", ")}` : `1등부터 ${order.join(", ")}`;
+  const orderText = mode === "line" ? `앞에서부터 ${order.join(", ")}` : mode === "seat" || mode === "row" ? `왼쪽부터 ${order.join(", ")}` : `1등부터 ${order.join(", ")}`;
   return {
     prompt: `${intro} ${puzzle.ask.text}`,
     answer: puzzle.answer,
-    solution: `${mode === "race" ? "등수가 바로 정해지는 조건부터 칸에 써 넣고, 누가 먼저 들어왔는지 말하는 조건으로 나머지 칸을 채웁니다." : "자리가 바로 정해지는 조건부터 칸에 써 넣고, 두 사람이 몇 자리 떨어져 있는지 말하는 조건으로 나머지 칸을 채웁니다."} 조건을 모두 따르면 ${orderText}의 순서 한 가지뿐입니다. 따라서 답은 ${puzzle.answer}입니다.`,
+    solution: `${mode === "race" ? "등수가 바로 정해지는 조건부터 칸에 써 넣고, 누가 먼저 들어왔는지 말하는 조건으로 나머지 칸을 채웁니다." : mode === "row" ? "같은 사람이 나오는 조건끼리 이어 왼쪽에서 오른쪽으로 한 줄에 놓아 봅니다." : "자리가 바로 정해지는 조건부터 칸에 써 넣고, 두 사람이 몇 자리 떨어져 있는지 말하는 조건으로 나머지 칸을 채웁니다."} 조건을 모두 따르면 ${orderText}의 순서 한 가지뿐입니다. 따라서 답은 ${puzzle.answer}입니다.`,
     visual: { kind: "fig", html: orderBoxesHtml(puzzle, mode) },
     meta: { family: "order-offset-placement-b4", mode, clues: puzzle.clues.map((c) => c.text), order, answer: puzzle.answer }
+  };
+}
+
+// ── 4단원 · 위에서부터 센 층 ─────────────────────────────
+// 교재 확인 2-2·연습 15: 몇 층짜리 건물에서 위에서부터 세어 몇 번째인 집이 몇 층인지(또는 그 반대) 구한다.
+const FLOOR_PEOPLE = Object.freeze(["하늘", "보람", "다솜", "누리", "한솔", "새롬", "이슬", "온유"]);
+
+function floorFromTop({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  let total;
+  let fromTop;
+  let floor;
+  do {
+    total = randomInt(d === 1 ? 5 : 8, d === 1 ? 9 : d === 2 ? 15 : 25);
+    fromTop = randomInt(2, total - 1);
+    floor = total - fromTop + 1;
+  } while (floor === fromTop); // 위에서 센 수와 층수가 같으면 거꾸로 세지 않아도 맞으므로 다시
+  const who = pick(FLOOR_PEOPLE);
+  const askFloor = d === 1 || Math.random() < 0.6;
+  const prompt = askFloor
+    ? `${josa(who, "은", "는")} ${total}층까지 있는 건물에 삽니다. 꼭대기 층부터 아래로 한 층씩 세어 내려가면 ${who}네 층은 ${fromTop}번째입니다. ${who}네는 몇 층일까요?`
+    : `${josa(who, "은", "는")} ${total}층까지 있는 건물의 ${floor}층에 삽니다. 꼭대기 층부터 아래로 한 층씩 세어 내려가면 ${who}네 층은 몇 번째일까요?`;
+  return {
+    prompt,
+    answer: askFloor ? `${floor}층` : `${fromTop}번째`,
+    solution: `맨 위층이 위에서 첫 번째인 ${total}층입니다. 한 층씩 내려갈 때마다 위에서 센 순서는 1씩 늘고 층수는 1씩 줄어들므로 위에서 ${fromTop}번째는 ${total} − ${fromTop} + 1 = ${floor}층입니다.${askFloor ? "" : ` 따라서 ${floor}층은 위에서 ${fromTop}번째입니다.`}`,
+    meta: { family: "floor-from-top-b4", total, fromTop, floor, askFloor }
   };
 }
 
@@ -977,7 +1017,7 @@ function polylineTurnFour() {
   const blanks = TURN_LABELS.map((t) => lineGridSvg(null, { caption: t.caption }));
   const answers = TURN_LABELS.map((t) => lineGridSvg(turnPoints(points, t.quarter), { caption: t.caption }));
   return {
-    prompt: "처음 모양을 오른쪽(시계 방향)으로 반의 반 바퀴씩 돌린 모양을 차례로 모두 그리세요. 왼쪽으로 반의 반 바퀴 돌린 모양과 한 바퀴 돌린 모양도 그립니다.",
+    prompt: "빨간 선 그림을 가운데를 중심으로 돌리려고 합니다. 칸 아래에 적힌 만큼 돌린 모양을 빈 칸에 각각 그리세요.",
     answer: "그림 답안",
     responseKind: "drawing",
     solution: "반의 반 바퀴 돌리면 위쪽에 있던 부분이 오른쪽으로 갑니다. 선의 끝점이 어느 칸 꼭짓점에 있는지 하나씩 옮겨 찍고 이으면 됩니다. 반 바퀴는 반의 반 바퀴를 두 번, 왼쪽으로 반의 반 바퀴는 오른쪽으로 세 번 돌린 것과 같고, 한 바퀴 돌리면 처음 모양으로 돌아옵니다.",
@@ -994,7 +1034,7 @@ function polylineFlipFour() {
   const blanks = FLIP_LABELS.map((f) => lineGridSvg(null, { caption: f.caption }));
   const answers = FLIP_LABELS.map((f) => lineGridSvg(flipPoints(points, f.how), { caption: f.caption }));
   return {
-    prompt: "처음 모양을 위·아래·왼쪽·오른쪽으로 뒤집은 모양을 각각 그리세요.",
+    prompt: "빨간 선 그림을 칸 아래에 적힌 쪽으로 뒤집었을 때의 모양을 빈 칸에 각각 그리세요.",
     answer: "그림 답안",
     responseKind: "drawing",
     solution: "위나 아래로 뒤집으면 위쪽과 아래쪽이 서로 바뀌고 왼쪽·오른쪽은 그대로입니다. 왼쪽이나 오른쪽으로 뒤집으면 왼쪽과 오른쪽이 서로 바뀝니다. 그래서 위로 뒤집은 모양과 아래로 뒤집은 모양이 같고, 왼쪽으로 뒤집은 모양과 오른쪽으로 뒤집은 모양이 같습니다.",
@@ -1050,7 +1090,7 @@ function digitalFlipTurnSet() {
   const a1 = stepRow("(1)", [segDigitSvg(start, { caption: "처음" }), arrowText(words[order[0]]), segDigitSvg(mid), arrowText(words[order[1]]), segDigitSvg(end)]);
   const a2 = stepRow("(2)", [segDigitSvg(start, { caption: "처음" }), arrowText("반 바퀴 돌리기"), segDigitSvg(half)]);
   return {
-    prompt: `디지털 숫자 ${num}${hasBatchim(String(num)) ? "을" : "를"} 움직이려고 합니다. (1) ${done[order[0]]} 뒤 ${done[order[1]]} 모양을 그리세요. (2) 반 바퀴 돌린 모양을 그리세요. (3) 어떤 모양을 ${doing[order[0]]} ${done[order[1]]} 것은 어떻게 돌린 것과 같은가요?`,
+    prompt: `막대로 쓴 숫자 ${num}${hasBatchim(String(num)) ? "을" : "를"} 화살표 아래에 적힌 대로 움직여 빈 틀에 그리세요. (1)은 두 번 뒤집고, (2)는 한 번 돌립니다. (3) (1)과 (2)를 견주어 보면, ${doing[order[0]]} 이어서 ${done[order[1]]} 결과는 무엇을 한 것과 같나요?`,
     answer: "(1)·(2) 그림 답안, (3) 반 바퀴 돌린 것과 같습니다.",
     responseKind: "drawing",
     solution: `오른쪽으로 뒤집으면 왼쪽 막대와 오른쪽 막대가 서로 바뀌고, 아래로 뒤집으면 위 막대와 아래 막대가 서로 바뀝니다. 두 번 뒤집으면 위아래와 왼쪽·오른쪽이 모두 바뀌므로 (2)의 반 바퀴 돌린 모양과 똑같습니다. 그래서 (3)은 반 바퀴 돌린 것과 같습니다.`,
@@ -1151,7 +1191,7 @@ function digitalThreeMovesBoard({ difficulty = 2 } = {}, n) {
     const a = `<div style="display:inline-block;text-align:left"><div style="${FONT};font-size:14px;margin:0 0 4px">(1)</div>${follow(steps)}</div>`;
     const whatWord = n === 2 ? "똑바로 놓이는 수를 구하세요." : "똑바로 놓이는 수들의 합을 구하세요.";
     return {
-      prompt: `도형을 ${first.doing}, ${turn.doing}, 다시 ${last.doing.replace("뒤집고", "뒤집으려고")} 합니다. (1) 숫자 1을 같은 방법으로 움직일 때 나오는 모양을 차례로 그리세요. (2) 다음 숫자판을 같은 방법으로 움직였을 때 ${whatWord}`,
+      prompt: `위에 적힌 세 가지 움직임을 차례로 합니다. (1) 숫자 1이 움직임마다 어떻게 놓이는지 빈 칸에 차례로 그리세요. (2) 숫자판 전체를 똑같이 세 번 움직였을 때 ${whatWord}`,
       answer: `(1) 그림 답안, (2) ${answerValue}`,
       responseKind: "drawing",
       solution: `(1) 숫자 1을 한 번에 하나씩 움직여 그립니다. 세 번 움직인 1의 모양은 처음 1을 한 번에 어떻게 움직인 것과 같은지 보여 줍니다. (2) 숫자판의 각 수가 지금 놓인 모양을 세 번 움직인 1의 모양과 견주어, 움직인 뒤 처음 1처럼 똑바로 서게 되는 수를 찾습니다. ${n === 2 ? `똑바로 놓이는 수는 ${answerValue}입니다.` : `똑바로 놓이는 수는 ${upright.join(", ")}이므로 합은 ${upright.join(" + ")} = ${sum}입니다.`}`,
@@ -1166,6 +1206,8 @@ function digitalThreeMovesBoard({ difficulty = 2 } = {}, n) {
 export const BOOK04_STRUCTURE_INTERNALS = { makeBalanceSystem, childSolve, ratioDetermined, eqNormalize };
 
 export const BOOK04_STRUCTURE_GENERATORS = {
+  rowLeftRightPlacementB4: (options) => orderPuzzleProblem(options, "row"),
+  floorFromTopB4: floorFromTop,
   numberBoardThreeMovesTwoB4: (options) => digitalThreeMovesBoard(options, 2),
   numberBoardThreeMovesThreeB4: (options) => digitalThreeMovesBoard(options, 3),
   polylineTurnFourB4: polylineTurnFour,
@@ -1204,6 +1246,8 @@ export const BOOK04_STRUCTURE_TYPE_ROWS = [
   { id: "mixed-pan-balance-three-b4", domain: "logic", middle: "양팔저울", label: "섞인 접시 저울 세 개로 바꾸어 넣어 같은 무게 구하기", generator: "mixedPanBalanceThreeB4", catalogGroup: BAL_GROUP, catalogStrategy: "한 가지 물건뿐인 저울부터 차례로 바꾸어 넣기", searchAliases: ["양팔저울", "바꾸어 넣기", "평형"] },
   { id: "shape-difference-tree-b4", domain: "number", middle: "비교와 차", label: "순서가 섞이고 빼기가 있는 도형 식으로 두 도형의 차 구하기", generator: "shapeDifferenceTreeB4", catalogGroup: DIFF_GROUP, catalogStrategy: "한 도형을 어떤 수로 두고 차례로 구하기", searchAliases: ["도형의 차", "크기 비교", "기준 정하기"] },
   { id: "measurement-relative-difference-b4", domain: "logic", middle: "순서와 비교", label: "몸무게·구슬·거리·길이 비교 조건으로 두 사이의 차 구하기", generator: "measurementRelativeDifferenceB4", catalogGroup: DIFF_GROUP, catalogStrategy: "한 사람을 어떤 수로 두고 표를 채우기", searchAliases: ["차이 구하기", "몸무게 비교", "거리 비교"] },
+  { id: "row-left-right-placement-b4", domain: "logic", middle: "자리 배치", label: "왼쪽·오른쪽 조건으로 네 명의 줄 자리 정하기", generator: "rowLeftRightPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "같은 사람이 나오는 조건을 이어 한 줄에 놓기", searchAliases: ["자리 배치", "왼쪽 오른쪽", "한 줄"] },
+  { id: "floor-from-top-b4", domain: "logic", middle: "순서와 비교", label: "위에서부터 센 순서로 몇 층인지 구하기", generator: "floorFromTopB4", catalogGroup: ORDER_GROUP, catalogStrategy: "맨 위층부터 거꾸로 세기", searchAliases: ["층수", "위에서부터", "몇 번째"] },
   { id: "line-offset-placement-b4", domain: "logic", middle: "자리 배치", label: "앞뒤 몇 번째 조건으로 한 줄의 자리 정하기", generator: "lineOffsetPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "자리가 바로 정해지는 조건부터 칸 채우기", searchAliases: ["줄 서기", "앞뒤", "몇 번째"] },
   { id: "seat-offset-placement-b4", domain: "logic", middle: "자리 배치", label: "왼쪽·오른쪽 몇 번째 조건으로 나란히 앉은 자리 정하기", generator: "seatOffsetPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "같은 사람이 나오는 조건을 이어 자리 칸 채우기", searchAliases: ["자리 배치", "왼쪽 오른쪽", "몇 번째"] },
   { id: "race-order-clues-b4", domain: "logic", middle: "순서와 비교", label: "먼저 들어온 조건으로 달리기 등수 정하기", generator: "raceOrderCluesB4", catalogGroup: ORDER_GROUP, catalogStrategy: "등수가 바로 정해지는 조건부터 표 채우기", searchAliases: ["달리기 등수", "순서 정하기", "먼저 들어옴"] }
@@ -1224,6 +1268,8 @@ export const BOOK04_STRUCTURE_GUIDES = {
   "mixed-pan-balance-three-b4": "바꾸어 넣을 수 있는 저울부터 차례로 바꾸고, 양쪽의 같은 물건을 덜어 내어 두 가지 물건만 남깁니다.",
   "shape-difference-tree-b4": "한 도형을 20처럼 정해 두고 식을 하나씩 따라가며 나머지 도형의 수를 구한 뒤 차를 뺍니다.",
   "measurement-relative-difference-b4": "한 사람을 20처럼 정해 두고 조건을 따라 표를 채운 뒤 두 사람의 차를 구합니다.",
+  "row-left-right-placement-b4": "「누가 누구의 오른쪽」 조건을 이어 가장 왼쪽 사람부터 한 줄로 놓아 봅니다.",
+  "floor-from-top-b4": "맨 위층이 위에서 첫 번째이니, 위에서 몇 번째인지에서 1을 빼고 전체 층수에서 빼면 됩니다.",
   "line-offset-placement-b4": "앞이나 뒤에 몇 명이 있는지 말하는 조건으로 한 자리를 먼저 정하고, 몇 번째 조건으로 나머지를 채웁니다.",
   "seat-offset-placement-b4": "같은 사람이 나오는 조건끼리 이어서 몇 칸 떨어져 있는지 그려 보고 자리를 정합니다.",
   "race-order-clues-b4": "등수가 바로 정해지는 조건부터 표에 쓰고, 누가 먼저 들어왔는지 조건으로 나머지 칸을 채웁니다."
@@ -1261,6 +1307,9 @@ export const BOOK04_STRUCTURE_REMAPS = [
   ["book-04", 3, "practice", 1, [15, 16], "mixed-pan-balance-three-b4"],
   ["book-04", 3, "advanced", 1, [3], "mixed-pan-balance-three-b4"],
   // 4단원 · 몇 번째 조건으로 줄 세우기
+  ["book-04", 4, "activity", 2, [3], "row-left-right-placement-b4"],
+  ["book-04", 4, "check", 2, [2], "floor-from-top-b4"],
+  ["book-04", 4, "practice", 1, [15], "floor-from-top-b4"],
   ["book-04", 4, "check", 1, [3], "line-offset-placement-b4"],
   ["book-04", 4, "practice", 1, [8], "line-offset-placement-b4"],
   ["book-04", 4, "practice", 1, [7], "seat-offset-placement-b4"],
