@@ -1,3 +1,33 @@
+## 2026-11-25 — 앱 전체 감사 일괄 점검, 4-2 삼각형 이름표 겹침 수정 (Claude Code / Opus 5.5, Mac)
+
+- main(102adb457)에서 JS 감사 1,342개를 모두 실행: 1,309개 통과. 실패 33개 중 27개는 Windows E: 증거가 필요한 기존 감사(사용자 결정으로 건너뜀). 나머지 중 4개(stack-assets-live·stack-renderer-live는 HSE_STACK_REVIEW_URL, 5-2 rounding-e2-browser는 고정 포트 8909 서버, four-vertex-cut-questions는 출력 폴더 이름 four-vertex-wrapper)는 환경을 맞춰 다시 실행해 통과. polycube-helper-compatibility는 변경 전 기준(before.json, --checkpoint)과 비교하는 도구라 기준 없이는 실행되지 않는다.
+- 실제 결함 1건: 4-2-u2-t4-3(정삼각형이 이어진 도형의 각) 그림에서 꼭짓점 이름 ㄴ과 각도 150°가 겹침. ㄴ을 왼쪽 위로(-22, -4), 150°를 (88, 93)으로 옮겨 source-4-2-triangle-browser 감사 통과. generators.js ?v=20261125-label-gap.
+
+## 2026-11-25 — 겨냥도 모서리 보완, 쉬움 난이도 힌트 정리, 6학년 5,697문항 독립 풀이 대조 완료 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 지적("모서리가 덜 그려짐 — 앞으로 이 부분 실수 없도록"): 6-1-u6-e3 겨냥도에서 잘라 낸 자리(홈)의 보이는 모서리가 주황 점선, 평행 절단면 테두리가 모두 점선, 계단 쌓기 면이 반투명해 뒤 선이 비쳤다. 보이는 모서리는 실선, 보이지 않는 모서리만 점선으로 바꿈(절단면은 앞·오른쪽 실선 2개, 뒤·왼쪽 점선 2개), 계단 면 불투명. source-6-1-volume-surface-e3-audit.js에 모서리 검사 추가: 직육면체 하나를 그리는 세 유형(남은 입체·세 면 넓이·자른 입체)의 문제·답 그림마다 보이는 면 3개 이상, 숨은 모서리 점선 정확히 3개, 홈 면 3개·안쪽 모서리 3개, 절단면 실선 2개·점선 2개.
+- 쉬움 난이도 힌트: 6-2-u3-e1-exploration 쉬움에서 앞쪽 모양을 미리 칠해 두던 것(원문에 없는 정답 일부)을 빼고 네 칸 모두 빈칸. problem-hint-policy.js의 문장 패턴이 "1cm, 2cm"처럼 단위 붙은 숫자 목록을 개수와 관계없이 맞추도록 고쳐, 변형 문항(목록 3개 이상)의 힌트 문장도 지워진다(6-1-u6-e2-example-1·mission-1). ?v=20261125-list-hints.
+- 6-2-u4-e2-exploration 변형 pool 1·2의 ③·④를 자연수 답(5, 9 / 6, 8)이 나오게 바꿈(source-6-2-ratio-e2-models.js). pool 0(③ 5 5/9, ④ 17 1/3)은 원본 수치 그대로.
+- 독립 풀이 대조: 남은 693문항(그사이 고친 문항 77개 재추출 포함)을 풀어 6학년 원문 633유형 × 3난이도 × 3고정 문항 = 5,697문항 전부 대조 완료. 남은 묶음에서 앱 정답이 틀린 문항은 없다(표기 차이, 해석 차이만: 6-2-u3-e4-mission-4 pool 2는 원문처럼 바닥에서만 돌리면 7가지). 확인만 한 것: 6-2-u5-e2-mission-1 원문 25·40(책 수치), 6-2-u6-e2-mission-2 원문 철사 111cm·모선 9cm(책 수치라 원뿔이 성립하지 않지만 그대로), 6-2-u6-e1-mission-2 변형 1은 높이 15cm 줄 두 개로 3바퀴 가능(앱 정답 맞음), 6-2-u5-e5-example-2 원 배치와 무관하게 같은 답.
+- 감사 통과: volume-surface-e3(모서리 검사 포함)·browser, height-views·live, space-missions, stack-models, volume-e2·browser, ratio-e2 bank·preview·questions, fraction-division-policy-browser, stack-color/hidden bank, stack-questions-live, stage-styles, runtime-availability, math-notation, elementary-language, numeric-display, source-release-gate.
+
+## 2026-11-25 — 6-1 6단원 개념탐구 3 겨냥도 7개 다시 그림 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 지적("겨냥도들이 잘못됨"): 6학년 그림 전체(원문 pool 0 329개, 창작 연습 328장, 4·5학년 입체 99장)를 모아 보고, 깨진 겨냥도는 6-1-u6-e3 묶음에만 있음을 확인했다.
+  - 원인 1: generators.js sourceGrade6VolumeSurfaceE3의 project가 깊이 y를 앞(왼쪽 아래)으로 그리는데, 그림 함수들은 y=0을 앞면으로 보고 앞면·오른쪽 면·윗면을 그렸다. 그래서 보이는 면 대신 뒷면이 그려져 직육면체가 흩어진 면 조각처럼 보였다(개념탐구, 예제 3-2·3-3·3-4, Mission 2·4).
+  - 원인 2: .source61-vs-e3-* 면 색 규칙이 공통 규칙 .geometry-diagram polygon{fill:none}보다 우선순위가 낮아 면 색이 모두 빠졌다.
+  - 원인 3: 예제 3-1 전개도는 뒷면을 옆면 크기로 그려 접을 수 없었고, 색 표시 변이 문장(파란 변 5cm, 파란 변+주황 변 12cm)과 달랐다.
+- 수정: project를 교과서 겨냥도 방식(앞면 실제 모양, 깊이는 오른쪽 위로 비스듬히)으로 바꾸고 fitProject로 상자 안 가운데 맞춤, 보이지 않는 모서리 3개를 점선으로 추가. 잘라 낸 입체의 윗면 꼭짓점 누락 보완, 세 면 넓이를 각 면 한가운데에 표시, 계단 쌓기·7개 정육면체는 뒤에서 앞으로 그리는 순서로 바꿈, 이어 붙인 직육면체·자른 입체도 같은 방향으로. 전개도는 원본처럼 앞면 a×c, 옆면 b×c, 윗·아랫면 a×b, 뒷면 a×c로 그리고 파란 변(a)·주황 변(b)을 한 줄로 이어 a+b 치수선을 둠. styles.css의 vs-e3 면 색 규칙 53개 앞에 .geometry-diagram을 붙여 색을 되살림.
+- 감사: source-6-1-volume-surface-e3(수학·DOM), e3-browser(전개도 색 변 기대 3→2, 문장대로 파란·주황 2개), volume-surface-readiness, stage-styles, runtime-availability, math-notation, elementary-language, numeric-display, source-release-gate, print-named-page 통과.
+- 캐시 꼬리표: generators.js·styles.css ?v=20261125-e3-solids.
+
+## 2026-11-24 — 6학년 쉬움·어려움·변형 5,064문항 독립 풀이 대조(진행 중) 및 문항 수정 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 결정("전부 풀기", "16개 유지"): 6학년 원문 633유형 × 3난이도 × 고정 문항(모두 5,697, 원문 633 제외 5,064)을 앱 정답 없이 서브에이전트로 풀어 대조. 36개 묶음 중 33개 끝(약 4,750문항), 묶음 23·24·25(일부)·34·35·36이 남음(사용량 한도). 지금까지 앱 정답이 틀린 곳: 6-1-u5-e2-mission-4 pool 1·2(조건과 띠 수치 불일치) 1건뿐이고 나머지 불일치는 표기 차이·확인된 해석.
+- 수정: 6-1-u4-e1-mission-6 pool 1(기약분수로 묻는데 답 2 → 2:1로 11/7), 6-1-u3-e1-mission-4 pool 1·2(가린 세로셈 답이 둘 → 4.65, 9.25; 감사에 퍼즐 단일해 검사 추가), 6-1-u3-e1-example-3 pool 2(90.50 제외 → 90.25, 답을 물음 순서 "가장 큰 수, 가장 작은 수"로), 6-1-u5-e4-exploration-2 variant 1 pool 2(22.1875% → 찬성 이유 34·30·24·12로 17.5%), 6-1-u5-e2-mission-4 pool 1·2(조건대로 30명·24명, 생성 시 조건 검사, 감사도 조건 검사), 6-1-u5-e2-mission-1(과일 띠 범례 추가로 포도 칸 식별), 6-1-u6-e2-example-1·mission-1 쉬움(물음 문장 복구), 6-2-u2-e6 글 문항(책 말투 …이다/…인가? → 앱 말투).
+- 감사 통과: decimal-division-e1(+mission4), ratio-e1, graphs-e2(+browser, crosswalk), inventory-grade6-e4, decimal-e6-text/live/original, volume-e2·e3·e4·surface. 미실행: 전체 일괄 감사.
+- 남은 확인 후보: 6-2-u5-e2-mission-1 pool(삼각형 넓이 25·40이 3:4와 불일치 보고), 6-2-u4-e2-exploration 변형 ③·④ 자연수 아님, 6-1-u6-e2-mission-4 그림 치수 글자 위치(옮겨 보았으나 브라우저 넘침 감사에 걸려 되돌림), 6-2-u5-e1-mission-3 나이테 해석, 6-2-u5-e4-example-1 중심각 미표기. 풀이 결과는 세션 임시 폴더(solve2/out-*.json)에만 있다.
+
 ## 2026-11-24 — 6학년 나머지 그림의 fill 색 되살림, 6-2-u4-e2 개념탐구 ③ 원본 수치 유지 (Claude Code / Opus 5.5, Mac)
 
 - 앞 항목의 그래프 색 수정에 이어, 6학년 pool 0 문제 그림에서 fill 속성이 공통 규칙(.geometry-diagram … {fill:none})에 지워지던 나머지 13문항(6-1-u1-e2 3개, 6-1-u2-e1-mission-5 삼각기둥 전개도, 6-1-u4 비율·소수 그림 9개, 6-2-u1-e2-mission-6 나무 자리, 6-2-u2-e2-mission-2 테이프 겹친 부분, 6-2-u2-e6-exploration-1)의 그림 갈래(source61-e2-diagram, source61-triangular-prism-net, source61-decimal-e4-diagram, source61-ratio-e2~e5-diagram, source62-tape-count, e6-geometry, source62-tree-method-figure)에도 fill:revert-layer를 적용했다. 지금 모습과 되살린 모습을 나란히 캡처해 깨지는 그림이 없음을 확인했고, 6학년 문제 그림 중 지워지는 fill은 0개다. styles.css ?v=20261124-g6-figure-fill.

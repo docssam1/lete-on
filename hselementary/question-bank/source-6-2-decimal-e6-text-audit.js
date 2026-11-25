@@ -97,17 +97,17 @@ const one = values => {
 const solve = (suffix, prompt, level) => {
   if (suffix === "example-4") {
     const decrease = scaled(match(prompt, /남학생의 ([\d.]+)만큼이 줄고/)[1]);
-    const increase = scaled(match(prompt, /여학생의 ([\d.]+)만큼이 늘었다/)[1]);
+    const increase = scaled(match(prompt, /여학생의 ([\d.]+)만큼이 늘었습니다/)[1]);
     assert(decrease > 0n && decrease < S && increase > 0n);
     let lastTotal, currentTotal, explicit;
     if (level === 0) {
-      const counts = match(prompt, /남학생 (\d+)명, 여학생 (\d+)명이었다/);
+      const counts = match(prompt, /남학생 (\d+)명, 여학생 (\d+)명이었습니다/);
       explicit = [BigInt(counts[1]), BigInt(counts[2])];
       lastTotal = explicit[0] + explicit[1];
     } else {
-      lastTotal = BigInt(match(prompt, /합하여 (\d+)명이었다/)[1]);
-      currentTotal = level === 1 ? BigInt(match(prompt, /모두 (\d+)명이 되었다/)[1])
-        : lastTotal + BigInt(match(prompt, /올해 전체 학생 수는 작년보다 (\d+)명 늘었다/)[1]);
+      lastTotal = BigInt(match(prompt, /합하여 (\d+)명이었습니다/)[1]);
+      currentTotal = level === 1 ? BigInt(match(prompt, /모두 (\d+)명이 되었습니다/)[1])
+        : lastTotal + BigInt(match(prompt, /올해 전체 학생 수는 작년보다 (\d+)명 늘었습니다/)[1]);
     }
     assert.equal(prompt.includes("올해 전체 학생 수는 작년보다"), level === 2);
     assert.equal(prompt.includes("모두"), level === 1);
@@ -128,20 +128,20 @@ const solve = (suffix, prompt, level) => {
   }
   if (suffix === "mission-1") {
     const increase = scaled(match(prompt, /남학생 수는 ([\d.]+)배만큼 늘었고/)[1]);
-    const decrease = scaled(match(prompt, /여학생 수는 ([\d.]+)배만큼 줄었다/)[1]);
+    const decrease = scaled(match(prompt, /여학생 수는 ([\d.]+)배만큼 줄었습니다/)[1]);
     assert(increase > 0n && decrease > 0n && decrease < S);
     let total, ratio, explicit;
     if (level === 0) {
-      const counts = match(prompt, /작년 6학년 남학생은 (\d+)명, 여학생은 (\d+)명이었다/);
+      const counts = match(prompt, /작년 6학년 남학생은 (\d+)명, 여학생은 (\d+)명이었습니다/);
       explicit = [BigInt(counts[1]), BigInt(counts[2])];
       total = explicit[0] + explicit[1];
     } else {
       total = BigInt(match(prompt, /작년 6학년 학생은 (\d+)명/)[1]);
-      ratio = level === 1 ? scaled(match(prompt, /여학생 수는 남학생 수의 ([\d.]+)배였다/)[1])
-        : S + scaled(match(prompt, /여학생 수는 남학생 수보다 남학생 수의 ([\d.]+)배만큼 더 많았다/)[1]);
+      ratio = level === 1 ? scaled(match(prompt, /여학생 수는 남학생 수의 ([\d.]+)배였습니다/)[1])
+        : S + scaled(match(prompt, /여학생 수는 남학생 수보다 남학생 수의 ([\d.]+)배만큼 더 많았습니다/)[1]);
     }
-    assert.equal(prompt.includes("더 많았다"), level === 2);
-    assert.equal(prompt.includes("배였다"), level === 1);
+    assert.equal(prompt.includes("더 많았습니다"), level === 2);
+    assert.equal(prompt.includes("배였습니다"), level === 1);
     assert.equal(Boolean(explicit), level === 0);
     const candidates = [];
     for (let boys = 1n; boys < total; boys += 1n) {
@@ -165,7 +165,7 @@ const solve = (suffix, prompt, level) => {
     const remainder = scaled(match(prompt, level === 2 ? /한 조각의 길이가 ([\d.]+)m였다면/ : /승철이가 가진 색 테이프의 길이가 ([\d.]+)m라면/)[1]) * pieces;
     assert.equal(prompt.includes("조각"), level === 2);
     assert.equal(prompt.includes("나영이는 전체의"), level === 0);
-    assert.match(prompt, /승철이는 혜진이와 나영이가 갖고 남은 나머지를 모두 가졌다/);
+    assert.match(prompt, /승철이는 혜진이와 나영이가 갖고 남은 나머지를 모두 가졌습니다/);
     assert.match(prompt, /처음에 있던 색 테이프의 길이/);
     const remainderShare = S - firstShare - secondShare;
     positive(firstShare, secondShare, remainderShare, remainder);
@@ -179,7 +179,7 @@ const solve = (suffix, prompt, level) => {
     assert.match(prompt, /거북의 무게는 원숭이의 무게의 약 몇 배/);
     assert.match(prompt, /반올림하여 소수 첫째 자리까지/);
     const dogTurtle = scaled(match(prompt, /개와 거북의 무게의 합은 ([\d.]+)kg/)[1]);
-    const monkeyDog = level === 2 ? dogTurtle - scaled(match(prompt, /원숭이와 개의 무게의 합은 개와 거북의 무게의 합보다 ([\d.]+)kg 가볍다/)[1])
+    const monkeyDog = level === 2 ? dogTurtle - scaled(match(prompt, /원숭이와 개의 무게의 합은 개와 거북의 무게의 합보다 ([\d.]+)kg 가볍습니다/)[1])
       : scaled(match(prompt, /원숭이와 개의 무게의 합은 ([\d.]+)kg/)[1]);
     let dog, turtle, monkey;
     if (level === 0) {
@@ -195,7 +195,7 @@ const solve = (suffix, prompt, level) => {
       monkey = allAnimals - dogTurtle;
       assert.equal(turtle + monkey, turtleMonkey, "거북+원숭이 쌍 역산");
     }
-    assert.equal(prompt.includes("가볍다"), level === 2);
+    assert.equal(prompt.includes("가볍습니다"), level === 2);
     assert.equal(prompt.includes("개의 무게는"), level === 0);
     positive(dog, turtle, monkey);
     assert.equal(dog + turtle, dogTurtle);
@@ -232,14 +232,14 @@ const solve = (suffix, prompt, level) => {
     assert(front > rear && rear > 0n);
     let frontTurns, rearTurns;
     if (level === 0) {
-      frontTurns = BigInt(match(prompt, /앞바퀴가 (\d+)번 회전하였다/)[1]);
+      frontTurns = BigInt(match(prompt, /앞바퀴가 (\d+)번 회전하였습니다/)[1]);
       rearTurns = exactDivide(front * frontTurns, rear);
     } else {
       let extra;
-      if (level === 1) extra = BigInt(match(prompt, /뒷바퀴는 앞바퀴보다 (\d+)번 더 많이 회전하였다/)[1]);
+      if (level === 1) extra = BigInt(match(prompt, /뒷바퀴는 앞바퀴보다 (\d+)번 더 많이 회전하였습니다/)[1]);
       else {
-        const totalExtra = BigInt(match(prompt, /전체에서 뒷바퀴는 앞바퀴보다 (\d+)번 더 많이 회전하였다/)[1]);
-        const firstExtra = BigInt(match(prompt, /첫 구간에서는 뒷바퀴가 앞바퀴보다 (\d+)번 더 많이 회전하였다/)[1]);
+        const totalExtra = BigInt(match(prompt, /전체에서 뒷바퀴는 앞바퀴보다 (\d+)번 더 많이 회전하였습니다/)[1]);
+        const firstExtra = BigInt(match(prompt, /첫 구간에서는 뒷바퀴가 앞바퀴보다 (\d+)번 더 많이 회전하였습니다/)[1]);
         extra = totalExtra - firstExtra;
         const firstFront = exactDivide(firstExtra * rear, front - rear);
         assert.equal(firstFront * front, (firstFront + firstExtra) * rear, "첫 구간도 정수 회전수·동일 거리");
@@ -275,16 +275,16 @@ const solve = (suffix, prompt, level) => {
       maleTotal = boys * maleAverage;
     } else {
       maleAverage = scaled(match(prompt, /남학생들의 평균 점수는 ([\d.]+)점/)[1]);
-      const averageGap = scaled(match(prompt, /여학생들의 평균 점수는 남학생들의 평균 점수보다 ([\d.]+)점 낮다/)[1]);
+      const averageGap = scaled(match(prompt, /여학생들의 평균 점수는 남학생들의 평균 점수보다 ([\d.]+)점 낮습니다/)[1]);
       positive(averageGap);
       femaleAverage = maleAverage - averageGap;
-      difference = BigInt(match(prompt, /남학생 수는 여학생 수보다 (\d+)명 더 많다/)[1]);
+      difference = BigInt(match(prompt, /남학생 수는 여학생 수보다 (\d+)명 더 많습니다/)[1]);
       positive(difference);
       assert.notEqual(2n * overall - maleAverage - femaleAverage, 0n, "일차식의 계수가 0이 아니므로 범위 밖 추가 해도 없음");
     }
     assert.equal(prompt.includes("점수의 합은"), level === 0);
-    assert.equal(prompt.includes("더 많다"), level === 2);
-    assert.equal(prompt.includes("점 낮다"), level === 2);
+    assert.equal(prompt.includes("더 많습니다"), level === 2);
+    assert.equal(prompt.includes("점 낮습니다"), level === 2);
     assert(overall > femaleAverage && overall <= 100n * S && femaleAverage > 0n);
     if (maleAverage) assert(maleAverage > overall && maleAverage <= 100n * S);
     const candidates = [];

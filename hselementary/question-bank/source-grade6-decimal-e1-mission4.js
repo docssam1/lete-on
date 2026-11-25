@@ -8,8 +8,10 @@
   const generatorKey = "sourceGrade6DecimalDivisionE1Mission4";
   const pools = Object.freeze([
     Object.freeze({ divisor: 8, dividend: 58.8, quotient: 7.35 }),
-    Object.freeze({ divisor: 8, dividend: 51.6, quotient: 6.45 }),
-    Object.freeze({ divisor: 6, dividend: 52.5, quotient: 8.75 })
+    // 2026-11-24: 변형은 첫째 곱(십의 자리만 보임)으로 몫의 일의 자리가 하나로 정해지는 수치로 바꿈.
+    // 예전 51.6÷8(40·48)과 52.5÷6(42·48)은 ㉠이 두 가지(5.45·6.45, 7.75·8.75)로 성립했다.
+    Object.freeze({ divisor: 8, dividend: 37.2, quotient: 4.65 }),
+    Object.freeze({ divisor: 6, dividend: 55.5, quotient: 9.25 })
   ]);
 
   const facts = data => {

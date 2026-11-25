@@ -221,6 +221,21 @@ for (let variant = 0; variant < publicIds.length; variant += 1) {
       assert(attr(problem, "phase") === "problem" && attr(answer, "phase") === "answer", `${sourceItemId}/pool${pool}: 문제·답 phase가 다릅니다.`);
       assert(!/solution-answer|data-answer-source|is-solved|source61-vs-e3-result-label/.test(problem), `${sourceItemId}/pool${pool}: 문제 SVG에 답 강조가 있습니다.`);
       assert(/data-answer-source|is-solved|source61-vs-e3-result-label/.test(answer), `${sourceItemId}/pool${pool}: 답 SVG에 답 강조가 없습니다.`);
+      // 2026-11-25: 겨냥도 모서리 검사(사용자 지적 "모서리가 덜 그려짐"). 직육면체 하나를 그리는 그림은
+      // 보이는 면 3개(앞·오른쪽·위, 모서리 9개)와 보이지 않는 모서리 점선 3개가 문제·답 그림 모두에 있어야 한다.
+      if ([0, 3, 6].includes(variant)) for (const [phase, figure] of [["문제", problem], ["답", answer]]) {
+        const hidden = (figure.match(/class="source61-vs-e3-hidden-edge"/g) || []).length;
+        const faces = (figure.match(/<polygon class="source61-vs-e3-face[^"]*"/g) || []).length;
+        assert(hidden === 3, `${sourceItemId}/pool${pool}/${phase}: 보이지 않는 모서리 점선이 3개가 아닙니다(${hidden}).`);
+        assert(faces >= 3, `${sourceItemId}/pool${pool}/${phase}: 보이는 면(앞·오른쪽·위)이 모두 그려지지 않았습니다(${faces}).`);
+        if (variant === 0) {
+          assert((figure.match(/source61-vs-e3-cut-face/g) || []).length === 3, `${sourceItemId}/pool${pool}/${phase}: 잘라 낸 자리의 면 3개가 없습니다.`);
+          assert((figure.match(/class="source61-vs-e3-cut-edge"/g) || []).length === 3, `${sourceItemId}/pool${pool}/${phase}: 잘라 낸 자리 안쪽 모서리 3개가 없습니다.`);
+        }
+        if (variant === 6) {
+          assert((figure.match(/class="source61-vs-e3-cut-edge"/g) || []).length === 2 && (figure.match(/class="source61-vs-e3-cut-hidden-edge"/g) || []).length === 2, `${sourceItemId}/pool${pool}/${phase}: 절단면 모서리(보이는 2개 실선, 보이지 않는 2개 점선)가 모두 그려지지 않았습니다.`);
+        }
+      }
       if (variant === 2) {
         assert((problem.match(/data-chain-index=/g) || []).length === 8, `${sourceItemId}: 연결 조각 8개가 아닙니다.`);
         assert((problem.match(/data-contact-face=/g) || []).length === 7, `${sourceItemId}: 독립적으로 세어야 할 접촉면 7개가 아닙니다.`);
