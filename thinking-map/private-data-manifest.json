@@ -4,14 +4,14 @@
   "files": [
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47053544,
-      "sha256": "d28b69e07e9142fb5f6703de0fa78bba247fbdefa174946071d909666e4d88f4",
+      "bytes": 47254633,
+      "sha256": "b319086919bb43bee1bccf7a49e60212ca35c0557bc065949b29d5c973f896c7",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59037271,
-      "sha256": "99526bbded23b52e42d83cb8ab5d5db6de06e5b14c320e2d84225fe07da7a03b",
+      "bytes": 59600039,
+      "sha256": "512a547516e64d23f937bdc2626f16d502cbfc87ea6fd03b102264debcf92a52",
       "contentIncludedInGit": false
     },
     {
@@ -70,12 +70,24 @@
     },
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 769405,
-      "sha256": "49ef910ebabc81bb654d4cabef8085fb3ebc431d064f84d5c7da8d675092e96a",
+      "bytes": 1323437,
+      "sha256": "1555ff58c6344dbbaed8316e96ec65b50d237b22122e59e42bba5d1157ec90a7",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/colored-triangle-enumeration-checkpoint.json",
+      "bytes": 605,
+      "sha256": "3d43daaab3c4f01961b9e79d123be1846f8a0a7d9afa264795e8be567dcd1cc5",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-rhombus-checkpoint.json",
+      "bytes": 544,
+      "sha256": "39f06901a6d7016edb8dbb74ceb481ead0144115b0ccadd679489435941a392a",
       "contentIncludedInGit": false
     }
   ],
-  "source": "Checkpoint 68; 1031 초급 B 1단원 3개 원문과 6개 유사문항은 private bank/pack에 저장; source originals remain outside Git.",
+  "source": "Checkpoint 70; 1031 초급 B p.16-17 원문 5개, 유사 8개; 정확 배치 열거와 답 개수 대조; 원본/교사 페이지는 Git/ZIP 제외.",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",
