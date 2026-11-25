@@ -20,7 +20,7 @@
     'wm-common1-basic-r01':'WM:common1-basic', 'wm-common1-basic-r02':'WM:common1-basic',
     'wm-common1-basic-r03':'WM:common1-basic', 'wm-common1-basic-r04':'WM:common1-basic',
     'wm-common1-basic-final':'WM:common1-basic',
-    'ed-middle1-authored-r01':'ED:middle1',
+    'ed-middle1-authored-r01':'ED:middle1', 'ed-middle1-authored-r02':'ED:middle1',
     'ed-common1-basic-r01':'ED:high-advance', 'ed-common1-basic-r02':'ED:high-advance',
     'dg-pre-high1-r01':'DG:pre-high1',
     'dg-middle1-entry-r01':'DG:middle1', 'dg-middle1-entry-r02':'DG:middle1',
