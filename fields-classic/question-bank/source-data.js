@@ -116,6 +116,17 @@ export const TYPES = [
   type("repeat-four-shapes", "pattern", "반복 규칙", "네 가지 도형의 순서 반복", { generator: "fourShapeCycle", sourceMatched: true }),
   type("repeat-four-items-with-duplicate", "pattern", "반복 규칙", "같은 모양이 두 번 들어간 네 칸 반복", { generator: "fourItemCycleWithDuplicate", sourceMatched: true }),
   type("shape-sum-table", "number", "도형이 나타내는 수", "같은 도형이 반복된 줄부터 값 찾기", { generator: "shapeSumTable", sourceMatched: true, textbookSource: "더클래식 1과정 2권 10~14·23쪽·단원 테스트 1·2·22번", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 줄의 같은 도형부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-2x2-set", "number", "도형이 나타내는 수", "2×2 덧셈 매트릭스 네 개", { generator: "shapeMatrixTwoByTwoSet", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "같은 모양 둘인 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-3x3-pair", "number", "도형이 나타내는 수", "3×3 덧셈 매트릭스 두 개(가로·세로 빈칸)", { generator: "shapeMatrixThreeByThreePair", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-3x3", "number", "도형이 나타내는 수", "3×3 덧셈 매트릭스", { generator: "shapeMatrixThreeByThree", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-2x3", "number", "도형이 나타내는 수", "2×3 덧셈 매트릭스", { generator: "shapeMatrixTwoByThree", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-2x3-multi", "number", "도형이 나타내는 수", "2×3 덧셈 매트릭스 빈칸 두 개", { generator: "shapeMatrixTwoByThreeMulti", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "찾은 값으로 빈칸 여러 개 채우기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-2x3-compare", "number", "도형이 나타내는 수", "2×3 덧셈 매트릭스 모양 네 가지", { generator: "shapeMatrixTwoByThreeCompare", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 줄을 견주어 차이 나는 모양 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-4x4", "number", "도형이 나타내는 수", "4×4 덧셈 매트릭스", { generator: "shapeMatrixFourByFour", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-4x4-compare", "number", "도형이 나타내는 수", "4×4 덧셈 매트릭스 한 가지 모양 줄 없음", { generator: "shapeMatrixFourByFourCompare", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "같은 묶음이 두 번인 줄을 반으로 나누고 두 줄 견주기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-4x4-multi", "number", "도형이 나타내는 수", "4×4 덧셈 매트릭스 빈칸 세 개", { generator: "shapeMatrixFourByFourMulti", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "찾은 값으로 빈칸 여러 개 채우기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-4x4-five", "number", "도형이 나타내는 수", "4×4 덧셈 매트릭스 모양 다섯 가지", { generator: "shapeMatrixFourByFourFive", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
+  type("shape-matrix-3x4", "number", "도형이 나타내는 수", "3×4 덧셈 매트릭스 모양 다섯 가지", { generator: "shapeMatrixThreeByFour", sourceMatched: true, textbookSource: "더클래식 1과정 2권 1단원 덧셈 매트릭스", catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "한 가지 모양만 있는 줄부터 값 찾기", searchAliases: ["매트릭스", "덧셈 매트릭스", "도형 합 표"] }),
   type("shape-sum-table-row-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 가로 합 구하기", { generator: "shapeSumRowTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
   type("shape-sum-table-bottom-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 아래 합 구하기", { generator: "shapeSumBottomTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
   type("shape-sum-table-column-target", "number", "도형이 나타내는 수", "도형값을 이어 찾아 세로 합 구하기", { generator: "shapeSumColumnTarget", sourceMatched: true, catalogGroup: "도형이 나타내는 수와 줄의 합", catalogStrategy: "두 모양으로 묶어 다음 도형값 찾기", searchAliases: ["매트릭스", "도형 합 표"] }),
@@ -1461,6 +1472,17 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "equal-partition-four": "먼저 반으로 나누고, 두 묶음을 다시 반으로 나누면 네 묶음이 같습니다.",
   "equal-partition-three": "같은 수를 세 번 모아 전체가 되는 수를 찾습니다.",
   "shape-sum-table": "같은 모양은 같은 수입니다. 같은 모양만 있는 줄부터 값을 찾습니다.",
+  "shape-matrix-2x2-set": "같은 모양 둘이 있는 줄부터 값을 찾고, 그 값을 다른 줄에 넣습니다.",
+  "shape-matrix-3x3-pair": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
+  "shape-matrix-3x3": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
+  "shape-matrix-2x3": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
+  "shape-matrix-2x3-multi": "모든 모양의 값을 먼저 찾은 뒤 빈칸마다 그 줄의 수를 더합니다.",
+  "shape-matrix-2x3-compare": "두 줄에 같이 있는 모양을 빼고 견주면 남는 모양의 값이 나옵니다.",
+  "shape-matrix-4x4": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
+  "shape-matrix-4x4-compare": "같은 묶음이 두 번 있는 줄은 반으로 나누고, 그 묶음을 품은 줄에서 빼어 남는 모양을 찾습니다.",
+  "shape-matrix-4x4-multi": "모든 모양의 값을 먼저 찾은 뒤 빈칸마다 그 줄의 수를 더합니다.",
+  "shape-matrix-4x4-five": "한 가지 모양만 있는 줄에서 시작해 모르는 모양이 하나만 남은 줄을 차례로 찾습니다.",
+  "shape-matrix-3x4": "한 가지 모양만 있는 줄에서 시작해 모르는 모양이 하나만 남은 줄을 차례로 찾습니다.",
   "equalize-transfer": "준 뒤와 받은 뒤의 수를 적고, 두 수가 같아지는지 확인합니다.",
   "total-difference": "더 많은 쪽의 차이를 먼저 떼어 놓고, 남은 수를 똑같이 나눕니다.",
   "reverse-transfer-total": "마지막 수에서 거꾸로 생각해, 준 만큼 더하고 받은 만큼 뺍니다.",
@@ -2222,12 +2244,43 @@ const BOOK02_UNIT01_REFS = Object.freeze({
     concept: [problemNumbers("activity", 1, [3])],
     practice: [problemNumbers("practice", 1, [3])]
   }),
-  "shape-sum-table": stageReferences({
-    concept: [problemNumbers("activity", 1, [4, 5])],
-    type: [problemNumbers("check", 1, [1, 2, 3, 4, 5, 6])],
-    practice: [problemNumbers("practice", 1, [4, 5, 6, 7, 8, 9, 10, 11, 12])],
-    advanced: [problemNumbers("advanced", 1, [3, 4])]
+  "shape-matrix-2x2-set": stageReferences({
+    concept: [problemNumbers("activity", 1, [4])],
+    practice: [problemNumbers("practice", 1, [4])]
   }),
+  "shape-matrix-3x3-pair": stageReferences({
+    concept: [problemNumbers("activity", 1, [5])]
+  }),
+  "shape-matrix-3x3": stageReferences({
+    type: [problemNumbers("check", 1, [1, 2])],
+    practice: [problemNumbers("practice", 1, [5, 6, 7, 8])]
+  }),
+  "shape-matrix-4x4": stageReferences({
+    type: [problemNumbers("check", 1, [3, 4])]
+  }),
+  "shape-matrix-4x4-compare": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [4])]
+  }),
+  "shape-matrix-2x3": stageReferences({
+    type: [problemNumbers("check", 1, [5, 6])]
+  }),
+  "shape-matrix-4x4-multi": stageReferences({
+    practice: [problemNumbers("practice", 1, [9])]
+  }),
+  "shape-matrix-4x4-five": stageReferences({
+    practice: [problemNumbers("practice", 1, [10])]
+  }),
+  "shape-matrix-2x3-multi": stageReferences({
+    practice: [problemNumbers("practice", 1, [11])]
+  }),
+  "shape-matrix-2x3-compare": stageReferences({
+    practice: [problemNumbers("practice", 1, [12])]
+  }),
+  "shape-matrix-3x4": stageReferences({
+    advanced: [problemNumbers("advanced", 1, [3])]
+  }),
+  // 교재 번호는 위 shape-matrix-*가 1:1로 맡는다. 이 유형은 권별 테스트(1·2·22번) 원문 꼴 재현용으로만 남긴다.
+  "shape-sum-table": stageReferences({}),
   "equalize-transfer": stageReferences({
     concept: [problemNumbers("activity", 2, [1, 2, 3])],
     practice: [problemNumbers("practice", 1, [13, 14, 15])],
@@ -3897,7 +3950,10 @@ export const CURRICULUM_REVIEW_CROSSWALK = Object.freeze({
     links: reviewQuestionLinks([
       [1, [1], "equal-partition-four"],
       [1, [2], "equal-partition-three"],
-      [1, [3, 4, 5, 10], "shape-sum-table"],
+      [1, [3], "shape-matrix-2x2-set"],
+      [1, [4], "shape-matrix-3x3-pair"],
+      [1, [5], "shape-matrix-4x4"],
+      [1, [10], "shape-matrix-4x4-compare"],
       [1, [6], "equalize-transfer"],
       [1, [7, 8, 9], "total-difference"],
       [2, [1], "balance-order-chain"],
@@ -4168,7 +4224,7 @@ export const CURRICULUM = [
     ], [5,4], [4,4], 4, 24, BOOK01_UNIT04_REFS)
   ] },
   { id: "book-02", label: "2권", title: "규칙찾기와 매트릭스", units: [
-    detailedStagedUnit("매트릭스와 주고받기", ["equal-partition-two","equal-partition-four","equal-partition-three","shape-sum-table","equalize-transfer","total-difference","reverse-transfer-total"], [5,5], [6,4], 4, 21, BOOK02_UNIT01_REFS),
+    detailedStagedUnit("매트릭스와 주고받기", ["equal-partition-two","equal-partition-four","equal-partition-three","shape-matrix-2x2-set","shape-matrix-3x3-pair","shape-matrix-3x3","shape-matrix-4x4","shape-matrix-4x4-compare","shape-matrix-2x3","shape-matrix-4x4-multi","shape-matrix-4x4-five","shape-matrix-2x3-multi","shape-matrix-2x3-compare","shape-matrix-3x4","shape-sum-table","equalize-transfer","total-difference","reverse-transfer-total"], [5,5], [6,4], 4, 21, BOOK02_UNIT01_REFS),
     detailedStagedUnit("양팔저울", ["balance-order-chain","balance-given-unit-weight","distinct-shape-value-equation"], [4,4], [4,4], 4, 18, BOOK02_UNIT02_REFS),
     detailedStagedUnit("규칙찾기와 수열", ["constant-step-number-sequence","interleaved-number-sequence","previous-two-sum-sequence","repeating-number-sequence","repeating-symbol-sequence","progressive-number-table","matchstick-shared-polygon-growth","triangular-stone-growth","square-border-stone-growth","staircase-tile-growth","repeated-fold-cut-count","colored-triangle-growth","nested-circle-count","cube-square-layer-growth","growing-segment-count","fold-punch-doubling"], [4,4], [4,3], 4, 17, BOOK02_UNIT03_REFS),
     detailedStagedUnit("약속과 스도쿠", ["four-number-center-rule","number-grid-row-rule","two-digit-compose-rule","sudoku-three-row-column","sudoku-three-region","sudoku-four-square-region","sudoku-four-irregular-region"], [6,3], [4,4], 4, 14, BOOK02_UNIT04_REFS)

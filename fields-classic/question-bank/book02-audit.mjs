@@ -139,6 +139,18 @@ function validate(type, problem, difficulty) {
     assert(numeric === meta.part, id, difficulty, "partition answer mismatch");
     return;
   }
+  if (id.startsWith("shape-matrix-")) {
+    // 덧셈 매트릭스: 빈칸 값 = 그 줄 모양 값의 합, 다른 모양은 다른 수
+    const parts = meta.parts || [{ blanks: meta.blanks, values: meta.values }];
+    parts.forEach((part) => {
+      const values = Object.values(part.values);
+      assert(new Set(values).size === values.length, id, difficulty, "same value for different shapes");
+      assert(values.every((value) => Number.isInteger(value) && value > 0), id, difficulty, "shape value not positive integer");
+      part.blanks.forEach((blank) => assert(problem.answer.includes(String(blank.sum)), id, difficulty, "blank sum missing in answer"));
+    });
+    assert(problem.visual?.kind === "shape-matrix" && problem.visual.html.includes("<svg"), id, difficulty, "matrix svg missing");
+    return;
+  }
   if (id === "shape-sum-table") {
     assert(numeric === visual.columnOne + visual.columnTwo - visual.rowOne, id, difficulty, "matrix answer mismatch");
     return;
@@ -298,7 +310,7 @@ function validate(type, problem, difficulty) {
 }
 
 assert(book, "book-02", 0, "curriculum book missing");
-assert(typeIds.length === 33, "book-02", 0, `expected 33 types, got ${typeIds.length}`);
+assert(typeIds.length === 44, "book-02", 0, `expected 44 types, got ${typeIds.length}`);
 assert(new Set(typeIds).size === typeIds.length, "book-02", 0, "duplicate type id");
 assert(types.every(Boolean), "book-02", 0, "unknown type id");
 assert(types.every((type) => type.textbookSource), "book-02", 0, "textbook source missing");

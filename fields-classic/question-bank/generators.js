@@ -21,6 +21,7 @@ import { COURSE2_A4_GENERATORS } from "./course2-a4-generators.js?v=20261124h";
 import { COURSE2_A5_GENERATORS } from "./course2-a5-generators.js?v=20261122zi";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
+import { BOOK02_MATRIX_GENERATORS } from "./book02-matrix-generators.js?v=20261125a";
 import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
 
 const COLORS = ["흰색", "검은색"];
@@ -6558,6 +6559,7 @@ export const GENERATORS = {
   ...MOCK06_GENERATORS,
   ...G1_WINTER_GENERATORS,
   ...BOOK01_GENERATORS,
+  ...BOOK02_MATRIX_GENERATORS,
   ...BOOK03_GENERATORS,
   ...BOOK04_GENERATORS,
   ...BOOK05_GENERATORS,
