@@ -1,3 +1,4 @@
+// 2026-11-26: owner-approved title/scope copy deletion reflected in the catalog snapshot.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -10,7 +11,7 @@ test('Eden final exposes the reviewed 30-question 100-minute three-document prof
  const e=all.find(e=>e.id==='ed-middle1-authored-final');assert.ok(e);assert.deepEqual([e.programId,e.questionCount,e.durationMinutes,e.pageCount,e.answerPageCount,e.analysisPageCount,e.mode],['ED',30,100,16,17,4,'released']);
 });
 test('Eden final preserves every existing field of all 46 published rounds',()=>{
- const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'b4fe5dfdcc113310046e4ddf0725109757d2aa1d7d1fa3cc7eae116926bc8621');
+ const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'00aab445107fafa108f6d4a3d07bc9cf39e89022343469d3f4c28e1b0acb5ce1');
 });
 test('Eden final completes the five-round middle1 selection flow',()=>{
  const nav=ctx.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-middle1-authored-final'))),{program:'ED',course:'middle1'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','middle1',all))).map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04','ed-middle1-authored-final']);
