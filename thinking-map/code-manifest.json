@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 75,
+  "sourceCheckpoint": 76,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -99,6 +99,12 @@
       "storedPath": "runtime/work/quantity-relations/local-bank-server.py",
       "bytes": 15286,
       "sha256": "ba487c1d58a6b8716eeb9be4be8a5b16bb5fcab2e07c6f05513728584d388c95"
+    },
+    {
+      "path": "work/quantity-relations/mixed_polygon_assembly_core.py",
+      "storedPath": "runtime/work/quantity-relations/mixed_polygon_assembly_core.py",
+      "bytes": 8902,
+      "sha256": "490e838b160b1866fffec035c705ffd8c0504fc8c6917164004112a185c4dacc"
     },
     {
       "path": "work/quantity-relations/native-reused-verifiers.mjs",

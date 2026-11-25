@@ -4,8 +4,8 @@
   "files": [
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1581588,
-      "sha256": "340e9f7149b67d7a6411d7aa4707bcac06614c8d255e2e763c70da2eee53770f",
+      "bytes": 1721817,
+      "sha256": "62577e0cba66cec30e4000da7535205a5cff8e7b9823dfd9d00fa293f56585ed",
       "contentIncludedInGit": false
     },
     {
@@ -28,14 +28,14 @@
     },
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47471961,
-      "sha256": "c997241a673fafcc26b58c8581356b072afb501bc80f01af95cfb58bb586012e",
+      "bytes": 47568365,
+      "sha256": "18c1b68f9ac91cfec59817728cef540d2b322fe63c0f08d642fb78d554775fb2",
       "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59894697,
-      "sha256": "ed58c7dc9465890c0646fde7790d6a1f517e0abb1880822dd92d79db6b9a1f70",
+      "bytes": 60060915,
+      "sha256": "e5f45388acc9360a987470ff551e6d97d936ebe88fdf8abc43ab729da15de5d6",
       "contentIncludedInGit": false
     },
     {
@@ -93,6 +93,12 @@
       "contentIncludedInGit": false
     },
     {
+      "path": "work/quantity-relations/1031-basic-b-page13-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 1851,
+      "sha256": "07f45caccc22ed5c8008c9828b55428089186848d477383ea337997a1145e2f5"
+    },
+    {
       "path": "work/quantity-relations/1031-basic-b-rhombus-checkpoint.json",
       "bytes": 544,
       "sha256": "39f06901a6d7016edb8dbb74ceb481ead0144115b0ccadd679489435941a392a",
@@ -128,7 +134,7 @@
       "contentIncludedInGit": false
     }
   ],
-  "source": "Checkpoint 72; 1031 초급 B p.17–19 원문 8개·유사문항 11개·답안 대조 8개; 체스판 정확 덮기와 원본 페이지 SHA를 확인.",
+  "source": "Checkpoint 76; 초급 B p.13 확인 4문항의 원문 조건·답 개수와 혼합 도형 열거를 대조. 원문 페이지/교사 이미지/사용자 DB는 비공개 작업공간에 유지.",
   "optionalPrivateAssets": [
     "work/quantity-relations/local-cache/original-preview-manifest.private.json",
     "work/quantity-relations/local-cache/textbook-pages",
