@@ -1,10 +1,10 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { applyTextbookRemaps, TEXTBOOK_REMAPS } from "./textbook-remaps.js?v=20261125b";
-import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125c";
-import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125c";
+import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125f";
+import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125c";
-import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125c";
-import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125c";
+import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
+import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125d";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125c";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125c";
 import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125c";
@@ -1016,7 +1016,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "height-order": Object.freeze(["g1-height-order-four", "g1-summer-height-order-five"]),
   "multi-person-transfer": Object.freeze(["g1-fall-three-person-total-transfer"]),
   "cryptarithm": Object.freeze(["two-digit-letter-cryptarithm", "diagnostic-two-digit-cryptarithm", "vertical-shape-cryptarithm-values"]),
-  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-mixed-operation-grid"]),
+  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-card-list-network-b5"]),
   "rod-length-ratio": Object.freeze(["g1-rod-ratio-total", "rod-ratio-total-book3", "rod-comparison-total-unit-test"]),
   "colored-triangle-difference": Object.freeze(["g1-triangle-color-difference", "g1-summer-triangular-color-difference"]),
   "polygon-stone-rearrangement": Object.freeze(["g1-polygon-stone-rearrangement", "polygon-border-shape-conversion-b7"]),
@@ -1027,19 +1027,19 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "segment-count": Object.freeze(["g1-summer-circle-point-segments"]),
   "square-side-composition": Object.freeze(["g1-summer-square-side-composition", "g1-fall-stacked-square-side-chain"]),
   "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "rectilinear-perimeter-book6"]),
-  "latin-square": Object.freeze(["sudoku-three-row-column", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
+  "latin-square": Object.freeze(["sudoku-fill-three-row-column-b2", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
   "consecutive-number-addition": Object.freeze(["consecutive-vertical-addition-b10", "g1-fall-consecutive-three-sum-completion"]),
   "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
   "multiplication-matrix": Object.freeze(["multiplication-table-pattern", "multiplication-matrix-products", "multiplication-matrix-placement"]),
   "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),
   "venn-count": Object.freeze(["set-union-count", "neither-set-count", "venn-neither-b7"]),
   "congruent-partition": Object.freeze(["congruent-equal-sum-partition-draw", "symbol-balanced-congruent-partition", "star-congruent-partition-draw-book4"]),
-  "calendar-weekday-sum": Object.freeze(["calendar-all-weekday-sum", "calendar-same-weekday-sum", "calendar-weekday-sum-year-boundary-book5"]),
+  "calendar-weekday-sum": Object.freeze(["calendar-all-weekday-sum", "calendar-ordinal-pair-sum-weekday-b5", "calendar-weekday-sum-year-boundary-book5"]),
   "custom-operation": Object.freeze(["two-custom-operations"]),
   "operator-insertion": Object.freeze(["plus-minus-multi-target", "number-card-plus-minus"]),
   "function-machine": Object.freeze(["two-function-machine-chain", "g1-fall-linear-input-output-table"]),
   "fold-diagonal-unfold": Object.freeze(["three-fold-line-unfold", "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw"]),
-  "shape-transform": Object.freeze(["shape-flip-composition", "shape-quarter-half-turn", "shape-rotate-flip-grid"]),
+  "shape-transform": Object.freeze(["line-letter-two-flips-half-b1", "line-letter-turn-four-b1", "shape-rotate-flip-grid"]),
   "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
   "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
   "tree-planting": Object.freeze(["closed-perimeter-object-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),

@@ -21,11 +21,11 @@ import { COURSE2_A4_GENERATORS } from "./course2-a4-generators.js?v=20261124h";
 import { COURSE2_A5_GENERATORS } from "./course2-a5-generators.js?v=20261122zi";
 import { MOCK06_GENERATORS } from "./mock06-generators.js?v=20260823b";
 import { book02UnitTestProblem } from "./book02-unit-test-generators.js?v=20260918b";
-import { BOOK01_STRUCTURE_GENERATORS } from "./book01-structure-generators.js?v=20261125c";
-import { BOOK02_STRUCTURE_GENERATORS } from "./book02-structure-generators.js?v=20261125c";
+import { BOOK01_STRUCTURE_GENERATORS } from "./book01-structure-generators.js?v=20261125f";
+import { BOOK02_STRUCTURE_GENERATORS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_GENERATORS } from "./book03-structure-generators.js?v=20261125c";
-import { BOOK04_STRUCTURE_GENERATORS } from "./book04-structure-generators.js?v=20261125c";
-import { BOOK05_STRUCTURE_GENERATORS } from "./book05-structure-generators.js?v=20261125c";
+import { BOOK04_STRUCTURE_GENERATORS } from "./book04-structure-generators.js?v=20261125f";
+import { BOOK05_STRUCTURE_GENERATORS } from "./book05-structure-generators.js?v=20261125d";
 import { BOOK06_STRUCTURE_GENERATORS } from "./book06-structure-generators.js?v=20261125c";
 import { BOOK07_STRUCTURE_GENERATORS } from "./book07-structure-generators.js?v=20261125c";
 import { BOOK08_STRUCTURE_GENERATORS } from "./book08-structure-generators.js?v=20261125c";
@@ -4170,7 +4170,8 @@ function sourceTwoDigitSumDifference({ difficulty = 2 }) {
   const choices = [];
   const minTens = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
   for (let tens = minTens; tens <= 9; tens += 1) {
-    for (let ones = 0; ones < tens; ones += 1) {
+    // 일의 자리 0은 뺀다(합과 차가 같아져 조건 하나가 남는 꼴이 되고, 교재 두 자리 수 조건 문항에는 없다 — 1권 대조 2026-11-25).
+    for (let ones = 1; ones < tens; ones += 1) {
       if (difficulty === 1 && ones > 5) continue;
       choices.push({ tens, ones });
     }
