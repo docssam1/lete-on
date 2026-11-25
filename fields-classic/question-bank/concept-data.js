@@ -1042,9 +1042,10 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-column-sum", "각 열의 계산을 검산해요", "일의 자리부터 계산해 결과의 각 자리와 맞는지, 필요한 받아올림이 있는지 확인합니다.")
     ],
     "같은 기호에 자리마다 다른 숫자를 주거나 가로로 보이는 수만 계산하고 세로 자리값을 확인하지 않았는지 살펴봅니다.",
-    [book3Evidence("복면산", 1, [1, 2])]
+    [book3Evidence("복면산", 1, [1])]
   ),
-  "cryptarithm-fixed-digit-addition": sourceLesson(
+  // 교재 번호 꼴 대조(2026-11-25)로 활동 1-3이 「모양 + 숫자 = 다른 모양」 새 유형(book03-structure-generators.js)으로 갔다 — 수업도 함께 옮긴다.
+  "crypt-shape-digit-sum-b3": sourceLesson(
     "concept:number:fixed-digit-cryptarithm",
     [
       beat("use-fixed-digit", "정해진 숫자를 먼저 표시해요", "문제에서 이미 알려 준 숫자를 해당 자리에 적고 같은 기호가 반복되는 위치를 표시합니다."),
@@ -1052,9 +1053,10 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("carry-to-next-column", "받아올림을 다음 자리로 이어요", "십의 자리와 그다음 자리에서 받아올림을 더해 결과와 일치하는지 끝까지 검산합니다.")
     ],
     "정해진 숫자를 다른 기호처럼 바꾸거나 일의 자리의 받아올림을 다음 열에 더하지 않았는지 확인합니다.",
-    [book3Evidence("복면산", 1, [3, 4])]
+    [book3Evidence("복면산", 1, [3])]
   ),
-  "cryptarithm-multi-symbol-carry": sourceLesson(
+  // 교재 번호 꼴 대조(2026-11-25)로 활동 2-1이 「AB + AB」 새 유형으로 갔다 — 수업도 함께 옮긴다.
+  "crypt-ab-double-b3": sourceLesson(
     "concept:number:multi-symbol-carry",
     [
       beat("list-symbol-constraints", "기호와 자리 조건을 정리해요", "기호마다 가능한 숫자를 적고 같은 기호의 반복, 서로 다른 기호의 중복 금지 조건을 표시합니다."),
@@ -1062,7 +1064,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("verify-all-symbols", "모든 기호와 열을 한 번에 검산해요", "정한 숫자를 전체 세로식에 넣어 각 열의 합과 마지막 받아올림이 모두 맞는지 확인합니다.")
     ],
     "한 열만 맞는 숫자를 고르거나 서로 다른 기호에 같은 숫자를 주고, 받아올림을 한 열 건너뛰지 않았는지 확인합니다.",
-    [book3Evidence("복면산", 2, [1, 2, 3])]
+    [book3Evidence("복면산", 2, [1])]
   ),
   "binary-weight-selection": sourceLesson(
     "concept:number:binary-weight-decomposition",
