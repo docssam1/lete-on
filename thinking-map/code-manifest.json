@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 73,
+  "sourceCheckpoint": 74,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -135,6 +135,12 @@
       "storedPath": "runtime/work/quantity-relations/normalization-ui.js",
       "bytes": 6030,
       "sha256": "ed242c32aea019b6ac7a5d33e42d97b0dc146bc673543e54fef35d692831980c"
+    },
+    {
+      "path": "work/quantity-relations/polyiamond_core.py",
+      "storedPath": "runtime/work/quantity-relations/polyiamond_core.py",
+      "bytes": 4078,
+      "sha256": "753f6103e0b916b78d2d47077151f7140ffd3249e3f3c51e87846fd26f7dffcb"
     },
     {
       "path": "work/quantity-relations/remaining-alignment.css",

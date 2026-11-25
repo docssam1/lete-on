@@ -4,8 +4,9 @@
   "files": [
     {
       "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1519873,
-      "sha256": "06d401ae8f6605f88e1d8576419124309ac7d487286491f84b8784eae15e4a9b"
+      "bytes": 1542213,
+      "sha256": "181eaa3b78134fa63c874acedb290787d31bbe313adf68e3f7ae50e594721c03",
+      "contentIncludedInGit": false
     },
     {
       "path": "outputs/native-runtime-config.json",
@@ -27,13 +28,15 @@
     },
     {
       "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47423879,
-      "sha256": "7d6817711e000e1ed35df2d0539fbd6e70956f05cca98eb735aec92391dcbdd1"
+      "bytes": 47444352,
+      "sha256": "bbe5c696e96203da540e4f238973d2e296d8a22557904bd4976806f3ef42b0ce",
+      "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59818964,
-      "sha256": "57f70fb270002daff521c1e57d4d7f34df2826fa0b10bf9362e7731dde72dd84"
+      "bytes": 59848956,
+      "sha256": "28be9cf4c61979735cb65526493bc7d7fbbf5dc203e9d9fdd990d67a7a49d0ba",
+      "contentIncludedInGit": false
     },
     {
       "path": "outputs/quantity-relations-practice.html",
@@ -75,6 +78,12 @@
       "path": "work/quantity-relations/1031-basic-b-colored-squares-checkpoint.json",
       "bytes": 1012,
       "sha256": "3ec07d2bf2b9cbf35387ee10b29b55a8bc1083aa283b78eaf0cfa8e5124278aa",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-equilateral-four-checkpoint.json",
+      "bytes": 651,
+      "sha256": "6623e02c0a6bdf4f81790acc40ce553bb0d6e9d5c843c7c4a4d8c0437f3de3a1",
       "contentIncludedInGit": false
     },
     {
