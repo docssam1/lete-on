@@ -581,6 +581,277 @@ function consecutiveMaskedTripleB10() {
   });
 }
 
+// ── 2단원 따라잡기 ─────────────────────────────────────
+const gcd = (a, b) => (b ? gcd(b, a % b) : Math.abs(a));
+const lcm = (a, b) => (a / gcd(a, b)) * b;
+const TOKENS = [
+  { token: "●", name: "동그라미", color: "#d9792c" },
+  { token: "▲", name: "세모", color: "#2581a0" },
+  { token: "■", name: "네모", color: "#5f8a32" },
+  { token: "★", name: "별", color: "#b0466a" }
+];
+const wa = (n) => `${n}${hasBatchim(n) ? "과" : "와"}`;
+const wIga = (word) => `${word}${wordBatchim(word) ? "이" : "가"}`;
+const piece = (s) => `<b style="color:${s.color};font-size:24px;line-height:1">${s.token}</b>`;
+const tile = (label, color = ACCENT) => `<span style="display:inline-grid;place-items:center;min-width:40px;height:28px;padding:0 6px;border:1.5px solid ${color};border-radius:6px;background:#fff;color:${color};font-size:14px;font-weight:800">${label}</span>`;
+// 저울 줄: [{ items: [html...], total }]
+function scaleRowsHtml(rows, unit = "g", width = 520) {
+  const line = (r) => `<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;padding:7px 4px;border-bottom:1px dashed #d8cfbd"><span style="display:flex;flex-wrap:wrap;gap:5px;align-items:center">${r.items.join("")}</span><b style="white-space:nowrap;font-size:17px">= ${r.total}${unit}</b></div>`;
+  return htmlPanel(rows.map(line).join(""), width);
+}
+const piecesOf = (shapes, counts) => counts.flatMap((n, i) => Array.from({ length: n }, () => piece(shapes[i])));
+const valuesText = (shapes, values, unit = "") => shapes.map((s, i) => `${s.name}=${values[i]}${unit}`).join(", ");
+
+// 두 모양 저울 — 개수 짝 (1,1)/(1,2) · (1,2)/(2,1) · (1,3)/(3,1), 둘 다 묻기
+const COMBOS = [[[1, 1], [1, 2]], [[1, 2], [2, 1]], [[1, 3], [3, 1]]];
+function twoSymbolComboB10({ difficulty = 2 }) {
+  const combo = difficulty === 1 ? COMBOS[0] : difficulty === 2 ? pick(COMBOS.slice(0, 2)) : pick(COMBOS.slice(1));
+  const hi = difficulty === 3 ? 30 : difficulty === 2 ? 18 : 12;
+  let a, b;
+  do { a = randomInt(2, hi); b = randomInt(2, hi); } while (a === b);
+  const shapes = shuffle(TOKENS).slice(0, 2);
+  const totals = combo.map(([x, y]) => x * a + y * b);
+  const [A, B] = totals;
+  const [s0, s1] = shapes;
+  let steps;
+  if (combo === COMBOS[0]) {
+    steps = `둘째 저울에는 첫째 저울보다 ${wIga(s1.name)} 하나 더 있습니다. ${s1.name} = ${B} - ${A} = ${b}. ${s0.name} = ${A} - ${b} = ${a}.`;
+  } else {
+    const k = combo[0][0] + combo[0][1];
+    const pair = (A + B) / k;
+    const extra = combo[0][1] - 1;
+    steps = `두 저울을 합치면 ${wWa(s0.name)} ${wIga(s1.name)} ${k}개씩이라 ${s0.name} 하나와 ${s1.name} 하나의 합은 (${A} + ${B}) ÷ ${k} = ${pair}입니다. 첫째 저울에서 ${eul(pair)} 빼면 ${s1.name} ${extra}개 = ${A - pair}${extra > 1 ? `, ${s1.name} = ${A - pair} ÷ ${extra} = ${b}` : ` → ${s1.name} = ${b}`}. ${s0.name} = ${pair} - ${b} = ${a}.`;
+  }
+  return problem("two-symbol-combo-b10", {
+    prompt: "같은 모양은 무게가 같습니다. 두 저울을 보고 두 모양의 무게를 각각 구하세요.",
+    visual: fig(scaleRowsHtml(combo.map((counts, i) => ({ items: piecesOf(shapes, counts), total: totals[i] })))),
+    answer: valuesText(shapes, [a, b], "g"),
+    solution: steps,
+    meta: { coefficients: combo, totals, values: [a, b] }
+  });
+}
+
+// 과녁 (2,1)/(1,1) → 한 칸 점수
+function targetSvg(colors) {
+  return `${svgOpen(110, 110, "두 칸 과녁")}<circle cx="55" cy="55" r="50" style="fill:${colors[1]};stroke:${LINE}"/><circle cx="55" cy="55" r="24" style="fill:${colors[0]};stroke:${LINE}"/></svg>`;
+}
+function targetOneScoreB10({ difficulty = 2 }) {
+  const zones = [{ name: "노란 칸", color: "#ffd98a" }, { name: "파란 칸", color: "#b9d7ec" }];
+  const hi = difficulty === 3 ? 40 : difficulty === 2 ? 20 : 12;
+  let x, y;
+  do { x = randomInt(3, hi); y = randomInt(2, hi); } while (x === y);
+  const twiceZone = randomInt(0, 1);
+  const hits = [twiceZone === 0 ? [2, 1] : [1, 2], [1, 1]];
+  const values = [x, y];
+  const totals = hits.map(([p, q]) => p * x + q * y);
+  const ask = difficulty === 1 ? twiceZone : randomInt(0, 1);
+  const order = shuffle([0, 1]);
+  const diff = totals[0] - totals[1];
+  const other = 1 - twiceZone;
+  const lines = order.map((i) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 2px;border-bottom:1px dashed #d8cfbd"><span>${MARKS[i]} ${zones[0].name} ${hits[i][0]}번, ${zones[1].name} ${hits[i][1]}번</span><b>${totals[i]}점</b></div>`).join("");
+  const askName = zones[ask].name;
+  const result = values[ask];
+  const solution = `두 기록을 견주면 ${MARKS[0]}에는 ${wIga(zones[twiceZone].name)} 한 번 더 있습니다. ${zones[twiceZone].name} = ${totals[0]} - ${totals[1]} = ${diff}점.${ask === twiceZone ? "" : ` ${zones[other].name} = ${totals[1]} - ${diff} = ${values[other]}점.`}`;
+  return problem("target-one-score-b10", {
+    prompt: `과녁의 같은 칸은 맞힐 때마다 점수가 같습니다. 두 기록을 보고 ${askName} 한 번의 점수를 구하세요.`,
+    visual: fig(`<div style="display:flex;flex-wrap:wrap;gap:14px;align-items:center;justify-content:center">${targetSvg(zones.map((z) => z.color))}${htmlPanel(lines, 340)}</div>`),
+    answer: `${result}점`,
+    solution,
+    meta: { values, hits, totals, ask }
+  });
+}
+
+// m● + n▲ = A, ● + n▲ = B (공통 묶음) → 둘 다
+function sharedTermThreeTwoB10({ difficulty = 2 }) {
+  const m = difficulty === 3 ? pick([3, 4, 5]) : 3;
+  const n = difficulty === 3 ? pick([2, 3]) : 2;
+  const hi = difficulty === 3 ? 25 : difficulty === 2 ? 15 : 10;
+  let a, b;
+  do { a = randomInt(2, hi); b = randomInt(2, hi); } while (a === b);
+  const shapes = shuffle(TOKENS).slice(0, 2);
+  const coefficients = [[m, n], [1, n]];
+  const totals = coefficients.map(([x, y]) => x * a + y * b);
+  const order = randomInt(0, 1) ? [0, 1] : [1, 0];
+  const [s0, s1] = shapes;
+  const solution = `두 저울은 ${s1.name} ${n}개가 같고 ${s0.name}만 ${m - 1}개 다릅니다. ${s0.name} ${m - 1}개 = ${totals[0]} - ${totals[1]} = ${totals[0] - totals[1]} → ${s0.name} = ${a}. 둘째 저울에서 ${s1.name} ${n}개 = ${totals[1]} - ${a} = ${totals[1] - a} → ${s1.name} = ${b}.`;
+  return problem("shared-term-three-two-b10", {
+    prompt: "같은 모양은 무게가 같습니다. 두 저울을 보고 두 모양의 무게를 각각 구하세요.",
+    visual: fig(scaleRowsHtml(order.map((i) => ({ items: piecesOf(shapes, coefficients[i]), total: totals[i] })))),
+    answer: valuesText(shapes, [a, b], "g"),
+    solution,
+    meta: { coefficients, totals, values: [a, b] }
+  });
+}
+
+// 그릇 + x, 그릇 + 2x → 그릇
+const HOLDERS = [["그릇", "사과"], ["바구니", "배"], ["상자", "공책"], ["가방", "책"], ["접시", "떡"]];
+function containerPlusContentB10({ difficulty = 2 }) {
+  const [holder, item] = pick(HOLDERS);
+  const pairs = difficulty === 1 ? [[1, 2]] : difficulty === 2 ? [[1, 2], [2, 4], [3, 6]] : [[2, 3], [1, 3], [2, 5], [3, 5]];
+  const [c1, c2] = pick(pairs);
+  const each = randomInt(difficulty === 1 ? 5 : 8, difficulty === 3 ? 40 : 25) * 10;
+  const holderWeight = randomInt(5, difficulty === 3 ? 60 : 40) * 10;
+  const totals = [holderWeight + c1 * each, holderWeight + c2 * each];
+  const extra = c2 - c1;
+  const rows = [c1, c2].map((count, i) => ({ items: [tile(holder), ...Array.from({ length: count }, () => tile(item, "#b0466a"))], total: totals[i] }));
+  return problem("container-plus-content-b10", {
+    prompt: `같은 ${holder}에 무게가 같은 ${wEul(item)} ${c1}개, ${c2}개 담아 무게를 쟀습니다. 빈 ${holder}의 무게는 몇 g인가요?`,
+    visual: fig(scaleRowsHtml(rows)),
+    answer: `${holderWeight}g`,
+    solution: `더 담은 ${item} ${extra}개의 무게는 ${totals[1]} - ${totals[0]} = ${extra * each}g이므로 ${item} 한 개는 ${each}g입니다. 빈 ${holder} = ${totals[0]} - ${c1 * each} = ${holderWeight}g.`,
+    meta: { holder, item, counts: [c1, c2], each, holderWeight, totals }
+  });
+}
+
+// 닫힌 둘레 — 간격을 바꿨을 때 개수 차 → 처음 개수·둘레 (셋째 간격 개수)
+function ringSvg(label) {
+  return `${svgOpen(240, 150, label)}<ellipse cx="120" cy="75" rx="104" ry="58" style="fill:#e6efe0;stroke:${ACCENT};stroke-width:2.5;stroke-dasharray:3 9;stroke-linecap:round"/>${text(120, 82, "둘레 ? m", 17, 'font-weight="700"')}</svg>`;
+}
+const PLACES = [["연못", "말뚝"], ["둥근 꽃밭", "팻말"], ["운동장", "깃발"], ["호수", "가로등"]];
+function perimeterSpacingReverse(difficulty, third) {
+  const [place, thing] = pick(PLACES);
+  const gapPool = difficulty === 1 ? [[2, 3], [2, 4], [3, 4]] : [[2, 3], [3, 4], [2, 5], [3, 5], [4, 5], [4, 6], [3, 6], [5, 6], [4, 10], [6, 8]];
+  const [g1, g2] = pick(gapPool);
+  const block = lcm(g1, g2);
+  const per = block / g1 - block / g2;
+  const k = randomInt(2, difficulty === 3 ? 8 : 5);
+  const perimeter = block * k;
+  if (perimeter > 300) return perimeterSpacingReverse(difficulty, third);
+  const d = per * k;
+  const first = perimeter / g1;
+  let g3 = null;
+  if (third) {
+    const options = range(2, 12).filter((g) => g !== g1 && g !== g2 && perimeter % g === 0);
+    if (!options.length) return perimeterSpacingReverse(difficulty, third);
+    g3 = pick(options);
+  }
+  const answer = `처음 ${first}개, 둘레 ${perimeter}m${third ? `, ${g3}m 간격 ${perimeter / g3}개` : ""}`;
+  return {
+    prompt: `${place} 둘레에 ${g1}m 간격으로 ${wEul(thing)} 세우려다 ${g2}m 간격으로 바꾸었더니 ${wIga(thing)} ${d}개 덜 들었습니다. 처음에 세우려던 ${thing} 수와 ${place} 둘레를 구하세요.${third ? ` 같은 둘레에 ${g3}m 간격으로 세우면 몇 개가 드나요?` : ""}`,
+    visual: fig(ringSvg(`${place} 둘레`)),
+    answer,
+    solution: `닫힌 둘레는 (둘레 ÷ 간격)개가 듭니다. ${wa(g1)} ${g2}의 공배수 ${block}m마다 ${g1}m 간격은 ${block / g1}개, ${g2}m 간격은 ${block / g2}개라 ${per}개씩 차이 납니다. ${d}개 차이면 ${block}m가 ${d} ÷ ${per} = ${k}번 → 둘레 ${perimeter}m, 처음 ${perimeter} ÷ ${g1} = ${first}개.${third ? ` ${g3}m 간격이면 ${perimeter} ÷ ${g3} = ${perimeter / g3}개.` : ""}`,
+    meta: { g1, g2, g3, d, perimeter, first }
+  };
+}
+function perimeterSpacingReverseB10({ difficulty = 2 }) { return problem("perimeter-spacing-reverse-b10", perimeterSpacingReverse(difficulty, false)); }
+function perimeterSpacingThirdB10({ difficulty = 3 }) { return problem("perimeter-spacing-third-b10", perimeterSpacingReverse(Math.max(2, difficulty), true)); }
+
+// 같은 돈 — 싼 것을 몇 개 더 → 가진 돈·비싼 것 개수
+const GOODS = [["공책", "권"], ["연필", "자루"], ["지우개", "개"], ["빵", "개"], ["색종이 묶음", "묶음"]];
+function sameBudgetReverseB10({ difficulty = 2 }) {
+  const [goods, unitWord] = pick(GOODS);
+  const pricePool = difficulty === 1 ? [[400, 200], [600, 300], [500, 400]] : [[800, 600], [900, 600], [700, 500], [800, 500], [1200, 800], [1000, 600], [600, 400], [1500, 1000]];
+  const [p1, p2] = pick(pricePool);
+  const block = lcm(p1, p2);
+  const per = block / p2 - block / p1;
+  const k = randomInt(2, difficulty === 3 ? 6 : 4);
+  const budget = block * k;
+  const d = per * k;
+  const expensive = budget / p1;
+  return problem("same-budget-reverse-b10", {
+    prompt: `가진 돈으로 한 ${unitWord}에 ${p1}원인 ${wEul(goods)} 사도, 한 ${unitWord}에 ${p2}원인 ${wEul(goods)} 사도 돈이 남지 않습니다. ${p2}원짜리를 ${d}${unitWord} 더 살 수 있을 때 가진 돈과 ${p1}원짜리 ${goods} 수를 구하세요.`,
+    visual: fig(htmlPanel(`<table style="border-collapse:collapse;width:100%;text-align:center"><tr><th style="padding:6px;border-bottom:1px solid ${LINE}">한 ${unitWord} 값</th><th style="padding:6px;border-bottom:1px solid ${LINE}">살 수 있는 수</th></tr><tr><td style="padding:6px">${p1}원</td><td>?</td></tr><tr><td style="padding:6px">${p2}원</td><td>? (${d}${unitWord} 더)</td></tr><tr><td colspan="2" style="padding:6px;border-top:1px solid ${LINE}">가진 돈 ? 원</td></tr></table>`, 360)),
+    answer: `가진 돈 ${budget}원, ${p1}원짜리 ${expensive}${unitWord}`,
+    solution: `${wa(p1)} ${p2}의 공배수 ${block}원마다 ${p1}원짜리는 ${block / p1}${unitWord}, ${p2}원짜리는 ${block / p2}${unitWord}${wordBatchim(unitWord) ? "이라" : "라"} ${per}${unitWord}씩 차이 납니다. ${d}${unitWord} 차이면 ${block}원이 ${k}번 → 가진 돈 ${budget}원, ${p1}원짜리는 ${budget} ÷ ${p1} = ${expensive}${unitWord}.`,
+    meta: { p1, p2, d, budget, expensive }
+  });
+}
+
+// 사람이 더 와서(빠져서) 몫이 바뀜 → 처음 인원·전체
+const SHARE_THINGS = ["사탕", "구슬", "색종이", "딱지", "스티커"];
+function newPeopleReverseB10({ difficulty = 2 }) {
+  const thing = pick(SHARE_THINGS);
+  const leave = difficulty === 3 && randomInt(0, 2) === 0;
+  for (let tries = 0; tries < 200; tries += 1) {
+    const change = randomInt(1, difficulty === 1 ? 2 : 4);
+    const delta = randomInt(1, difficulty === 1 ? 2 : 4);
+    const small = randomInt(2, difficulty === 3 ? 12 : 8);
+    // 더 옴: 처음 n명 × (small+delta) = (n+change) × small → n = change×small÷delta
+    // 빠짐: 처음 n명 × small = (n−change) × (small+delta) → n = change×(small+delta)÷delta
+    const numerator = leave ? change * (small + delta) : change * small;
+    if (numerator % delta) continue;
+    const first = numerator / delta;
+    if (first < 3 || first > 30 || (leave && first - change < 2)) continue;
+    const before = leave ? small : small + delta;
+    const after = leave ? small + delta : small;
+    const total = first * before;
+    if (total > 400) continue;
+    const prompt = leave
+      ? `몇 명이 ${wEul(thing)} 한 사람에게 ${before}개씩 남김없이 나누어 가지려 했는데 ${change}명이 빠져서 한 사람에게 ${after}개씩 남김없이 나누어 가졌습니다. 처음 사람 수와 ${thing} 수를 구하세요.`
+      : `몇 명이 ${wEul(thing)} 한 사람에게 ${before}개씩 남김없이 나누어 가지려 했는데 ${change}명이 더 와서 한 사람에게 ${after}개씩 남김없이 나누어 가졌습니다. 처음 사람 수와 ${thing} 수를 구하세요.`;
+    const solution = leave
+      ? `빠진 ${change}명 몫 ${change} × ${before} = ${change * before}개를 남은 사람이 한 명에 ${delta}개씩 더 가졌습니다. 남은 사람 = ${change * before} ÷ ${delta} = ${first - change}명, 처음 = ${first}명, ${thing} = ${first} × ${before} = ${total}개.`
+      : `처음 사람들이 한 명에 ${delta}개씩 내놓아 새로 온 ${change}명에게 ${after}개씩, 모두 ${change} × ${after} = ${change * after}개를 주었습니다. 처음 사람 = ${change * after} ÷ ${delta} = ${first}명, ${thing} = ${first} × ${before} = ${total}개.`;
+    const head = `<tr><th></th><th style="padding:6px;border-bottom:1px solid ${LINE}">사람 수</th><th style="padding:6px;border-bottom:1px solid ${LINE}">한 사람 몫</th></tr>`;
+    const table = `<table style="border-collapse:collapse;width:100%;text-align:center">${head}<tr><th style="padding:6px">처음</th><td>?명</td><td>${before}개</td></tr><tr><th style="padding:6px">나중</th><td>${leave ? `${change}명 빠짐` : `${change}명 더 옴`}</td><td>${after}개</td></tr></table>`;
+    return problem("new-people-reverse-b10", {
+      prompt, visual: fig(htmlPanel(table, 360)),
+      answer: `처음 ${first}명, ${thing} ${total}개`,
+      solution,
+      meta: { leave, change, before, after, first, total }
+    });
+  }
+  return newPeopleReverseB10({ difficulty });
+}
+
+// 둘씩 평균 → 세 값
+const AVG_SETS = [
+  { names: ["국어", "수학", "과학"], unit: "점", lo: 60, hi: 100, what: "세 과목 점수", pairWord: "두 과목씩" },
+  { names: ["민지", "서준", "하은"], unit: "kg", lo: 24, hi: 40, what: "세 사람의 몸무게", pairWord: "두 사람씩" },
+  { names: ["빨간 상자", "파란 상자", "노란 상자"], unit: "kg", lo: 6, hi: 30, what: "세 상자의 무게", pairWord: "두 상자씩" }
+];
+function pairAveragesB10({ difficulty = 2 }) {
+  const set = pick(AVG_SETS);
+  const parity = randomInt(0, 1);
+  const pool = shuffle(range(set.lo, set.hi).filter((v) => v % 2 === parity));
+  const values = pool.slice(0, 3);
+  const pairs = [[0, 1], [1, 2], [0, 2]];
+  const averages = pairs.map(([i, j]) => (values[i] + values[j]) / 2);
+  const total = sum(values);
+  const lines = pairs.map(([i, j], k) => `<div style="display:flex;justify-content:space-between;gap:12px;padding:6px 2px;border-bottom:1px dashed #d8cfbd"><span>${set.names[i]}·${set.names[j]}의 평균</span><b>${averages[k]}${set.unit}</b></div>`).join("");
+  return problem("pair-averages-b10", {
+    prompt: `${set.what}${wordBatchim(set.what) ? "을" : "를"} ${set.pairWord} 묶어 평균을 냈습니다. ${set.names.join(", ")}의 값을 각각 구하세요.`,
+    visual: fig(htmlPanel(lines, 380)),
+    answer: set.names.map((n, i) => `${n}=${values[i]}${set.unit}`).join(", "),
+    solution: `평균 × 2 = 두 값의 합: ${averages.map((v) => v * 2).join(", ")}. 세 합을 더하면 셋의 합의 2배 → 셋의 합 = ${averages.map((v) => v * 2).join(" + ")} = ${total * 2}, ÷ 2 = ${total}. ${pairs.map(([i, j], k) => `${set.names[3 - i - j]} = ${total} - ${averages[k] * 2} = ${values[3 - i - j]}`).join(", ")}.`,
+    meta: { values, averages }
+  });
+}
+
+// 접시에 2~5개 섞인 네 모양 — 하나씩 새 모양이 들어가는 이어진 식
+function mixedPlateWeightsB10({ difficulty = 2 }) {
+  const hi = difficulty === 3 ? 16 : 12;
+  const values = shuffle(range(2, hi)).slice(0, 4);
+  const shapes = TOKENS.slice();
+  const plates = [];
+  for (let k = 0; k < 4; k += 1) {
+    const size = k + 2;
+    const counts = [0, 0, 0, 0];
+    if (k === 0) counts[0] = size;
+    else {
+      counts[k] = randomInt(1, Math.min(2, size - 1));
+      for (let r = counts[k]; r < size; r += 1) counts[randomInt(0, k - 1)] += 1;
+    }
+    plates.push(counts);
+  }
+  const totals = plates.map((c) => sum(c.map((n, i) => n * values[i])));
+  const order = shuffle([0, 1, 2, 3]);
+  const rows = order.map((k) => ({ items: shuffle(piecesOf(shapes, plates[k])), total: totals[k] }));
+  const steps = plates.map((c, k) => {
+    const known = c.map((n, i) => (i !== k && n ? `${shapes[i].name} ${n}개(${n * values[i]})` : "")).filter(Boolean);
+    const rest = totals[k] - sum(c.map((n, i) => (i !== k ? n * values[i] : 0)));
+    return `${known.length ? `${totals[k]}에서 ${known.join("·")}를 빼면 ` : ""}${shapes[k].name} ${c[k]}개 = ${rest}${c[k] > 1 ? ` → ${shapes[k].name} = ${values[k]}` : ""}`;
+  });
+  return problem("mixed-plate-weights-b10", {
+    prompt: "같은 모양은 무게가 같습니다. 네 접시를 보고 네 모양의 무게를 각각 구하세요.",
+    visual: fig(scaleRowsHtml(rows)),
+    answer: valuesText(shapes, values, "g"),
+    solution: `한 가지 모양만 있는 접시부터 풀고, 아는 모양을 빼며 한 모양씩 찾습니다. ${steps.join(". ")}.`,
+    meta: { plates, totals, values }
+  });
+}
+
 // ── 내보내기 ────────────────────────────────────────
 
 export const BOOK10_STRUCTURE_GENERATORS = {
@@ -597,7 +868,17 @@ export const BOOK10_STRUCTURE_GENERATORS = {
   calendarBlockReverseB10,
   sameTensComplementSheetB10,
   consecutiveTensDigitTotalB10,
-  consecutiveMaskedTripleB10
+  consecutiveMaskedTripleB10,
+  twoSymbolComboB10,
+  targetOneScoreB10,
+  sharedTermThreeTwoB10,
+  containerPlusContentB10,
+  perimeterSpacingReverseB10,
+  perimeterSpacingThirdB10,
+  sameBudgetReverseB10,
+  newPeopleReverseB10,
+  pairAveragesB10,
+  mixedPlateWeightsB10
 };
 
 const row = (id, middle, label, generator, aliases = [], domain = "number") => ({
@@ -619,7 +900,17 @@ export const BOOK10_STRUCTURE_TYPE_ROWS = [
   row("calendar-block-reverse-b10", "연속수의 합", "달력 묶음의 합으로 가장 작은·큰 날짜 찾기", "calendarBlockReverseB10", ["달력", "묶음 합"]),
   row("same-tens-complement-sheet-b10", "곱셈의 규칙", "십의 자리가 같고 일의 자리 합이 10인 곱셈 판", "sameTensComplementSheetB10", ["곱셈 규칙"]),
   row("consecutive-tens-digit-total-b10", "연속수의 합", "십의 자리 숫자의 합으로 연속수의 합 구하기", "consecutiveTensDigitTotalB10", ["연속수", "십의 자리"]),
-  row("consecutive-masked-triple-b10", "연속수의 합", "끝 두 자리만 보이는 연속한 세 수의 덧셈", "consecutiveMaskedTripleB10", ["연속수", "세로셈"])
+  row("consecutive-masked-triple-b10", "연속수의 합", "끝 두 자리만 보이는 연속한 세 수의 덧셈", "consecutiveMaskedTripleB10", ["연속수", "세로셈"]),
+  row("two-symbol-combo-b10", "대응 관계", "개수 짝이 다른 두 저울로 두 모양의 무게 구하기", "twoSymbolComboB10", ["저울", "두 모양"]),
+  row("target-one-score-b10", "대응 관계", "한 칸을 한 번 더 맞힌 기록으로 과녁 점수 구하기", "targetOneScoreB10", ["과녁", "점수"]),
+  row("shared-term-three-two-b10", "대응 관계", "같은 묶음이 있는 두 저울로 두 모양의 무게 구하기", "sharedTermThreeTwoB10", ["저울", "공통 묶음"]),
+  row("container-plus-content-b10", "대응 관계", "담은 개수가 다른 두 무게로 빈 그릇 무게 구하기", "containerPlusContentB10", ["그릇 무게", "빈 통"]),
+  row("perimeter-spacing-reverse-b10", "간격과 개수", "닫힌 둘레에서 간격을 바꾼 개수 차로 둘레·처음 개수 구하기", "perimeterSpacingReverseB10", ["간격", "둘레", "거꾸로"]),
+  row("perimeter-spacing-third-b10", "간격과 개수", "간격을 바꾼 개수 차로 둘레를 찾고 다른 간격의 개수 구하기", "perimeterSpacingThirdB10", ["간격", "둘레"]),
+  row("same-budget-reverse-b10", "대응 관계", "같은 돈으로 더 살 수 있는 개수로 가진 돈 구하기", "sameBudgetReverseB10", ["같은 돈", "거꾸로"]),
+  row("new-people-reverse-b10", "대응 관계", "사람 수가 바뀌어 달라진 몫으로 처음 사람 수 구하기", "newPeopleReverseB10", ["똑같이 나누기", "거꾸로"]),
+  row("pair-averages-b10", "대응 관계", "둘씩 낸 평균으로 세 값 구하기", "pairAveragesB10", ["평균", "두 개씩"]),
+  row("mixed-plate-weights-b10", "대응 관계", "여러 모양이 섞인 네 접시로 네 모양의 무게 구하기", "mixedPlateWeightsB10", ["저울", "네 모양"], "logic")
 ];
 
 export const BOOK10_STRUCTURE_GUIDES = {
@@ -636,7 +927,17 @@ export const BOOK10_STRUCTURE_GUIDES = {
   "calendar-block-reverse-b10": "묶음의 합 ÷ 칸 수가 가운데 날짜입니다. 위아래는 7, 옆은 1 차이입니다.",
   "same-tens-complement-sheet-b10": "십의 자리 수 × (그 수 + 1)을 앞에, 일의 자리 두 수의 곱을 두 자리로 뒤에 씁니다.",
   "consecutive-tens-digit-total-b10": "십의 자리 숫자가 모두 같은지, 중간에 바뀌는지를 합으로 따져 수를 정합니다.",
-  "consecutive-masked-triple-b10": "연속한 세 수의 합은 가운데 수의 3배라 3의 배수입니다. 그런 합을 찾고 ÷ 3."
+  "consecutive-masked-triple-b10": "연속한 세 수의 합은 가운데 수의 3배라 3의 배수입니다. 그런 합을 찾고 ÷ 3.",
+  "two-symbol-combo-b10": "두 저울의 차이(하나 더 있는 모양)를 보거나, 두 저울을 합쳐 두 모양을 같은 개수로 만들어 한 짝의 무게를 먼저 구합니다.",
+  "target-one-score-b10": "두 기록에서 한 번 더 맞힌 칸만 다르므로 점수의 차가 그 칸 한 번의 점수입니다.",
+  "shared-term-three-two-b10": "두 저울에 똑같이 있는 묶음은 지우고 다른 모양만 견줍니다.",
+  "container-plus-content-b10": "두 무게의 차가 더 담은 것의 무게입니다. 한 개 무게를 구해 빼면 빈 그릇입니다.",
+  "perimeter-spacing-reverse-b10": "두 간격의 공배수 길이마다 개수가 몇 개씩 차이 나는지 보고, 전체 차이를 그 수로 나눠 둘레를 구합니다.",
+  "perimeter-spacing-third-b10": "공배수 길이로 둘레를 먼저 구한 뒤, 닫힌 둘레는 둘레 ÷ 간격만큼 듭니다.",
+  "same-budget-reverse-b10": "두 값의 공배수 금액마다 개수가 몇 개씩 차이 나는지 보고, 그 묶음이 몇 번인지 셉니다.",
+  "new-people-reverse-b10": "바뀐 사람의 몫을 남은 사람들이 나누어 내거나 받습니다. 그 양 ÷ 한 명이 바뀐 개수 = 사람 수.",
+  "pair-averages-b10": "평균 × 2로 두 값의 합을 만들고, 세 합을 더해 반으로 나누면 셋의 합입니다.",
+  "mixed-plate-weights-b10": "한 가지 모양만 있는 접시부터 풀고, 아는 모양의 무게를 빼며 한 모양씩 찾습니다."
 };
 
 export const BOOK10_STRUCTURE_REMAPS = [
@@ -668,12 +969,50 @@ export const BOOK10_STRUCTURE_REMAPS = [
   ["book-10", 1, "check", 1, [2], "same-tens-complement-sheet-b10"],
   ["book-10", 1, "practice", 1, [3], "same-tens-complement-sheet-b10"],
   ["book-10", 1, "advanced", 1, [5], "consecutive-tens-digit-total-b10"],
-  ["book-10", 1, "advanced", 1, [6], "consecutive-masked-triple-b10"]
+  ["book-10", 1, "advanced", 1, [6], "consecutive-masked-triple-b10"],
+  // 2단원 — 개수 짝이 다른 저울, 과녁 한 칸, 공통 묶음, 빈 그릇, 거꾸로(간격·같은 돈·사람 수), 둘씩 평균, 섞인 접시
+  ["book-10", 2, "activity", 1, [1], "two-symbol-combo-b10"],
+  ["book-10", 2, "practice", 1, [1, 2], "two-symbol-combo-b10"],
+  ["book-10", 2, "activity", 1, [2], "target-one-score-b10"],
+  ["book-10", 2, "practice", 1, [3], "target-one-score-b10"],
+  ["book-10", 2, "activity", 1, [3], "shared-term-three-two-b10"],
+  ["book-10", 2, "practice", 1, [4], "shared-term-three-two-b10"],
+  ["book-10", 2, "activity", 1, [4], "container-plus-content-b10"],
+  ["book-10", 2, "practice", 1, [5], "container-plus-content-b10"],
+  ["book-10", 2, "activity", 2, [1], "perimeter-spacing-reverse-b10"],
+  ["book-10", 2, "practice", 1, [10], "perimeter-spacing-reverse-b10"],
+  ["book-10", 2, "advanced", 1, [5], "perimeter-spacing-third-b10"],
+  ["book-10", 2, "activity", 2, [2], "same-budget-reverse-b10"],
+  ["book-10", 2, "practice", 1, [11], "same-budget-reverse-b10"],
+  ["book-10", 2, "activity", 2, [3, 4], "new-people-reverse-b10"],
+  ["book-10", 2, "practice", 1, [12, 13], "new-people-reverse-b10"],
+  ["book-10", 2, "advanced", 1, [3], "pair-averages-b10"],
+  ["book-10", 2, "advanced", 1, [2], "mixed-plate-weights-b10"]
 ];
 
 // ── 독립 검산(book10-audit.mjs가 부름) — 생성기 코드와 따로 meta로 다시 셈 ─────────
 const isRun = (values, step = 1) => values.every((v, i) => i === 0 || v - values[i - 1] === step);
 const sumOf = (values) => values.reduce((a, b) => a + b, 0);
+// 정수 계수 연립식 — 계수 행렬의 계수(rank)가 미지수 수와 같고(답 하나) 주어진 값이 식에 맞는지
+function uniqueLinear(rows, totals, values) {
+  const n = values.length;
+  if (rows.length < n || rows.some((r, i) => sumOf(r.map((c, j) => c * values[j])) !== totals[i])) return false;
+  const a = rows.map((r) => r.slice(0, n).map(Number));
+  let rank = 0;
+  for (let col = 0; col < n; col += 1) {
+    const pivot = a.findIndex((r, i) => i >= rank && Math.abs(r[col]) > 1e-9);
+    if (pivot < 0) return false;
+    [a[rank], a[pivot]] = [a[pivot], a[rank]];
+    for (let i = 0; i < a.length; i += 1) if (i !== rank) { const f = a[i][col] / a[rank][col]; a[i] = a[i].map((v, j) => v - f * a[rank][j]); }
+    rank += 1;
+  }
+  return values.every((v) => Number.isInteger(v) && v > 0);
+}
+function spacingCheck(m) {
+  const fits = [];
+  for (let per = 1; per <= 2000; per += 1) if (per % m.g1 === 0 && per % m.g2 === 0 && per / m.g1 - per / m.g2 === m.d) fits.push(per);
+  return fits.length === 1 && fits[0] === m.perimeter && m.first === m.perimeter / m.g1;
+}
 export const BOOK10_STRUCTURE_CHECKS = {
   "gauss-from-one-even-b10": (p) => p.meta.ends.every((n, i) => n % 2 === 0 && p.meta.totals[i] === (n * (n + 1)) / 2) || "1부터 n까지 합",
   "gauss-from-one-odd-b10": (p) => p.meta.ends.every((n, i) => n % 2 === 1 && p.meta.totals[i] === (n * (n + 1)) / 2) || "1부터 n까지 합",
@@ -715,5 +1054,35 @@ export const BOOK10_STRUCTURE_CHECKS = {
   "consecutive-masked-triple-b10": (p) => p.meta.parts.every((q) => {
     const ok = [100, 200].map((h) => h + q.tail).filter((t) => t % 3 === 0 && t / 3 - 1 >= 10 && t / 3 + 1 <= 99);
     return ok.length === 1 && ok[0] === q.total && isRun(q.values) && sumOf(q.values) === q.total;
-  }) || "가린 덧셈 답 하나"
+  }) || "가린 덧셈 답 하나",
+  "two-symbol-combo-b10": (p) => uniqueLinear(p.meta.coefficients, p.meta.totals, p.meta.values) || "두 저울 답 하나",
+  "target-one-score-b10": (p) => (uniqueLinear(p.meta.hits, p.meta.totals, p.meta.values) && p.answer === `${p.meta.values[p.meta.ask]}점`) || "과녁 점수",
+  "shared-term-three-two-b10": (p) => uniqueLinear(p.meta.coefficients, p.meta.totals, p.meta.values) || "공통 묶음 답 하나",
+  "container-plus-content-b10": (p) => {
+    const m = p.meta;
+    const each = (m.totals[1] - m.totals[0]) / (m.counts[1] - m.counts[0]);
+    return (Number.isInteger(each) && each === m.each && m.totals[0] - m.counts[0] * each === m.holderWeight && m.holderWeight > 0) || "빈 그릇";
+  },
+  "perimeter-spacing-reverse-b10": (p) => spacingCheck(p.meta) || "간격 거꾸로",
+  "perimeter-spacing-third-b10": (p) => (spacingCheck(p.meta) && p.meta.g3 && p.answer.endsWith(`${p.meta.perimeter / p.meta.g3}개`)) || "셋째 간격",
+  "same-budget-reverse-b10": (p) => {
+    const m = p.meta;
+    const fits = [];
+    for (let b = m.p2; b <= 200000; b += m.p2) if (b % m.p1 === 0 && b / m.p2 - b / m.p1 === m.d) fits.push(b);
+    return (fits.length === 1 && fits[0] === m.budget && m.expensive === m.budget / m.p1) || "같은 돈 거꾸로";
+  },
+  "new-people-reverse-b10": (p) => {
+    const m = p.meta;
+    const fits = range(1, 300).filter((n) => (m.leave ? n - m.change >= 1 && n * m.before === (n - m.change) * m.after : n * m.before === (n + m.change) * m.after));
+    return (fits.length === 1 && fits[0] === m.first && m.total === m.first * m.before) || "처음 사람 수";
+  },
+  "pair-averages-b10": (p) => {
+    const [a, b, c] = p.meta.values;
+    return (new Set(p.meta.values).size === 3 && [(a + b) / 2, (b + c) / 2, (a + c) / 2].every((v, i) => v === p.meta.averages[i] && Number.isInteger(v))) || "둘씩 평균";
+  },
+  "mixed-plate-weights-b10": (p) => {
+    const m = p.meta;
+    if (!m.plates.every((c, k) => sumOf(c) >= 2 && sumOf(c) <= 5 && c.filter(Boolean).length >= (k === 0 ? 1 : 2))) return "접시 모양 수";
+    return uniqueLinear(m.plates, m.totals, m.values) || "섞인 접시 답 하나";
+  }
 };

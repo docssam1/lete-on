@@ -398,7 +398,7 @@ function sameBudgetPriceCountBook10({ difficulty = 2 }) {
   const secondCount = budget / secondPrice;
   const result = secondCount - firstCount;
   return book10Problem({
-    prompt: `같은 돈으로 한 개에 ${firstPrice}천 원인 물건과 ${secondPrice}천 원인 물건을 살 수 있습니다. 싼 물건을 몇 개 더 살 수 있나요?`,
+    prompt: `${budget}천 원으로 한 개에 ${firstPrice}천 원인 물건과 한 개에 ${secondPrice}천 원인 물건을 각각 살 수 있는 만큼 삽니다. 싼 물건을 몇 개 더 살 수 있나요?`,
     subtype: "budget-table", visual: { budget, firstPrice, secondPrice }, answer: `${result}개`,
     solution: `${budget}천 원으로 각각 ${firstCount}개와 ${secondCount}개를 살 수 있으므로 ${result}개 더 살 수 있습니다.`,
     family: "same-budget-price-count-b10", meta: { difficulty, budget, firstPrice, secondPrice, firstCount, secondCount, result }
