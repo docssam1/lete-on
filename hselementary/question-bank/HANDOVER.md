@@ -1,3 +1,11 @@
+## 2026-11-25 — 겨냥도 모서리 보완, 쉬움 난이도 힌트 정리, 6학년 5,697문항 독립 풀이 대조 완료 (Claude Code / Opus 5.5, Mac)
+
+- 사용자 지적("모서리가 덜 그려짐 — 앞으로 이 부분 실수 없도록"): 6-1-u6-e3 겨냥도에서 잘라 낸 자리(홈)의 보이는 모서리가 주황 점선, 평행 절단면 테두리가 모두 점선, 계단 쌓기 면이 반투명해 뒤 선이 비쳤다. 보이는 모서리는 실선, 보이지 않는 모서리만 점선으로 바꿈(절단면은 앞·오른쪽 실선 2개, 뒤·왼쪽 점선 2개), 계단 면 불투명. source-6-1-volume-surface-e3-audit.js에 모서리 검사 추가: 직육면체 하나를 그리는 세 유형(남은 입체·세 면 넓이·자른 입체)의 문제·답 그림마다 보이는 면 3개 이상, 숨은 모서리 점선 정확히 3개, 홈 면 3개·안쪽 모서리 3개, 절단면 실선 2개·점선 2개.
+- 쉬움 난이도 힌트: 6-2-u3-e1-exploration 쉬움에서 앞쪽 모양을 미리 칠해 두던 것(원문에 없는 정답 일부)을 빼고 네 칸 모두 빈칸. problem-hint-policy.js의 문장 패턴이 "1cm, 2cm"처럼 단위 붙은 숫자 목록을 개수와 관계없이 맞추도록 고쳐, 변형 문항(목록 3개 이상)의 힌트 문장도 지워진다(6-1-u6-e2-example-1·mission-1). ?v=20261125-list-hints.
+- 6-2-u4-e2-exploration 변형 pool 1·2의 ③·④를 자연수 답(5, 9 / 6, 8)이 나오게 바꿈(source-6-2-ratio-e2-models.js). pool 0(③ 5 5/9, ④ 17 1/3)은 원본 수치 그대로.
+- 독립 풀이 대조: 남은 693문항(그사이 고친 문항 77개 재추출 포함)을 풀어 6학년 원문 633유형 × 3난이도 × 3고정 문항 = 5,697문항 전부 대조 완료. 남은 묶음에서 앱 정답이 틀린 문항은 없다(표기 차이, 해석 차이만: 6-2-u3-e4-mission-4 pool 2는 원문처럼 바닥에서만 돌리면 7가지). 확인만 한 것: 6-2-u5-e2-mission-1 원문 25·40(책 수치), 6-2-u6-e2-mission-2 원문 철사 111cm·모선 9cm(책 수치라 원뿔이 성립하지 않지만 그대로), 6-2-u6-e1-mission-2 변형 1은 높이 15cm 줄 두 개로 3바퀴 가능(앱 정답 맞음), 6-2-u5-e5-example-2 원 배치와 무관하게 같은 답.
+- 감사 통과: volume-surface-e3(모서리 검사 포함)·browser, height-views·live, space-missions, stack-models, volume-e2·browser, ratio-e2 bank·preview·questions, fraction-division-policy-browser, stack-color/hidden bank, stack-questions-live, stage-styles, runtime-availability, math-notation, elementary-language, numeric-display, source-release-gate.
+
 ## 2026-11-25 — 6-1 6단원 개념탐구 3 겨냥도 7개 다시 그림 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 지적("겨냥도들이 잘못됨"): 6학년 그림 전체(원문 pool 0 329개, 창작 연습 328장, 4·5학년 입체 99장)를 모아 보고, 깨진 겨냥도는 6-1-u6-e3 묶음에만 있음을 확인했다.
