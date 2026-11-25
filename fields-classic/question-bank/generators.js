@@ -30,7 +30,7 @@ import { BOOK06_STRUCTURE_GENERATORS } from "./book06-structure-generators.js?v=
 import { BOOK07_STRUCTURE_GENERATORS } from "./book07-structure-generators.js?v=20261125q";
 import { BOOK08_STRUCTURE_GENERATORS } from "./book08-structure-generators.js?v=20261125k";
 import { BOOK09_STRUCTURE_GENERATORS } from "./book09-structure-generators.js?v=20261125j";
-import { BOOK10_STRUCTURE_GENERATORS } from "./book10-structure-generators.js?v=20261125p";
+import { BOOK10_STRUCTURE_GENERATORS } from "./book10-structure-generators.js?v=20261125r";
 import { BOOK02_MATRIX_GENERATORS } from "./book02-matrix-generators.js?v=20261125a";
 import { book01UnitTestProblem } from "./book01-unit-test-generators.js?v=20261028zb";
 

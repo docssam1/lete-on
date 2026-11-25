@@ -1235,6 +1235,40 @@ function numberBaseballSymbolB10({ difficulty = 3 }) {
   });
 }
 
+
+// ── 남은 번호(2차) — 1단원 활동 1-3: 방법마다 부분곱 칸 채우기 ─────────────
+function areaModelSvg(a, b) {
+  const [aT, aO] = [Math.floor(a / 10) * 10, a % 10];
+  const [bT, bO] = [Math.floor(b / 10) * 10, b % 10];
+  const x0 = 54, y0 = 34, wT = 150, wO = 70, hT = 96, hO = 50;
+  const cell = (x, y, w, h) => `<rect x="${x}" y="${y}" width="${w}" height="${h}" style="fill:#fff;stroke:${INK};stroke-width:1.4"/><rect x="${x + w / 2 - 26}" y="${y + h / 2 - 15}" width="52" height="30" rx="3" style="fill:#fff;stroke:${ACCENT};stroke-width:1.4"/>`;
+  return `${svgOpen(300, 200, "넓이로 나눈 곱셈")}${text(x0 + wT / 2, 24, aT, 16)}${text(x0 + wT + wO / 2, 24, aO, 16)}${text(30, y0 + hT / 2 + 5, bT, 16)}${text(30, y0 + hT + hO / 2 + 5, bO, 16)}${cell(x0, y0, wT, hT)}${cell(x0 + wT, y0, wO, hT)}${cell(x0, y0 + hT, wT, hO)}${cell(x0 + wT, y0 + hT, wO, hO)}</svg>`;
+}
+function columnPartialSvg(a, b) {
+  const digits = (n) => String(n).split("");
+  const W = 200, cw = 26, right = 170;
+  const rowDigits = (y, n) => digits(n).reverse().map((d, i) => text(right - i * cw, y, d, 20)).join("");
+  const blankRow = (y, len) => Array.from({ length: len }, (_, i) => `<rect x="${right - i * cw - 11}" y="${y - 19}" width="22" height="26" rx="2" style="fill:#fff;stroke:${ACCENT};stroke-width:1.3"/>`).join("");
+  const p1 = String(a * (b % 10)).length, p2 = String(a * (b - (b % 10))).length, r = String(a * b).length;
+  return `${svgOpen(W, 210, "부분곱 세로셈")}${rowDigits(34, a)}${text(right - 3 * cw, 66, "×", 20)}${rowDigits(66, b)}<line x1="40" y1="78" x2="${right + 16}" y2="78" style="stroke:${INK};stroke-width:1.6"/>${blankRow(108, p1)}${blankRow(144, p2)}<line x1="40" y1="156" x2="${right + 16}" y2="156" style="stroke:${INK};stroke-width:1.6"/>${blankRow(188, r)}</svg>`;
+}
+function multiMethodPartialFillB10({ difficulty = 2 }) {
+  const lim = { 1: [12, 29, 11, 19], 2: [21, 59, 13, 39], 3: [32, 89, 21, 69] }[difficulty];
+  let a, b;
+  do { a = randomInt(lim[0], lim[1]); b = randomInt(lim[2], lim[3]); } while (a % 10 === 0 || b % 10 === 0 || a === b);
+  const [aT, aO, bT, bO] = [Math.floor(a / 10) * 10, a % 10, Math.floor(b / 10) * 10, b % 10];
+  const cells = [aT * bT, aO * bT, aT * bO, aO * bO];
+  const p1 = a * bO, p2 = a * bT, result = a * b;
+  const splitLine = htmlPanel(`<div style="text-align:center;font-size:17px">${a} × ${b} = ${a} × ${bT} + ${a} × ${bO} = ${box("", "min-width:54px")} + ${box("", "min-width:46px")} = ${box("", "min-width:60px")}</div>`, 520);
+  return problem("multi-method-partial-fill-b10", {
+    prompt: `${a} × ${eul(b)} 세 가지 방법으로 계산하려고 합니다. 넓이 그림의 네 칸, 세로셈의 부분곱, 가르기 식의 빈칸을 모두 채우세요.`,
+    visual: fig(`<div style="display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:center">${areaModelSvg(a, b)}${columnPartialSvg(a, b)}</div>${splitLine}`),
+    answer: `넓이 칸 ${cells.join(", ")} / 세로셈 ${p1}, ${p2}, ${result} / 가르기 ${p2} + ${p1} = ${result}`,
+    solution: `넓이 그림: ${aT}×${bT}=${cells[0]}, ${aO}×${bT}=${cells[1]}, ${aT}×${bO}=${cells[2]}, ${aO}×${bO}=${cells[3]} → 모두 더하면 ${result}. 세로셈: ${a}×${bO}=${p1}, ${a}×${bT}=${p2}, ${p1}+${p2}=${result}. 세 방법 모두 같은 곱 ${result}입니다.`,
+    meta: { a, b, cells, p1, p2, result }
+  });
+}
+
 // ── 내보내기 ────────────────────────────────────────
 
 export const BOOK10_STRUCTURE_GENERATORS = {
@@ -1277,7 +1311,8 @@ export const BOOK10_STRUCTURE_GENERATORS = {
   rangeDigitTableB10,
   digitOccurrenceHundredsB10,
   numberBaseballMixedB10,
-  numberBaseballSymbolB10
+  numberBaseballSymbolB10,
+  multiMethodPartialFillB10
 };
 
 const row = (id, middle, label, generator, aliases = [], domain = "number") => ({
@@ -1325,7 +1360,8 @@ export const BOOK10_STRUCTURE_TYPE_ROWS = [
   row("range-digit-table-b10", "수와 숫자", "여러 범위의 수의 개수와 쓴 숫자의 개수 표 채우기", "rangeDigitTableB10", ["쓴 숫자 수", "표"]),
   row("digit-occurrence-hundreds-b10", "수와 숫자", "백의 자리대 범위에서 특정 숫자를 쓴 횟수", "digitOccurrenceHundredsB10", ["숫자 세기", "범위"]),
   row("number-baseball-mixed-b10", "숫자 야구", "2S·3B·1S 1B·아웃이 섞인 단서로 비밀 수 찾기", "numberBaseballMixedB10", ["숫자 야구", "스트라이크"], "logic"),
-  row("number-baseball-symbol-b10", "숫자 야구", "□·△ 기호 단서로 비밀 수 찾기", "numberBaseballSymbolB10", ["숫자 야구", "기호"], "logic")
+  row("number-baseball-symbol-b10", "숫자 야구", "□·△ 기호 단서로 비밀 수 찾기", "numberBaseballSymbolB10", ["숫자 야구", "기호"], "logic"),
+  row("multi-method-partial-fill-b10", "곱셈의 규칙", "넓이·세로셈·가르기로 같은 곱셈의 부분곱 칸 채우기", "multiMethodPartialFillB10", ["부분곱", "넓이 모델", "세로셈"])
 ];
 
 export const BOOK10_STRUCTURE_GUIDES = {
@@ -1368,7 +1404,8 @@ export const BOOK10_STRUCTURE_GUIDES = {
   "range-digit-table-b10": "수의 개수 = 끝 - 처음 + 1. 자리 수가 바뀌는 곳에서 나누어 셉니다.",
   "digit-occurrence-hundreds-b10": "자리마다 나누고, 백의 자리대가 바뀌는 곳에서 끊어 셉니다.",
   "number-baseball-mixed-b10": "아웃 단서의 숫자를 먼저 지우고, 2S·3B처럼 많이 알려 주는 단서부터 맞춰 봅니다.",
-  "number-baseball-symbol-b10": "□는 숫자와 자리, △는 숫자만 맞습니다. 기호가 없는 단서의 숫자부터 지웁니다."
+  "number-baseball-symbol-b10": "□는 숫자와 자리, △는 숫자만 맞습니다. 기호가 없는 단서의 숫자부터 지웁니다.",
+  "multi-method-partial-fill-b10": "두 수를 몇십과 몇으로 가르고, 칸마다 곱한 뒤 모두 더합니다. 방법이 달라도 부분곱의 합은 같습니다."
 };
 
 export const BOOK10_STRUCTURE_REMAPS = [
@@ -1446,7 +1483,8 @@ export const BOOK10_STRUCTURE_REMAPS = [
   ["book-10", 4, "advanced", 1, [1, 2], "digit-occurrence-hundreds-b10"],
   ["book-10", 4, "activity", 1, [1, 2, 3, 4], "number-baseball-mixed-b10"],
   ["book-10", 4, "practice", 1, [1, 2, 3, 4], "number-baseball-mixed-b10"],
-  ["book-10", 4, "advanced", 1, [5], "number-baseball-symbol-b10"]
+  ["book-10", 4, "advanced", 1, [5], "number-baseball-symbol-b10"],
+  ["book-10", 1, "activity", 1, [3], "multi-method-partial-fill-b10"]
 ];
 
 // ── 독립 검산(book10-audit.mjs가 부름) — 생성기 코드와 따로 meta로 다시 셈 ─────────
@@ -1648,5 +1686,11 @@ export const BOOK10_STRUCTURE_CHECKS = {
     return (m.from >= 100 && p.answer === `${c}번`) || "범위 숫자 세기";
   },
   "number-baseball-mixed-b10": (p) => baseballCheck(p) || "숫자 야구 답 하나",
-  "number-baseball-symbol-b10": (p) => baseballCheck(p) || "기호 숫자 야구 답 하나"
+  "number-baseball-symbol-b10": (p) => baseballCheck(p) || "기호 숫자 야구 답 하나",
+  "multi-method-partial-fill-b10": (p) => {
+    const m = p.meta;
+    const [aT, aO, bT, bO] = [m.a - (m.a % 10), m.a % 10, m.b - (m.b % 10), m.b % 10];
+    const ok = sumOf(m.cells) === m.a * m.b && m.cells.join() === [aT * bT, aO * bT, aT * bO, aO * bO].join() && m.p1 + m.p2 === m.a * m.b && m.p1 === m.a * bO;
+    return (ok && !p.visual.html.includes(`>${m.result}<`)) || "부분곱";
+  }
 };
