@@ -889,7 +889,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-09 missing");
 if (units.length !== 4) throw new Error(`book-09 unit count ${units.length}`);
-if (typeIds.length !== 63) throw new Error(`book-09 type count ${typeIds.length}`);
+if (typeIds.length !== 69) throw new Error(`book-09 type count ${typeIds.length}`);
 if (book09TypeIds.length !== 35) throw new Error(`book-09 new type count ${book09TypeIds.length}`);
 
 let sourceQuestionCount = 0;

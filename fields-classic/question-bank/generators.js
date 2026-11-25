@@ -4953,7 +4953,7 @@ function triangleTileGrowth({ difficulty = 2 }) {
       : `작은 정삼각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만들어 나갑니다. ${target}번째 모양에는 작은 정삼각형 색종이가 몇 장 필요한가요?`,
     visual: { kind: "triangle-tile-growth", stages: [1, 2, 3, 4], showCounts: difficulty === 1, target, pieceCount, askIndex, theme },
     answer: askIndex ? `${target}번째` : `${pieceCount}장`,
-    solution: `1번째부터 작은 삼각형 수는 1장, 4장, 9장, 16장으로 늘어납니다. ${target}번째는 ${target}을 ${target}번 더한 ${pieceCount}장이므로, ${askIndex ? `${pieceCount}장이 필요한 것은 ${target}번째` : `${target}번째 모양에는 ${pieceCount}장`}입니다.`,
+    solution: `1번째부터 작은 삼각형 수는 1장, 4장, 9장, 16장으로 늘어납니다. ${target}번째는 ${koreanParticle(target, "을", "를")} ${target}번 더한 ${pieceCount}장이므로, ${askIndex ? `${pieceCount}장이 필요한 것은 ${target}번째` : `${target}번째 모양에는 ${pieceCount}장`}입니다.`,
     meta: { difficulty, target, pieceCount, askIndex, theme, answer: askIndex ? target : pieceCount }
   };
 }

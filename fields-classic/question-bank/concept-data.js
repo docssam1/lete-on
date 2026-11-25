@@ -517,26 +517,11 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     misconception: "펼친 뒤에도 자른 모양을 한쪽에만 두지 않았는지 확인합니다.",
     sourceEvidence: Object.freeze([
-      evidence("색종이 접기", 2, [1, 2, 3, 4])
+      evidence("색종이 접기", 2, [3, 4])
     ]),
     verificationState: "source-confirmed"
   }),
   // 1권 2단원 1차시(한 번 접기) — 활동 1-1번(원장 2026-11-01 「1차시 본책에 두 번 접기가 있어」)
-  "fold-cut-shape-choice-one": Object.freeze({
-    conceptId: "concept:geometry:fold-reflection-unfold",
-    scope: "global-type-id",
-    sharedByDesign: true,
-    beats: Object.freeze([
-      beat("fold-line", "접은 선을 찾아요", "종이를 한 번 접은 선이 가로인지 세로인지 먼저 표시합니다."),
-      beat("reflect-cut", "자른 자리를 비춰요", "자른 자리를 접은 선 반대쪽 같은 거리로 한 번 옮깁니다."),
-      beat("complete-unfold", "펼친 모양을 완성해요", "원래 자리와 비친 자리 두 곳을 함께 그려 전체 모양을 확인합니다.")
-    ]),
-    misconception: "펼친 뒤에도 자른 모양을 한쪽에만 두거나 접지 않은 방향으로 비추지 않았는지 확인합니다.",
-    sourceEvidence: Object.freeze([
-      evidence("색종이 접기", 1, [1])
-    ]),
-    verificationState: "source-confirmed"
-  }),
   "fold-number-cut-sum-one": Object.freeze({
     conceptId: "concept:geometry:folded-number-cut-sum",
     scope: "global-type-id",
@@ -684,7 +669,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "gakuro-card-rectangle-placement": Object.freeze({
+  "gakuro-card-irregular-placement": Object.freeze({
     conceptId: "concept:number:row-column-sum-constraints",
     scope: "global-type-id",
     sharedByDesign: true,
@@ -699,14 +684,14 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     ]),
     verificationState: "source-confirmed"
   }),
-  "gakuro-grid-sum": Object.freeze({
+  "gakuro-grid-irregular-sum": Object.freeze({
     conceptId: "concept:number:row-column-sum-constraints",
     scope: "global-type-id",
     sharedByDesign: true,
     beats: Object.freeze([
-      beat("write-number-range", "사용할 수를 모두 적어요", "주어진 범위의 서로 다른 여섯 수를 적어 각 수를 한 번씩 쓸 준비를 합니다."),
+      beat("write-number-range", "쓸 수 있는 수를 적어요", "한 줄에 같은 수가 겹치지 않도록 칸마다 들어갈 수 있는 후보를 적어 둡니다."),
       beat("intersect-row-column", "가로와 세로 조건을 겹쳐 봐요", "한 칸에 들어갈 수를 그 칸의 가로 합과 세로 합을 모두 만족하는 후보로 좁힙니다."),
-      beat("check-six-values", "여섯 칸을 함께 검산해요", "모든 줄의 합과 여섯 수의 중복 여부를 처음부터 다시 확인합니다.")
+      beat("check-six-values", "모든 칸을 함께 검산해요", "모든 줄의 합과 한 줄 안에서 수가 겹치지 않는지 처음부터 다시 확인합니다.")
     ]),
     misconception: "한 줄을 완성한 뒤 다른 줄의 합이 달라지거나 범위의 수를 빠뜨리지 않았는지 확인합니다.",
     sourceEvidence: Object.freeze([
@@ -867,7 +852,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("compose-next-symbol", "다음 그림을 합쳐 만들어요", "다음 위치의 모양과 색 또는 개수를 각각 찾은 뒤 한 그림으로 합칩니다.")
     ],
     "모양 규칙만 맞고 색이나 개수 규칙은 틀린 그림을 고르지 않았는지 확인합니다.",
-    [book2Evidence("규칙찾기와 수열", 1, [2, 3, 4])]
+    [book2Evidence("규칙찾기와 수열", 1, [2])]
   ),
   "matchstick-shared-polygon-growth": sourceLesson(
     "concept:pattern:shared-edge-linear-growth",
@@ -1077,7 +1062,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("verify-all-symbols", "모든 기호와 열을 한 번에 검산해요", "정한 숫자를 전체 세로식에 넣어 각 열의 합과 마지막 받아올림이 모두 맞는지 확인합니다.")
     ],
     "한 열만 맞는 숫자를 고르거나 서로 다른 기호에 같은 숫자를 주고, 받아올림을 한 열 건너뛰지 않았는지 확인합니다.",
-    [book3Evidence("복면산", 2, [1, 2, 3, 4])]
+    [book3Evidence("복면산", 2, [1, 2, 3])]
   ),
   "binary-weight-selection": sourceLesson(
     "concept:number:binary-weight-decomposition",
@@ -1157,7 +1142,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("apply-two-grid-transforms", "두 동작을 순서대로 해요", "두 동작이 있으면 첫 동작 뒤의 숫자판에 두 번째 회전이나 뒤집기를 차례로 적용합니다.")
     ],
     "숫자 하나만 따로 움직이거나 두 동작을 처음 숫자판에 각각 적용하고, 정해진 순서를 바꾸지 않았는지 확인합니다.",
-    [book4Evidence("도형 분할과 움직이기", 2, [3, 4, 5, 6])]
+    [book4Evidence("도형 분할과 움직이기", 2, [5, 6])]
   ),
   "fold-cut-unfold-one-draw": sourceLesson(
     "concept:geometry:fold-reflection-unfold",
@@ -1167,7 +1152,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("unfold-cut-symmetry", "잘린 모양을 대칭으로 펼쳐 그려요", "접은 동작을 거꾸로 되돌리며 잘린 모양을 접은 선 반대쪽의 같은 거리에 대칭으로 그립니다.")
     ],
     "그림을 접은 선 한쪽에만 남기거나 펼칠 때 같은 거리를 지키지 않았는지 확인합니다.",
-    [book4Evidence("색종이 접기와 쌓기나무", 1, [1])]
+    [evidence("색종이 접기", 1, [1]), book4Evidence("색종이 접기와 쌓기나무", 1, [1])]
   ),
   "fold-number-grid-one": sourceLesson(
     "concept:geometry:folded-number-cut-sum",
@@ -1219,7 +1204,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "그림에 보이지 않는 큐브를 모두 채우거나, 위 큐브를 받치는 데 필요하지 않은 나무까지 세지 않았는지 확인합니다.",
     [book4Evidence("색종이 접기와 쌓기나무", 2, [3])]
   ),
-  "cube-step-sequence": sourceLesson(
+  "cube-triangular-wall-growth": sourceLesson(
     "concept:pattern:triangular-stair-cumulative-growth",
     [
       beat("compare-step-stages", "계단 단계를 비교해요", "앞 단계와 다음 단계의 층 모양을 나란히 보고 새로 생긴 부분을 표시합니다."),
@@ -1257,7 +1242,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("recheck-all-seating", "모든 조건을 다시 검산해요", "완성한 자리표를 처음부터 다시 읽어 모든 사람과 방향 조건이 맞는지 확인합니다.")
     ],
     "기준 자리 없이 한 사람부터 마음대로 놓거나 대각선 자리를 위·아래·왼쪽·오른쪽으로 잘못 읽고, 마지막 검산을 빠뜨리지 않았는지 확인합니다.",
-    [book4Evidence("논리추리와 자리배치", 2, [1, 2, 3, 4, 5, 6])]
+    [book4Evidence("논리추리와 자리배치", 2, [3, 4])]
   ),
   "sequential-path-number-grid": sourceLesson(
     "concept:pattern:path-indexed-number-grid",
@@ -1267,7 +1252,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-neighbors", "앞뒤 수로 확인해요", "찾은 수의 바로 앞자리와 뒷자리도 같은 규칙으로 이어지는지 다시 확인합니다.")
     ],
     "칸을 가로로만 읽거나 길이 꺾이는 곳에서 순서를 건너뛰지 않았는지 확인합니다.",
-    [book5Evidence("수 배열표와 달력", 1, [1, 2, 4])]
+    [book5Evidence("수 배열표와 달력", 1, [1, 4])]
   ),
   "diagonal-fill-number-grid": sourceLesson(
     "concept:pattern:path-indexed-number-grid",
@@ -1287,9 +1272,9 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("count-ordinal", "몇 번째 요일인지 확인해요", "그 달에서 같은 요일의 날짜를 처음부터 세어 몇 번째인지 함께 확인합니다.")
     ],
     "날짜 수와 칸 수를 섞거나, 달력에 없는 앞뒤 달의 칸까지 그 달의 첫 번째 요일로 세지 않았는지 확인합니다.",
-    [book5Evidence("수 배열표와 달력", 2, [1, 2])]
+    [book5Evidence("수 배열표와 달력", 2, [1])]
   ),
-  "calendar-cross-month-weekday": sourceLesson(
+  "calendar-special-date-offset-book5": sourceLesson(
     "concept:pattern:calendar-seven-day-cycle",
     [
       beat("check-month-length", "이번 달의 마지막 날을 확인해요", "이번 달이 며칠까지 있는지 확인하고 기준 날짜에서 남은 날짜 수를 셉니다."),
@@ -1307,17 +1292,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("read-destination-count", "도착점의 수를 확인해요", "도착점에 모인 방법 수를 읽고 되돌아간 길이나 중복된 길이 없는지 확인합니다.")
     ],
     "가장 짧지 않은 되돌아가는 길을 포함하거나 갈림길에서 방법 수를 더하지 않고 칸 수만 세지 않았는지 확인합니다.",
-    [book5Evidence("최단거리와 숫자 카드", 1, [1, 2])]
-  ),
-  "shortest-path-irregular-grid": sourceLesson(
-    "concept:logic:shortest-path-branch-count",
-    [
-      beat("mark-blocked-routes", "갈 수 없는 길을 지워요", "막힌 선과 없는 길을 표시해 그 방향으로는 방법 수가 넘어가지 않게 합니다."),
-      beat("add-open-branches", "열린 갈림길만 더해요", "도착점에 가까워지는 열린 길을 따라 각 지점으로 들어오는 방법 수만 더합니다."),
-      beat("audit-obstacles", "막힌 곳을 다시 확인해요", "계산한 경로가 막힌 곳을 지나지 않는지 출발점부터 도착점까지 다시 따라갑니다.")
-    ],
-    "막힌 선을 칸으로 보거나 없는 길을 건너 방법 수를 전달하지 않았는지 확인합니다.",
-    [book5Evidence("최단거리와 숫자 카드", 1, [3, 4, 5, 6])]
+    [book5Evidence("최단거리와 숫자 카드", 1, [1, 2, 3, 4, 5, 6])]
   ),
   "digit-card-number-enumeration": sourceLesson(
     "concept:number:digit-card-enumerate-rank",
@@ -1357,7 +1332,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("close-product-cycle", "둘레를 한 바퀴 검산해요", "찾은 꼭짓점 수를 차례로 곱해 모든 변의 곱과 맞는지 한 바퀴 확인합니다.")
     ],
     "마주 보는 꼭짓점을 곱하거나 한 변의 조건만 맞춘 뒤 다른 변의 곱을 확인하지 않았는지 살펴봅니다.",
-    [book5Evidence("곱셈 매트릭스", 1, [2, 3, 4])]
+    [book5Evidence("곱셈 매트릭스", 1, [2, 4])]
   ),
   "symbol-product-pair": sourceLesson(
     "concept:number:symbol-product-equation-chain",
@@ -1369,7 +1344,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "곱 조건만 맞는 수의 짝을 고르거나 같은 도형에 서로 다른 수를 넣지 않았는지 확인합니다.",
     [book5Evidence("곱셈 매트릭스", 2, [1])]
   ),
-  "symbol-multiplication-chain": sourceLesson(
+  "symbol-zero-one-network-book5": sourceLesson(
     "concept:number:symbol-product-equation-chain",
     [
       beat("start-simple-product", "도형이 가장 적은 곱셈식부터 풀어요", "한 도형의 값을 바로 알 수 있거나 후보가 가장 적은 식을 먼저 찾습니다."),
@@ -1387,7 +1362,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-every-equation", "모든 가로·세로 식을 확인해요", "완성한 도형값이 각 가로식과 세로식의 결과를 모두 만족하는지 확인합니다.")
     ],
     "식을 왼쪽부터 무조건 계산하거나 가로식만 맞추고 세로식의 조건을 놓치지 않았는지 확인합니다.",
-    [book5Evidence("곱셈 매트릭스", 2, [3, 4, 5])]
+    [book5Evidence("곱셈 매트릭스", 2, [4])]
   ),
   "handshake-pair-count": sourceLesson(
     "concept:logic:unordered-pair-count",

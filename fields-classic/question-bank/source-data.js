@@ -1,4 +1,5 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
+import { applyTextbookRemaps } from "./textbook-remaps.js?v=20261125b";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
 import { COURSE2_G2_TYPE_ROWS, COURSE2_G2_GUIDES } from "./course2-g2-generators.js?v=20261124h";
 import { COURSE2_G3_TYPE_ROWS, COURSE2_G3_GUIDES } from "./course2-g3-generators.js?v=20261124h";
@@ -1001,7 +1002,7 @@ export const TYPES = [
 export const LEGACY_TYPE_ALIASES = Object.freeze({
   "number-table-rule": Object.freeze(["addition-table-grid", "addition-table-grid-offset", "arrow-number-grid"]),
   "shape-equation": Object.freeze(["shape-equation-add-subtract", "symbol-relation", "vertical-cryptarithm-shape-sum"]),
-  "number-line-distance": Object.freeze(["number-line-six-points", "number-line-unit-distance-book6", "number-line-two-part-distance"]),
+  "number-line-distance": Object.freeze(["number-line-six-points", "number-line-unit-distance-book6", "split-target-distance-unit-test-book6"]),
   "height-order": Object.freeze(["g1-height-order-four", "g1-summer-height-order-five"]),
   "multi-person-transfer": Object.freeze(["g1-fall-three-person-total-transfer"]),
   "cryptarithm": Object.freeze(["two-digit-letter-cryptarithm", "diagnostic-two-digit-cryptarithm", "vertical-shape-cryptarithm-values"]),
@@ -1029,10 +1030,10 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "function-machine": Object.freeze(["two-function-machine-chain", "g1-fall-linear-input-output-table"]),
   "fold-diagonal-unfold": Object.freeze(["three-fold-line-unfold", "fold-cut-unfold-one-draw", "fold-cut-unfold-two-draw"]),
   "shape-transform": Object.freeze(["shape-flip-composition", "shape-quarter-half-turn", "shape-rotate-flip-grid"]),
-  "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-sum", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
-  "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-irregular-grid", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
+  "gakuro": Object.freeze(["gakuro-card-placement", "gakuro-card-rectangle-placement", "gakuro-card-irregular-placement", "gakuro-grid-nine-sum", "gakuro-grid-irregular-sum"]),
+  "shortest-path": Object.freeze(["shortest-path-rectangle", "shortest-path-via-waypoint", "shortest-path-diagonal-shortcut-book5"]),
   "tree-planting": Object.freeze(["closed-perimeter-object-count-b7", "between-objects-subdivision-count-b7", "inner-outer-path-object-count-b7"]),
-  "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "calendar-date-palindrome-b7", "clock-time-palindrome-b7", "reverse-add-palindrome-b7"]),
+  "palindrome": Object.freeze(["palindrome-length-count-b7", "three-digit-palindrome-digit-sum-b7", "calendar-date-palindrome-b7", "clock-palindrome-unpadded-unit-test-book7", "reverse-add-palindrome-b7"]),
   "catch-up": Object.freeze(["catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10"]),
   "number-baseball": Object.freeze(["number-baseball-b10"]),
   "unit-area-fraction": Object.freeze(["unit-grid-area", "equal-part-shaded-fraction", "incomplete-partition-fraction", "paired-hexagon-fractions", "triangle-twelve-part-fraction", "concentric-square-sixteen-fraction"]),
@@ -1472,6 +1473,45 @@ const TEXTBOOK_CONCEPT_GUIDES = Object.freeze({
   "equal-partition-four": "먼저 반으로 나누고, 두 묶음을 다시 반으로 나누면 네 묶음이 같습니다.",
   "equal-partition-three": "같은 수를 세 번 모아 전체가 되는 수를 찾습니다.",
   "shape-sum-table": "같은 모양은 같은 수입니다. 같은 모양만 있는 줄부터 값을 찾습니다.",
+  "equal-line-sum-eight-cards-twelve": "꼭짓점처럼 두 줄에 함께 들어가는 칸부터 정하고, 남은 카드로 각 줄의 합을 맞춥니다.",
+  "g1-height-order-four": "「누가 누구보다 크다」를 화살표로 잇고 네 사람을 한 줄로 세웁니다.",
+  "interleaved-pair-sequence": "홀수째 수와 짝수째 수를 따로 떼어 각각의 규칙을 찾습니다.",
+  "repeat-shape-color-dual": "모양이 되풀이되는 마디와 색이 되풀이되는 마디를 따로 세어 각각 몇 번째인지 구합니다.",
+  "matchstick-square-growth": "한 단계 늘 때마다 더해지는 성냥개비 수를 표로 적어 규칙을 찾습니다.",
+  "diagnostic-two-digit-cryptarithm": "일의 자리부터 더해 받아올림이 있는지 보고, 같은 모양에는 같은 수를 넣습니다.",
+  "cryptarithm-unit-test-q15": "가장 큰 자리의 받아올림부터 정하고 일의 자리로 내려오며 남은 모양을 채웁니다.",
+  "vertical-shape-cryptarithm-values": "일의 자리 합으로 받아올림을 먼저 정하고 십의 자리에서 남은 모양 값을 구합니다.",
+  "cryptarithm-unit-test-q14": "합의 같은 모양 세 자리에서 백의 자리 받아올림을 먼저 정하고 아래 자리로 맞춥니다.",
+  "four-cell-binary-code": "칸마다 나타내는 수를 먼저 찾고, 색칠한 칸의 수만 더합니다.",
+  "unused-number-card-equations": "답이 하나로 정해지는 식부터 카드를 놓고, 다 쓰고 남은 카드를 찾습니다.",
+  "g1-front-back-between": "앞에서 센 순서와 뒤에서 센 순서를 한 줄 그림에 표시하고 사이 칸을 셉니다.",
+  "front-back-total": "앞에서 몇째와 뒤에서 몇째를 더한 뒤 겹쳐 센 한 사람을 뺍니다.",
+  "relative-position-number-grid-nine": "위치가 바로 정해지는 수부터 놓고 「위·아래·옆」 조건으로 나머지를 채웁니다.",
+  "split-target-distance-unit-test-book6": "두 구간을 각각 나누어 한 칸의 길이를 먼저 구한 뒤 두 점까지 칸 수만큼 더합니다.",
+  "equal-bar-pieces-unit-test-book6": "같은 길이를 더 많이 나눈 쪽의 한 조각이 더 짧으므로, 조각 수의 반대 비로 두 길이를 구합니다.",
+  "two-object-weight-unit-test-book6": "저울에서 개수 관계를 비로 읽고, 한 개씩의 합으로 각각의 무게를 나눕니다.",
+  "rectangle-rhombus-side-unit-test-book6": "직사각형 둘레에서 아는 변을 빼 남은 변을 구하면 그 변이 붙인 마름모의 한 변입니다.",
+  "rectangle-triangle-square-unit-test-book6": "붙인 변이 같다는 것을 이용해 각 도형의 한 변을 차례로 구하고 바깥 둘레만 더합니다.",
+  "three-square-shaded-perimeter-unit-test-book6": "큰 정사각형과 작은 정사각형의 변 차로 색칠한 부분의 가로·세로를 구합니다.",
+  "scattered-side-perimeter-unit-test-book6": "흩어진 변을 가로끼리, 세로끼리 옮겨 모으면 직사각형 둘레와 같습니다.",
+  "square-triangle-strip-unit-test-book6": "정사각형과 정삼각형의 변이 모두 같으므로 바깥에 드러난 변의 개수만 셉니다.",
+  "facing-page-sum-unit-test-book6": "마주 보는 두 쪽은 1 차이이므로 합에서 1을 빼고 반으로 나누면 왼쪽 쪽입니다.",
+  "clock-palindrome-unpadded-unit-test-book7": "시와 분을 0 없이 이어 쓴 수를 앞뒤로 읽어 같은지 시마다 확인합니다.",
+  "reversed-difference-largest-unit-test-book7": "자리를 바꾼 두 수의 차는 두 숫자 차의 9배이므로 숫자 차를 먼저 구합니다.",
+  "four-group-three-clues-unit-test-book7": "「어느 모둠이 아닌」 학생 수를 더하면 몇 모둠이 겹쳐 세어지는지 보고 전체를 구합니다.",
+  "unit-test-book08-q01": "두 저울의 식을 빼거나 더해 한 도형만 남게 만든 뒤 그 값을 다른 식에 넣습니다.",
+  "unit-test-book08-q21": "가로 합으로 도형 값을 모두 구한 뒤 숨은 세로줄의 도형을 더합니다.",
+  "unit-test-book08-q03": "줄마다 곱이 되는 두 수를 카드에서 찾고, 겹치는 칸부터 정합니다.",
+  "unit-test-book08-q06": "가장 높은 자리의 받아올림부터 정하고 같은 모양에는 같은 수를 넣습니다.",
+  "unit-test-book08-q07": "일의 자리부터 받아올림을 생각하며 빈 숫자를 채운 뒤 그 숫자들을 더합니다.",
+  "unit-test-book08-q08": "맨 앞 자리부터 받아올림을 따져 이어 붙인 모양의 수를 정합니다.",
+  "unit-test-book08-q10": "같은 수가 반복되는 합은 그 수의 몇 배인지 보고 모양 값을 좁힙니다.",
+  "unit-test-book08-q22": "자리마다 같은 문자가 몇 번 더해지는지 세어 일의 자리부터 정합니다.",
+  "unit-test-book08-q13": "표의 전체에서 아는 칸을 빼 두 빈칸의 합을 구하고, 차와 함께 두 칸을 나눕니다.",
+  "unit-test-book08-q23": "두 번 옮긴 결과에서 거꾸로 돌려 처음 수를 구하고 합 조건으로 확인합니다.",
+  "unit-test-book08-q20": "두 집단이 각각 전체의 몇 분의 몇인지 보고 차를 한 칸의 크기로 바꿉니다.",
+  "unit-test-book08-q24": "옮긴 뒤의 조건을 그림으로 그리고 하나를 다시 돌려놓아 처음 수를 구합니다.",
+  "congruent-equal-sum-partition-draw": "전체 합을 조각 수로 나눠 한 조각의 합을 먼저 구하고 같은 모양으로 나눕니다.",
   "shape-matrix-2x2-set": "같은 모양 둘이 있는 줄부터 값을 찾고, 그 값을 다른 줄에 넣습니다.",
   "shape-matrix-3x3-pair": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
   "shape-matrix-3x3": "한 가지 모양만 있는 줄부터 값을 찾아 빈칸 줄의 모양을 하나씩 채웁니다.",
@@ -4484,6 +4524,8 @@ export const CURRICULUM = [
     }
   };
 });
+// 교재 번호마다 그 문제 꼴에 맞는 유형으로 다시 잇는다(원장 2026-11-25, 원본 N30 대조) — textbook-remaps.js
+applyTextbookRemaps(CURRICULUM);
 
 // ── 2과정 G1 「돌리기와 뒤집기」 본책(N30 신판) — 1과정과 같은 꼴(원장 2026-11-16 「1과정에 비해 너무 조잡스러워 … 교재 인쇄도 없고 흐름도 달라」 → 한 권 시범).
 // 본책 172문항을 번호마다 유형 하나에 잇는다. 1과정 생성기로 같은 풀이가 되는 번호는 1과정 유형, 나머지는 2과정 G1 생성기(course2-g1-generators.js).

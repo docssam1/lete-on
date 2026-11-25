@@ -365,7 +365,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-04 missing");
 if (units.length !== 4) throw new Error(`book-04 unit count ${units.length}`);
-if (typeIds.length !== 35) throw new Error(`book-04 type count ${typeIds.length}`);
+if (typeIds.length !== 55) throw new Error(`book-04 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-04 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-04 unit test number ${question.number}, expected ${index + 1}`);
