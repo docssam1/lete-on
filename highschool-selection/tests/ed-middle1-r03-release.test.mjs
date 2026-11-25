@@ -1,3 +1,4 @@
+// 2026-11-26: owner-approved title/scope copy deletion reflected in the catalog snapshot.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync,existsSync,mkdtempSync,rmSync} from 'node:fs';
@@ -14,7 +15,7 @@ test('ED3 adds one reviewed subjective round with the exact page and time profil
  const e=all.find(e=>e.id==='ed-middle1-authored-r03');assert.ok(e);assert.deepEqual([e.programId,e.questionCount,e.durationMinutes,e.pageCount,e.answerPageCount,e.analysisPageCount],['ED',30,100,14,16,4]);assert.equal(e.mode,'released');
 });
 test('ED3 addition preserves every field of the existing 44 public editions',()=>{
- const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'7fd5c98ae329c12c1e3d68f5e3eb45a91178fcfc61bc65baf6bbc8f47573cb89');
+ const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'3d073bdc1ec14965d7a86f489ce8dc7af24cad81cb5ea4470c57f1161d990e65');
 });
 test('ED3 is reached from the existing Eden middle1 course in round order',()=>{
  const nav=context.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-middle1-authored-r03'))),{program:'ED',course:'middle1'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','middle1',all))).map(e=>e.id).slice(0,3),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03']);

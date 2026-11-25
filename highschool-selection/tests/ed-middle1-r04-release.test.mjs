@@ -1,3 +1,4 @@
+// 2026-11-26: owner-approved title/scope copy deletion reflected in the catalog snapshot.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -10,7 +11,7 @@ test('ED4 exposes the reviewed 30-question 100-minute document profile',()=>{
  const e=all.find(e=>e.id==='ed-middle1-authored-r04');assert.ok(e);assert.deepEqual([e.programId,e.questionCount,e.durationMinutes,e.pageCount,e.answerPageCount,e.analysisPageCount,e.mode],['ED',30,100,16,16,4,'released']);
 });
 test('ED4 preserves all existing 45 public edition fields',()=>{
- const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'22c4a7092354e365a53f9ea07578fb7fdd1fc1c9fdbc5c0c2603ca6828ac8551');
+ const retained=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(retained.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(retained)).digest('hex'),'738f8fddd5005fb28c26a2684b8ce03b908f4b9595f87ef6beaadc42ceb9482d');
 });
 test('ED4 follows the existing Eden middle1 rounds through the course navigation',()=>{
  const nav=ctx.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-middle1-authored-r04'))),{program:'ED',course:'middle1'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','middle1',all))).map(e=>e.id).slice(0,4),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04']);
