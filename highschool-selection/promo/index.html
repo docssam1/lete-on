@@ -15,7 +15,7 @@
   <a class="skip-link" href="#main">본문으로</a>
   <header class="site-header"><nav class="shell nav" aria-label="주 메뉴">
     <a class="brand lete-on-brand" href="#" aria-label="LETE-ON 첫 화면"><span class="brand-wordmark">LETE-ON</span><small>초중고 입학 테스트를 위한</small></a>
-    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=eden-middle1-final-20261126b">내 시험 입장</a></div>
+    <div class="nav-links"><a class="nav-academies" href="#">학원 선택</a><a class="button accent" href="../login.html?v=eden-common1-r03-20261126">내 시험 입장</a></div>
   </nav></header>
   <main id="main">
     <section class="academy-home" id="academy-home" aria-labelledby="home-title">
@@ -23,7 +23,7 @@
         <div class="home-intro"><p class="section-kicker">학원별 모의고사 · 대비 수업</p><h1 id="home-title" tabindex="-1">학원을 선택하세요.</h1></div>
         <div class="academy-launcher" id="academy-launcher" aria-label="대비 과정을 볼 학원 선택"></div>
         <section class="notice-board-section" id="notices" aria-labelledby="notices-title"><div class="small-section-head"><h2 id="notices-title">테스트 일정·설명회</h2><span>대치·분당 · 황소는 대치</span></div><div id="home-notice-board"></div></section>
-        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=eden-middle1-final-20261126b">내 시험 입장</a></p></noscript>
+        <noscript><p>대비 과정을 보려면 JavaScript를 켜 주세요. <a href="../login.html?v=eden-common1-r03-20261126">내 시험 입장</a></p></noscript>
       </div>
     </section>
     <section class="academy-intro-view" id="academy-intro-view" hidden>
@@ -37,13 +37,13 @@
     </section>
     <section class="learning-path" id="learning-path"><div class="shell"><h2>모의고사 이용 순서</h2><ol><li><span>1</span>학원·과정 선택</li><li><span>2</span>회차 선택</li><li><span>3</span>내 시험 입장</li></ol></div></section>
   </main>
-  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=eden-middle1-final-20261126b">배정받은 시험 입장</a></div></footer>
+  <footer class="footer"><div class="shell"><span>LETE-ON · 초중고 입학 테스트 대비</span><a href="../login.html?v=eden-common1-r03-20261126">배정받은 시험 입장</a></div></footer>
   <script src="../data/public-exam-profiles.js?v=wm-final-20261114"></script>
-  <script src="../data/academy-engagement.js?v=eden-middle1-final-20261126b"></script>
-  <script src="../data/available-mocks.js?v=eden-middle1-final-20261126b"></script>
-  <script src="../data/official-exam-specs.js?v=eden-middle1-final-20261126b"></script>
-  <script src="../data/course-admissions.js?v=eden-middle1-final-20261126b"></script>
-  <script src="./course-navigation.js?v=eden-middle1-final-20261126b"></script>
+  <script src="../data/academy-engagement.js?v=eden-common1-r03-20261126"></script>
+  <script src="../data/available-mocks.js?v=eden-common1-r03-20261126"></script>
+  <script src="../data/official-exam-specs.js?v=eden-common1-r03-20261126"></script>
+  <script src="../data/course-admissions.js?v=eden-common1-r03-20261126"></script>
+  <script src="./course-navigation.js?v=eden-common1-r03-20261126"></script>
   <script>
     'use strict';
     const data=HIGHSELECT_PUBLIC_PROFILES;
@@ -83,7 +83,7 @@
     const navigation=HIGHSELECT_PROMO_NAV;
     const courseExams=(program,course)=>navigation.examsFor(program,course,mocks);
     const mockTime=e=>e.pauseLabel?`총 ${e.totalWindowMinutes}분 · 대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · ${e.pauseLabel} ${e.breakMinutes}분`:e.sectionMinutes?`대수 ${e.sectionMinutes.ALG}분 · 기하 ${e.sectionMinutes.GEO}분 · 휴식 ${e.breakMinutes}분 별도`:(e.durationMinutes?e.durationMinutes+'분':'');
-    const examHref=e=>'../login.html?v=eden-middle1-final-20261126b&exam='+encodeURIComponent(e.id);
+    const examHref=e=>'../login.html?v=eden-common1-r03-20261126&exam='+encodeURIComponent(e.id);
     function academyLogo(program){
       return `<span class="academy-mark ${program.code==='DP'?'academy-mark-clear':''}"><img src="./assets/logos/${academyLogos[program.code]}" alt="" decoding="async"></span>`;
     }

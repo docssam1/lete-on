@@ -9,7 +9,7 @@ const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
 test('all released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,47);
+  assert.equal(visible.length,48);
   assert.equal(new Set(visible).size,visible.length);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
@@ -101,7 +101,7 @@ test('Won middle22 transfer preserves historical R1 and adds the latest-timetabl
 
 test('Eden elementary-entry and common1 papers remain separate despite sharing a 100-minute duration',()=>{
  const middle=nav.examsFor('ED','middle1',mocks),common=nav.examsFor('ED','high-advance',mocks);
- assert.deepEqual(middle.map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04','ed-middle1-authored-final']);assert.equal(common.length,2);
+ assert.deepEqual(middle.map(e=>e.id),['ed-middle1-authored-r01','ed-middle1-authored-r02','ed-middle1-authored-r03','ed-middle1-authored-r04','ed-middle1-authored-final']);assert.equal(common.length,3);
  assert.match(middle[0].scope,/초5.*초6/);assert.ok(common.every(e=>/중2.*중3/.test(e.scope)));
  assert.equal(middle[0].pageCount,10);assert.equal(middle[0].answerPageCount,10);assert.equal(middle[0].analysisPageCount,3);
  assert.deepEqual(nav.selectionForExam(middle[0].id),{program:'ED',course:'middle1'});
