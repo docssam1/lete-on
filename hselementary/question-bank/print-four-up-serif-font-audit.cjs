@@ -33,7 +33,8 @@ const ids = ["5-2-u3-e8-mission-1-double-point-synthetic", "5-2-u3-e8-mission-2-
       }, ids);
       await page.emulateMedia({ media: "print" });
       await page.evaluate(() => document.fonts.ready);
-      assert(await page.evaluate(() => document.fonts.check('400 14px "Noto Serif KR"', '꽃잎')), 'print font is loaded');
+      // 2026-11-26: 인쇄 명조는 print-typography.css의 "HSE Print Serif"(같은 Noto Serif KR 파일)로 통일했다.
+      assert(await page.evaluate(() => document.fonts.check('400 14px "HSE Print Serif"', '꽃잎')), 'print font is loaded');
       const printed = await page.locator('#problemView .question-item').evaluateAll(items=>items.map(item=>{const p=item.querySelector('.question-prompt p'), prompt=item.querySelector('.question-prompt').getBoundingClientRect(),answer=item.querySelector('.answer-line').getBoundingClientRect();return {font:p&&getComputedStyle(p).fontFamily, weight:p&&getComputedStyle(p).fontWeight,bottom:prompt.bottom,answer:answer.top};}));
       for (const [i,p] of printed.entries()) { assert.match(p.font||'',/Noto Serif KR/,`question ${i+1} uses print serif`); assert.equal(p.weight,'400'); assert(p.bottom<=p.answer+1,`question ${i+1} does not overlap answer`); }
       await page.emulateMedia({ media: null });

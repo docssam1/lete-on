@@ -6,10 +6,12 @@
      (Windows의 Malgun Gothic 대체를 막는다).
    - 글자 모양이 조건이거나 자릿수 맞춤에 고정폭이 필요한 곳은 바꾸지 않는다:
      세로셈(.long-operation)·나눗셈 식(.source-division-work)·식 상자(.equation-boxes)·디지털 수(.digital-number),
-     돌린 숫자·글자 그림 5문항의 SVG. */
-@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2");font-style:normal;font-weight:100 500;font-display:block}
-@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2");font-style:normal;font-weight:501 650;font-display:block}
-@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2") format("woff2");font-style:normal;font-weight:651 1000;font-display:block}
+     돌린 숫자·글자 그림 5문항의 SVG.
+   - 줄 상자 높이(ascent·descent)는 Pretendard 값(95.2%·24.1%)으로 맞춘다. Noto Serif KR 기본값은 위아래가 커서
+     도형 글자의 상자가 선·테두리에 닿은 것으로 재어지고 줄 간격도 달라진다. 글자 모양은 그대로다. */
+@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-400-normal.woff2") format("woff2");font-style:normal;font-weight:100 500;font-display:swap;ascent-override:95.2%;descent-override:24.1%;line-gap-override:0%}
+@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-600-normal.woff2") format("woff2");font-style:normal;font-weight:501 650;font-display:swap;ascent-override:95.2%;descent-override:24.1%;line-gap-override:0%}
+@font-face{font-family:"HSE Print Serif";src:url("../../fields-classic/question-bank/assets/fonts/noto-serif-kr-korean-700-normal.woff2") format("woff2");font-style:normal;font-weight:651 1000;font-display:swap;ascent-override:95.2%;descent-override:24.1%;line-gap-override:0%}
 
 :root{--hse-print-serif:"HSE Print Serif","Noto Serif KR",Pretendard,"Batang","AppleMyungjo",serif}
 
@@ -19,4 +21,6 @@
   :is(#problemView,#solutionView,#answerKeyView) :is(.question-item,.solution-item,.answer-key-page) :not(.long-operation,.source-division-work,.equation-boxes,.digital-number,.long-operation *,.source-division-work *,.equation-boxes *,.digital-number *,:is([data-source-item-id="5-2-u3-e7-example-7-3-original"],[data-source-answer="5-2-u3-e7-example-7-3-original"],[data-source-item-id="5-2-u3-e7-mission-1-original"],[data-source-answer="5-2-u3-e7-mission-1-original"],[data-source-item-id="5-2-u3-e8-mission-5-original"],[data-source-answer="5-2-u3-e8-mission-5-original"],[data-source-item-id="5-2-u3-e7-mission-1-rotated-addition-synthetic"],[data-source-answer="5-2-u3-e7-mission-1-rotated-addition-synthetic"],[data-source-item-id="5-2-u3-e7-example-3-letter-rotation-synthetic"],[data-source-answer="5-2-u3-e7-example-3-letter-rotation-synthetic"]) svg,:is([data-source-item-id="5-2-u3-e7-example-7-3-original"],[data-source-answer="5-2-u3-e7-example-7-3-original"],[data-source-item-id="5-2-u3-e7-mission-1-original"],[data-source-answer="5-2-u3-e7-mission-1-original"],[data-source-item-id="5-2-u3-e8-mission-5-original"],[data-source-answer="5-2-u3-e8-mission-5-original"],[data-source-item-id="5-2-u3-e7-mission-1-rotated-addition-synthetic"],[data-source-answer="5-2-u3-e7-mission-1-rotated-addition-synthetic"],[data-source-item-id="5-2-u3-e7-example-3-letter-rotation-synthetic"],[data-source-answer="5-2-u3-e7-example-3-letter-rotation-synthetic"]) svg *){
     font-family:var(--hse-print-serif)!important;
   }
+  /* 5-2 3단원 접기 직사각형: 왼쪽 세로 길이(오른쪽 끝 x=36)가 명조에서 0.8px 더 넓어 그림 밖으로 나간다. 인쇄 때만 조금 줄인다. */
+  svg[data-fold-rectangle] text[font-size="14"][text-anchor="end"]{font-size:13.5px}
 }

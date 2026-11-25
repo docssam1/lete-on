@@ -510,7 +510,22 @@
     updateApprovalButtons();
   }
 
+  // 인쇄 명조(print-typography.css)는 인쇄 때만 쓰인다. 문제지를 처음 만들 때 한 번 받아 두어야 바로 인쇄·PDF로 저장해도
+  // 글자가 빠지거나 대체 글꼴로 찍히지 않는다(목록만 보는 사용자는 받지 않는다).
+  let printFontsLoading = null;
+  function preloadPrintFonts() {
+    if (!printFontsLoading) {
+      try {
+        printFontsLoading = document.fonts?.load
+          ? Promise.all(["400", "600", "700"].map(weight => document.fonts.load(`${weight} 16px "HSE Print Serif"`, "가㉠1").catch(() => [])))
+          : Promise.resolve();
+      } catch (error) { printFontsLoading = Promise.resolve(); }
+    }
+    return printFontsLoading;
+  }
+
   function buildQuestions() {
+    preloadPrintFonts();
     const selected = selectedQuestionTypes().filter(type => type?.generator && !type.reviewLocked && bankAccess.canAccess(type.grade, type.term));
     if (!selected.length) return;
     const plannedTypes = plannedQuestionTypes(selected);
@@ -935,7 +950,7 @@
     try {
       try { if (document.fonts?.ready) await document.fonts.ready; } catch (error) {}
       // 인쇄 명조(print-typography.css)는 인쇄할 때만 쓰여 미리 받아 두지 않으면 대체 글꼴로 찍힐 수 있다. 굵기 3개를 먼저 받는다(최대 6초).
-      try { if (document.fonts?.load) await Promise.race([Promise.all(["400", "600", "700"].map(weight => document.fonts.load(`${weight} 16px "HSE Print Serif"`, "가㉠1"))), new Promise(resolve => setTimeout(resolve, 6000))]); } catch (error) {}
+      try { await Promise.race([preloadPrintFonts(), new Promise(resolve => setTimeout(resolve, 6000))]); } catch (error) {}
       if (mode === "problem") await rebalanceAllPrintPages();
       const images = [$("problemView"), $("solutionView"), $("answerKeyView")].filter(view => !view.hidden).flatMap(view => [...view.querySelectorAll("img")]);
       await Promise.all(images.map(image => image.decode()));
