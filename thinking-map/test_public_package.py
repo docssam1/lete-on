@@ -14,7 +14,7 @@ def main():
   assert not p.is_symlink()
   assert not secret.search(p.read_text()),relative
   if p.suffix=='.py':ast.parse(p.read_text())
- payloads=code_payloads();assert len(payloads)==100
+ payloads=code_payloads();assert len(payloads)==101
  # The worker's snapshot is already public Git code, not a fresh answer/source export.
  assert all(f['ref']=='c0f37b74b3f23d112c1c193241a8918615525150'for f in read('code-manifest.json')['pinnedGitFiles'])
  print(json.dumps(dict(passed=True,publicFiles=len(present),restorableRuntimeFiles=len(payloads),allRuntimeHashesMatched=True,unmanifestedRuntimeFiles=0,privatePayloadsIncluded=0,credentialPatternMatches=0)))

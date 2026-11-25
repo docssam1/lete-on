@@ -11,7 +11,7 @@ def main():
  p=argparse.ArgumentParser();p.add_argument('--private-workspace');p.add_argument('--node');p.add_argument('--report');a=p.parse_args();report=dict(passed=True)
  with tempfile.TemporaryDirectory(prefix='thinking-map-restore-')as tmp:
   home=Path(tmp);work=home/'restored';result=restore.install(work);assert result['datasetsCopied']==0
-  assert restore.verify(work,require_data=False)['codeVersion']==68
+  assert restore.verify(work,require_data=False)['codeVersion']==restore.read('code-manifest.json')['sourceCheckpoint']
   sentinel=work/'work/quantity-relations/saved-bank/generated-items.private.sqlite3';sentinel.parent.mkdir();sentinel.write_bytes(b'private-user-record-sentinel')
   assert restore.install(work)['installedCodeFiles']==0 and sentinel.read_bytes()==b'private-user-record-sentinel'
   conflict=home/'conflict';name=next(iter(restore.code_payloads()));target=conflict/name;target.parent.mkdir(parents=True);target.write_bytes(b'user edit')

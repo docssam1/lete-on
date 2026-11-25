@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
   "date": "2026-11-25",
-  "sourceCheckpoint": 72,
+  "sourceCheckpoint": 73,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -23,6 +23,12 @@
       "sha256": "901b1bae70e0c75501f2d5bb82aa5a85fa98f4e81f90d5b589c46bff5b017133"
     },
     {
+      "path": "work/quantity-relations/build-taxonomy-hierarchy.py",
+      "storedPath": "runtime/work/quantity-relations/build-taxonomy-hierarchy.py",
+      "bytes": 3767,
+      "sha256": "0961c277f9b42b269db9e33259190f5e9981bbd928e0f0d6be2d797a261d3fbc"
+    },
+    {
       "path": "work/quantity-relations/catalog-preview.css",
       "storedPath": "runtime/work/quantity-relations/catalog-preview.css",
       "bytes": 12756,
@@ -39,6 +45,12 @@
       "storedPath": "runtime/work/quantity-relations/crossbook-alignment-ui.js",
       "bytes": 6225,
       "sha256": "23d6cdf1515aa8b3f6b2aeaf7dcdc095b3be96a5fba5b2130e171d88b029f327"
+    },
+    {
+      "path": "work/quantity-relations/edge_labeled_triangles.py",
+      "storedPath": "runtime/work/quantity-relations/edge_labeled_triangles.py",
+      "bytes": 8640,
+      "sha256": "8ebf857372e164c6603dffd30ace91b5bce14037678b7bd5dd5447e36c8fb24a"
     },
     {
       "path": "work/quantity-relations/family-search.css",
@@ -221,6 +233,12 @@
       "sha256": "8802582304f0c7034ba077851a160645f6314b19ba5e1f98a495716d9c89c54e"
     },
     {
+      "path": "work/quantity-relations/textbook-scope.json",
+      "storedPath": "runtime/work/quantity-relations/textbook-scope.json",
+      "bytes": 905,
+      "sha256": "df1ecdbe713c090b8c8af8b497ca4afac5822d7dd4a9782ca0dbf25e0ec2ae35"
+    },
+    {
       "path": "work/quantity-relations/textbook-workbench.css",
       "storedPath": "runtime/work/quantity-relations/textbook-workbench.css",
       "bytes": 8694,
@@ -233,10 +251,10 @@
       "sha256": "c0e1b00f75d85967a3d629d1d37c6c5138ec5ff1ffbadcc37cd803294f7beb7d"
     },
     {
-      "path": "work/quantity-relations/vision-text-candidates.swift",
-      "storedPath": "runtime/work/quantity-relations/vision-text-candidates.swift",
-      "bytes": 5782,
-      "sha256": "9af89242b0e0407bc17728b230d94da7d62c411fa026916fa40e8376f73333f1"
+      "path": "work/quantity-relations/type-explorer.js",
+      "storedPath": "runtime/work/quantity-relations/type-explorer.js",
+      "bytes": 18969,
+      "sha256": "1700e5f3fc44a22fceeb1b2fa1c642ba76e429fbbc937c4a90dda2c5cbf99654"
     },
     {
       "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/manifest.json",
@@ -251,22 +269,10 @@
       "sha256": "89c47db7851f89caec72da4f215ebc21cf1e294aeef3b45d2583562d846ab035"
     },
     {
-      "path": "work/quantity-relations/type-explorer.js",
-      "storedPath": "runtime/work/quantity-relations/type-explorer.js",
-      "bytes": 18969,
-      "sha256": "1700e5f3fc44a22fceeb1b2fa1c642ba76e429fbbc937c4a90dda2c5cbf99654"
-    },
-    {
-      "path": "work/quantity-relations/build-taxonomy-hierarchy.py",
-      "storedPath": "runtime/work/quantity-relations/build-taxonomy-hierarchy.py",
-      "bytes": 3767,
-      "sha256": "0961c277f9b42b269db9e33259190f5e9981bbd928e0f0d6be2d797a261d3fbc"
-    },
-    {
-      "path": "work/quantity-relations/textbook-scope.json",
-      "storedPath": "runtime/work/quantity-relations/textbook-scope.json",
-      "bytes": 905,
-      "sha256": "df1ecdbe713c090b8c8af8b497ca4afac5822d7dd4a9782ca0dbf25e0ec2ae35"
+      "path": "work/quantity-relations/vision-text-candidates.swift",
+      "storedPath": "runtime/work/quantity-relations/vision-text-candidates.swift",
+      "bytes": 5782,
+      "sha256": "9af89242b0e0407bc17728b230d94da7d62c411fa026916fa40e8376f73333f1"
     }
   ],
   "pinnedGitFiles": [

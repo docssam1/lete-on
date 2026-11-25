@@ -3,27 +3,42 @@
   "date": "2026-11-25",
   "files": [
     {
-      "path": "outputs/quantity-crossbook-bank.html",
-      "bytes": 47395151,
-      "sha256": "97d64a523605ea7ca093076d6e3b6d98e103d6ea00b504b68e550d08759f0e63",
+      "path": "outputs/1031-basic-b-shape-composition-items.json",
+      "bytes": 1519873,
+      "sha256": "06d401ae8f6605f88e1d8576419124309ac7d487286491f84b8784eae15e4a9b"
+    },
+    {
+      "path": "outputs/native-runtime-config.json",
+      "bytes": 50029,
+      "sha256": "17f578c9c322c9b7c7ce6a9ccdc7167dc740505351db75b9d35132f0413bee3f",
       "contentIncludedInGit": false
     },
     {
-      "path": "outputs/quantity-crossbook-bank.json",
-      "bytes": 59777099,
-      "sha256": "d2343fa83718a106f21257e13425e4d9e4c74cb7b7bb61fd39777d61b39fcab4",
+      "path": "outputs/native-runtime-examples.json",
+      "bytes": 149180,
+      "sha256": "34a1aba7fa0738a9916afcfd3f7ab61cb1c23a412e14022041ea50aca701932d",
       "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-manifest.json",
+      "bytes": 7556,
+      "sha256": "71772a4a34added10854647d32b55040c0adeaf9d2a8897df2c701893446847f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-crossbook-bank.html",
+      "bytes": 47423879,
+      "sha256": "7d6817711e000e1ed35df2d0539fbd6e70956f05cca98eb735aec92391dcbdd1"
+    },
+    {
+      "path": "outputs/quantity-crossbook-bank.json",
+      "bytes": 59818964,
+      "sha256": "57f70fb270002daff521c1e57d4d7f34df2826fa0b10bf9362e7731dde72dd84"
     },
     {
       "path": "outputs/quantity-relations-practice.html",
       "bytes": 40428,
       "sha256": "428586046cee388b2dc030403a910fae092fb43bcb936ee5802bbdab1222bfd3",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "outputs/soma-type-authored-examples.json",
-      "bytes": 260832,
-      "sha256": "945519c30dd6eff8e58b9a9fbe6ef38a99053ded36549b89b2448891eba9b82f",
       "contentIncludedInGit": false
     },
     {
@@ -39,27 +54,9 @@
       "contentIncludedInGit": false
     },
     {
-      "path": "outputs/native-runtime-config.json",
-      "bytes": 50029,
-      "sha256": "17f578c9c322c9b7c7ce6a9ccdc7167dc740505351db75b9d35132f0413bee3f",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "outputs/native-runtime-manifest.json",
-      "bytes": 7556,
-      "sha256": "71772a4a34added10854647d32b55040c0adeaf9d2a8897df2c701893446847f",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "outputs/native-runtime-examples.json",
-      "bytes": 149180,
-      "sha256": "34a1aba7fa0738a9916afcfd3f7ab61cb1c23a412e14022041ea50aca701932d",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "work/quantity-relations/soma-authoring-answer-check.json",
-      "bytes": 29095,
-      "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
+      "path": "outputs/soma-type-authored-examples.json",
+      "bytes": 260832,
+      "sha256": "945519c30dd6eff8e58b9a9fbe6ef38a99053ded36549b89b2448891eba9b82f",
       "contentIncludedInGit": false
     },
     {
@@ -69,21 +66,9 @@
       "sha256": "1a5e7577741fd253a33b77560dae3ac06679e10f123633fdd0574933ef162c43"
     },
     {
-      "path": "outputs/1031-basic-b-shape-composition-items.json",
-      "bytes": 1483680,
-      "sha256": "e3124faf804d3f15366b63a6a78743c05021f7a55870099dc474061081c4cb63",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "work/quantity-relations/colored-triangle-enumeration-checkpoint.json",
-      "bytes": 605,
-      "sha256": "3d43daaab3c4f01961b9e79d123be1846f8a0a7d9afa264795e8be567dcd1cc5",
-      "contentIncludedInGit": false
-    },
-    {
-      "path": "work/quantity-relations/1031-basic-b-rhombus-checkpoint.json",
-      "bytes": 544,
-      "sha256": "39f06901a6d7016edb8dbb74ceb481ead0144115b0ccadd679489435941a392a",
+      "path": "work/quantity-relations/1031-basic-b-checkerboard-checkpoint.json",
+      "bytes": 663,
+      "sha256": "c85587a347bd7c0cec60d9272de1ca34503447e45e394610b86ec272b6c886d8",
       "contentIncludedInGit": false
     },
     {
@@ -99,9 +84,26 @@
       "contentIncludedInGit": false
     },
     {
-      "path": "work/quantity-relations/1031-basic-b-checkerboard-checkpoint.json",
-      "bytes": 663,
-      "sha256": "c85587a347bd7c0cec60d9272de1ca34503447e45e394610b86ec272b6c886d8",
+      "path": "work/quantity-relations/1031-basic-b-rhombus-checkpoint.json",
+      "bytes": 544,
+      "sha256": "39f06901a6d7016edb8dbb74ceb481ead0144115b0ccadd679489435941a392a",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-triangle-edge-checkpoint.json",
+      "bytes": 1005,
+      "sha256": "311f51f03050fa73d20953b1ddbd3d256f97494aa27473a3c156d34b7ed0b91a"
+    },
+    {
+      "path": "work/quantity-relations/colored-triangle-enumeration-checkpoint.json",
+      "bytes": 605,
+      "sha256": "3d43daaab3c4f01961b9e79d123be1846f8a0a7d9afa264795e8be567dcd1cc5",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/soma-authoring-answer-check.json",
+      "bytes": 29095,
+      "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
       "contentIncludedInGit": false
     }
   ],
