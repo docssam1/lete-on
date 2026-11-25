@@ -4,6 +4,7 @@ import { CURRICULUM, TEXTBOOK_STAGES, textbookGuideForType, typeById } from "./s
 import { GENERATORS } from "./generators.js";
 import { BOOK08_UNIT_TEST_GENERATORS } from "./book08-generators.js";
 import { book08Markup } from "./book08-renderers.js";
+import { BOOK08_STRUCTURE_TYPE_ROWS } from "./book08-structure-generators.js";
 
 const iterations = Number(process.env.BOOK08_ITERATIONS || 1000);
 const book = CURRICULUM.find((item) => item.id === "book-08");
@@ -443,7 +444,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 70) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 101) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -470,6 +471,239 @@ units.forEach((unit, unitIndex) => {
 });
 if (sourceQuestionCount !== 164) throw new Error(`book-08 source count ${sourceQuestionCount}`);
 
+
+// ── 교재 번호 꼴 새 유형(book08-structure-generators.js) — 생성기 풀이기와 따로 다시 센다.
+const STRUCTURE_HEAVY = new Set(["all-shape-cryptarithm-b8", "symbol-network-b8", "square-frame-b8", "product-matrix-hidden-b8"]);
+const evalExpr = (side, val) => {
+  // ×·÷ 먼저, 그다음 +·− (음수·나누어떨어지지 않음은 null)
+  const terms = [];
+  const ops = [];
+  let cur = val(side[0]);
+  for (let i = 1; i < side.length; i += 2) {
+    const op = side[i];
+    const v = val(side[i + 1]);
+    if (cur === null || v === null) return null;
+    if (op === "×") cur *= v;
+    else if (op === "÷") cur = v === 0 || cur % v ? null : cur / v;
+    else { terms.push(cur); ops.push(op); cur = v; }
+  }
+  if (cur === null) return null;
+  terms.push(cur);
+  let acc = terms[0];
+  for (let i = 0; i < ops.length; i += 1) { acc = ops[i] === "+" ? acc + terms[i + 1] : acc - terms[i + 1]; if (acc < 0) return null; }
+  return acc;
+};
+function injectiveSolutions(k, pool, ok) {
+  const sols = [];
+  const vals = new Array(k);
+  const used = new Set();
+  const visit = (i) => {
+    if (i === k) { if (ok(vals)) sols.push([...vals]); return; }
+    for (const v of pool) { if (used.has(v)) continue; used.add(v); vals[i] = v; visit(i + 1); used.delete(v); }
+  };
+  visit(0);
+  return sols;
+}
+const wordValue = (word, vals) => Number(word.map((t) => (typeof t === "number" ? vals[t] : t)).join(""));
+function cryptCount(addends, result, k, { distinct = true, reserve = [] } = {}) {
+  const pool = range10.filter((d) => !(distinct && reserve.includes(d)));
+  const leadBad = (vals) => [...addends, result].some((w) => w.length > 1 && typeof w[0] === "number" && vals[w[0]] === 0);
+  const ok = (vals) => !leadBad(vals) && addends.reduce((s, w) => s + wordValue(w, vals), 0) === wordValue(result, vals);
+  if (distinct) return injectiveSolutions(k, pool, ok);
+  const sols = [];
+  const vals = new Array(k);
+  const visit = (i) => { if (i === k) { if (ok(vals)) sols.push([...vals]); return; } for (const d of range10) { vals[i] = d; visit(i + 1); } };
+  visit(0);
+  return sols;
+}
+const range10 = Array.from({ length: 10 }, (_, i) => i);
+const product = (list) => list.reduce((a, b) => a * b, 1);
+
+function validateStructure(problem, id, difficulty) {
+  const meta = problem.meta;
+  const numeric = numericAnswer(problem);
+  assert(problem.visual?.kind === "fig" && /<svg/.test(problem.visual.html), id, difficulty, "그림 없음");
+  assert(!/\d\/\d/.test(problem.prompt), id, difficulty, "빗금 분수");
+  assert(!hasWrongNumberParticle(problem.prompt) && !hasWrongNumberParticle(problem.solution), id, difficulty, "수 뒤 조사 오류");
+  switch (meta.family) {
+    case "symbol-network-b8": {
+      const eqs = meta.equations;
+      const sols = injectiveSolutions(meta.values.length, meta.pool, (vals) => eqs.every((eq) => {
+        const val = (t) => (typeof t === "number" ? vals[t] : Number(t));
+        const l = evalExpr(eq.L, val);
+        return l !== null && l === evalExpr(eq.R, val);
+      }));
+      assert(sols.length === 1 && same(sols[0], meta.values), id, difficulty, `도형 식 답 ${sols.length}개`);
+      assert(numeric === meta.ask.reduce((s, a) => s + meta.values[a], 0), id, difficulty, "도형 식 답 값 오류");
+      return;
+    }
+    case "square-frame-b8": {
+      const lines = [[0, 1, 2], [0, 3, 5], [2, 4, 7], [5, 6, 7]];
+      const k = meta.values.length;
+      const sols = injectiveSolutions(k, meta.pool, (vals) => lines.every(([a, b, c], i) => {
+        const x = vals[meta.pos[a]];
+        const y = vals[meta.pos[b]];
+        const op = meta.ops[i];
+        const r = op === "+" ? x + y : op === "−" ? (x >= y ? x - y : null) : op === "×" ? x * y : (y && x % y === 0 ? x / y : null);
+        return r === vals[meta.pos[c]];
+      }));
+      const kept = meta.order ? sols.filter((v) => v[meta.order.big] > v[meta.order.small]) : sols;
+      const answers = [...new Set(kept.map((v) => meta.ask.reduce((s, a) => s + v[a], 0)))].sort((a, b) => a - b);
+      if (meta.mode === "two") assert(answers.length === 2, id, difficulty, `두 가지 경우가 아님: ${answers}`);
+      else assert(answers.length === 1, id, difficulty, `답이 하나가 아님: ${answers}`);
+      assert(String(problem.answer) === answers.join(", "), id, difficulty, "사각 틀 답 오류");
+      return;
+    }
+    case "product-matrix-fill-b8":
+      meta.parts.forEach((part) => {
+        assert(part.cells.every((row) => row.filter((v) => v !== "").length === 2), id, difficulty, "줄마다 두 칸이 아님");
+        [0, 1, 2, 3].forEach((c) => assert(part.cells.filter((row) => row[c] !== "").length === 2, id, difficulty, "세로줄 두 칸 아님"));
+        assert(same(part.rows, part.cells.map((row) => product(row.filter((v) => v !== "")))), id, difficulty, "가로 곱 오류");
+        assert(same(part.cols, [0, 1, 2, 3].map((c) => product(part.cells.map((row) => row[c]).filter((v) => v !== "")))), id, difficulty, "세로 곱 오류");
+      });
+      return;
+    case "product-matrix-hidden-b8":
+      meta.parts.forEach((part) => {
+        // 숫자마다 (가로줄, 세로줄)을 고르는 모든 방법을 센다
+        const digits = [2, 3, 4, 5, 6, 7, 8, 9];
+        let count = 0;
+        const rowOf = {};
+        const rowUse = [0, 0, 0, 0];
+        const visit = (i) => {
+          if (count > 1) return;
+          if (i === digits.length) {
+            const rowsOk = [0, 1, 2, 3].every((r) => product(digits.filter((d) => rowOf[d] === r)) === part.rows[r]);
+            if (!rowsOk) return;
+            const colOf = {};
+            const colUse = [0, 0, 0, 0];
+            const taken = new Set();
+            const visitCol = (j) => {
+              if (count > 1) return;
+              if (j === digits.length) {
+                if ([0, 1, 2, 3].every((c) => product(digits.filter((d) => colOf[d] === c)) === part.cols[c])) count += 1;
+                return;
+              }
+              const d = digits[j];
+              for (let c = 0; c < 4; c += 1) {
+                const key = `${rowOf[d]},${c}`;
+                if (colUse[c] === 2 || taken.has(key)) continue;
+                colUse[c] += 1; taken.add(key); colOf[d] = c;
+                visitCol(j + 1);
+                colUse[c] -= 1; taken.delete(key);
+              }
+            };
+            visitCol(0);
+            return;
+          }
+          const d = digits[i];
+          for (let r = 0; r < 4; r += 1) {
+            if (rowUse[r] === 2 || part.rows[r] % d) continue;
+            rowUse[r] += 1; rowOf[d] = r;
+            visit(i + 1);
+            rowUse[r] -= 1;
+          }
+        };
+        visit(0);
+        assert(count === 1, id, difficulty, `숨은 곱셈 매트릭스 답 ${count}개`);
+      });
+      return;
+    case "shape-pyramid-b8":
+    case "shape-result-cryptarithm-b8":
+    case "multi-row-shape-b8":
+    case "all-shape-cryptarithm-b8":
+      meta.parts.forEach((part) => {
+        const sols = cryptCount(part.addends, part.result, part.k);
+        assert(sols.length === 1 && same(sols[0], part.vals), id, difficulty, `복면산 답 ${sols.length}개`);
+      });
+      return;
+    case "blank-digit-sum-both-b8":
+      meta.parts.forEach((part) => {
+        const sols = cryptCount(part.addends, part.result, 4, { distinct: false });
+        const sums = new Set(sols.map((v) => v.reduce((a, b) => a + b, 0)));
+        assert(sols.length > 0 && sums.size === 1 && [...sums][0] === part.digitSum, id, difficulty, "빈칸 숫자 합이 하나가 아님");
+      });
+      return;
+    case "cards-cryptarithm-b8": {
+      const t = meta.truth;
+      assert(same([...t].sort(), [1, 2, 3, 4, 5, 6, 7, 8]) && 100 * t[0] + 10 * t[1] + t[2] + 10 * t[3] + t[4] === 100 * t[5] + 10 * t[6] + t[7], id, difficulty, "카드 덧셈식 오류");
+      const hidden = [0, 1, 2, 3, 4, 5, 6, 7].filter((i) => !meta.shown.includes(i));
+      const rest = hidden.map((i) => t[i]);
+      const marks = new Set();
+      injectiveSolutions(hidden.length, rest, (vals) => {
+        const full = [...t];
+        hidden.forEach((i, j) => { full[i] = vals[j]; });
+        const ok = 100 * full[0] + 10 * full[1] + full[2] + 10 * full[3] + full[4] === 100 * full[5] + 10 * full[6] + full[7];
+        if (ok) marks.add(full[meta.mark]);
+        return ok;
+      });
+      assert(marks.size === 1 && numeric === t[meta.mark], id, difficulty, "㉠ 값이 하나가 아님");
+      return;
+    }
+    case "ordered-shape-two-digit-b8": {
+      const sols = cryptCount(meta.addends, meta.result, 3, { reserve: meta.reserve }).filter((v) => v[meta.small] < v[meta.big]);
+      assert(sols.length === 1 && same(sols[0], meta.truth), id, difficulty, `크기 조건 복면산 답 ${sols.length}개`);
+      return;
+    }
+    case "repeated-addend-all-b8": {
+      const sols = cryptCount(meta.addends, meta.result, meta.k);
+      const values = [...new Set(sols.map((v) => v[meta.ask]))].sort((a, b) => a - b);
+      assert(sols.length >= 2 && values.length === sols.length && String(problem.answer) === values.join(", "), id, difficulty, "여러 번 더한 복면산 답 모두 오류");
+      return;
+    }
+    case "reverse-steps-b8": {
+      const end = meta.steps.reduce((v, [op, x]) => (op === "+" ? v + x : v - x), meta.start);
+      assert(end === meta.final && numeric === meta.start, id, difficulty, "거꾸로 풀기 오류");
+      return;
+    }
+    case "give-as-much-equal-b8": {
+      let a = meta.first;
+      let b = meta.second;
+      a -= b; b *= 2;
+      a += meta.returned; b -= meta.returned;
+      assert(a === meta.n && b === meta.n, id, difficulty, "가진 만큼 주기 결과가 같지 않음");
+      assert(numeric === meta.first, id, difficulty, "가진 만큼 주기 답 오류");
+      return;
+    }
+    case "chained-difference-equalize-b8": {
+      // 다를 0으로 두고 가 = p+q, 다 = 0 → give개를 주면 같아지는지
+      const a = meta.p + meta.q;
+      assert(a - meta.give === meta.give && numeric === meta.give, id, difficulty, "이어진 차 같게 만들기 오류");
+      return;
+    }
+    case "age-sum-after-years-b8":
+      assert(meta.o + meta.n + meta.y + meta.n === meta.sum && problem.answer.includes(`${meta.o + meta.n}살`) && problem.answer.includes(`${meta.y + meta.n}살`), id, difficulty, "몇 년 뒤 나이 오류");
+      return;
+    case "total-give-equal-b8": {
+      const b = meta.half - meta.g;
+      const a = meta.total - b;
+      assert(a - meta.g === b + meta.g && numeric === (meta.askA ? a : b), id, difficulty, "합과 준 수 오류");
+      return;
+    }
+    case "three-total-give-equal-b8":
+      assert(meta.known + meta.xv + meta.yv === meta.total && meta.xv - meta.g === meta.yv + meta.g && numeric === meta.xv, id, difficulty, "세 사람 표 오류");
+      return;
+    case "transfer-for-multiple-b8":
+      assert((meta.bStart + meta.moved) === meta.k * (meta.aStart - meta.moved) && meta.aStart - meta.moved > 0 && numeric === meta.moved, id, difficulty, "몇 배가 되게 주기 오류");
+      return;
+    case "shape-sum-difference-b8":
+      meta.parts.forEach((m, i) => {
+        assert(m.big + m.small === m.sum && m.big - m.small === m.diff && m.small > 0, id, difficulty, "합과 차 식 오류");
+        assert(String(problem.answer).includes(`(${i + 1}) `) && String(problem.answer).includes(`=${m.big}, `), id, difficulty, "합과 차 답 오류");
+      });
+      return;
+    case "mutual-give-as-much-b8": {
+      let [x, y] = meta.start;
+      for (let r = 0; r < meta.rounds; r += 1) { if (r % 2 === 0) { x -= y; y *= 2; } else { y -= x; x *= 2; } assert(x > 0 && y > 0, id, difficulty, "옮기는 중 0 이하"); }
+      assert(x === meta.n && y === meta.n, id, difficulty, "서로 가진 만큼 옮기기 결과 오류");
+      return;
+    }
+    default:
+      fail(id, difficulty, "새 유형 검산 분기 없음: " + meta.family);
+  }
+}
+
+const STRUCTURE_TYPES = new Set(BOOK08_STRUCTURE_TYPE_ROWS.map((row) => row.id));
+let structureChecked = 0;
 let generated = 0;
 for (const typeId of typeIds) {
   const type = typeById(typeId);
@@ -480,6 +714,7 @@ for (const typeId of typeIds) {
       // 5권에서 이미 검산된 공용 곱셈 매트릭스 두 유형은 해당 권 감사에서 확인한다.
       // 권별 테스트용 유형을 교재 번호에 빌려 쓴 것(textbook-remaps.js)은 아래 권별 테스트 검산이 맡는다.
       if (problem.visual?.kind === "book8" && !(REMAPPED.has(typeId) && typeId.startsWith("unit-test-book08-"))) validate(problem, typeId, difficulty);
+      if (STRUCTURE_TYPES.has(typeId) && (!STRUCTURE_HEAVY.has(problem.meta?.family) || index < 6)) { validateStructure(problem, typeId, difficulty); structureChecked += 1; }
       generated += 1;
     }
   }
@@ -535,4 +770,4 @@ for (const questionNumber of unitQuestionNumbers) {
 }
 Math.random = originalRandom;
 
-console.log(`book-08 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} regression checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks`);
+console.log(`book-08 audit passed: ${sourceQuestionCount} source questions, ${typeIds.length} types, ${generated.toLocaleString("en-US")} regression checks, ${structureChecked.toLocaleString("en-US")} structure re-checks, ${unitGenerated.toLocaleString("en-US")} unit-test checks`);
