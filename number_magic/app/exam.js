@@ -500,6 +500,9 @@
   .nm-pt-page svg { -webkit-print-color-adjust:exact; print-color-adjust:exact; }
 
   @font-face { font-family:'NM Tools Sans';src:url('assets/fonts/pretendard-var.woff2') format('woff2');font-weight:100 700;font-display:swap; }
+  /* 개념 칸 머리말 「Today's Mission」 — 책 표지·마법책과 같은 손글씨 디자인 글꼴(원장 2026-11-23 「이 정도는 영어로 해도 돼 디자인 폰트」 → 「넣어」) */
+  @font-face { font-family:'NM Kalam';src:url('assets/fonts/kalam-cover.ttf') format('truetype');font-weight:400;font-display:block; }
+  .nm-mission { font-family:'NM Kalam',cursive; font-weight:400; font-size:1.3em; line-height:1; letter-spacing:.01em; color:#b38a3c; text-transform:none; }
   .nm-pt-designed { font-family:'NM Tools Sans',Pretendard,sans-serif; color:#191511; }
   .nm-pt-designed .nm-hist-head { border-color:#2f6b4a; margin-bottom:2mm; }
   .nm-pt-designed .nm-hist-head b { color:#191511;font-size:18px;font-weight:700; }
@@ -5873,7 +5876,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
     // 레벨의 목표를 공통 개념으로 덮어쓰지 않는다. 원본 재구성 설명은 한국어만 제공한다.
     const focus = pickConcept((lvObj && lvObj.concept) || W2_LEVEL_CONCEPTS[threadId + ':' + level] || info.thread.concept) || '';
     return `<section class="nm-w2-concept nm-mid-concept" aria-label="개념 이해" data-middle-concept="${esc(threadId)}">
-      <h3>개념 이해 · ${esc(nm)}</h3>
+      <h3><span class="nm-mission">Today’s Mission</span> · ${esc(nm)}</h3>
       <p><b>왜 이렇게 할까요?</b> ${escEmph(middle.why)}</p>
       <div class="nm-mid-rule"><span class="nm-w2-tex" data-tex="${esc(middle.rule)}"></span></div>
       <ol>${middle.steps.map(s => `<li>${escEmph(s)}</li>`).join('')}</ol>
@@ -5916,7 +5919,7 @@ function w2ConceptPanelHtml(threadId, level, extra){
   <div class="nm-w2-board">
     <img class="nm-w2-board-mascot" src="assets/characters/docssam.png" alt="">
     <div class="nm-w2-board-body">
-      <div class="nm-mn-kicker">${esc(lk('개념','CONCEPT','概念'))} · ${esc(nm)}</div>
+      <div class="nm-mn-kicker"><span class="nm-mission">Today’s Mission</span> · ${esc(nm)}</div>
       ${sentence ? `<p class="nm-w2-concept-sentence">${escEmph(sentence)}</p>` : ''}
       ${visual ? '' : stageLines}
     </div>
