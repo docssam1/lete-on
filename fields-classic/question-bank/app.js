@@ -1,4 +1,4 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261124h";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261125a";
 import { mathText } from "./math-markup.js?v=20261122w";
 import { GENERATORS } from "./generators.js?v=20261124h";
 import { saveRecord } from "./study-progress.js?v=20261117a";

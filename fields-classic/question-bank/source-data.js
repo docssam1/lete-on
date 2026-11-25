@@ -4619,27 +4619,27 @@ const C2_G5_UNITS = [
     ["activity", 2, [1, 2, 3, 4, 5, 6], "c2-congruent-triangle"], ["check", 2, [1, 2, 3, 4], "c2-congruent-triangle"],
     ["activity", 3, [1, 2, 3], "c2-angle-equation"], ["check", 3, [1, 2, 3, 4], "c2-angle-equation"],
     ["advanced", 1, [1], "c2-star-angle-sum"], ["advanced", 1, [2], "c2-butterfly-angle"], ["advanced", 1, [3, 4], "c2-congruent-triangle"], ["advanced", 1, [5, 6], "c2-angle-equation"],
-    ["practice", 1, [1, 2, 3, 4], "c2-star-angle-sum"], ["practice", 1, [5, 6, 7, 8], "c2-butterfly-angle"], ["practice", 1, [9, 10, 11, 12, 13, 14, 15], "c2-congruent-triangle"], ["practice", 1, [16, 17, 18, 19, 20, 21], "c2-angle-equation"]
+    ["practice", 1, [1, 2, 3, 4], "c2-star-angle-sum"], ["practice", 1, [5, 6, 7], "c2-butterfly-angle"], ["practice", 1, [8, 9, 10, 11, 12, 13, 14, 15], "c2-congruent-triangle"], ["practice", 1, [16, 17, 18, 19, 20, 21], "c2-angle-equation"]
   ]),
   c2Unit("평행선과 등적변형", [7, 6, 4], [4, 5, 2], 6, 25, [
     ["activity", 1, [1, 2, 3, 4, 5, 6, 7], "c2-equal-area-shift"], ["check", 1, [1, 2, 3, 4], "c2-equal-area-shift"],
     ["activity", 2, [1, 2, 3, 4, 5, 6], "c2-area-ratio-base"], ["check", 2, [1, 2, 3, 4, 5], "c2-area-ratio-base"],
     ["activity", 3, [1, 2, 3, 4], "c2-area-ratio-twice"], ["check", 3, [1, 2], "c2-area-ratio-twice"],
     ["advanced", 1, [1, 2], "c2-equal-area-shift"], ["advanced", 1, [3, 4], "c2-area-ratio-base"], ["advanced", 1, [5, 6], "c2-area-ratio-twice"],
-    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9], "c2-equal-area-shift"], ["practice", 1, [10, 11, 12, 13, 14, 15, 16, 17, 18, 19], "c2-area-ratio-base"], ["practice", 1, [20, 21, 22, 23, 24, 25], "c2-triangle-area"]
+    ["practice", 1, [1, 2, 3, 4], "c2-equal-area-shift"], ["practice", 1, [5, 6, 12, 13, 14, 15, 16, 24], "c2-area-ratio-base"], ["practice", 1, [7, 8, 9, 10, 11, 17, 18, 19, 20, 21, 22, 23, 25], "c2-area-ratio-twice"]
   ]),
   c2Unit("도형의 넓이와 비", [6, 4, 2], [4, 4, 4], 6, 28, [
     ["activity", 1, [1, 2, 3, 4, 5, 6], "c2-triangle-area"], ["check", 1, [1, 2, 3, 4], "c2-triangle-area"],
     ["activity", 2, [1, 2, 3, 4], "c2-height-inverse-ratio"], ["check", 2, [1, 2, 3, 4], "c2-height-inverse-ratio"],
     ["activity", 3, [1, 2], "c2-trapezoid-area"], ["check", 3, [1, 2, 3, 4], "c2-trapezoid-area"],
     ["advanced", 1, [1, 2], "c2-triangle-area"], ["advanced", 1, [3, 4], "c2-area-ratio-base"], ["advanced", 1, [5, 6], "c2-trapezoid-area"],
-    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8], "c2-triangle-area"], ["practice", 1, [9, 10, 11, 12, 13, 14, 15, 16, 17, 18], "c2-area-ratio-base"], ["practice", 1, [19, 20, 21, 22, 23, 24, 25, 26, 27, 28], "c2-trapezoid-area"]
+    ["practice", 1, [4, 5, 20, 21, 23, 25, 26, 27, 28], "c2-triangle-area"], ["practice", 1, [8, 9, 10], "c2-set-square-side"], ["practice", 1, [1, 11, 12, 13, 14, 15, 16, 17, 18, 19], "c2-height-inverse-ratio"], ["practice", 1, [2, 3, 6, 7, 24], "c2-trapezoid-area"], ["practice", 1, [22], "c2-congruent-rect-perimeter"]
   ]),
   c2Unit("닮음과 비", [5, 7], [3, 4], 7, 20, [
     ["activity", 1, [1, 2, 3, 4, 5], "c2-similar-scale"], ["check", 1, [1, 2, 3], "c2-similar-scale"],
     ["activity", 2, [1, 2, 3, 4, 5, 6, 7], "c2-pyramid-hourglass"], ["check", 2, [1, 2, 3, 4], "c2-pyramid-hourglass"],
     ["advanced", 1, [1, 2, 3, 4], "c2-similar-scale"], ["advanced", 1, [5, 6, 7], "c2-shadow-height"],
-    ["practice", 1, [1, 2, 3, 4, 5, 6, 7, 8, 9, 10], "c2-similar-scale"], ["practice", 1, [11, 12, 13, 14, 15, 16, 17, 18, 19, 20], "c2-shadow-height"]
+    ["practice", 1, [5, 9], "c2-similar-scale"], ["practice", 1, [1, 2, 3, 4, 6, 7, 8, 10, 11, 13, 14, 15, 16, 17, 18, 19, 20], "c2-pyramid-hourglass"], ["practice", 1, [12], "c2-area-ratio-base"]
   ])
 ];
 // 2과정 A1 — 교재 번호마다 유형. 1과정에 같은 풀이가 있으면 1과정 유형(6·7·8권 등), 없으면 course2-a1-generators.js
