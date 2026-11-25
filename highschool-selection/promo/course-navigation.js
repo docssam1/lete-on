@@ -22,6 +22,7 @@
     'wm-common1-basic-final':'WM:common1-basic',
     'ed-middle1-authored-r01':'ED:middle1', 'ed-middle1-authored-r02':'ED:middle1', 'ed-middle1-authored-r03':'ED:middle1', 'ed-middle1-authored-r04':'ED:middle1', 'ed-middle1-authored-final':'ED:middle1',
     'ed-common1-basic-r01':'ED:high-advance', 'ed-common1-basic-r02':'ED:high-advance', 'ed-common1-basic-r03':'ED:high-advance', 'ed-common1-basic-r04':'ED:high-advance',
+    'ed-common1-basic-final':'ED:high-advance',
     'dg-pre-high1-r01':'DG:pre-high1',
     'dg-middle1-entry-r01':'DG:middle1', 'dg-middle1-entry-r02':'DG:middle1',
     'sm-pre-middle-common1-r01':'SM:common1-basic', 'sm-pre-middle-common1-r02':'SM:common1-basic'
