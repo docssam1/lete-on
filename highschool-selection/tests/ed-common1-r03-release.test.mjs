@@ -1,3 +1,4 @@
+// 2026-11-26: owner-approved title/scope copy deletion reflected in the catalog snapshot.
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import {readFileSync} from 'node:fs';
@@ -10,7 +11,7 @@ test('Eden common1 round3 exposes reviewed 30 questions, 100 minutes and three d
  const e=all.find(e=>e.id==='ed-common1-basic-r03');assert.deepEqual([e.programId,e.questionCount,e.durationMinutes,e.pageCount,e.answerPageCount,e.analysisPageCount,e.mode],['ED',30,100,15,16,4,'released']);
 });
 test('Eden common1 round3 preserves all fields of the existing 47 exams',()=>{
- const old=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(old.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(old)).digest('hex'),'74be666761e04833795c29f0226de98c99928be32a4819512d9e8583de525921');
+ const old=oldIDs.map(id=>all.find(e=>e.id===id));assert.ok(old.every(Boolean));assert.equal(createHash('sha256').update(JSON.stringify(old)).digest('hex'),'003cc9f3b955f0f655b234ea190ce2405f41c6e0910f02448559a0062db08b00');
 });
 test('Eden common1 round3 stays in the common1 selection flow',()=>{
  const nav=ctx.HIGHSELECT_PROMO_NAV;assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam('ed-common1-basic-r03'))),{program:'ED',course:'high-advance'});assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','high-advance',all))).map(e=>e.id),['ed-common1-basic-r01','ed-common1-basic-r02','ed-common1-basic-r03']);
