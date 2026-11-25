@@ -21,10 +21,10 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 541, `expected 541 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 610, `expected 610 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 563, `expected 563 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 632, `expected 632 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 85, `expected 85 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 84, `expected 84 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -210,7 +210,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "distinct-shape-value-equation": Object.freeze({
+  "shape-value-chain-cards-b2": Object.freeze({
     conceptId: "concept:number:distinct-symbol-equation-chain",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
@@ -240,11 +240,6 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02", "book-05"])
   }),
-  "four-number-center-rule": Object.freeze({
-    conceptId: "concept:number:four-outer-center-operation",
-    sourceBookId: "book-02",
-    placementBooks: Object.freeze(["book-02"])
-  }),
   "number-grid-row-rule": Object.freeze({
     conceptId: "concept:number:uniform-row-operation",
     sourceBookId: "book-02",
@@ -255,12 +250,12 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "sudoku-three-row-column": Object.freeze({
+  "sudoku-fill-three-row-column-b2": Object.freeze({
     conceptId: "concept:logic:latin-row-column-three",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "sudoku-four-square-region": Object.freeze({
+  "sudoku-fill-four-square-pair-b2": Object.freeze({
     conceptId: "concept:logic:latin-row-column-region-four",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
@@ -578,8 +573,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 85, `expected 85 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 456, `expected 456 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 84, `expected 84 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 479, `expected 479 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
