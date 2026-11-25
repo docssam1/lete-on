@@ -22,7 +22,8 @@ const hashes = {
 };
 const modelPath = path.join(__dirname, "source-6-2-stack-pattern-models.js");
 const contractPath = path.join(__dirname, "source-6-2-border-mission3-contracts.js");
-const hash = file => crypto.createHash("sha256").update(fs.readFileSync(file)).digest("hex").toUpperCase();
+// 2026-11-25: Windows에서 git이 줄바꿈을 CRLF로 바꿔 받아도 같은 해시가 나오도록, 저장소 안 글자 파일만 줄바꿈을 LF로 맞춘 뒤 해시한다(증거 폴더 파일은 원래 바이트 그대로)(2026-11-25 Windows 실행에서 이 차이로만 실패).
+const hash = file => { const bytes = fs.readFileSync(file); const inRepo = path.resolve(file).toLowerCase().startsWith(path.resolve(__dirname).toLowerCase()); const normalized = inRepo && /\.(m?js|json|html|css|md|txt|py|xml)$/i.test(file) ? Buffer.from(bytes.toString("utf8").replace(/\r\n/g, "\n"), "utf8") : bytes; return crypto.createHash("sha256").update(normalized).digest("hex").toUpperCase(); };
 function explicitPath(value, drives) {
   assert(typeof value === "string" && path.win32.isAbsolute(value) && /^[A-Za-z]:[\\/]/.test(value),
     "Provide an explicit absolute drive path through the evidence environment");

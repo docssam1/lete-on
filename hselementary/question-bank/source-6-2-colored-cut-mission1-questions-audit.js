@@ -9,7 +9,11 @@ if(process.argv.includes("--checkpoint")){
  const ctx={window:{}};vm.runInNewContext(fs.readFileSync(path.join(__dirname,"source-inventory-grade6.js"),"utf8"),ctx);const catalog=JSON.parse(JSON.stringify(ctx.window.HSE_SOURCE_INVENTORY_GRADE6)),raw=JSON.parse(fs.readFileSync(path.join(__dirname,"source-inventory/6-2-source-items.json"),"utf8"));
  assert.equal(catalog.items.find(t=>t.sourceItemId===id).reviewLocked,true);fs.writeFileSync(baseline,JSON.stringify({prototypeHashes:prototypeHashes(),normalized:catalog.items,raw:raw.items,totals:catalog.totals},null,2)+"\n");console.log("Saved locked catalog and prototype-output checkpoint");process.exit(0);
 }
-assert.deepEqual(prototypeHashes(),JSON.parse(fs.readFileSync(baseline,"utf8")).prototypeHashes,"Bank extension must preserve the tested prototype outputs");
+// 2026-11-23 사용자 결정("원본대로 바꿔")으로 원문 문항(variant 0, 보통 난이도)의 문장만 책과 같게 바꿨다(커밋 8ea552f6f).
+// E: 드라이브의 기준 파일은 그 전 값이므로, 이 한 칸만 바뀐 뒤의 값으로 대조하고 나머지 8칸은 그대로 보존을 확인한다.
+const intendedSourceTextChange={variant:0,level:1,before:"d90a4bb1d1b3f81036c996ed4ae9d0ee21a244a4babef523c745c4f423174cef",after:"ddab0fbf7596798be0afa4fb2d4d7c8cce54f6f440fd394fc04ea7926f6d7ae4"};
+const expectedPrototypeHashes=JSON.parse(fs.readFileSync(baseline,"utf8")).prototypeHashes.map(entry=>entry.variant===intendedSourceTextChange.variant&&entry.level===intendedSourceTextChange.level&&entry.sha256===intendedSourceTextChange.before?{...entry,sha256:intendedSourceTextChange.after}:entry);
+assert.deepEqual(prototypeHashes(),expectedPrototypeHashes,"Bank extension must preserve the tested prototype outputs");
 const code=fs.readFileSync(path.join(__dirname,"source-6-2-colored-cut-mission1-questions.js"),"utf8"),type={sourceItemId:id,generatorKey:key,reviewLocked:false};
 function setup(renderer=presentation,assetApi=assets){const calls=[],api={names:["old"],generatorKey(){calls.push(this);return"old-key";},generate(){calls.push(this);return"old-question";}};vm.runInNewContext(code,{window:{HSE_GENERATORS:api,HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_MODELS:models,HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_PRESENTATION:renderer,HSE_SOURCE_GRADE6_COLORED_CUT_MISSION1_ASSETS:assetApi}});return{api,calls};}
 const report={status:"running",cases:0,rejections:0,assets:0,legacyDelegations:0,prototypeOutputsPreserved:true,catalogUnlocked:false},{api,calls}=setup();
