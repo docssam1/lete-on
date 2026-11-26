@@ -23,9 +23,9 @@
     'ed-middle1-authored-r01':'ED:middle1', 'ed-middle1-authored-r02':'ED:middle1', 'ed-middle1-authored-r03':'ED:middle1', 'ed-middle1-authored-r04':'ED:middle1', 'ed-middle1-authored-final':'ED:middle1',
     'ed-common1-basic-r01':'ED:high-advance', 'ed-common1-basic-r02':'ED:high-advance', 'ed-common1-basic-r03':'ED:high-advance', 'ed-common1-basic-r04':'ED:high-advance',
     'ed-common1-basic-final':'ED:high-advance',
-    'dg-pre-high1-r01':'DG:pre-high1', 'dg-pre-high1-r02':'DG:pre-high1', 'dg-pre-high1-r03':'DG:pre-high1',
+    'dg-pre-high1-r01':'DG:pre-high1', 'dg-pre-high1-r02':'DG:pre-high1', 'dg-pre-high1-r03':'DG:pre-high1', 'dg-pre-high1-r04':'DG:pre-high1', 'dg-pre-high1-final':'DG:pre-high1',
     'dg-middle1-entry-r01':'DG:middle1', 'dg-middle1-entry-r02':'DG:middle1', 'dg-middle1-entry-r03':'DG:middle1', 'dg-middle1-entry-r04':'DG:middle1',
-    'sm-pre-middle-common1-r01':'SM:common1-basic', 'sm-pre-middle-common1-r02':'SM:common1-basic', 'sm-pre-middle-common1-r03':'SM:common1-basic', 'sm-pre-middle-common1-r04':'SM:common1-basic', 'dg-middle1-entry-final':'DG:middle1'
+    'sm-pre-middle-common1-r01':'SM:common1-basic', 'sm-pre-middle-common1-r02':'SM:common1-basic', 'sm-pre-middle-common1-r03':'SM:common1-basic', 'sm-pre-middle-common1-r04':'SM:common1-basic', 'sm-pre-middle-common1-final':'SM:common1-basic', 'dg-middle1-entry-final':'DG:middle1'
   };
   function examsFor(program, course, exams) {
     return exams.filter(e => e.programId === program &&
