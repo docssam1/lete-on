@@ -1627,7 +1627,7 @@ function rowSumsOnlyMatrixB8({ difficulty = 2 }) {
 function digitSwapAddB8({ difficulty = 2 }) {
   // □△ + ○ = △□ → ○ = 9, △ = □ + 1. 조건 하나로 답 하나를 고른다.
   const sh = shuffle(range(0, SHAPES.length - 1)).slice(0, 3);
-  const A = randomInt(1, 8), B = A + 1;
+  const A = randomInt(1, 7), B = A + 1; // 더하는 수가 9라 일의 자리 9(89)는 안 된다
   const conds = [
     { text: `${shapeWa(sh[0])} ${SHAPES[sh[1]].ch}의 합은 ${A + B}입니다.`, ok: (a, b) => a + b === A + B },
     { text: `${SHAPES[sh[0]].ch}${shapeEun(sh[1])} ${Math.floor((10 * A + B) / 10) * 10}보다 크고 ${Math.floor((10 * A + B) / 10) * 10 + 10}보다 작습니다.`, ok: (a, b) => 10 * a + b > Math.floor((10 * A + B) / 10) * 10 && 10 * a + b < Math.floor((10 * A + B) / 10) * 10 + 10 }
