@@ -9,7 +9,7 @@ const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
 test('all released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,57);
+  assert.equal(visible.length,60);
   assert.equal(new Set(visible).size,visible.length);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
@@ -45,12 +45,13 @@ test('Dolpa keeps common1 and middle transfer papers in their own available cour
 
 test('Deepthink starting and prehigh editions never cross course boundaries', () => {
   const middle = nav.examsFor('DG','middle1',mocks);
-  assert.deepEqual(nav.examsFor('SM','common1-basic',mocks).map(e=>e.id),['sm-pre-middle-common1-r01','sm-pre-middle-common1-r02','sm-pre-middle-common1-r03','sm-pre-middle-common1-r04']);
+  assert.deepEqual(nav.examsFor('SM','common1-basic',mocks).map(e=>e.id),['sm-pre-middle-common1-r01','sm-pre-middle-common1-r02','sm-pre-middle-common1-r03','sm-pre-middle-common1-r04','sm-pre-middle-common1-final']);
   const high = nav.examsFor('DG','pre-high1',mocks);
   assert.equal(middle.length,5);
   assert.deepEqual(middle.map(e=>e.id),['dg-middle1-entry-r01','dg-middle1-entry-r02','dg-middle1-entry-r03','dg-middle1-entry-r04','dg-middle1-entry-final']);
   assert.ok(middle.every(e => e.durationMinutes === 70));
-  assert.equal(high.length,3);
+  assert.equal(high.length,5);
+  assert.deepEqual(high.map(e=>e.id),['dg-pre-high1-r01','dg-pre-high1-r02','dg-pre-high1-r03','dg-pre-high1-r04','dg-pre-high1-final']);
   assert.equal(high[0].durationMinutes,90);
   assert.equal(nav.examsFor('DG','level-entry',mocks).length,0);
 });
@@ -152,9 +153,9 @@ test('Won middle21 final follows four original rounds with its own protected pag
 });
 
 
-test('SM common1 exposes all four mapped editions and avoids claiming an official section ratio',()=>{
+test('SM common1 exposes all five mapped editions and avoids claiming an official section ratio',()=>{
  const rounds=nav.examsFor('SM','common1-basic',mocks);
- assert.deepEqual(rounds.map(e=>e.id),['sm-pre-middle-common1-r01','sm-pre-middle-common1-r02','sm-pre-middle-common1-r03','sm-pre-middle-common1-r04']);
+ assert.deepEqual(rounds.map(e=>e.id),['sm-pre-middle-common1-r01','sm-pre-middle-common1-r02','sm-pre-middle-common1-r03','sm-pre-middle-common1-r04','sm-pre-middle-common1-final']);
  const r03=rounds[2];
  const r04=rounds[3];
  assert.deepEqual([r04.questionCount,r04.durationMinutes,r04.pageCount,r04.answerPageCount,r04.analysisPageCount],[30,180,16,16,4]);
