@@ -106,9 +106,9 @@
       examNature: "중1 시작반은 초5·초6 누적, 예비고1은 공통수학 연결형 입반 테스트",
       preparation: ["단원별 풀이보다 개념 사이 연결을 설명", "함수 그래프와 부등식 조건을 함께 해석", "한 문제 안에서 여러 경우를 끝까지 검토"],
       courses: [
-        { id: "middle1", label: "중1 시작반", scope: "초5·초6 누적 · 각 30문항 · 70분", status: "guide" },
+        { id: "middle1", label: "중1 시작반", scope: "초5·초6 누적 · 30문항 · 70분", status: "guide" },
         { id: "level-entry", label: "레벨 입학", scope: "중3 심화·공통수학 연결", status: "guide" },
-        { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 도형의 방정식", status: "guide" }
+        { id: "pre-high1", label: "예비고1 입학", scope: "공통수학1·공통수학2 전 범위", status: "guide" }
       ],
       channel: { label: "깊은생각 공식 입학테스트 안내", url: "https://apply.dailystudy.com/entrance-test/info/?academy=master", status: "official" },
       updates: []
@@ -118,8 +118,8 @@
       shortName: "생수",
       publicName: "생각하는수학",
       accent: "#286d75",
-      examNature: "대수 15문항과 기하 15문항을 나누어 중등 누적 정확도와 조건 결합을 함께 보는 공통수학 입반형",
-      preparation: ["대수·기하를 각각 15문항 단위로 점검", "구판보다 강화된 조건 결합과 표현 전환 연습", "삼각비·원·함수 등 기하 추론의 풀이 근거를 남김", "지원 과정과 반을 확정한 뒤 수업 속도·과제·보충 방식을 직접 확인"],
+      examNature: "대수·기하를 포함한 중등 누적 정확도와 조건 결합을 함께 보는 공통수학 입반 연습",
+      preparation: ["대수·기하를 함께 점검", "구판보다 강화된 조건 결합과 표현 전환 연습", "삼각비·원·함수 등 기하 추론의 풀이 근거를 남김", "지원 과정과 반을 확정한 뒤 수업 속도·과제·보충 방식을 직접 확인"],
       courses: [
         { id: "common1-basic", label: "공통수학1 기본 입반", scope: "중2-2·중3-1·중3-2", status: "guide" },
         { id: "common2", label: "공통수학2 과정", scope: "회차별 공식 범위 확인", status: "guide" }

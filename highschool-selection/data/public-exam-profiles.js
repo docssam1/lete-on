@@ -46,10 +46,10 @@
     },
     "DG-DAECHI-PREHIGH-2027-OFFICIAL": {
       "title": "깊은생각 대치 2027 예비고1 입학테스트 범위",
-      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master&grade=M3",
+      "url": "https://apply.dailystudy.com/entrance-test/info/?academy=master&grade=H1",
       "grade": "A",
       "publishedAt": null,
-      "checkedAt": "2026-11-06"
+      "checkedAt": "2026-11-26"
     },
     "SM-CM1-OCT-2026-OFFICIAL": {
       "title": "생수 대치 본관 초6(예비중1) 공통수학1 10월 개강",
@@ -360,9 +360,9 @@
       code: "DG",
       publicName: "깊은생각 입학테스트 대비",
       eyebrow: "과정별 입학테스트",
-      summary: "대치 2027 예비고1은 공통수학1과 공통수학2 도형의 방정식을 점검합니다. 초등관 중1 시작반은 별도 시험지입니다.",
+      summary: "대치 2027 예비고1 범위는 공통수학1·공통수학2 전 범위입니다. 초등관 중1 시작반은 별도 시험지입니다.",
       facts: [
-        { label: "대치 2027 예비고1 범위", value: "공통수학1 + 공통수학2 도형의 방정식", state: "verified", sourceIds: ["DG-DAECHI-PREHIGH-2027-OFFICIAL"] },
+        { label: "대치 2027 예비고1 범위", value: "공통수학1 + 공통수학2 전 범위", state: "verified", sourceIds: ["DG-DAECHI-PREHIGH-2027-OFFICIAL"] },
         { label: "대치 공식 시험시간", value: "초등관 30문항·70분 / 중고등 30문항·90분", state: "verified", sourceIds: ["DG-DAECHI-ENTRY-OFFICIAL"] },
         { label: "강조 유형", value: "이차함수·여러 가지 부등식의 연결", state: "observed", sourceIds: [] },
         { label: "분당 범위", value: "예비고1 공식 조회에 등록값 없음 · 대치 범위와 별도 확인", state: "needs-review", sourceIds: [] }
@@ -382,11 +382,11 @@
     {
       code: "SM",
       publicName: "생수수학 공통수학1 입반 대비",
-      eyebrow: "중2-2~중3-2 · 대수 15 + 기하 15",
+      eyebrow: "중2-2~중3-2",
       summary: "현재 공지 범위와 2022 구판 모의 참고지 2회를 분리해 감사하고, 현재 시험이 더 어렵다는 사용자 관찰을 제작 난도에만 반영합니다.",
       facts: [
-        { label: "현재 시험 범위", value: "중2-2 · 중3-1 · 중3-2", state: "verified", sourceIds: ["SM-CM1-OCT-2026-OFFICIAL"] },
-        { label: "현재 시험 구성", value: "대수 15 + 기하 15 · 총 30문항 · 180분", state: "verified", sourceIds: ["SM-CM1-OCT-2026-OFFICIAL"] },
+        { label: "모의고사 범위", value: "중2-2 · 중3-1 · 중3-2", state: "confirmed", sourceIds: [] },
+        { label: "모의고사 구성", value: "30문항 · 180분", state: "confirmed", sourceIds: [] },
         { label: "구판 참고지 감사", value: "2022 모의 참고지 2회 · 60문항 세부유형 후보 분류", state: "observed", sourceIds: [] },
         { label: "현행 난도 보정", value: "사용자 관찰을 반영해 조건 결합과 풀이 단계를 강화", state: "confirmed", sourceIds: [] }
       ],
