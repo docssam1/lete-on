@@ -5366,7 +5366,8 @@ function w2CellHtml(p, num, threadId, isVerticalRound, isFirstRamp, layoutType, 
     if(threadId==='NS3'&&!W2_C0&&p.tex)inner+=`<div class="nm-w2-tex" data-tex="${esc(texDisplay(p.tex))}"></div>`;
   } else if(p.scatterPlot){
     cls += ' nm-w2-item-vis nm-w2-item-scatter';
-    inner = scatterPlotHtml(p,false) + `<div class="nm-w2-tex" data-tex="${esc(texDisplay(String(p.tex||'')))}"></div>`;
+    /* 산점도 아래 식도 그래프 문항처럼 texChainHtml — 「⇒ □」가 다음 줄로 내려갈 수 있게(2026-11-26, 과정 37 영어·중국어판 칸 가로 넘침) */
+    inner = scatterPlotHtml(p,false) + `<div class="nm-w2-graph-tex">${texChainHtml(texDisplay(String(p.tex||'')))}</div>`;
   } else if(p.graph){
     cls += ' nm-w2-item-vis';
     inner = graphSvg(p.graph) + `<div class="nm-w2-graph-tex">${texChainHtml(texDisplay(String(p.tex||'')))}</div>`;

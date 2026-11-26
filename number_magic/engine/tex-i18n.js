@@ -79,8 +79,9 @@
     { re: rx(T('을 ') + String.raw`\s*([xy])\s*` + T('축 방향으로 ') + String.raw`\s*(-?\d+)\s*` + T('만큼')),
       en: '\\text{ shifted by } $2 \\text{ along the }$1\\text{-axis}', zh: '\\text{ 沿 }$1\\text{ 轴方向平移 } $2 \\text{ 个单位}' },
     { re: rx(T('을 ') + String.raw`\s*x\s*` + T('축으로 ') + String.raw`\s*(-?\d+),\s*\\;\s*y\s*` + T('축으로 ') + String.raw`\s*(-?\d+)`),
-      en: '\\text{ shifted } $1 \\text{ along the }x\\text{-axis and } $2 \\text{ along the }y\\text{-axis}',
-      zh: '\\text{ 沿 }x\\text{ 轴平移 } $1 \\text{ 个单位，沿 }y\\text{ 轴平移 } $2 \\text{ 个单位}' },
+      /* 영어·중국어는 길어 칸을 넘었다(과정 37, 2026-11-26) — (x, y) 방향 이동 짝으로 짧게 */
+      en: '\\text{ shifted by }($1,\\,$2)',
+      zh: '\\text{ 平移 }($1,\\,$2)' },
     /* y=5x를 8만큼 위로 */
     { re: rx(T('를 ') + String.raw`\s*(-?\d+)` + T('만큼 (위로|아래로)')),
       en: (m, n, d) => `\\text{ shifted ${d === '위로' ? 'up' : 'down'} by }${n}`,
@@ -126,7 +127,7 @@
     { re: rx(String.raw`x` + T('가 커질 때 점들의 전체 방향을 본다')),
       en: '\\text{look at the overall direction of the points as }x\\text{ gets larger}', zh: '\\text{观察 }x\\text{ 增大时各点的整体走向}' },
     { re: rx(T('순서쌍 ') + String.raw`(\d+)` + T('개를 모두 찍고, 찍은 점의 수')),
-      en: '\\text{plot all }$1\\text{ ordered pairs; number of points plotted}', zh: '\\text{把 }$1\\text{ 个有序数对全部画出，画出的点数}' },
+      en: '\\text{plot all }$1\\text{ pairs; points plotted}', zh: '\\text{画出全部 }$1\\text{ 个数对，点数}' },
     { re: rx(T('첫 자리부터 선택지는 ') + String.raw`([^\\]*?)` + T('개')),
       en: '\\text{choices starting from the first place: }$1', zh: '\\text{从第一位起的选择数：}$1' },
     { re: rx(T('고정한 뒤 남은 빈자리 ') + String.raw`(\d+)` + T('개')),
@@ -217,9 +218,10 @@
     '그린 상자그림에서 다시 읽기:': { en: 'Reading it back from the box plot we drew:', zh: '从画出的箱线图中重新读出：' },
     '찍은 점의 수': { en: 'number of points plotted', zh: '画出的点数' },
     '점의 수': { en: 'number of points', zh: '点的个数' },
-    '①양의 상관  ②음의 상관  ③없음': { en: '① positive correlation  ② negative correlation  ③ none', zh: '①正相关  ②负相关  ③无相关' },
-    '①강한 양  ②약한 양  ③없음': { en: '① strong positive  ② weak positive  ③ none', zh: '①强正相关  ②弱正相关  ③无相关' },
-    '④약한 음  ⑤강한 음': { en: '④ weak negative  ⑤ strong negative', zh: '④弱负相关  ⑤强负相关' },
+    '①양의 상관  ②음의 상관  ③없음': { en: '① positive  ② negative  ③ none', zh: '①正相关  ②负相关  ③无相关' },
+    '①강한 양  ②약한 양  ③없음': { en: '① strong +  ② weak +  ③ none',   // 한국어처럼 줄인 말 — 풀어 쓰면 영어판 칸을 넘었다(2026-11-26 과정 37)
+    zh: '①强正相关  ②弱正相关  ③无相关' },
+    '④약한 음  ⑤강한 음': { en: '④ weak −  ⑤ strong −', zh: '④弱负相关  ⑤强负相关' },
     '상관관계 없음': { en: 'no correlation', zh: '无相关' },
     '약한 음의 상관관계': { en: 'weak negative correlation', zh: '弱负相关' }, '강한 음의 상관관계': { en: 'strong negative correlation', zh: '强负相关' },
 
