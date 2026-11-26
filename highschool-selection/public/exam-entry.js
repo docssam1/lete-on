@@ -14,7 +14,7 @@
   const q=new URLSearchParams({action,...query}),headers={apikey:KEY};if(teacher?staff:token)headers.Authorization='Bearer '+(teacher?staff:token);if(body)headers['Content-Type']='application/json';
   const response=await fetch(ENDPOINT+'?'+q,{method,headers,body:body?JSON.stringify(body):undefined,cache:'no-store'});const data=await response.json();if(!response.ok)throw Object.assign(new Error(errors[data.error]||'연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'),{code:data.error});return data;
  }
- function run(fn){return async event=>{event?.preventDefault();const button=event?.submitter||(event?.type==='click'?event.target.closest?.('button'):null);try{if(button){button.disabled=true;button.setAttribute('aria-busy','true');}message('');await fn(event);}catch(error){if(error.code==='login_required')logout(false);if(error.code==='exam_version_changed')versionChanged();message(error.message||'연결을 확인해 주세요.');if($('save-confirm').open)$('save-error').textContent=error.message;}finally{if(button){button.disabled=!versionValid&&['submit-responses','confirm-save'].includes(button.id);button.removeAttribute('aria-busy');}}};}
+ function run(fn){return async event=>{event?.preventDefault();const button=event?.submitter||(event?.type==='click'?event.target.closest?.('button'):null);try{if(button){button.disabled=true;button.setAttribute('aria-busy','true');}message('');await fn(event);}catch(error){if(error.code==='login_required')logout(false);if(error.code==='exam_version_changed')versionChanged();message(error.message||'연결을 확인해 주세요.');if($('save-confirm').open)$('save-error').textContent=error.message;}finally{if(button){button.disabled=(!versionValid&&['submit-responses','confirm-save'].includes(button.id))||($('exam-view').getAttribute('aria-busy')==='true'&&['view-paper','view-answers','view-analysis'].includes(button.id));button.removeAttribute('aria-busy');}}};}
  function logout(server=true){if(server&&token)api('logout',{method:'POST'}).catch(()=>{});token='';staff='';sessionStorage.removeItem('highselectExamToken');sessionStorage.removeItem('highselectExamStaff');for(const key of Object.keys(sessionStorage))if(key.startsWith('highselectDraft:')||key.startsWith('highselectReading:'))sessionStorage.removeItem(key);requestedExam=(document.body.dataset.view==='report-view'&&reportExamId)||current?.exam?.id||requestedExam||new URLSearchParams(location.search).get('exam');current=null;reportExamId='';reportAttemptId='';savedMarks.clear();mountedVersion='';documentRequest++;examRequest++;pageGeneration++;pagePositions={};$('paper-pages').replaceChildren();$('response-fields').replaceChildren();$('report-content').replaceChildren();$('exam-list').replaceChildren();$('past-results').replaceChildren();$('save-confirm').close();if(requestedExam){const url=new URL(location.href);url.searchParams.set('exam',requestedExam);history.replaceState(null,'',url.pathname+url.search);}show('login-view',{replace:true});document.title='모의고사 | LETE-ON';renderEntrySelection();}
  $('logout').onclick=()=>logout();
  function tab(teacher){$('student-login').hidden=teacher;$('teacher-login').hidden=!teacher;$('student-tab').setAttribute('aria-pressed',String(!teacher));$('teacher-tab').setAttribute('aria-pressed',String(teacher));message('');}
@@ -155,8 +155,12 @@
    return false;
   }catch(error){if(error.code==='login_required')throw error;return true;}
  }
+ function setExamLoading(loading){
+  $('exam-view').setAttribute('aria-busy',String(loading));for(const kind of ['paper','answers','analysis'])$('view-'+kind).disabled=loading;
+ }
  async function openExam(id,{record=true}={}){
-  rememberReading();const request=++examRequest;const data=await api('manifest',{query:{exam:id}});if(request!==examRequest)return;
+  rememberReading();const request=++examRequest;setExamLoading(true);try{
+  const data=await api('manifest',{query:{exam:id}});if(request!==examRequest)return;
   const savedLoadFailed=await loadSavedMarks(data,request);if(request!==examRequest)return;
   current=data;assetKind='paper';pagePositions={};readingPositions={};const reading=loadReading();readingPositions=reading?.positions||{};mountedVersion='';versionValid=true;documentRequest++;show('exam-view',{record});const e=current.exam;
   $('exam-title').textContent=examTitle(e);document.title=examTitle(e)+' | LETE-ON';setPane('paper');
@@ -168,6 +172,7 @@
   $('submit-responses').disabled=false;$('confirm-save').disabled=false;updateCheck();fitViewport();
   if(matchMedia('(max-width:800px)').matches&&innerHeight-$('paper-viewport').getBoundingClientRect().top-144<200)focusReadingArea();
   scheduleRenew();if(reading&&reading.kind!=='paper'&&current.exam[{answers:'answerPageCount',analysis:'analysisPageCount'}[reading.kind]])await showDocument(reading.kind,{capture:false});
+  }finally{if(request===examRequest)setExamLoading(false);}
  }
  function saveDraft(){updateCheck();try{sessionStorage.setItem(draftKey(),JSON.stringify(responses()));$('draft-status').textContent='이 탭에 임시 저장됨 · 결과 저장 전';}catch{$('draft-status').textContent='임시 저장을 사용할 수 없습니다. 결과 저장을 눌러 주세요.';}}
  $('response-fields').onchange=saveDraft;
