@@ -806,8 +806,9 @@ const DAILY_MIN_TIERS = { level1:1, level2:1, level3:1, challenge:1 };
 const sessionCount = ss => [...ss.school, ...ss.strategy.practice, ...ss.application].reduce((a, d) => a + d.count, 0);
 /* 하루 20문항 채우기 한 걸음 — 한 칸을 6 늘리면 true(초등 회차 · 중고등 학습 묶음이 같이 쓴다).
    차례: 교과(적은 것부터, 같으면 어려운 것) → 적용·독셈(그리기 제외) → 복습(18까지). */
-function growSession(ss, moreMax){
-  const cap = d => COUNT_CAP[d.t + '@' + d.lv] || 36;
+function growSession(ss, moreMax, wide){
+  const cap = d => (wide && LESSON_WIDE_CAP[d.t + '@' + d.lv]) || COUNT_CAP[d.t + '@' + d.lv] || 36;
+  const threadMax = wide ? 84 : 42;
   const all = [...ss.school, ...ss.strategy.practice, ...ss.application];
   const own = ss.school.filter(d => !d.review);
   const more = [...ss.application.filter(d => d.kind !== 'drawing'), ...ss.strategy.practice];
@@ -815,12 +816,12 @@ function growSession(ss, moreMax){
   const threadSum = t => all.filter(x => x.t === t).reduce((a, x) => a + x.count, 0);
   /* 쉬운 유형은 어려운 유형보다 많아지지 않게(check-session-roles 「어려운 유형이 쉬운 유형보다 적게」) */
   const hard = own.filter(d => d.difficulty === 'hard'), hardMin = hard.length ? Math.min(...hard.map(d => d.count)) : Infinity;
-  const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 42 && !(d.difficulty === 'easy' && d.count + 6 > hardMin);
+  const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= threadMax && !(d.difficulty === 'easy' && d.count + 6 > hardMin);
   /* 그래도 모자라면 복습 칸을 18까지 늘린다 — 교과·적용·독셈이 모두 상한에 막힌 회차(과정 26~28 등) */
   const reviews = ss.school.filter(d => d.review);
   const c = own.slice().sort((a, b) => a.count - b.count || (b.difficulty === 'hard') - (a.difficulty === 'hard')).find(room)
     || more.slice().sort((a, b) => a.count - b.count).find(d => room(d) && !(d.count + 6 > (moreMax || Infinity)))
-    || reviews.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(18, cap(d)) && threadSum(d.t) + 6 <= 42);
+    || reviews.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(wide ? 30 : 18, cap(d)) && threadSum(d.t) + 6 <= threadMax);
   if(!c) return false;
   c.count += 6; return true;
 }
@@ -835,6 +836,91 @@ function sessionSeconds(ss, tier){
    그래서 묶음마다 5일 × 20 = 100문항이 될 때까지, 그 묶음 회차 중 가장 적은 회차부터 한 칸씩 6 늘린다(초등과 같은 growSession).
    묶음 나누기(high-pacing.js)는 채우기 전 시간(baseMinutes)으로 하므로 몇 번 불러도 같은 묶음이다. */
 const LESSON_DAILY_DAYS = 5;
+/* 중고등 묶음 채우기 두 번째 단계의 칸 상한 = (서로 다른 문항 수 − 예시·따라 풀기 4)를 6의 배수로 내림, 72까지.
+   생성 6000회로 잰 값(2026-11-26, 같은 방법 scripts/report-count-cap.js) — 100문항에 못 닿던 묶음의 교과 칸만. */
+const LESSON_WIDE_CAP = {
+  'MD113@3':72,
+  'MD119@3':72,
+  'MD32@3':72,   // C51-4 복습 칸(두 번째 단계 30까지)
+  'MD124@3':72,
+  'MD127@3':72,
+  'MD129@3':72,
+  'MD13@4':72,
+  'MD13@5':72,
+  'MD13@6':72,
+  'MD143@3':72,
+  'MD144@3':72,
+  'MD151@3':72,
+  'MD153@2':72,
+  'MD153@3':72,
+  'MD154@1':72,
+  'MD154@2':72,
+  'MD154@3':72,
+  'MD155@1':72,
+  'MD156@2':72,
+  'MD157@1':72,
+  'MD157@2':72,
+  'MD158@1':72,
+  'MD158@2':72,
+  'MD15@1':72,
+  'MD15@2':72,
+  'MD15@3':72,
+  'MD15@4':72,
+  'MD15@5':72,
+  'MD15@6':72,
+  'MD16@1':72,
+  'MD16@2':72,
+  'MD16@3':72,
+  'MD17@1':72,
+  'MD17@2':72,
+  'MD17@3':72,
+  'MD19@1':72,
+  'MD19@2':72,
+  'MD19@3':66,
+  'MD20@1':72,
+  'MD20@2':72,
+  'MD20@3':36,
+  'MD24@3':72,
+  'MD30@3':72,
+  'MD43@1':72,
+  'MD43@2':72,
+  'MD43@3':72,
+  'MD44@1':72,
+  'MD44@2':72,
+  'MD44@3':72,
+  'MD44@4':72,
+  'MD44@5':72,
+  'MD45@1':72,
+  'MD45@2':72,
+  'MD46@1':72,
+  'MD46@2':72,
+  'MD46@3':72,
+  'MD58@1':72,
+  'MD58@2':72,
+  'MD59@1':72,
+  'MD59@2':72,
+  'MD60@2':72,
+  'MD63@3':72,
+  'MD64@4':72,
+  'MD67@1':72,
+  'MD67@2':72,
+  'MD67@3':72,
+  'MD79@2':42,
+  'MD79@3':72,
+  'MD79@4':42,
+  'MD84@2':72,
+  'MD84@3':72,
+  'MD84@4':72,
+  'MD84@5':72,
+  'MD84@6':72,
+  'MD88@3':72,
+  'MD88@4':54,
+  'MD88@5':72,
+  'MD92@3':72,
+  'MD9@2':72,
+  'MD9@3':72,
+  'MD9@4':72,
+};
 function fillLessonDaily(course, sourceIndices){
   const tier = course && course.tier;
   const list = (sourceIndices || []).map(i => course.sessions[i]).filter(ss => ss && !ss.test && ss.school && ss.strategy && ss.application);
@@ -844,6 +930,13 @@ function fillLessonDaily(course, sourceIndices){
   for(let guard = 0; guard < 400 && lessonCount() < target; guard++){
     /* 중고등 적용·독셈 칸은 18까지만 — 적용 칸은 서로 다른 문항이 교과보다 적어 30이면 1배에서도 같은 문제가 났다(C33 MD71 L3 · C37 MD77 L3) */
     const grew = list.slice().sort((a, b) => sessionCount(a) - sessionCount(b)).some(ss => growSession(ss, 18));
+    if(!grew) break;
+  }
+  /* 그래도 모자라면(한 회차가 한 스레드의 여러 레벨로만 짜였거나, 칸이 36에 막힘) 서로 다른 문항을 잰 상한
+     LESSON_WIDE_CAP 까지 칸을 늘리고 같은 스레드 합은 84까지 — 레벨끼리 겹치는 문항이 거의 없음을 잰 뒤다(2026-11-26).
+     첫 단계로 이미 100에 닿은 묶음은 이 단계를 타지 않아 예전 그대로다. */
+  for(let guard = 0; guard < 400 && lessonCount() < target; guard++){
+    const grew = list.slice().sort((a, b) => sessionCount(a) - sessionCount(b)).some(ss => growSession(ss, 18, true));
     if(!grew) break;
   }
   list.forEach(ss => {
