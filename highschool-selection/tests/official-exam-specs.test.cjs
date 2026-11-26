@@ -10,8 +10,8 @@ const mocks = globalThis.HIGHSELECT_AVAILABLE_MOCKS;
 const keyFor = e => e.id.startsWith("wm-middle31-basic-") ? "WM:middle31-basic" : e.id === "wm-middle22-basic-r01" ? "WM:middle22-basic" : e.id.startsWith("ed-middle1-authored-") ? "ED:middle1" : e.id.startsWith("dp-middle22-transfer-") ? "DP:middle-transfer" : e.id.startsWith("wm-common1-basic-") ? "WM:common1-basic" : ({SH:"SH:high-selection",DP:"DP:common1-basic",WM:"WM:middle21-basic",ED:"ED:high-advance",SM:"SM:common1-basic"}[e.programId] || (e.id.startsWith("dg-middle1-") ? "DG:middle1" : "DG:pre-high1"));
 
 test("every released mock agrees with its own branch/course time and count", () => {
-  assert.equal(mocks.length, 48);
-  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 1890);
+  assert.equal(mocks.length, 57);
+  assert.equal(mocks.reduce((n,e) => n + e.questionCount, 0), 2160);
   mocks.forEach(e => {
     const s = specs.editions?.[e.id] || specs.courses[keyFor(e)];
     assert.ok(s, e.id);
@@ -78,8 +78,10 @@ test("Won transfer levels keep their different geometry scopes and breaks", () =
   assert.equal(m31.scopeRevisedAt,'2026-09-03');assert.notEqual(m22.sourceUrl,m31.sourceUrl);
 });
 
-test("Deepthink current prehigh scope excludes the old extra middle3 range", () => {
-  assert.equal(specs.courses["DG:pre-high1"].scope, "공통수학1 + 공통수학2 도형의 방정식");
+test("Deepthink current prehigh scope covers common1/common2 and preserves the legacy first edition", () => {
+  assert.equal(specs.courses["DG:pre-high1"].scope, "공통수학1 + 공통수학2 전 범위");
+  assert.equal(specs.editions["dg-pre-high1-r01"].scopeState,"source-paper");
+  assert.equal(specs.editions["dg-pre-high1-r01"].scope,"공통수학1 + 공통수학2 도형의 방정식");
   const dg = globalThis.HIGHSELECT_PUBLIC_PROFILES.profiles.find(p => p.code === "DG");
   const fact = dg.facts.find(f => f.label === "대치 2027 예비고1 범위");
   assert.equal(fact.value, specs.courses["DG:pre-high1"].scope);
