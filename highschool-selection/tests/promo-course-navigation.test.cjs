@@ -9,7 +9,7 @@ const programs = globalThis.HIGHSELECT_ACADEMY_ENGAGEMENT.programs;
 
 test('all released editions remain reachable in exactly one advertised course', () => {
   const visible = programs.flatMap(p => p.courses.flatMap(c => nav.examsFor(p.code,c.id,mocks).map(e => e.id)));
-  assert.equal(visible.length,50);
+  assert.equal(visible.length,52);
   assert.equal(new Set(visible).size,visible.length);
   assert.deepEqual([...visible].sort(),mocks.map(e => e.id).sort());
 });
@@ -46,7 +46,8 @@ test('Dolpa keeps common1 and middle transfer papers in their own available cour
 test('Deepthink starting and prehigh editions never cross course boundaries', () => {
   const middle = nav.examsFor('DG','middle1',mocks);
   const high = nav.examsFor('DG','pre-high1',mocks);
-  assert.equal(middle.length,2);
+  assert.equal(middle.length,3);
+  assert.deepEqual(middle.map(e=>e.id),['dg-middle1-entry-r01','dg-middle1-entry-r02','dg-middle1-entry-r03']);
   assert.ok(middle.every(e => e.durationMinutes === 70));
   assert.equal(high.length,1);
   assert.equal(high[0].durationMinutes,90);
@@ -147,4 +148,14 @@ test('Won middle21 final follows four original rounds with its own protected pag
  assert.deepEqual([final.pageCount,final.answerPageCount,final.analysisPageCount],[19,20,5]);
  assert.deepEqual(nav.selectionForExam(final.id),{program:'WM',course:'middle21-basic'});
  for(const course of ['common1-basic','middle22-basic','middle31-basic','middle-transfer'])assert.ok(nav.examsFor('WM',course,mocks).every(e=>e.id!==final.id));
+});
+
+
+test('SM common1 exposes all three mapped r03 editions and keeps its stated practice scope',()=>{
+ const rounds=nav.examsFor('SM','common1-basic',mocks);
+ assert.deepEqual(rounds.map(e=>e.id),['sm-pre-middle-common1-r01','sm-pre-middle-common1-r02','sm-pre-middle-common1-r03']);
+ const r03=rounds[2];
+ assert.deepEqual(nav.selectionForExam(r03.id),{program:'SM',course:'common1-basic'});
+ assert.deepEqual([r03.questionCount,r03.durationMinutes,r03.pageCount,r03.answerPageCount,r03.analysisPageCount],[30,180,15,16,4]);
+ assert.match(r03.scope,/기존 중2-2·중3-1·중3-2 대비 연속성/);
 });

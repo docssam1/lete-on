@@ -24,9 +24,14 @@ test('final metadata appends as round 50 and binds 30 self-check items, 100 minu
  assert.equal(baseline.originMainCommit,'d4eb98fdcf088c07fb8c82f9477b61865dff117e');
  assert.equal(baseline.availableMocksCount,49);assert.equal(baseline.questionCount,1920);
  assert.equal(baseline.recordsCanonicalSHA256,'39a303366b1b9b8ba1c8761b0a04a46f9bc46e2ecd41c66c0588413a7a248781');
- assert.equal(rows.length,50);assert.equal(rows.reduce((n,x)=>n+x.questionCount,0),1950);
- assert.deepEqual(rows.slice(0,-1).map(x=>x.id),baseline.orderedIds);
- assert.equal(digest(rows.slice(0,-1)),'39a303366b1b9b8ba1c8761b0a04a46f9bc46e2ecd41c66c0588413a7a248781');
+ const baselineRows=baseline.orderedIds.map(id=>rows.find(x=>x.id===id));
+ assert.ok(baselineRows.every(Boolean),'every baseline ID remains in the catalog');
+ assert.deepEqual(baselineRows.map(x=>x.id),baseline.orderedIds);
+ assert.equal(baselineRows.length,49);assert.equal(baselineRows.reduce((n,x)=>n+x.questionCount,0),1920);
+ assert.equal(digest(baselineRows),'39a303366b1b9b8ba1c8761b0a04a46f9bc46e2ecd41c66c0588413a7a248781');
+ const historical50=[...baselineRows,final];
+ assert.equal(historical50.length,50);assert.equal(historical50.reduce((n,x)=>n+x.questionCount,0),1950);
+ assert.deepEqual(historical50.map(x=>x.id),[...baseline.orderedIds,FINAL_ID]);
  assert.deepEqual(final,{id:FINAL_ID,programId:'ED',title:'이든 공통수학1 기본반 최종(마무리)',scope:'중2·중3 전 과정 · 대수20·기하10',mode:'released',durationMinutes:100,sectionMinutes:null,breakMinutes:0,questionCount:30,pageCount:12,answerPageCount:16,analysisPageCount:4,responseMode:'self-check'});
 });
 test('all pre-existing 49 course mappings and grouped order are preserved; final joins ED high-advance last',()=>{
@@ -34,7 +39,8 @@ test('all pre-existing 49 course mappings and grouped order are preserved; final
  for(const id of baseline.orderedIds)assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam(id))),baseline.courseSelectionById[id],id);
  for(const [key,ids] of Object.entries(baseline.courseGroups)){
   const [program,course]=key.split(':');
-  assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor(program,course,rows))).map(x=>x.id).filter(id=>id!==FINAL_ID),ids,key);
+  const baselineSet=new Set(baseline.orderedIds);
+  assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor(program,course,rows))).map(x=>x.id).filter(id=>baselineSet.has(id)),ids,key);
  }
  assert.deepEqual(JSON.parse(JSON.stringify(nav.selectionForExam(FINAL_ID))),{program:'ED',course:'high-advance'});
  assert.deepEqual(JSON.parse(JSON.stringify(nav.examsFor('ED','high-advance',rows))).map(x=>x.id),['ed-common1-basic-r01','ed-common1-basic-r02','ed-common1-basic-r03','ed-common1-basic-r04',FINAL_ID]);
@@ -43,16 +49,21 @@ test('both browser entries use coherent version tags and the actual public surfa
  for(const file of ['promo/index.html','public/exam-entry.html']){
   const html=fs.readFileSync(path.join(root,file),'utf8');
   const tags=[...html.matchAll(/<script\b[^>]*\bsrc=["']([^"']+)["'][^>]*>/g)].map(m=>m[1]);
+  const cacheVersions=[];
   for(const name of ['available-mocks.js','course-navigation.js']){
    const found=tags.filter(src=>src.split('?')[0].endsWith(name));assert.equal(found.length,1,`${file} ${name}`);
-   assert.equal(new URL(found[0],'https://candidate.invalid/').searchParams.get('v'),VERSION,`${file} ${name} cache version`);
+   const version=new URL(found[0],'https://candidate.invalid/').searchParams.get('v');
+   assert.ok(version,`${file} ${name} has a non-empty cache version`);cacheVersions.push(version);
   }
+  assert.equal(cacheVersions[0],cacheVersions[1],`${file} scripts share a cache version`);
+  if(file==='promo/index.html')globalThis.promoVersions=cacheVersions;
+  else assert.deepEqual(cacheVersions,globalThis.promoVersions,'both HTML entrypoints share their cache version');
  }
  const surfaces=['data/available-mocks.js','promo/course-navigation.js','promo/index.html','public/exam-entry.html','README.md','docs/EDEN_COMMON1_FINAL_RELEASE_PREP_20261126.md'].map(f=>fs.readFileSync(path.join(root,f),'utf8')).join('\n');
  assert.deepEqual(leakCounts(surfaces),{directDriveURLs:0,directPDFOrZIPLinks:0,privateObjectPaths:0,privatePayloadKeys:0});
  assert.deepEqual(Object.keys(final).sort(),['id','programId','title','scope','mode','durationMinutes','sectionMinutes','breakMinutes','questionCount','pageCount','answerPageCount','analysisPageCount','responseMode'].sort());
  const doc=fs.readFileSync(path.join(root,'docs/EDEN_COMMON1_FINAL_RELEASE_PREP_20261126.md'),'utf8');
- assert.match(doc,/현재 공개 목록은 49회·1,920문항/);assert.match(doc,/실제 공개 또는 운영 승인을 뜻하지 않는다/);
+ assert.match(doc,/당시 공개 목록은 49회·1,920문항/);assert.match(doc,/실제 사이트에 반영되기 전이었다/);
 });
 test('synthetic privacy fixtures prove direct-link, object-path and private-payload checks reject forbidden patterns',()=>{
  const synthetic={
