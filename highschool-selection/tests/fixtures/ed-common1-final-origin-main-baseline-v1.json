@@ -1,0 +1,331 @@
+{
+  "source": "origin/main highschool-selection subtree",
+  "originMainCommit": "d4eb98fdcf088c07fb8c82f9477b61865dff117e",
+  "availableMocksCount": 49,
+  "questionCount": 1920,
+  "recordsCanonicalSHA256": "39a303366b1b9b8ba1c8761b0a04a46f9bc46e2ecd41c66c0588413a7a248781",
+  "orderedIds": [
+    "sh-selection-r01",
+    "sh-selection-r02",
+    "sh-selection-r03",
+    "sh-selection-r04",
+    "sh-selection-r05",
+    "dp-common1-v14-pilot",
+    "dp-common1-r02",
+    "dp-common1-r03",
+    "dp-common1-r04",
+    "dp-common1-final",
+    "wm-middle21-basic-mixed-r01",
+    "wm-middle21-basic-mixed-r02",
+    "wm-middle21-basic-mixed-r03",
+    "wm-middle21-basic-mixed-r04",
+    "wm-middle21-basic-final",
+    "ed-common1-basic-r01",
+    "ed-common1-basic-r02",
+    "ed-common1-basic-r03",
+    "ed-common1-basic-r04",
+    "dg-pre-high1-r01",
+    "sm-pre-middle-common1-r01",
+    "sm-pre-middle-common1-r02",
+    "dg-middle1-entry-r01",
+    "dg-middle1-entry-r02",
+    "wm-common1-basic-r01",
+    "wm-common1-basic-r02",
+    "wm-common1-basic-r03",
+    "wm-common1-basic-r04",
+    "wm-common1-basic-final",
+    "dp-middle22-transfer-r01",
+    "dp-middle22-transfer-r02",
+    "dp-middle22-transfer-r03",
+    "dp-middle22-transfer-r04",
+    "dp-middle22-transfer-final",
+    "ed-middle1-authored-r01",
+    "ed-middle1-authored-r02",
+    "ed-middle1-authored-r03",
+    "ed-middle1-authored-r04",
+    "ed-middle1-authored-final",
+    "wm-middle22-basic-r01",
+    "wm-middle22-basic-mixed-r02",
+    "wm-middle22-basic-mixed-r03",
+    "wm-middle22-basic-mixed-r04",
+    "wm-middle22-basic-mixed-final",
+    "wm-middle31-basic-r01",
+    "wm-middle31-basic-r02",
+    "wm-middle31-basic-r03",
+    "wm-middle31-basic-r04",
+    "wm-middle31-basic-final"
+  ],
+  "courseSelectionById": {
+    "sh-selection-r01": {
+      "program": "SH",
+      "course": "high-selection"
+    },
+    "sh-selection-r02": {
+      "program": "SH",
+      "course": "high-selection"
+    },
+    "sh-selection-r03": {
+      "program": "SH",
+      "course": "high-selection"
+    },
+    "sh-selection-r04": {
+      "program": "SH",
+      "course": "high-selection"
+    },
+    "sh-selection-r05": {
+      "program": "SH",
+      "course": "high-selection"
+    },
+    "dp-common1-v14-pilot": {
+      "program": "DP",
+      "course": "common1-basic"
+    },
+    "dp-common1-r02": {
+      "program": "DP",
+      "course": "common1-basic"
+    },
+    "dp-common1-r03": {
+      "program": "DP",
+      "course": "common1-basic"
+    },
+    "dp-common1-r04": {
+      "program": "DP",
+      "course": "common1-basic"
+    },
+    "dp-common1-final": {
+      "program": "DP",
+      "course": "common1-basic"
+    },
+    "wm-middle21-basic-mixed-r01": {
+      "program": "WM",
+      "course": "middle21-basic"
+    },
+    "wm-middle21-basic-mixed-r02": {
+      "program": "WM",
+      "course": "middle21-basic"
+    },
+    "wm-middle21-basic-mixed-r03": {
+      "program": "WM",
+      "course": "middle21-basic"
+    },
+    "wm-middle21-basic-mixed-r04": {
+      "program": "WM",
+      "course": "middle21-basic"
+    },
+    "wm-middle21-basic-final": {
+      "program": "WM",
+      "course": "middle21-basic"
+    },
+    "ed-common1-basic-r01": {
+      "program": "ED",
+      "course": "high-advance"
+    },
+    "ed-common1-basic-r02": {
+      "program": "ED",
+      "course": "high-advance"
+    },
+    "ed-common1-basic-r03": {
+      "program": "ED",
+      "course": "high-advance"
+    },
+    "ed-common1-basic-r04": {
+      "program": "ED",
+      "course": "high-advance"
+    },
+    "dg-pre-high1-r01": {
+      "program": "DG",
+      "course": "pre-high1"
+    },
+    "sm-pre-middle-common1-r01": {
+      "program": "SM",
+      "course": "common1-basic"
+    },
+    "sm-pre-middle-common1-r02": {
+      "program": "SM",
+      "course": "common1-basic"
+    },
+    "dg-middle1-entry-r01": {
+      "program": "DG",
+      "course": "middle1"
+    },
+    "dg-middle1-entry-r02": {
+      "program": "DG",
+      "course": "middle1"
+    },
+    "wm-common1-basic-r01": {
+      "program": "WM",
+      "course": "common1-basic"
+    },
+    "wm-common1-basic-r02": {
+      "program": "WM",
+      "course": "common1-basic"
+    },
+    "wm-common1-basic-r03": {
+      "program": "WM",
+      "course": "common1-basic"
+    },
+    "wm-common1-basic-r04": {
+      "program": "WM",
+      "course": "common1-basic"
+    },
+    "wm-common1-basic-final": {
+      "program": "WM",
+      "course": "common1-basic"
+    },
+    "dp-middle22-transfer-r01": {
+      "program": "DP",
+      "course": "middle-transfer"
+    },
+    "dp-middle22-transfer-r02": {
+      "program": "DP",
+      "course": "middle-transfer"
+    },
+    "dp-middle22-transfer-r03": {
+      "program": "DP",
+      "course": "middle-transfer"
+    },
+    "dp-middle22-transfer-r04": {
+      "program": "DP",
+      "course": "middle-transfer"
+    },
+    "dp-middle22-transfer-final": {
+      "program": "DP",
+      "course": "middle-transfer"
+    },
+    "ed-middle1-authored-r01": {
+      "program": "ED",
+      "course": "middle1"
+    },
+    "ed-middle1-authored-r02": {
+      "program": "ED",
+      "course": "middle1"
+    },
+    "ed-middle1-authored-r03": {
+      "program": "ED",
+      "course": "middle1"
+    },
+    "ed-middle1-authored-r04": {
+      "program": "ED",
+      "course": "middle1"
+    },
+    "ed-middle1-authored-final": {
+      "program": "ED",
+      "course": "middle1"
+    },
+    "wm-middle22-basic-r01": {
+      "program": "WM",
+      "course": "middle22-basic"
+    },
+    "wm-middle22-basic-mixed-r02": {
+      "program": "WM",
+      "course": "middle22-basic"
+    },
+    "wm-middle22-basic-mixed-r03": {
+      "program": "WM",
+      "course": "middle22-basic"
+    },
+    "wm-middle22-basic-mixed-r04": {
+      "program": "WM",
+      "course": "middle22-basic"
+    },
+    "wm-middle22-basic-mixed-final": {
+      "program": "WM",
+      "course": "middle22-basic"
+    },
+    "wm-middle31-basic-r01": {
+      "program": "WM",
+      "course": "middle31-basic"
+    },
+    "wm-middle31-basic-r02": {
+      "program": "WM",
+      "course": "middle31-basic"
+    },
+    "wm-middle31-basic-r03": {
+      "program": "WM",
+      "course": "middle31-basic"
+    },
+    "wm-middle31-basic-r04": {
+      "program": "WM",
+      "course": "middle31-basic"
+    },
+    "wm-middle31-basic-final": {
+      "program": "WM",
+      "course": "middle31-basic"
+    }
+  },
+  "courseGroups": {
+    "SH:high-selection": [
+      "sh-selection-r01",
+      "sh-selection-r02",
+      "sh-selection-r03",
+      "sh-selection-r04",
+      "sh-selection-r05"
+    ],
+    "DP:common1-basic": [
+      "dp-common1-v14-pilot",
+      "dp-common1-r02",
+      "dp-common1-r03",
+      "dp-common1-r04",
+      "dp-common1-final"
+    ],
+    "WM:middle21-basic": [
+      "wm-middle21-basic-mixed-r01",
+      "wm-middle21-basic-mixed-r02",
+      "wm-middle21-basic-mixed-r03",
+      "wm-middle21-basic-mixed-r04",
+      "wm-middle21-basic-final"
+    ],
+    "ED:high-advance": [
+      "ed-common1-basic-r01",
+      "ed-common1-basic-r02",
+      "ed-common1-basic-r03",
+      "ed-common1-basic-r04"
+    ],
+    "DG:pre-high1": [
+      "dg-pre-high1-r01"
+    ],
+    "SM:common1-basic": [
+      "sm-pre-middle-common1-r01",
+      "sm-pre-middle-common1-r02"
+    ],
+    "DG:middle1": [
+      "dg-middle1-entry-r01",
+      "dg-middle1-entry-r02"
+    ],
+    "WM:common1-basic": [
+      "wm-common1-basic-r01",
+      "wm-common1-basic-r02",
+      "wm-common1-basic-r03",
+      "wm-common1-basic-r04",
+      "wm-common1-basic-final"
+    ],
+    "DP:middle-transfer": [
+      "dp-middle22-transfer-r01",
+      "dp-middle22-transfer-r02",
+      "dp-middle22-transfer-r03",
+      "dp-middle22-transfer-r04",
+      "dp-middle22-transfer-final"
+    ],
+    "ED:middle1": [
+      "ed-middle1-authored-r01",
+      "ed-middle1-authored-r02",
+      "ed-middle1-authored-r03",
+      "ed-middle1-authored-r04",
+      "ed-middle1-authored-final"
+    ],
+    "WM:middle22-basic": [
+      "wm-middle22-basic-r01",
+      "wm-middle22-basic-mixed-r02",
+      "wm-middle22-basic-mixed-r03",
+      "wm-middle22-basic-mixed-r04",
+      "wm-middle22-basic-mixed-final"
+    ],
+    "WM:middle31-basic": [
+      "wm-middle31-basic-r01",
+      "wm-middle31-basic-r02",
+      "wm-middle31-basic-r03",
+      "wm-middle31-basic-r04",
+      "wm-middle31-basic-final"
+    ]
+  }
+}

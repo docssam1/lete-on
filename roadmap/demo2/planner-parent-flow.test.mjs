@@ -178,7 +178,8 @@ test('the detailed interview uses one learner selector and then follows each lea
 
 test('quick draft needs only one current fact, including a semester without a book',()=>{
  for(const [age,grade,axis] of [['5','pre','thinking'],['10','3','calc'],['14','7','calc']]){
-  assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['current']);
+  assert.deepEqual(plain(F.slidePlan(age,grade,true).map(s=>s.id)),['learner','current']);
+  assert.equal(F.slidePlan(age,grade,true)[1].title,'지금 진행하고 있는 수학 학습을 알려주세요.');
   assert.equal(F.ageCopy(age,grade).order[0],axis);
  }
  const semester=F.build({age:'10',grade:'3',quickDraft:true,school:{stage:'e:4-1'}});
@@ -192,6 +193,10 @@ test('quick draft needs only one current fact, including a semester without a bo
  assert.doesNotMatch(F.draftMarkup(book),/고등 과정|교재를 마쳤/);
  const detail=F.build({...F.inputModel(book),quickDraft:false},book);
  assert.equal(detail.parentFlow.quickDraft,false);assert.equal(detail.parentFlow.actualBooks.school,'나의 <개념> 교재');
+ const withRange=F.build({grade:'3',quickDraft:true,school:{stage:'e:3-2',book:'디딤돌 기본+응용',range:'2/6단원'}});
+ assert.match(F.draftMarkup(withRange),/디딤돌 기본\+응용 · 2\/6단원/);
+ const {done,total,unit}=I.progressValue(withRange,'schoolStatus');
+ assert.deepEqual({done,total,unit},{done:2,total:6,unit:'unit'});
 });
 
 test('one draft includes each supplied study area in the age-appropriate order',()=>{

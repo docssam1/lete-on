@@ -108,8 +108,9 @@ test("ED testimonial assessment is not promoted to an admission cutoff", () => {
 
 test("SM common1 entry keeps current public format separate from legacy reference difficulty", () => {
   const sm = data.profiles.find(profile => profile.code === "SM");
-  assert.equal(sm.facts.find(fact => fact.label === "현재 시험 범위").value, "중2-2 · 중3-1 · 중3-2");
-  assert.equal(sm.facts.find(fact => fact.label === "현재 시험 구성").value, "대수 15 + 기하 15 · 총 30문항 · 180분");
+  assert.equal(sm.facts.find(fact => fact.label === "모의고사 범위").value, "중2-2 · 중3-1 · 중3-2");
+  assert.equal(sm.facts.find(fact => fact.label === "모의고사 구성").value, "30문항 · 180분");
+  for (const label of ["모의고사 범위", "모의고사 구성"]) { const fact = sm.facts.find(f => f.label === label); assert.equal(fact.state, "confirmed"); assert.deepEqual(fact.sourceIds, []); }
   assert.equal(sm.cutline.display, "확인 필요");
   assert.match(sm.cutline.context, /성적순 선발/);
   assert.deepEqual(sm.cutline.sourceIds, ["SM-CM1-OCT-2026-OFFICIAL"]);

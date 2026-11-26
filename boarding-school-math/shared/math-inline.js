@@ -1,9 +1,9 @@
 (function (root) {
   "use strict";
 
-  function append(target, value) {
+  function append(target, value, options) {
     const sourceText = String(value == null ? "" : value);
-    const i18n = root.GFIELDContentI18n;
+    const i18n = options && options.preserveLanguage ? null : root.GFIELDContentI18n;
     const initialLength = i18n ? target.childNodes.length : 0;
     const text = i18n ? i18n.text(sourceText) : sourceText;
     const parenthesized = "\\((?:[^()]|\\([^()]*\\))*\\)";
