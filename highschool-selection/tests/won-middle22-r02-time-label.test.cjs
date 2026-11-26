@@ -22,10 +22,13 @@ test("entry script invalidates the previous timing formatter cache",()=>{
  const version=html.match(/exams\/app\.js\?v=([^"\s]+)/)?.[1];
  assert.ok(version);
  assert.notEqual(version,'won-middle22-r04-20261116');
+ const dataVersion=html.match(/data\/available-mocks\.js\?v=([^"\s]+)/)?.[1];
+ assert.ok(dataVersion);
+ assert.notEqual(dataVersion,'won-middle22-r04-20261116');
  for(const source of ['data/available-mocks.js','promo/course-navigation.js']){
-  assert.ok(html.includes(source+'?v='+version),source);
+  assert.ok(html.includes(source+'?v='+dataVersion),source);
  }
- assert.ok(promo.includes('data/available-mocks.js?v='+version));
+ assert.ok(promo.includes('data/available-mocks.js?v='+dataVersion));
 });
 
 test('third round uses the same confirmed clock window without changing the first two editions',()=>{
