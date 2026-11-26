@@ -1,3 +1,20 @@
+## 2026-11-25 — A4 인쇄 글꼴 명조로 통일 (Claude Code / Opus 5.5, Mac)
+
+- 근거: Windows Codex 글꼴 실측(Drive 코딩관련/황소문제은행_글꼴표시_Windows실측_20261125.md). 인쇄 기본 글꼴이 Pretendard이고 명조는 문항별로만 지정되어, 바깥 .question-prompt는 명조인데 안쪽 <p>·SVG는 Pretendard였고, ㉮·㉯는 Windows에서 Malgun Gothic으로 그려졌다.
+- 사용자 결정: "인쇄 전부 명조"(화면 글꼴은 그대로).
+- print-typography.css(새 파일, index.html 마지막 스타일): 인쇄 때만 #problemView·#solutionView·#answerKeyView의 문항 상자와 그 안 모든 글자(분수·치수·SVG text 포함)를 "HSE Print Serif"(저장소 fields-classic/…/noto-serif-kr-korean-400/600/700.woff2, unicode-range 없이) → Noto Serif KR → Pretendard → Batang으로 맞춘다. 한글 파일에 숫자·영문·㉠~㉰·×·÷·°·²가 들어 있고, ①·□·○·△·★·→는 저장소 Pretendard가 이어 받아 기기마다 같다(∠만 시스템 명조).
+- 예외(바꾸지 않음): 고정폭으로 자리를 맞추는 .long-operation·.source-division-work·.equation-boxes·.digital-number, 글자 모양이 조건인 5-2 3단원 돌린 숫자·글자 5문항(e7-example-7-3, e7-mission-1, e8-mission-5 원문, rotated-addition, letter-rotation)의 SVG. Noto Serif KR에는 tabular-nums가 없다.
+- app.js preloadPrintFonts(): 인쇄 명조는 인쇄 때만 쓰이므로 문제지를 처음 만들 때(buildQuestions) 굵기 3개(약 3MB)를 한 번 받아 두고, printWorksheet에서 window.print 전에 그 완료를 기다린다(최대 6초). 목록만 보는 사용자는 받지 않는다. 쪽 보정 측정 틀은 인쇄 규칙을 그대로 옮겨 같은 글꼴로 잰다.
+- 확인: CDP CSS.getPlatformFontsForNode로 68개 유형(학기·단원마다 1개 + 무작위 31개) × 문제·풀이·빠른 정답의 실제 렌더 글꼴을 모음. 본문·분수·도형 글자는 모두 Noto Serif KR, 그 밖은 위 기호만 Pretendard(∠ 1건 AppleMyungjo). 4-2-u4-t2-7·6-2-u4-e2-mission-3·6-2-u3-e1-example-2 PDF 확인.
+- 캐시: print-typography.css?v=20261126-print-serif4, app.js?v=20261126-print-serif3.
+- 감사 수정: print-four-up-serif-font-audit.cjs의 글꼴 확인을 "Noto Serif KR" → "HSE Print Serif"(같은 파일)로.
+- 인쇄 감사 실패 17개 원인과 조치(2026-11-26):
+  - 빈 쪽 9개: font-display:block이라 감사가 PDF를 바로 만들 때 명조를 받기 전 글자가 투명하게 찍혔다. swap으로 바꾸고(받기 전엔 대체 글꼴로라도 찍힘), 문제지를 만들 때 굵기 3개를 미리 받는다.
+  - 도형 글자 겹침·잘림 6개(4-2 꺾은선그래프 1·2, 4-2 평행선 각, grade52 그림 이름표, 5-2 113쪽 4문항 2개): 실제 글자는 겹치지 않았고 Noto Serif KR의 줄 상자(ascent·descent)가 커서 getBBox가 넓게 재어졌다. @font-face에 ascent-override 95.2%·descent-override 24.1%·line-gap-override 0%(Pretendard 값)를 넣어 해결.
+  - 5-2 3단원 접기 직사각형(page34-mixed): 왼쪽 세로 길이 "22cm"가 명조에서 0.8px 더 넓어 그림 밖으로 나갔다. 인쇄 때만 그 글자를 13.5px로(생성기 파일은 그대로).
+  - 6-2 예제 4-4: 쪽 수가 4→3으로 줄었는데 예전 실행의 4쪽 PNG가 출력 폴더에 남아 있었다(폴더를 비우고 통과).
+- 새 감사 print-typography-browser-audit.js: 마지막 스타일 확인, 4유형 × 문제·풀이·빠른 정답 12장의 실제 렌더 글꼴(명조, 기호만 Pretendard), 화면 Pretendard 유지, 돌린 숫자 그림 예외.
+
 ## 2026-11-25 — 여러 학년·학기·단원 함께 고르기, 여러 난이도 섞기, 문항 수 넓힘 (Claude Code / Opus 5.5, Mac)
 
 - 사용자 요청(MathFlat 화면 참고): "여러 학년 학기 여러 단원도 선택 가능해야 돼, 난이도도", "문제 수도 다양하게".
