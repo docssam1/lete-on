@@ -275,7 +275,7 @@ function allDigitsOnceCryptarithmBook8({ difficulty = 2 }) {
     const answer = `${solutions[0][0]}+${solutions[0][1]}=${target}`;
     return book8Problem({
       prompt: "네 숫자 카드를 한 번씩 써서 큰 수를 위에 놓는 덧셈식을 완성하세요.",
-      subtype: "cards", visual: { cards, layout: "□□ + □□", target, note: "가장 큰 카드는 위 수의 십의 자리, 가장 작은 카드는 위 수의 일의 자리" }, answer,
+      subtype: "cards", visual: { cards, layout: "□□ + □□", target }, answer,
       solution: `가장 큰 카드 ${numberAnd(largest)} 가장 작은 카드 ${numberObject(smallest)} 위 수에 놓고 남은 카드를 한 번씩 쓰면 가능한 식은 ${answer} 한 가지입니다.`,
       family: "all-digits-once-b8", meta: { cards, target, solutions, result: answer }
     });
@@ -446,7 +446,7 @@ function equalizeTransferBook8({ difficulty = 2 }) {
     ? `두 사람의 수 차이는 ${larger - smaller}개입니다. 많은 쪽에서 적은 쪽으로 몇 개를 옮기면 같아지나요?`
     : difficulty === 3
       ? `두 사람이 가진 수는 모두 ${larger + smaller}개이고, 많은 쪽은 ${larger}개입니다. 많은 쪽에서 적은 쪽으로 몇 개를 옮기면 같아지나요?`
-      : "많은 쪽에서 적은 쪽으로 몇 개를 옮기면 두 사람의 수가 같아지나요?";
+      : `가는 ${larger}개, 나는 ${smaller}개를 가지고 있습니다. 가가 나에게 몇 개를 주면 두 사람의 수가 같아지나요?`;
   const bars = difficulty === 3
     ? [{ label: "가", value: larger }, { label: "나", value: "?" }]
     : [{ label: "가", value: larger }, { label: "나", value: smaller }];
