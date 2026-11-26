@@ -558,6 +558,30 @@ function validate(type, problem, difficulty) {
       assert(at === meta.kth, id, difficulty, "kth finger mismatch");
       return;
     }
+    case "times-table-window-b5": {
+      const want = meta.blanks.map(([i, j]) => (meta.r0 + i) * (meta.c0 + j));
+      assert(String(problem.answer) === want.join(", ") && meta.r0 + meta.size - 1 <= 9 && meta.c0 + meta.size - 1 <= 9, id, difficulty, "times table window mismatch");
+      return;
+    }
+    case "product-matrix-place-all-b5": {
+      const found = [];
+      const cs = meta.cards;
+      for (const a of cs) for (const b of cs) for (const c of cs) for (const d of cs) {
+        if (new Set([a, b, c, d]).size !== 4) continue;
+        if (a * b === meta.rowP[0] && c * d === meta.rowP[1] && a * c === meta.colP[0] && b * d === meta.colP[1]) found.push(`(${a}, ${b}, ${c}, ${d})`);
+      }
+      assert(found.length >= 1 && found.sort().join(", ") === String(problem.answer).split("), ").map((s, i, all) => (i < all.length - 1 ? `${s})` : s)).sort().join(", "), id, difficulty, "2x2 placements mismatch");
+      return;
+    }
+    case "product-matrix-write-b5":
+      assert(meta.rowP.every((p, i) => p === meta.cells[i].reduce((x, y) => x * y, 1)) && meta.colP.every((p, j) => p === meta.cells.reduce((x, r) => x * r[j], 1)), id, difficulty, "product write mismatch");
+      return;
+    case "symbol-product-difference-b5": {
+      const fits = [];
+      for (let x = 1; x <= meta.P; x += 1) for (let y = 1; y < x; y += 1) if (x * y === meta.P && x - y === meta.D) fits.push(`${x},${y}`);
+      assert(fits.length === 1 && fits[0] === `${meta.big},${meta.small}`, id, difficulty, "product difference mismatch");
+      return;
+    }
     case "digit-card-ranked-mix-b5": {
       const brute = [];
       for (let n = 10 ** (meta.length - 1); n < 10 ** meta.length; n += 1) {
@@ -586,7 +610,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
-if (typeIds.length !== 78) throw new Error(`book-05 type count ${typeIds.length}`);
+if (typeIds.length !== 82) throw new Error(`book-05 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);

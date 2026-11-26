@@ -1264,10 +1264,10 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "가능한 수를 다 만들기 전에 눈에 띄는 수만 고르거나 큰 수부터와 작은 수부터를 반대로 읽지 않았는지 확인합니다.",
     [book5Evidence("최단거리와 숫자 카드", 2, [3])]
   ),
-  "multiplication-table-pattern": sourceLesson(
+  "times-table-window-b5": sourceLesson(
     "concept:number:multiplication-head-table",
     [
-      beat("read-headers", "가로와 세로 머리수를 읽어요", "빈칸이 속한 가로줄의 머리수와 세로줄의 머리수를 각각 찾습니다."),
+      beat("read-headers", "가로와 세로 머리수를 읽어요", "이웃한 두 칸의 차로 그 가로줄과 세로줄이 몇 단인지(머리수) 찾습니다."),
       beat("multiply-headers", "두 머리수를 곱해요", "찾은 가로 머리수와 세로 머리수를 곱해 만나는 칸에 적습니다."),
       beat("check-row-column", "가로와 세로에서 다시 확인해요", "같은 줄의 다른 칸도 같은 머리수를 사용했는지 곱셈표 전체를 확인합니다.")
     ],

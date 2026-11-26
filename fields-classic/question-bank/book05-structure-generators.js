@@ -1294,7 +1294,110 @@ function fingerDoubleEndB5({ difficulty = 2 }) {
 }
 const eul = (n) => `${n}${hasBatchim(n) ? "을" : "를"}`;
 
+
+const range = (from, to) => Array.from({ length: Math.max(0, to - from + 1) }, (_, i) => from + i);
+function permutations(items, count = items.length, chosen = [], out = []) {
+  if (chosen.length === count) { out.push(chosen.slice()); return out; }
+  items.forEach((item, i) => { if (!chosen.includes(i)) { chosen.push(i); permutations(items, count, chosen, out); chosen.pop(); } });
+  return out;
+}
+// ── 남은 번호(2차) — 3단원: 곱셈표 조각 · 2×2 카드 배치 모두 · 곱 쓰기 · 곱과 차 ─────────────
+function boxGridSvg(rows, label) {
+  // rows: [[{v, blank, head}]] — 칸마다 값/빈칸/머리
+  const s = 44, W = rows[0].length * s + 2, H = rows.length * s + 2;
+  let body = "";
+  rows.forEach((row, r) => row.forEach((cell, c) => {
+    if (!cell) return;
+    const x = 1 + c * s, y = 1 + r * s;
+    body += `<rect x="${x}" y="${y}" width="${s}" height="${s}" style="fill:${cell.head ? "#efe8d6" : "#fff"};stroke:#8a7e68;stroke-width:1"/>`;
+    if (cell.blank) body += `<rect x="${x + 9}" y="${y + 9}" width="${s - 18}" height="${s - 18}" rx="3" style="fill:#fff;stroke:#2f6b4f;stroke-width:1.4"/>`;
+    else if (cell.v !== undefined && cell.v !== "") body += text(x + s / 2, y + s / 2 + 6, cell.v, 17, cell.head ? 'font-weight="700"' : "");
+  }));
+  return `${svgOpen(W, H, label)}${body}</svg>`;
+}
+function timesTableWindowB5({ difficulty = 2 }) {
+  for (;;) {
+    const size = difficulty === 1 ? 3 : difficulty === 2 ? 3 : 4;
+    const r0 = randomInt(2, 10 - size), c0 = randomInt(2, 10 - size);
+    const val = (i, j) => (r0 + i) * (c0 + j);
+    const cells = [];
+    for (let i = 0; i < size; i += 1) for (let j = 0; j < size; j += 1) cells.push([i, j]);
+    const blanks = shuffle(cells).slice(0, difficulty === 1 ? 2 : difficulty === 2 ? 3 : 5);
+    const isBlank = (i, j) => blanks.some(([a, b]) => a === i && b === j);
+    // 아이가 머리수를 찾으려면 한 줄·한 칸에 이웃한 두 값이 보여야 한다
+    const rowOk = Array.from({ length: size }, (_, i) => Array.from({ length: size - 1 }, (_, j) => !isBlank(i, j) && !isBlank(i, j + 1)).some(Boolean)).some(Boolean);
+    const colOk = Array.from({ length: size }, (_, j) => Array.from({ length: size - 1 }, (_, i) => !isBlank(i, j) && !isBlank(i + 1, j)).some(Boolean)).some(Boolean);
+    if (!rowOk || !colOk) continue;
+    const rows = Array.from({ length: size }, (_, i) => Array.from({ length: size }, (_, j) => (isBlank(i, j) ? { blank: true } : { v: val(i, j) })));
+    const order = blanks.slice().sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    return {
+      prompt: "곱셈표(구구단 표)의 한 부분을 잘라 냈습니다. 가로줄과 세로줄의 규칙을 찾아 빈칸에 알맞은 수를 써넣으세요. (빈칸은 위 줄부터, 왼쪽부터 차례로)",
+      visual: { kind: "fig", html: boxGridSvg(rows, "곱셈표 조각") },
+      answer: order.map(([i, j]) => val(i, j)).join(", "),
+      solution: `가로로 한 칸 갈 때마다 그 줄의 단 수만큼, 세로로 한 칸 갈 때마다 그 칸의 단 수만큼 커집니다. 이웃한 두 수의 차로 맨 위 줄은 ${r0}단, 맨 왼쪽 칸은 ${c0}단임을 찾으면 칸의 수 = 줄의 단 × 칸의 단입니다: ${order.map(([i, j]) => `${r0 + i} × ${c0 + j} = ${val(i, j)}`).join(", ")}.`,
+      meta: { family: "times-table-window-b5", r0, c0, size, blanks: order }
+    };
+  }
+}
+function placements2x2(cards, rowP, colP) {
+  return permutations(cards, 4).map((idx) => idx.map((i) => cards[i])).filter(([a, b, c, d]) => a * b === rowP[0] && c * d === rowP[1] && a * c === colP[0] && b * d === colP[1]);
+}
+function productMatrixPlaceAllB5({ difficulty = 2 }) {
+  for (;;) {
+    const pool = difficulty === 1 ? range(1, 9) : range(2, 12);
+    const cards = shuffle(pool).slice(0, 4);
+    const [a, b, c, d] = cards;
+    const rowP = [a * b, c * d], colP = [a * c, b * d];
+    const sols = placements2x2(cards, rowP, colP);
+    if (sols.length < 1 || sols.length > 2) continue;
+    const rows = [[{ blank: true }, { blank: true }, { v: rowP[0], head: true }], [{ blank: true }, { blank: true }, { v: rowP[1], head: true }], [{ v: colP[0], head: true }, { v: colP[1], head: true }, null]];
+    const sorted = cards.slice().sort((x, y) => x - y);
+    return {
+      prompt: `수 카드 ${sorted.slice(0, -1).join(", ")}, ${josa(sorted.at(-1), "을", "를")} 한 번씩 넣어 가로줄 두 수의 곱이 오른쪽 수, 세로줄 두 수의 곱이 아래 수가 되게 하려고 합니다. 놓는 방법을 모두 구하세요. (왼쪽 위, 오른쪽 위, 왼쪽 아래, 오른쪽 아래 차례로)`,
+      visual: { kind: "fig", html: boxGridSvg(rows, "2×2 곱 칸") },
+      answer: sols.map((s) => `(${s.join(", ")})`).join(", "),
+      solution: `왼쪽 위 칸의 수는 첫째 가로 곱 ${josa(rowP[0], "과", "와")} 첫째 세로 곱 ${colP[0]}을 모두 나누어떨어지게 하는 카드여야 합니다. 그 칸부터 정하고 나머지를 나눗셈으로 채워 맞는지 확인하면 ${sols.length}가지: ${sols.map((s) => `(${s.join(", ")})`).join(", ")}.`,
+      meta: { family: "product-matrix-place-all-b5", cards, rowP, colP, sols }
+    };
+  }
+}
+function productMatrixWriteB5({ difficulty = 2 }) {
+  const R = difficulty === 3 ? 3 : 2, C = 3;
+  const cells = Array.from({ length: R }, () => Array.from({ length: C }, () => randomInt(2, difficulty === 1 ? 6 : 9)));
+  const rowP = cells.map((row) => row.reduce((x, y) => x * y, 1));
+  const colP = Array.from({ length: C }, (_, j) => cells.reduce((x, row) => x * row[j], 1));
+  const rows = [...cells.map((row) => [...row.map((v) => ({ v })), { blank: true }]), [...colP.map(() => ({ blank: true })), null]];
+  return {
+    prompt: "각 가로줄과 세로줄에 있는 수를 모두 곱해 오른쪽과 아래 빈칸에 쓰세요.",
+    visual: { kind: "fig", html: boxGridSvg(rows, "곱 쓰기 칸") },
+    answer: `오른쪽 ${rowP.join(", ")} / 아래 ${colP.join(", ")}`,
+    solution: `가로: ${cells.map((row, i) => `${row.join(" × ")} = ${rowP[i]}`).join(", ")}. 세로: ${colP.map((p, j) => `${cells.map((row) => row[j]).join(" × ")} = ${p}`).join(", ")}.`,
+    meta: { family: "product-matrix-write-b5", cells, rowP, colP }
+  };
+}
+function symbolProductDifferenceB5({ difficulty = 2 }) {
+  for (;;) {
+    const hi = difficulty === 1 ? 9 : difficulty === 2 ? 12 : 20;
+    const big = randomInt(3, hi), small = randomInt(difficulty === 1 ? 1 : 2, big - 1);
+    const P = big * small, D = big - small;
+    const fits = [];
+    for (let x = 1; x <= P; x += 1) for (let y = 1; y < x; y += 1) if (x * y === P && x - y === D) fits.push([x, y]);
+    if (fits.length !== 1) continue;
+    return {
+      prompt: `●는 ▲보다 큰 수입니다. 두 모양의 수를 곱하면 ${P}, 큰 수에서 작은 수를 빼면 ${D}입니다. ●와 ▲의 수를 각각 구하세요.`,
+      visual: { kind: "fig", html: `${svgOpen(280, 110, "도형 식")}${text(140, 30, `● × ▲ = ${P}`, 20)}${text(140, 62, `● − ▲ = ${D}`, 20)}${text(140, 94, "● > ▲", 18)}</svg>` },
+      answer: `●=${big}, ▲=${small}`,
+      solution: `곱이 ${P}인 두 수의 짝을 모두 적고(${(() => { const ps = []; for (let y = 1; y * y <= P; y += 1) if (P % y === 0) ps.push(`${josa(P / y, "과", "와")} ${y}`); return ps.join(", "); })()}) 그중 차가 ${D}인 짝을 고르면 ●=${big}, ▲=${small}입니다.`,
+      meta: { family: "symbol-product-difference-b5", P, D, big, small }
+    };
+  }
+}
+
 export const BOOK05_STRUCTURE_GENERATORS = {
+  timesTableWindowB5,
+  productMatrixPlaceAllB5,
+  productMatrixWriteB5,
+  symbolProductDifferenceB5,
   diagonalOneWayB5,
   spiralVariantB5,
   fingerDoubleEndB5,
@@ -1329,6 +1432,10 @@ const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, mi
 
 export const BOOK05_STRUCTURE_TYPE_ROWS = [
   // domain/middle은 같은 단원 기존 유형 값을 따른다
+  row("times-table-window-b5", "number", "곱셈 매트릭스", "곱셈표 조각에서 단을 찾아 빈칸 채우기", "timesTableWindowB5", ["곱셈표", "구구단 규칙"]),
+  row("product-matrix-place-all-b5", "logic", "곱셈 매트릭스", "2×2 곱 칸에 수 카드를 놓는 방법 모두 찾기", "productMatrixPlaceAllB5", ["곱셈 매트릭스", "모두 찾기"]),
+  row("product-matrix-write-b5", "number", "곱셈 매트릭스", "가로·세로 줄의 곱을 빈칸에 쓰기", "productMatrixWriteB5", ["곱셈 매트릭스", "곱 쓰기"]),
+  row("symbol-product-difference-b5", "number", "도형 곱셈식", "곱과 차로 두 도형의 수를 모두 구하기", "symbolProductDifferenceB5", ["도형식", "곱과 차"]),
   row("diagonal-one-way-b5", "pattern", "수 배열 경로", "한 방향 대각선으로 채운 표의 세 물음(칸의 수·수의 자리)", "diagonalOneWayB5", ["대각선 수 배열", "자리 찾기"]),
   row("spiral-variant-b5", "pattern", "수 배열 경로", "크기·시작 모서리·방향이 다른 나선 수 배열", "spiralVariantB5", ["나선", "수 배열"]),
   row("finger-double-end-b5", "pattern", "수열의 활용", "끝 손가락을 두 번 세는 왕복 세기(주기 10)", "fingerDoubleEndB5", ["손가락 세기", "주기"]),
@@ -1357,6 +1464,10 @@ export const BOOK05_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK05_STRUCTURE_GUIDES = {
+  "times-table-window-b5": "이웃한 두 수의 차가 그 줄의 단입니다. 줄의 단 × 칸의 단으로 빈칸을 채웁니다.",
+  "product-matrix-place-all-b5": "두 곱을 모두 나누어떨어지게 하는 카드로 모서리 칸을 먼저 정하고 나눗셈으로 나머지를 채웁니다.",
+  "product-matrix-write-b5": "줄마다 수를 차례로 곱합니다. 큰 수끼리 먼저 곱하지 말고 쉬운 짝부터 곱해도 됩니다.",
+  "symbol-product-difference-b5": "곱이 같은 두 수의 짝을 모두 적고 차가 맞는 짝을 고릅니다.",
   "diagonal-one-way-b5": "줄 번호 + 칸 번호가 같은 칸이 한 대각선입니다. 앞 대각선 칸 수(1+2+…)를 더하고 그 대각선 안에서 몇째인지 셉니다.",
   "spiral-variant-b5": "시작 칸과 도는 방향을 확인하고 바깥 테두리부터 칸 수를 세어 안쪽으로 이어 갑니다.",
   "finger-double-end-b5": "끝을 두 번 세면 한 바퀴가 10입니다. 10으로 나눈 나머지로 손가락을 찾습니다.",
@@ -1385,6 +1496,12 @@ export const BOOK05_STRUCTURE_GUIDES = {
 };
 
 export const BOOK05_STRUCTURE_REMAPS = [
+  // (2차) 3단원 — 곱셈표 조각, 2×2 배치 모두, 곱 쓰기, 곱과 차
+  ["book-05", 3, "activity", 1, [1], "times-table-window-b5"],
+  ["book-05", 3, "check", 1, [1], "product-matrix-place-all-b5"],
+  ["book-05", 3, "check", 1, [2], "product-matrix-write-b5"],
+  ["book-05", 3, "practice", 1, [6], "product-matrix-write-b5"],
+  ["book-05", 3, "practice", 1, [8], "symbol-product-difference-b5"],
   // (2차) 1단원 — 한 방향 대각선 세 물음, 나선 변형, 끝을 두 번 세는 손가락
   ["book-05", 1, "activity", 1, [3], "diagonal-one-way-b5"],
   ["book-05", 1, "practice", 1, [5], "diagonal-one-way-b5"],
