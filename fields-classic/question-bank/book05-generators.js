@@ -123,7 +123,7 @@ function fingerBounceSequence({ difficulty = 2 }) {
   const position = randomInt(difficulty === 1 ? 9 : difficulty === 2 ? 18 : 35, difficulty === 1 ? 24 : difficulty === 2 ? 48 : 90);
   const answer = cycle[(position - 1) % cycle.length];
   return {
-    prompt: `엄지부터 새끼손가락까지 갔다가 다시 엄지 쪽으로 돌아오며 수를 셉니다. ${position}을 말할 때 어느 손가락인가요?`,
+    prompt: `엄지부터 새끼손가락까지 갔다가 다시 엄지 쪽으로 돌아오며 수를 셉니다. ${position}${[2, 4, 5, 9].includes(position % 10) ? "를" : "을"} 말할 때 어느 손가락인가요?`,
     visual: { kind: "book5", subtype: "finger-bounce", cycle, position },
     answer,
     solution: `손가락 순서는 ${cycle.join(" → ")}이고 다시 반복됩니다. ${position}은 ${answer}에서 말합니다.`,

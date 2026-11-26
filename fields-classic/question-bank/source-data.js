@@ -4,10 +4,10 @@ import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_R
 import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125g";
 import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
-import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261125s";
+import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261126b";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125j";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125q";
-import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261125k";
+import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261126c";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
 import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125r";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
@@ -1030,7 +1030,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "latin-square": Object.freeze(["sudoku-fill-three-row-column-b2", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
   "consecutive-number-addition": Object.freeze(["consecutive-masked-triple-b10", "g1-fall-consecutive-three-sum-completion"]),
   "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
-  "multiplication-matrix": Object.freeze(["multiplication-table-pattern", "multiplication-matrix-products", "multiplication-matrix-placement"]),
+  "multiplication-matrix": Object.freeze(["times-table-window-b5", "product-matrix-write-b5", "multiplication-matrix-placement"]),
   "three-digit-card-count": Object.freeze(["g1-winter-three-digit-cards-above"]),
   "venn-count": Object.freeze(["set-union-count", "neither-set-count", "venn-neither-b7"]),
   "congruent-partition": Object.freeze(["congruent-equal-sum-partition-draw", "symbol-balanced-congruent-partition", "star-congruent-partition-draw-book4"]),

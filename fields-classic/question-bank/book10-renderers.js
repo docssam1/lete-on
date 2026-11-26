@@ -215,11 +215,12 @@ const delayedCatchUp = (visual) => {
 const statementList = (visual) => `<ul class="b10-statements">${(visual.items || []).map((line) => `<li>${esc(line)}</li>`).join("")}</ul>`;
 
 function digitSlots(visual) {
-  const arrow = visual.direction ? `<b>${visual.direction === "increasing" ? "작은 숫자 → 큰 숫자" : "큰 숫자 → 작은 숫자"}</b>` : "";
+  // 카드는 문제 재료라 그린다. 빈 자리 줄·「작은 숫자 → 큰 숫자」·「N가지」·「여러 번 써도 돼요」는 푸는 방법을 알려 주므로 그리지 않는다
+  // (원장 2026-11-26 「또 문제를 설명하는 그림이 있잖아」). 자리에 미리 놓인 숫자(fixed)가 있을 때만 자리 줄을 그린다 — 그것은 문제 조건이다.
   const fixed = visual.fixed || [];
-  const counts = visual.choiceCounts || [];
-  const notes = [visual.repeat ? "같은 숫자를 여러 번 써도 돼요" : "", ].filter(Boolean);   // 범위·「작은 수부터 N번째」는 문제 글에 있다
-  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div><div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}${counts[index] ? `<small>${counts[index]}가지</small>` : ""}</i>`).join("")}</div>${arrow}${notes.map((note) => `<em>${note}</em>`).join("")}</div>`;
+  const slots = fixed.some((digit) => digit !== undefined && digit !== null && digit !== "")
+    ? `<div class="slots">${Array.from({ length: visual.length }, (_, index) => `<i>${fixed[index] ?? ""}</i>`).join("")}</div>` : "";
+  return `<div class="b10-digit-slots"><div class="cards">${visual.digits.map((digit) => `<span>${digit}</span>`).join("")}</div>${slots}</div>`;
 }
 
 // 켜고 끄는 것(전구·신호등)과 앞뒤가 있는 것(동전)을 나란히 그린다.

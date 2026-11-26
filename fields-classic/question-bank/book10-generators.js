@@ -545,7 +545,7 @@ function monotoneDigitEnumerationBook10({ difficulty = 2 }) {
   const direction = sample(["increasing", "decreasing"]);
   const candidates = monotoneNumbers(digits, length, direction);
   return book10Problem({
-    prompt: `왼쪽부터 숫자가 ${direction === "increasing" ? "점점 커지는" : "점점 작아지는"} ${length}자리 수는 모두 몇 개인가요?`,
+    prompt: `숫자 카드 ${digits.join(", ")} 중에서 서로 다른 ${length === 2 ? "두" : "세"} 장을 골라 만든 ${length}자리 수 가운데, 왼쪽부터 숫자가 ${direction === "increasing" ? "점점 커지는" : "점점 작아지는"} 수는 모두 몇 개인가요?`,
     subtype: "digit-slots", visual: { digits, length, direction }, answer: `${candidates.length}개`,
     solution: `맨 앞 숫자부터 작은 순서로 정하고 뒤에 올 수 있는 카드만 이어 적으면 모두 ${candidates.length}개입니다.`,
     family: "monotone-digit-enumeration-b10", meta: { difficulty, length, digits, direction, candidates, result: candidates.length }
@@ -560,7 +560,7 @@ function monotoneDigitRankBook10({ difficulty = 2 }) {
   const rank = randomInt(2, Math.max(2, candidates.length - 1));
   const result = candidates[rank - 1];
   return book10Problem({
-    prompt: `왼쪽부터 숫자가 ${direction === "increasing" ? "점점 커지는" : "점점 작아지는"} 세 자리 수를 작은 수부터 쓸 때 ${rank}번째 수를 구하세요.`,
+    prompt: `숫자 카드 ${digits.join(", ")} 중에서 서로 다른 세 장을 골라 만든 세 자리 수 가운데, 왼쪽부터 숫자가 ${direction === "increasing" ? "점점 커지는" : "점점 작아지는"} 수를 작은 수부터 쓸 때 ${rank}번째 수를 구하세요.`,
     subtype: "digit-slots", visual: { digits, length, direction, rank }, answer: result,
     solution: `첫 자리부터 가능한 카드를 차례로 정해 작은 순서로 쓰면 ${rank}번째 수는 ${result}입니다.`,
     family: "monotone-digit-rank-b10", meta: { difficulty, length, digits, direction, candidates, rank, result }

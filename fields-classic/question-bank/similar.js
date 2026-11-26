@@ -1,4 +1,4 @@
-import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261125s";
+import { CURRICULUM as COURSE1_BOOKS, COURSE2_CURRICULUM, bookById } from "./source-data.js?v=20261126c";
 import { unitParts, partProblems } from "./study-map.js?v=20261125k";
 import { loadLocalAll, loggedIn, checkSession } from "./study-progress.js?v=20261117a";
 import { canRetry, lockCard, accessBanner, wireAccess } from "./fields-access.js?v=20261118a";

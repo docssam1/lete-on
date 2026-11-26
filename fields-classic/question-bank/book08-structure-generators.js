@@ -1547,7 +1547,132 @@ function mutualGiveAsMuchB8({ difficulty = 2 }) {
 
 // ── 내보내기 ────────────────────────────────────────
 
+
+// ── 남은 번호(2차) — 1단원 네 식 사슬·가로합만 4×4 · 2단원 자리 바뀐 수·카드 덧셈 결과 모두 ─────────────
+const shapeWa = (index) => `${SHAPES[index].ch}${shapeBatchim(index) ? "과" : "와"}`;
+const shapeEun = (index) => `${SHAPES[index].ch}${shapeBatchim(index) ? "은" : "는"}`;
+function symbolChainFourB8({ difficulty = 2 }) {
+  const hi = difficulty === 1 ? 9 : difficulty === 2 ? 15 : 25;
+  const vals = shuffle(range(2, hi)).slice(0, 4);
+  const sh = shuffle(range(0, SHAPES.length - 1)).slice(0, 4);
+  const eqs = [];
+  for (let k = 0; k < 4; k += 1) {
+    const size = k === 0 ? pick([2, 3]) : pick([3, 4]);
+    const terms = [];
+    if (k === 0) for (let i = 0; i < size; i += 1) terms.push(0);
+    else {
+      const own = randomInt(1, Math.min(2, size - 1));
+      for (let i = 0; i < own; i += 1) terms.push(k);
+      while (terms.length < size) terms.push(randomInt(0, k - 1));
+    }
+    eqs.push({ terms: shuffle(terms), total: terms.reduce((s, x) => s + vals[x], 0) });
+  }
+  const shown = shuffle(eqs.slice());
+  const rows = shown.map((e) => [...e.terms.flatMap((x, i) => (i ? ["+", x] : [x])), "=", String(e.total)]);
+  const ask = randomInt(1, 3);
+  const steps = eqs.map((e, k) => {
+    const own = e.terms.filter((x) => x === k).length;
+    const known = e.terms.filter((x) => x !== k).reduce((s, x) => s + vals[x], 0);
+    return `${SHAPES[sh[k]].ch} ${own}개 = ${known ? `${e.total} − ${known} = ` : ""}${own * vals[k]}${own > 1 ? ` → ${SHAPES[sh[k]].ch}=${vals[k]}` : ""}`;
+  });
+  return {
+    prompt: `같은 모양은 같은 수를 나타냅니다. 네 식을 보고 ${shapeIga(sh[ask])} 나타내는 수를 구하세요.`,
+    visual: figs(equationsSvg(rows, sh, "도형 식 넷")),
+    answer: String(vals[ask]),
+    solution: `한 가지 모양만 있는 식부터 풀고, 아는 모양을 빼며 차례로 찾습니다. ${steps.slice(0, ask + 1).join(". ")}.`,
+    meta: { family: "symbol-chain-four-b8", vals, eqs, ask, sh }
+  };
+}
+function rowSumsGridSvg(grid, sums, sh) {
+  const c = 40, W = grid[0].length * c + 70, H = grid.length * c + 8;
+  let body = "";
+  grid.forEach((row, r) => {
+    row.forEach((x, j) => { body += `<rect x="${4 + j * c}" y="${4 + r * c}" width="${c}" height="${c}" fill="#fff" stroke="${INK}" stroke-width="1"/>${glyph(SHAPES[sh[x]].key, 4 + j * c + c / 2, 4 + r * c + c / 2, 12)}`; });
+    body += text(4 + row.length * c + 30, 4 + r * c + c / 2 + 6, sums[r], 17, 'font-weight="600"');
+  });
+  return `${svgOpen(W, H, "가로줄의 합만 있는 표")}${body}</svg>`;
+}
+function rowSumsOnlyMatrixB8({ difficulty = 2 }) {
+  for (let tries = 0; tries < 500; tries += 1) {
+    const vals = shuffle(range(1, difficulty === 3 ? 15 : 9)).slice(0, 4);
+    const sh = shuffle(range(0, SHAPES.length - 1)).slice(0, 4);
+    // 줄 k에는 새 모양 k가 처음 들어가고, 나머지는 앞에서 나온 모양 — 첫 줄은 한 모양만
+    const grid = [];
+    for (let k = 0; k < 4; k += 1) {
+      const row = [];
+      if (k === 0) for (let i = 0; i < 4; i += 1) row.push(0);
+      else {
+        const own = randomInt(1, 2);
+        for (let i = 0; i < own; i += 1) row.push(k);
+        while (row.length < 4) row.push(randomInt(0, k - 1));
+      }
+      grid.push(shuffle(row));
+    }
+    const order = shuffle([0, 1, 2, 3]);
+    const g2 = order.map((k) => grid[k]);
+    const sums = g2.map((row) => row.reduce((s, x) => s + vals[x], 0));
+    const askAll = randomInt(0, 1) === 0;
+    const ask = randomInt(1, 3);
+    const total = vals.reduce((a, b) => a + b, 0);
+    return {
+      prompt: `같은 모양은 같은 수를 나타냅니다. 표의 오른쪽에는 가로줄 네 칸의 합만 있습니다. ${askAll ? "네 모양이 나타내는 수의 합을 구하세요." : `${shapeIga(sh[ask])} 나타내는 수를 구하세요.`}`,
+      visual: figs(rowSumsGridSvg(g2, sums, sh)),
+      answer: String(askAll ? total : vals[ask]),
+      solution: `한 가지 모양만 있는 줄로 ${SHAPES[sh[0]].ch}=${vals[0]}부터 찾고, 새 모양이 하나씩 더해지는 줄에서 아는 모양을 빼 차례로 구합니다: ${SHAPES[sh[1]].ch}=${vals[1]}, ${SHAPES[sh[2]].ch}=${vals[2]}, ${SHAPES[sh[3]].ch}=${vals[3]}.${askAll ? ` 합은 ${total}.` : ""}`,
+      meta: { family: "row-sums-only-matrix-b8", vals, grid: g2, sums, askAll, ask }
+    };
+  }
+  return null;
+}
+function digitSwapAddB8({ difficulty = 2 }) {
+  // □△ + ○ = △□ → ○ = 9, △ = □ + 1. 조건 하나로 답 하나를 고른다.
+  const sh = shuffle(range(0, SHAPES.length - 1)).slice(0, 3);
+  const A = randomInt(1, 7), B = A + 1; // 더하는 수가 9라 일의 자리 9(89)는 안 된다
+  const conds = [
+    { text: `${shapeWa(sh[0])} ${SHAPES[sh[1]].ch}의 합은 ${A + B}입니다.`, ok: (a, b) => a + b === A + B },
+    { text: `${SHAPES[sh[0]].ch}${shapeEun(sh[1])} ${Math.floor((10 * A + B) / 10) * 10}보다 크고 ${Math.floor((10 * A + B) / 10) * 10 + 10}보다 작습니다.`, ok: (a, b) => 10 * a + b > Math.floor((10 * A + B) / 10) * 10 && 10 * a + b < Math.floor((10 * A + B) / 10) * 10 + 10 }
+  ];
+  const cond = difficulty === 1 ? conds[0] : pick(conds);
+  const fits = [];
+  for (let a = 1; a <= 9; a += 1) for (let b = 0; b <= 9; b += 1) for (let c = 1; c <= 9; c += 1) {
+    if (new Set([a, b, c]).size !== 3) continue;
+    if (10 * a + b + c === 10 * b + a && cond.ok(a, b)) fits.push([a, b, c]);
+  }
+  return {
+    prompt: `서로 다른 모양은 서로 다른 숫자를 나타냅니다. 두 자리 수에 한 자리 수를 더했더니 두 숫자의 자리가 바뀐 수가 되었습니다. ${cond.text} 덧셈식을 완성하세요.`,
+    visual: figs(cryptSvg([[0, 1], [2]], [1, 0], sh)),
+    answer: `${10 * A + B} + 9 = ${10 * B + A}`,
+    solution: `자리가 바뀐 두 수의 차는 (큰 숫자 − 작은 숫자) × 9입니다. 더한 수는 한 자리라 차가 9뿐이므로 ${SHAPES[sh[2]].ch}=9, 일의 자리 숫자가 십의 자리 숫자보다 1 큽니다. 조건에 맞는 것은 ${10 * A + B} + 9 = ${10 * B + A}.`,
+    meta: { family: "digit-swap-add-b8", A, B, fits }
+  };
+}
+function cardSumAllB8({ difficulty = 2 }) {
+  for (;;) {
+    const withZero = difficulty === 3 && randomInt(0, 1) === 1;
+    const nonzero = shuffle(range(1, 9)).slice(0, withZero ? 3 : 4);
+    const cards = (withZero ? [0, ...nonzero] : nonzero).sort((a, b) => a - b);
+    const sums = new Set();
+    const perms = [];
+    const walk = (left, chosen) => { if (!left.length) { perms.push(chosen); return; } left.forEach((x, i) => walk(left.filter((_, j) => j !== i), [...chosen, x])); };
+    walk(cards, []);
+    for (const [a, b, c, d] of perms) { if (a === 0 || c === 0) continue; sums.add(10 * a + b + 10 * c + d); }
+    const list = [...sums].sort((x, y) => x - y);
+    if (list.length < 3) continue;
+    return {
+      prompt: `숫자 카드 네 장을 한 번씩 모두 써서 두 자리 수 두 개를 만들어 더하려고 합니다. 나올 수 있는 합을 모두 구하세요.`,
+      visual: figs(cardsSvg(cards)),
+      answer: list.join(", "),
+      solution: `합은 (십의 자리 두 숫자의 합) × 10 + (일의 자리 두 숫자의 합)이라, 어느 두 카드를 십의 자리에 놓을지만 정하면 됩니다${withZero ? "(0은 십의 자리 ✕)" : ""}. 고르는 방법마다 계산하면 ${list.join(", ")}.`,
+      meta: { family: "card-sum-all-b8", cards, list }
+    };
+  }
+}
+
 export const BOOK08_STRUCTURE_GENERATORS = {
+  symbolChainFourB8,
+  rowSumsOnlyMatrixB8,
+  digitSwapAddB8,
+  cardSumAllB8,
   symbolNetworkOneB8,
   symbolNetworkSumB8,
   symbolNetworkSmallPoolB8,
@@ -1587,6 +1712,10 @@ export const BOOK08_STRUCTURE_SOLVERS = { bruteSolutions, propagate, cryptSoluti
 const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, middle, label, generator, searchAliases: aliases });
 
 export const BOOK08_STRUCTURE_TYPE_ROWS = [
+  row("symbol-chain-four-b8", "number", "묶음수와 매트릭스", "네 도형 식(항 2~4개)을 이어 이름 붙은 도형의 수 구하기", "symbolChainFourB8", ["도형 식", "덧셈 사슬"]),
+  row("row-sums-only-matrix-b8", "number", "덧셈 매트릭스", "가로줄 합만 있는 4×4 모양 표 풀기", "rowSumsOnlyMatrixB8", ["덧셈 매트릭스", "가로합"]),
+  row("digit-swap-add-b8", "number", "덧셈 복면산", "두 자리 수 + 한 자리 수 = 자리가 바뀐 수", "digitSwapAddB8", ["복면산", "자리 바뀐 수"]),
+  row("card-sum-all-b8", "number", "덧셈 복면산", "카드 네 장으로 만든 두 자리 수 두 개의 합 모두", "cardSumAllB8", ["숫자 카드", "합 모두"]),
   row("symbol-network-one-b8", "number", "도형이 나타내는 수", "1~9 도형 식 네 개로 한 도형 찾기", "symbolNetworkOneB8", ["도형 식", "같은 모양 같은 수", "곱셈 도형식"]),
   row("symbol-network-sum-b8", "number", "도형이 나타내는 수", "1~9 도형 식으로 두 도형의 합 구하기", "symbolNetworkSumB8", ["도형 식", "두 도형의 합"]),
   row("symbol-network-small-pool-b8", "number", "도형이 나타내는 수", "0과 1의 성질로 작은 수 도형 식 풀기", "symbolNetworkSmallPoolB8", ["0의 성질", "1의 성질", "도형 식"]),
@@ -1621,6 +1750,10 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK08_STRUCTURE_GUIDES = {
+  "symbol-chain-four-b8": "한 가지 모양만 있는 식부터 풀고, 아는 모양을 빼며 새 모양을 하나씩 찾습니다.",
+  "row-sums-only-matrix-b8": "한 가지 모양만 있는 줄로 첫 모양을 찾고, 새 모양이 하나씩 끼는 줄에서 아는 것을 뺍니다.",
+  "digit-swap-add-b8": "자리가 바뀐 두 수의 차는 (두 숫자의 차) × 9입니다. 한 자리 수를 더했으니 차는 9뿐입니다.",
+  "card-sum-all-b8": "합 = 십의 자리 두 숫자의 합 × 10 + 일의 자리 두 숫자의 합. 십의 자리에 놓을 두 장만 고르면 됩니다.",
   "symbol-network-one-b8": "같은 도형을 여러 번 곱하거나 더한 식부터 될 수 있는 수만 남기고, 정해진 수를 다른 식에 넣습니다.",
   "symbol-network-sum-b8": "될 수 있는 수가 가장 적은 식부터 도형의 수를 정하고, 묻는 두 도형의 수를 더합니다.",
   "symbol-network-small-pool-b8": "어떤 수에 곱해도 그대로이면 1, 더해도 그대로이면 0이라는 성질부터 씁니다.",
@@ -1655,6 +1788,11 @@ export const BOOK08_STRUCTURE_GUIDES = {
 };
 
 export const BOOK08_STRUCTURE_REMAPS = [
+  // (2차) 1단원 네 식 사슬·가로합만, 2단원 자리 바뀐 수·카드 합 모두
+  ["book-08", 1, "activity", 1, [2, 4], "symbol-chain-four-b8"],
+  ["book-08", 1, "advanced", 1, [2], "row-sums-only-matrix-b8"],
+  ["book-08", 2, "check", 2, [3], "digit-swap-add-b8"],
+  ["book-08", 2, "advanced", 1, [4], "card-sum-all-b8"],
   // 1단원 — 도형 식 묶음(1~9 · 0~5·0~6 · 수 카드 넉 장 · 두 도형의 합), 사각 틀 네 식, 곱셈 매트릭스
   ["book-08", 1, "activity", 2, [1, 2], "symbol-network-one-b8"],
   ["book-08", 1, "activity", 2, [3, 4], "square-frame-equations-b8"],

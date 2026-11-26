@@ -358,29 +358,50 @@ function indexedArithmeticSequenceBook7({ difficulty = 2 }) {
   });
 }
 
-function twoCategoryProblem({ difficulty, labels, units, unitName, family, generatorLabel }) {
+// 받침에 따라 조사를 고른다(숫자로 끝나면 읽는 소리로).
+function hasBatchimB7(word) {
+  const last = String(word).trim().slice(-1);
+  if (/[0-9]/.test(last)) return [0, 1, 3, 6, 7, 8].includes(Number(last));
+  const code = last.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0;
+}
+const pB7 = (word, withFinal, withoutFinal) => `${word}${hasBatchimB7(word) ? withFinal : withoutFinal}`;
+
+// 글로만 풀 수 있게: 하나당 값(다리·바퀴·카드 수·점수·값)과 「무엇의 합」을 문제 글에 쓴다
+// (원장 2026-11-26 「또 문제를 설명하는 그림이 있잖아」 — 표 그림은 학습지에서 빠지므로 글에 정보가 다 있어야 한다).
+function twoCategoryProblem({ difficulty, labels, units, unitName, family, generatorLabel, names = labels, eachText, sumText }) {
   const totalCount = randomInt(difficulty === 1 ? 8 : 12, difficulty === 3 ? 28 : 20);
   const secondCount = randomInt(2, totalCount - 2);
   const firstCount = totalCount - secondCount;
   const totalUnits = firstCount * units[0] + secondCount * units[1];
+  const each = eachText ? `${eachText} ` : "";
   return book7Problem({
-    prompt: `${labels[0]}와 ${labels[1]}가 모두 ${totalCount}${generatorLabel}이고 ${unitName}의 합은 ${totalUnits}입니다. 각각 몇 ${generatorLabel}인가요?`,
+    prompt: `${pB7(names[0], "과", "와")} ${pB7(names[1], "이", "가")} 모두 ${totalCount}${generatorLabel}이고 ${sumText(totalUnits)}입니다. ${each}각각 몇 ${generatorLabel}인가요?`,
     subtype: "assumption-table", visual: { labels, units, totalCount, totalUnits, unitName },
-    answer: `${labels[0]} ${firstCount}${generatorLabel}, ${labels[1]} ${secondCount}${generatorLabel}`,
-    solution: `모두 ${labels[0]}라고 하면 ${units[0] * totalCount}${unitName}입니다. 차이 ${totalUnits - units[0] * totalCount}${unitName}를 한 ${generatorLabel}을 바꿀 때 늘어나는 ${units[1] - units[0]}${unitName}로 나누면 ${labels[1]}는 ${secondCount}${generatorLabel}, ${labels[0]}는 ${firstCount}${generatorLabel}입니다.`,
+    answer: `${names[0]} ${firstCount}${generatorLabel}, ${names[1]} ${secondCount}${generatorLabel}`,
+    solution: `모두 ${pB7(names[0], "이", "")}라고 하면 ${units[0] * totalCount}${unitName}입니다. 차이 ${totalUnits - units[0] * totalCount}${unitName}${hasBatchimB7(unitName || String(totalUnits)) ? "을" : "를"} 한 ${generatorLabel}을 바꿀 때 늘어나는 ${units[1] - units[0]}${unitName}로 나누면 ${pB7(names[1], "은", "는")} ${secondCount}${generatorLabel}, ${pB7(names[0], "은", "는")} ${firstCount}${generatorLabel}입니다.`,
     family, meta: { labels, units, totalCount, totalUnits, firstCount, secondCount }
   });
 }
 
 const twoLegAnimalAssumption = ({ difficulty = 2 }) => {
   const variant = Math.random() < 0.65 ? { labels: ["닭", "토끼"], units: [2, 4] } : { labels: ["개미", "거미"], units: [6, 8] };
-  return twoCategoryProblem({ difficulty, ...variant, unitName: "개", family: "two-category", generatorLabel: "마리" });
+  return twoCategoryProblem({ difficulty, ...variant, unitName: "개", family: "two-category", generatorLabel: "마리",
+    eachText: `${pB7(variant.labels[0], "은", "는")} 다리가 ${variant.units[0]}개, ${pB7(variant.labels[1], "은", "는")} 다리가 ${variant.units[1]}개입니다.`,
+    sumText: (total) => `다리 수의 합은 ${total}개` });
 };
 
-const twoWheelVehicleAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: ["두발자전거", "자동차"], units: [2, 4], unitName: "개", family: "two-category", generatorLabel: "대" });
-const twoCardValueAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: ["3 카드", difficulty === 3 ? "8 카드" : "5 카드"], units: [3, difficulty === 3 ? 8 : 5], unitName: "", family: "two-category", generatorLabel: "장" });
-const twoScoreValueAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: [difficulty === 1 ? "2점 문제" : "3점 문제", difficulty === 1 ? "5점 문제" : "7점 문제"], units: [difficulty === 1 ? 2 : 3, difficulty === 1 ? 5 : 7], unitName: "점", family: "two-category", generatorLabel: "개" });
-const twoCoinValueAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: [difficulty === 3 ? "50원 우표" : "10원 동전", difficulty === 3 ? "100원 우표" : "50원 동전"], units: [difficulty === 3 ? 50 : 10, difficulty === 3 ? 100 : 50], unitName: "원", family: "two-category", generatorLabel: "개" });
+const twoWheelVehicleAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: ["두발자전거", "자동차"], units: [2, 4], unitName: "개", family: "two-category", generatorLabel: "대",
+  eachText: "두발자전거는 바퀴가 2개, 자동차는 바퀴가 4개입니다.", sumText: (total) => `바퀴 수의 합은 ${total}개` });
+const twoCardValueAssumption = ({ difficulty = 2 }) => {
+  const big = difficulty === 3 ? 8 : 5;
+  return twoCategoryProblem({ difficulty, labels: ["3 카드", `${big} 카드`], names: ["3이 적힌 카드", `${pB7(big, "이", "가")} 적힌 카드`], units: [3, big], unitName: "", family: "two-category", generatorLabel: "장",
+    sumText: (total) => `카드에 적힌 수의 합은 ${total}` });
+};
+const twoScoreValueAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: [difficulty === 1 ? "2점 문제" : "3점 문제", difficulty === 1 ? "5점 문제" : "7점 문제"], units: [difficulty === 1 ? 2 : 3, difficulty === 1 ? 5 : 7], unitName: "점", family: "two-category", generatorLabel: "개",
+  sumText: (total) => `맞힌 점수의 합은 ${total}점` });
+const twoCoinValueAssumption = ({ difficulty = 2 }) => twoCategoryProblem({ difficulty, labels: [difficulty === 3 ? "50원 우표" : "10원 동전", difficulty === 3 ? "100원 우표" : "50원 동전"], units: [difficulty === 3 ? 50 : 10, difficulty === 3 ? 100 : 50], unitName: "원", family: "two-category", generatorLabel: "개",
+  sumText: (total) => `값의 합은 ${total}원` });
 
 function correctWrongScoreAssumption({ difficulty = 2 }) {
   const total = randomInt(difficulty === 1 ? 8 : 10, difficulty === 3 ? 20 : 15);

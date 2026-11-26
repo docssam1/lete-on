@@ -1,6 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261125s";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261126c";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { GENERATORS } from "./generators.js?v=20261125s";
+import { GENERATORS } from "./generators.js?v=20261126e";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -14,7 +14,7 @@ import { book06Markup } from "./book06-renderers.js?v=20261124i";
 import { book07Markup } from "./book07-renderers.js?v=20261023h";
 import { book08Markup } from "./book08-renderers.js?v=20261122w";
 import { book09Markup } from "./book09-renderers.js?v=20261121c";
-import { book10Markup } from "./book10-renderers.js?v=20261101m";
+import { book10Markup } from "./book10-renderers.js?v=20261126e";
 import { mock06Markup } from "./mock06-renderers.js?v=20261123a";
 import { PRINT_TEMPLATE_OPTIONS, layoutWorksheetPages, loadPrintTemplate, mountPrintTemplatePanel, printTemplateClasses } from "./print-templates.js?v=20261028w";
 import { equalPartitionTreeMarkup, shapeSumTableMarkup, equalizeBagsMarkup, totalDifferenceBarsMarkup, balanceUnitEquationsMarkup, distinctShapeEquationsMarkup, numberSequencesMarkup, progressiveNumberTableMarkup, book2GrowthMarkup, centerNumberRuleMarkup, numberRuleGridMarkup, twoDigitComposeRuleMarkup, sudokuGridMarkup, symbolPatternSequenceMarkup } from "./book02-visuals.js?v=20261027b";
@@ -430,9 +430,10 @@ function showTypePreview(anchor) {
   const sourcePreview = unitTestPreviewContext(anchor);
   const previewLabel = sourcePreview?.label || item.label;
   // 미리보기는 문제만(원장 2026-10-27 「문제만 보이면 되지 너무 복잡해」): 이름 한 줄 + 문제 글 + 그림
+  // 그림은 학습지와 같은 규칙(worksheetVisualMarkup) — 문장제를 다시 그린 풀이 그림은 미리보기에도 안 싣는다(원장 2026-11-26 「또 문제를 설명하는 그림이 있잖아」)
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${previewLabel}</strong></div>
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
-    ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
+    ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : worksheetVisualMarkup({ ...problem, image: null, parts: problem.parts, type: problem.type || item })}`;
   panel.hidden = false;
   typePreviewAnchor?.removeAttribute("aria-describedby");
   typePreviewAnchor = anchor;
@@ -2942,7 +2943,24 @@ function statementListMarkup(visual) {
 }
 
 function balanceOrderChainMarkup(visual) {
-  const scale = (row) => `<div class="balance-compare ${row.heavier}"><div class="balance-load">${row.left}</div><div class="balance-beam"><i></i></div><div class="balance-load">${row.right}</div></div>`;
+  // 막대가 기울면 접시도 함께 내려간다. 접시는 평평한 판 + 줄 둘(곡선 접시 ✕), 땅 선·접시 밑줄은 그리지 않는다.
+  const W = 180, H = 128, cx = 90, cy = 36, half = 62, tilt = 10 * Math.PI / 180;
+  const scale = (row) => {
+    const dir = row.heavier === "left" ? 1 : -1;
+    const dx = half * Math.cos(tilt), dy = half * Math.sin(tilt) * dir;
+    const ends = [{ x: cx - dx, y: cy + dy, load: row.left }, { x: cx + dx, y: cy - dy, load: row.right }];
+    const pan = (end) => {
+      const py = end.y + 38;
+      return `<line x1="${end.x}" y1="${end.y}" x2="${end.x - 22}" y2="${py}"/><line x1="${end.x}" y1="${end.y}" x2="${end.x + 22}" y2="${py}"/>` +
+        `<line x1="${end.x - 26}" y1="${py}" x2="${end.x + 26}" y2="${py}" stroke-width="3.5"/>` +
+        `<text x="${end.x}" y="${py - 5}" text-anchor="middle" font-size="25" font-weight="900" stroke="none" fill="#54493a">${end.load}</text>`;
+    };
+    return `<svg class="balance-compare-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${row.heavier === "left" ? row.left : row.right} 쪽으로 기운 양팔저울" stroke="#837763" stroke-width="2" stroke-linecap="round">` +
+      `<polygon points="${cx},${cy} ${cx - 15},${H - 6} ${cx + 15},${H - 6}" fill="#f9d66e" stroke="#c9a640" stroke-width="1.5"/>` +
+      `<line x1="${ends[0].x}" y1="${ends[0].y}" x2="${ends[1].x}" y2="${ends[1].y}" stroke-width="3.5"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#837763" stroke="none"/>` +
+      ends.map(pan).join("") + `</svg>`;
+  };
   return `<div class="balance-order-work">${visual.relations.map(scale).join("")}</div>`;
 }
 
@@ -3448,7 +3466,8 @@ function visualMarkup(visual) {
 // (원장 2026-11-01 「이렇게 문제를 설명하면 안 돼」). 2026-11-01 전 유형을 띄워 「그림 글의 수가 모두 문제 글에 있고 그림 자체(모눈·도형)가 없는」 것을
 // 찾아 하나씩 보고 고름. 그림을 보고 푸는 문제(조건표·저울·색종이·세로셈·「그림의」「다음」이 들어간 문제)는 남김.
 // 원문 그대로 옮긴 문항(generationCase.mode === "source")은 교재 모양대로 둔다.
-const TEXT_ONLY_TYPES = new Set(["digit-sum-enumeration", "walking-step-ratio", "route-distance-multiple", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count", "proportional-rods-common-total", "difference-unit-measure", "binary-weight-selection", "two-digit-digit-sum-rank", "two-digit-digit-difference-rank", "symbol-product-pair", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio", "stride-ratio-total", "repeated-unit-length-total", "near-round-multiplication", "facing-page-number", "consecutive-numbers-from-sum", "newspaper-page-pair", "digit-occurrence-count", "digit-exclusion-count", "remove-plus-concatenation", "weekday-after-days-b7", "time-unit-conversion-b7", "reverse-linear-equation-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7", "correct-wrong-score-assumption-b7", "shared-consumption-assumption-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7", "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-two-start-earlier-b7", "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7", "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7", "three-digit-palindrome-digit-sum-b7", "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7", "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7", "palindrome-adjacent-digit-difference-b7", "total-difference-bars-b8", "future-age-sum-b8", "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8", "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8", "three-container-condition-b8", "fraction-subgroup-count-b8", "multi-count-consecutive-decomposition-b10", "consecutive-page-range-b10", "catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10", "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10", "monotone-digit-count-b10", "most-frequent-digit-b10", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"]);
+// 2026-11-26 원장 「또 문제를 설명하는 그림이 있잖아」 — 그림 있는 유형 370여 개를 다시 띄워 보고 표·막대·흐름·벤·식 틀·칠한 달력·점 그림을 더 뺌(그림에만 있던 정보는 글로 옮김).
+const TEXT_ONLY_TYPES = new Set(["digit-sum-enumeration", "walking-step-ratio", "route-distance-multiple", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count", "proportional-rods-common-total", "difference-unit-measure", "binary-weight-selection", "two-digit-digit-sum-rank", "two-digit-digit-difference-rank", "symbol-product-pair", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio", "stride-ratio-total", "repeated-unit-length-total", "near-round-multiplication", "facing-page-number", "consecutive-numbers-from-sum", "newspaper-page-pair", "digit-occurrence-count", "digit-exclusion-count", "remove-plus-concatenation", "weekday-after-days-b7", "time-unit-conversion-b7", "reverse-linear-equation-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7", "correct-wrong-score-assumption-b7", "shared-consumption-assumption-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7", "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-two-start-earlier-b7", "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7", "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7", "three-digit-palindrome-digit-sum-b7", "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7", "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7", "palindrome-adjacent-digit-difference-b7", "total-difference-bars-b8", "future-age-sum-b8", "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8", "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8", "three-container-condition-b8", "fraction-subgroup-count-b8", "multi-count-consecutive-decomposition-b10", "consecutive-page-range-b10", "catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10", "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10", "monotone-digit-count-b10", "most-frequent-digit-b10", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10", "calendar-week-span-weekday-b10", "digit-sum-ranked-large-b10", "disjoint-groups-rest-b7", "give-as-much-equal-b8", "near-ten-times-b6", "neither-set-count", "new-people-reverse-b10", "palindrome-range-digit-sum-b7", "same-budget-reverse-b10", "doubling-before-full-b7", "doubling-half-full-day-b7", "equal-bars-whole-length-b6", "equal-interval-length", "equal-step-digit-numbers-b10", "equalize-transfer-b8", "even-odd-position", "exchange-only-count-b7", "factor-pair-divisor-count-b10", "finger-bounce-sequence", "finger-double-end-b5", "four-group-complement-total-b7", "four-point-distance-chain-b7", "fraction-difference-whole-b8", "fraction-given-away-original-b8", "give-as-much-once-b8", "give-as-much-return-b8", "handshake-pair-count", "inclusive-range-count", "inverse-pair-count", "kaprekar-495-b7", "last-number-from-digit-total", "leap-year-cross-month-weekday-b7", "lineup-count-b10", "loop-lamp-bench-people-b7", "loop-spacing-from-count-b7", "loop-total-trees-perimeter-b7", "loop-tree-flower-count-b7", "age-sum-after-years-b8", "all-consecutive-decompositions-b10", "alternating-line-total", "arithmetic-sequence-nth-b7", "arithmetic-sequence-position-b7", "bounded-symbol-sum-extrema-b7", "calendar-cross-month-weekday-b7", "calendar-date-palindrome-b7", "calendar-mixed-weekday-sum-b5", "calendar-month-shift-weekday-b7", "calendar-ordinal-pair-sum-steps-b5", "calendar-ordinal-pair-sum-weekday-b5", "calendar-ordinal-sum-infer-weekday-book5", "calendar-same-weekday-sum", "calendar-special-date-offset-book5", "chained-difference-equalize-b8", "climb-slip-days-b7", "complement-groups-total-b7", "consecutive-tens-digit-condition-b10", "consecutive-tens-digit-total-b10", "correct-wrong-zero-base-b7", "count-difference-assumption-b7", "cube-shell-interior-b9", "date-palindrome-count-range-b7", "digit-directed-difference-b5", "digit-occurrence-hundreds-b10", "digit-occurrence-wide-b10", "shaded-fraction-count-b8", "symbol-product-difference-b5", "total-give-equal-b8", "total-written-digits-block-b10", "total-written-digits-four-b10", "total-written-digits", "transfer-for-multiple-b8", "two-card-value-assumption-b7", "two-class-total-difference", "two-leg-animal-assumption-b7", "two-wheel-vehicle-assumption-b7", "unused-number-card-equations", "venn-exactly-one-b7", "venn-neither-b7", "venn-overlap-all-b7", "venn-overlap-with-neither-b7", "venn-union-total-b7", "venn-total-neither-one-b7", "win-loss-net-zero-b7", "square-number-odd-sum", "month-date-palindrome-b7", "most-frequent-digit-count-b10", "new-participants-equal-share-b10", "nth-even-odd", "number-line-midpoint-book6", "number-line-two-part-distance", "number-line-unit-distance-book6", "palindrome-length-count-b7", "perimeter-spacing-reverse-b10", "perimeter-spacing-third-b10", "polygon-border-point-count-b7", "polygon-border-shape-conversion-b7", "polygon-border-side-count-inverse-b7", "polygon-stakes-from-side-b7", "range-number-digit-count", "rect-perimeter-tree-count-b7", "reverse-add-palindrome-b7", "reverse-bus-stops-b8", "reverse-floor-moves-b8", "reverse-number-steps-b8", "reverse-people-marbles-b8", "reversed-diff-smallest-b7", "reversed-digit-grows-b7", "reversed-digit-pair-range-b7", "rod-difference-from-counts-b6", "rod-difference-measure-count", "same-budget-price-count-b10", "same-parity-consecutive-sum-b10", "digit-contain-count-b6", "digit-exclude-count-b6", "complete-graph-segment-count", "binary-switch-count-b10", "pascal-row-sum"]);
 function worksheetVisualMarkup(question) {
   if (TEXT_ONLY_TYPES.has(question.type?.id) && question.generationCase?.mode !== "source") return "";
   if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
