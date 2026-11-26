@@ -106,7 +106,8 @@ for(const tier of ['highmath1','highmath2','algebra','calculus1'])assert.equal(
 for(const [id,n] of [['C71',24],['C72',56],['C73',40]]){
   const c=C[id];assert.equal(c.sessions.at(-1).pool.reduce((sum,d)=>sum+d.n,0),n,id+' assessment question total');
   for(const s of c.sessions.filter(s=>!s.test)){
-    assert(s.minutes>=20&&s.minutes<=35,id+' independent-work budget');
+    /* 하루 20문항(2026-11-25): 미적분 한 회차 = 한 묶음(5일) — 채우기 전 20~35분, 채운 뒤 하루 25분까지 */
+    assert(s.baseMinutes>=20&&s.baseMinutes<=35&&s.minutes/5<=25,id+' independent-work budget');
     for(const d of s.school)assert(d.count>=6&&d.count%6===0,id+' six-question skill blocks');
   }
 }

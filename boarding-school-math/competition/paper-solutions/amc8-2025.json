@@ -1,0 +1,909 @@
+{
+  "schemaVersion": "gfield-paper-solutions-v1",
+  "paper": {
+    "program": "amc8",
+    "year": 2025,
+    "form": ""
+  },
+  "authorship": "GFIELD",
+  "contentType": "independent-mathematical-commentary",
+  "items": [
+    {
+      "number": 1,
+      "result": "50%",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/1",
+      "versions": {
+        "ko": {
+          "title": "단위 넓이로 나누기",
+          "steps": [
+            "가운데 정사각형 4개의 넓이는 4이다. 바깥의 삼각형 8개는 각각 단위 정사각형의 절반이다.",
+            "색칠한 넓이는 4 + 8 × 1/2 = 8, 전체 넓이는 16이다.",
+            "8/16 × 100 = 50이므로 50%이다."
+          ],
+          "check": "삼각형 두 개를 합치면 어떤 크기의 정사각형이 되는가?"
+        },
+        "en": {
+          "title": "Count unit areas",
+          "steps": [
+            "The middle contributes 4 square units; the eight outer triangles contribute half a unit each.",
+            "The shaded area is 4 + 8 × 1/2 = 8 out of 16.",
+            "8/16 × 100 = 50%."
+          ],
+          "check": "Why can two half-square triangles count as one square?"
+        },
+        "zh-Hans": {
+          "title": "按单位面积计数",
+          "steps": [
+            "中间4个小正方形的面积为4；外围8个三角形各占半格。",
+            "阴影面积为4 + 8 × 1/2 = 8，总面积为16。",
+            "8/16 × 100 = 50%。"
+          ],
+          "check": "两个半格三角形合起来有多大？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 2,
+      "result": "10423",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/2",
+      "versions": {
+        "ko": {
+          "title": "기호의 값과 개수",
+          "steps": [
+            "기호별 개수와 값을 곱한다. 10000짜리 1개, 100짜리 4개, 10짜리 2개, 1짜리 3개이다.",
+            "합은 10000 + 400 + 20 + 3 = 10423이다."
+          ],
+          "check": "1000을 나타내는 기호가 없는 것을 확인했는가?"
+        },
+        "en": {
+          "title": "Add symbol values",
+          "steps": [
+            "Multiply each symbol value by its count: 10000 × 1, 100 × 4, 10 × 2 and 1 × 3.",
+            "Their sum is 10423."
+          ],
+          "check": "Did you check that no 1000-symbol appears?"
+        },
+        "zh-Hans": {
+          "title": "符号的数值与数量",
+          "steps": [
+            "将各类符号的数值乘以数量：10000 × 1、100 × 4、10 × 2、1 × 3。",
+            "相加得10423。"
+          ],
+          "check": "是否确认没有表示1000的符号？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 3,
+      "result": "10",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/3",
+      "versions": {
+        "ko": {
+          "title": "전체 수를 먼저 구하기",
+          "steps": [
+            "처음 인원은 본인을 포함해 4명이므로 전체 카드는 4 × 15 = 60장이다.",
+            "다음에는 6명이 똑같이 나누므로 60 ÷ 6 = 10장씩 받는다."
+          ],
+          "check": "4명이 6명으로 늘어날 때 전체 카드 수는 변하는가?"
+        },
+        "en": {
+          "title": "Keep the total fixed",
+          "steps": [
+            "There are initially 4 players, so the deck has 4 × 15 = 60 cards.",
+            "With 6 players, each receives 60 ÷ 6 = 10 cards."
+          ],
+          "check": "Does the deck size change when more players join?"
+        },
+        "zh-Hans": {
+          "title": "总量保持不变",
+          "steps": [
+            "最初共有4人，因此总数为4 × 15 = 60张。",
+            "后来共有6人，每人分得60 ÷ 6 = 10张。"
+          ],
+          "check": "人数增加时，卡片总数是否改变？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 4,
+      "result": "37",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/4",
+      "versions": {
+        "ko": {
+          "title": "항의 수와 간격 수",
+          "steps": [
+            "첫째 항에서 열째 항까지는 간격이 9개이다.",
+            "따라서 100 − 9 × 7 = 37이다."
+          ],
+          "check": "첫째 항부터 7을 열 번 빼면 몇째 항이 되는가?"
+        },
+        "en": {
+          "title": "Count gaps, not terms",
+          "steps": [
+            "From term 1 to term 10 there are 9 gaps.",
+            "The required term is 100 − 9 × 7 = 37."
+          ],
+          "check": "Which term would subtracting ten 7s produce?"
+        },
+        "zh-Hans": {
+          "title": "区分项数与间隔数",
+          "steps": [
+            "从第1项到第10项共有9个间隔。",
+            "所以第10项为100 − 9 × 7 = 37。"
+          ],
+          "check": "若减去10个7，会得到第几项？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 5,
+      "result": "24",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/5",
+      "versions": {
+        "ko": {
+          "title": "격자 위 최단 거리",
+          "steps": [
+            "B를 (0,0)으로 잡으면 F(6,5), A(7,3), C(2,4)이다.",
+            "각 구간에서 가로 이동과 세로 이동의 합을 구한다. F→A는 3, A→B는 10, B→C는 6, C→F는 5이다.",
+            "총거리는 3 + 10 + 6 + 5 = 24블록이다."
+          ],
+          "check": "도로를 벗어나는 대각선 거리를 사용하지 않았는가?"
+        },
+        "en": {
+          "title": "Shortest routes on a grid",
+          "steps": [
+            "Set B=(0,0). Then F=(6,5), A=(7,3), C=(2,4).",
+            "Add horizontal and vertical changes for each leg: 3, 10, 6 and 5.",
+            "The total is 24 blocks."
+          ],
+          "check": "Why is a straight diagonal not a permitted road route?"
+        },
+        "zh-Hans": {
+          "title": "方格道路的最短距离",
+          "steps": [
+            "以B=(0,0)，则F=(6,5)、A=(7,3)、C=(2,4)。",
+            "各段最短距离等于横向与纵向移动距离之和，分别为3、10、6、5。",
+            "总距离为24个街区。"
+          ],
+          "check": "为何不能直接使用斜线距离？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 6,
+      "result": "17",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/6",
+      "versions": {
+        "ko": {
+          "title": "나머지로 조건 확인",
+          "steps": [
+            "다섯 수의 합은 85이다.",
+            "85에서 한 수를 빼서 4의 배수가 되려면, 빼는 수도 4로 나눈 나머지가 1이어야 한다.",
+            "해당하는 수는 17이고, 85 − 17 = 68 = 4 × 17이다."
+          ],
+          "check": "합과 지울 수의 나머지가 같아야 하는 이유는 무엇인가?"
+        },
+        "en": {
+          "title": "Match the remainder",
+          "steps": [
+            "The five numbers sum to 85.",
+            "To leave a multiple of 4, remove a number with remainder 1 upon division by 4.",
+            "Only 17 works: 85 − 17 = 68."
+          ],
+          "check": "Why must the removed number have the same remainder as the total?"
+        },
+        "zh-Hans": {
+          "title": "用余数检验",
+          "steps": [
+            "五个数的和为85。",
+            "要使剩余的和是4的倍数，删去的数除以4必须余1。",
+            "只有17符合，且85 − 17 = 68。"
+          ],
+          "check": "为何删去的数与总和必须有相同余数？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 7,
+      "result": "37",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/7",
+      "versions": {
+        "ko": {
+          "title": "누적 인원에서 구간 인원으로",
+          "steps": [
+            "80% 이상인 50명에는 90% 이상인 13명도 포함된다.",
+            "90% 이상인 인원을 빼면 80% 이상 90% 미만인 인원은 50 − 13 = 37명이다."
+          ],
+          "check": "정확히 90%인 학생은 어느 쪽에 포함되는가?"
+        },
+        "en": {
+          "title": "Subtract nested counts",
+          "steps": [
+            "The 50 students scoring at least 80% include the 13 scoring at least 90%.",
+            "The requested interval therefore contains 50 − 13 = 37 students."
+          ],
+          "check": "Does a score of exactly 90% belong in the requested interval?"
+        },
+        "zh-Hans": {
+          "title": "累计人数与区间人数",
+          "steps": [
+            "成绩至少80%的50人中，已经包括至少90%的13人。",
+            "因此至少80%而低于90%的人数为50 − 13 = 37。"
+          ],
+          "check": "恰好90%的学生是否属于所求区间？"
+        }
+      },
+      "answer": "D"
+    },
+    {
+      "number": 8,
+      "result": "3√3",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/8",
+      "versions": {
+        "ko": {
+          "title": "겉넓이와 부피 구분",
+          "steps": [
+            "전개도는 같은 정사각형 6개이므로 한 면의 넓이는 18 ÷ 6 = 3이다.",
+            "모서리 길이는 √3이다. 부피는 한 면의 넓이 × 높이 = 3√3이다."
+          ],
+          "check": "겉넓이의 단위와 부피의 단위는 어떻게 다른가?"
+        },
+        "en": {
+          "title": "Surface area to volume",
+          "steps": [
+            "Six congruent faces give a face area of 18 ÷ 6 = 3.",
+            "The edge length is √3; multiplying face area by height gives volume 3√3."
+          ],
+          "check": "How do area and volume units differ?"
+        },
+        "zh-Hans": {
+          "title": "从表面积求体积",
+          "steps": [
+            "6个面全等，每个面的面积为18 ÷ 6 = 3。",
+            "棱长为√3，体积为底面积乘高，即3√3。"
+          ],
+          "check": "面积单位与体积单位有何不同？"
+        }
+      },
+      "answer": "A"
+    },
+    {
+      "number": 9,
+      "result": "6.5",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/9",
+      "versions": {
+        "ko": {
+          "title": "같은 크기의 묶음과 평균",
+          "steps": [
+            "두 수씩 묶은 6개 평균을 더하면, 1부터 12까지의 합을 2로 나눈 것과 같다.",
+            "이를 다시 6으로 나누면 전체 12개 수의 평균이다.",
+            "(1 + 12)/2 = 6.5이다."
+          ],
+          "check": "묶음마다 수의 개수가 달라도 평균들의 단순 평균을 쓸 수 있는가?"
+        },
+        "en": {
+          "title": "Average equally sized groups",
+          "steps": [
+            "Each original number contributes half its value to one pair-average.",
+            "Averaging the six pair-averages thus divides the original sum by 12.",
+            "The answer is (1 + 12)/2 = 6.5."
+          ],
+          "check": "Would this shortcut work for groups of unequal sizes?"
+        },
+        "zh-Hans": {
+          "title": "等大小组的平均数",
+          "steps": [
+            "每个原数对某个二数平均值的贡献是它的一半。",
+            "再求6个平均值的平均数，等于将原数总和除以12。",
+            "结果为(1 + 12)/2 = 6.5。"
+          ],
+          "check": "组内个数不同时，还能直接平均各组平均数吗？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 10,
+      "result": "23.75",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/10",
+      "versions": {
+        "ko": {
+          "title": "겹친 넓이는 한 번 빼기",
+          "steps": [
+            "회전 중심을 원점으로 놓으면 첫 직사각형은 가로 −2.5부터 2.5, 세로 0부터 3에 놓을 수 있다.",
+            "시계 방향 회전 후 겹치는 부분은 가로 0부터 2.5, 세로 0부터 2.5인 정사각형이다.",
+            "합친 넓이는 15 + 15 − 2.5 × 2.5 = 23.75이다."
+          ],
+          "check": "직사각형 두 개의 넓이만 더하면 어떤 부분을 두 번 세는가?"
+        },
+        "en": {
+          "title": "Remove the duplicated area",
+          "steps": [
+            "Put the pivot at the origin: the first rectangle spans x=−2.5 to 2.5 and y=0 to 3.",
+            "After clockwise rotation, the overlap spans 0 to 2.5 on each axis.",
+            "The union has area 15 + 15 − 2.5² = 23.75."
+          ],
+          "check": "Which region is counted twice when the rectangle areas are added?"
+        },
+        "zh-Hans": {
+          "title": "减去重复计算的面积",
+          "steps": [
+            "以旋转中心为原点，原长方形的横坐标为−2.5至2.5，纵坐标为0至3。",
+            "顺时针旋转后，重叠部分在两轴方向均为0至2.5。",
+            "总覆盖面积为15 + 15 − 2.5² = 23.75。"
+          ],
+          "check": "直接相加会重复计算哪一部分？"
+        }
+      },
+      "answer": "D"
+    },
+    {
+      "number": 11,
+      "result": "L + L",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/11",
+      "versions": {
+        "ko": {
+          "title": "배치로 가능성 확인",
+          "steps": [
+            "아래 3행 4열 배치에서 같은 글자 4개가 한 조각이다. L과 R은 서로 다른 두 L형 조각을 뜻한다.",
+            "S는 가운데에서 두 칸씩 엇갈린 모양이고, 나머지 두 조각은 회전하거나 뒤집은 L형이다.",
+            "따라서 S형과 함께 필요한 두 조각은 L형 두 개이다."
+          ],
+          "check": "각 글자가 정확히 네 칸이고, 각 조각이 변으로 이어지는가?",
+          "grid": [
+            "LLSR",
+            "LSSR",
+            "LSRR"
+          ]
+        },
+        "en": {
+          "title": "Verify a tiling",
+          "steps": [
+            "In the grid, each letter marks one four-square tile. L and R denote two separate L-tiles.",
+            "S forms the central staggered tile; the other two pieces are rotated or reflected L-tiles.",
+            "Thus the remaining tiles are L and L."
+          ],
+          "check": "Does every tile occupy four edge-connected squares?",
+          "grid": [
+            "LLSR",
+            "LSSR",
+            "LSRR"
+          ]
+        },
+        "zh-Hans": {
+          "title": "用具体铺法验证",
+          "steps": [
+            "下图中每种字母的4格组成一块。L与R分别表示两块L形。",
+            "中间的S格组成错开的S形，另外两块都是旋转或翻转后的L形。",
+            "因此另外两块都是L形。"
+          ],
+          "check": "每块是否恰有4格，且通过公共边相连？",
+          "grid": [
+            "LLSR",
+            "LSSR",
+            "LSRR"
+          ]
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 12,
+      "result": "5π",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/12",
+      "versions": {
+        "ko": {
+          "title": "반지름의 최댓값 증명",
+          "steps": [
+            "도형 중심을 원점으로 잡으면 안쪽 꼭짓점 (1,2)까지의 거리는 √5이다. 중심이 원점이고 반지름이 √5인 원은 영역 안에 들어간다.",
+            "더 큰 원이라면 반지름이 2보다 크므로 중심 (a,b)는 |a|<1, |b|<1이어야 한다.",
+            "대칭으로 a,b≥0이라 두면 (1,2)까지 거리의 제곱은 (1−a)² + (2−b)² ≤ 5이다. 따라서 반지름은 √5를 넘을 수 없다.",
+            "최대 넓이는 π × 5 = 5π이다."
+          ],
+          "check": "원을 하나 그려 보이는 것과 더 큰 원이 불가능함을 보이는 것은 어떻게 다른가?"
+        },
+        "en": {
+          "title": "Prove a maximum radius",
+          "steps": [
+            "The origin-centred circle reaches the inward corner (1,2), so radius √5 fits.",
+            "Any larger radius exceeds 2, forcing the centre within one unit of both axes.",
+            "By symmetry take a,b≥0. Its squared distance to (1,2) is (1−a)² + (2−b)² ≤ 5; no larger radius fits.",
+            "Maximum area: 5π."
+          ],
+          "check": "Why must both existence and maximality be shown?"
+        },
+        "zh-Hans": {
+          "title": "证明半径的最大值",
+          "steps": [
+            "以图形中心为原点，到内凹顶点(1,2)的距离为√5；以原点为圆心、半径为√5的圆能放入。",
+            "若半径更大，则大于2，圆心到两坐标轴的距离都必须小于1。",
+            "由对称性取a,b≥0。到(1,2)的距离平方为(1−a)² + (2−b)² ≤ 5，因此半径不能大于√5。",
+            "最大面积为5π。"
+          ],
+          "check": "为何既要说明能放入，也要说明不能更大？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 13,
+      "result": "3, 4, 4, 3, 4, 3, 4",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/13",
+      "versions": {
+        "ko": {
+          "title": "주기와 남은 항",
+          "steps": [
+            "짝수를 7로 나눈 나머지는 2, 4, 6, 1, 3, 5, 0의 순서로 반복된다.",
+            "짝수는 25개이고 25 = 7 × 3 + 4이다. 각 나머지가 세 번씩 나온 뒤 2, 4, 6, 1이 한 번씩 더 나온다.",
+            "나머지 0부터 6의 빈도는 차례로 3, 4, 4, 3, 4, 3, 4이다. 이에 맞는 보기는 A이다."
+          ],
+          "check": "막대의 높이뿐 아니라 가로축의 나머지 값도 확인했는가?"
+        },
+        "en": {
+          "title": "Use a complete remainder cycle",
+          "steps": [
+            "The remainder cycle is 2, 4, 6, 1, 3, 5, 0.",
+            "Since 25 = 7 × 3 + 4, remainders 2, 4, 6 and 1 occur once more than the others.",
+            "For remainders 0 through 6, the frequencies are 3, 4, 4, 3, 4, 3, 4: option A."
+          ],
+          "check": "Did you match each frequency to its horizontal-axis label?"
+        },
+        "zh-Hans": {
+          "title": "利用余数周期",
+          "steps": [
+            "余数按2、4、6、1、3、5、0循环。",
+            "25 = 7 × 3 + 4，所以余数2、4、6、1比其他余数各多出现一次。",
+            "余数0至6的次数依次为3、4、4、3、4、3、4，对应A。"
+          ],
+          "check": "是否将次数与横轴余数逐一对应？"
+        }
+      },
+      "answer": "A"
+    },
+    {
+      "number": 14,
+      "result": "34",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/14",
+      "versions": {
+        "ko": {
+          "title": "평균과 중앙값의 조건",
+          "steps": [
+            "N<7이면 중앙값은 6.5 이상이지만 평균은 9.5 미만이다. 평균이 중앙값의 두 배가 될 수 없다.",
+            "따라서 N≥7이며 여섯 수의 중앙 두 수는 모두 7이다. 평균은 14여야 한다.",
+            "(50 + N)/6 = 14에서 N = 34이다."
+          ],
+          "check": "구한 N을 크기순으로 끼워 넣고 중앙값을 다시 확인했는가?"
+        },
+        "en": {
+          "title": "Check the median case",
+          "steps": [
+            "For N<7, the median is at least 6.5 but the mean is below 9.5; doubling is impossible.",
+            "Thus N≥7, the middle entries are 7 and 7, and the mean must be 14.",
+            "Solve (50 + N)/6 = 14 to obtain N=34."
+          ],
+          "check": "Does inserting 34 preserve the median you used?"
+        },
+        "zh-Hans": {
+          "title": "先判断中位数的情况",
+          "steps": [
+            "若N<7，中位数至少为6.5，而平均数小于9.5，不可能是中位数的两倍。",
+            "所以N≥7，中间两数均为7，平均数必须是14。",
+            "由(50 + N)/6 = 14，得N=34。"
+          ],
+          "check": "插入34后，中位数是否仍为7？"
+        }
+      },
+      "answer": "E"
+    },
+    {
+      "number": 15,
+      "result": "16",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/15",
+      "versions": {
+        "ko": {
+          "title": "짝짓기의 최솟값과 최댓값",
+          "steps": [
+            "금색 칸은 36 − 13 = 23개이고 접으면 18쌍이 된다.",
+            "금색끼리 겹침을 최소화하려면 18쌍에 하나씩 놓은 뒤 남은 5개를 겹친다. 따라서 m=5이다.",
+            "최대화하려면 금색끼리 두 개씩 묶는다. 23 = 2 × 11 + 1이므로 M=11이다.",
+            "m + M = 16이다."
+          ],
+          "check": "최솟값과 최댓값을 실제 색칠로 각각 만들 수 있는가?"
+        },
+        "en": {
+          "title": "Extremes of pairing",
+          "steps": [
+            "There are 23 gold squares in 18 overlapping pairs.",
+            "Spreading gold across all pairs leaves 5 extra squares, so the minimum double-gold count is 5.",
+            "Pairing gold together gives at most 11 double-gold pairs, with one gold square left.",
+            "The sum is 16."
+          ],
+          "check": "Can you construct both extreme arrangements?"
+        },
+        "zh-Hans": {
+          "title": "配对的最小值与最大值",
+          "steps": [
+            "金色共有23格，折叠后形成18对。",
+            "先在每对放一格金色，剩余5格造成双金色配对，所以最小值为5。",
+            "尽量将金色两两配对，可得11对，余1格，所以最大值为11。",
+            "两者之和为16。"
+          ],
+          "check": "能否实际安排出这两种极端情况？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 16,
+      "result": "105",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/16",
+      "versions": {
+        "ko": {
+          "title": "대응하는 두 수 중 하나씩",
+          "steps": [
+            "(1,11), (2,12), …, (10,20)의 열 쌍에서 두 수를 동시에 고를 수 없다.",
+            "총 열 수를 고르므로 각 쌍에서 정확히 하나씩 골라야 한다.",
+            "각 쌍의 작은 수를 모두 고르면 합은 55이다. 큰 수를 고르는 다섯 쌍에서 각각 10씩 늘어나므로 55 + 50 = 105이다."
+          ],
+          "check": "각 쌍에서 정확히 하나씩 골라야 하는 이유를 설명할 수 있는가?"
+        },
+        "en": {
+          "title": "Choose one from each pair",
+          "steps": [
+            "Group the numbers as (1,11), …, (10,20). Each pair contributes at most one selection.",
+            "Ten selections force exactly one from every pair.",
+            "The lower entries sum to 55; the five upper selections each add 10. Total: 105."
+          ],
+          "check": "Why must every pair contribute exactly one number?"
+        },
+        "zh-Hans": {
+          "title": "每对中恰选一个",
+          "steps": [
+            "将数分成(1,11)、…、(10,20)，每对至多选一个。",
+            "共需选10个数，因此每对必须恰选一个。",
+            "所有较小数之和为55，选取的5个较大数各增加10，总和为105。"
+          ],
+          "check": "为什么每对必须恰好贡献一个数？"
+        }
+      },
+      "answer": "C"
+    },
+    {
+      "number": 17,
+      "result": "115",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/17",
+      "versions": {
+        "ko": {
+          "title": "화살표의 출발점과 기준량",
+          "steps": [
+            "A에서 나가는 비율은 1/4과 1/5이므로 A에 남아 일하는 인원은 100 × (1 − 1/4 − 1/5) = 55명이다.",
+            "B에서 A로 오는 인원은 120 × 1/3 = 40명, C에서는 160 × 1/8 = 20명이다.",
+            "A에서 일하는 전체 인원은 55 + 40 + 20 = 115명이다."
+          ],
+          "check": "각 분수를 곱할 때 출발 도시의 인구를 기준량으로 삼았는가?"
+        },
+        "en": {
+          "title": "Use the arrow’s starting population",
+          "steps": [
+            "A retains 100 × (1 − 1/4 − 1/5) = 55 workers.",
+            "B sends 120 × 1/3 = 40 and C sends 160 × 1/8 = 20 workers to A.",
+            "The total working in A is 115."
+          ],
+          "check": "Which city’s population is the whole for each fraction?"
+        },
+        "zh-Hans": {
+          "title": "以箭头起点人口为单位量",
+          "steps": [
+            "A本地留下100 × (1 − 1/4 − 1/5) = 55人。",
+            "B有120 × 1/3 = 40人到A，C有160 × 1/8 = 20人到A。",
+            "在A工作的人数共115。"
+          ],
+          "check": "每个分数应乘以哪一座城市的人口？"
+        }
+      },
+      "answer": "D"
+    },
+    {
+      "number": 18,
+      "result": "2",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/18",
+      "versions": {
+        "ko": {
+          "title": "길이비와 넓이비",
+          "steps": [
+            "같은 모양인 원과 내접 정사각형 사이의 넓이는 반지름의 제곱에 비례한다.",
+            "오른쪽은 그 부분의 1/4만 색칠했으므로 (R²)/4 = 1이다.",
+            "R² = 4이고 반지름은 양수이므로 R=2이다."
+          ],
+          "check": "넓이가 네 배일 때 길이도 네 배라고 생각하지 않았는가?"
+        },
+        "en": {
+          "title": "Area scales with length squared",
+          "steps": [
+            "For similar circle-square configurations, the gap area is proportional to the radius squared.",
+            "Only a quarter of the right gap is shaded, giving (R²)/4 = 1.",
+            "The positive radius is R=2."
+          ],
+          "check": "If area quadruples, by what factor does length change?"
+        },
+        "zh-Hans": {
+          "title": "长度比与面积比",
+          "steps": [
+            "相似的圆与内接正方形之间，间隙面积与半径平方成正比。",
+            "右边只涂了间隙的1/4，因此(R²)/4 = 1。",
+            "半径为正，故R=2。"
+          ],
+          "check": "面积变成4倍时，长度变成几倍？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 19,
+      "result": "8.5",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/19",
+      "versions": {
+        "ko": {
+          "title": "시간을 식으로 맞추기",
+          "steps": [
+            "만나는 위치를 A에서 x마일 떨어진 곳으로 두고 가운데 구간 5≤x≤10을 생각한다.",
+            "A쪽 차의 시간은 1/5 + (x−5)/40, B쪽 차의 시간은 1/4 + (10−x)/40이다.",
+            "두 시간이 같다는 식에 40을 곱하면 8 + x − 5 = 10 + 10 − x이다. 따라서 2x=17, x=8.5이다.",
+            "8.5는 가운데 구간에 있으므로 세운 구간 조건에도 맞는다."
+          ],
+          "check": "시간을 더하기 전에 모든 구간의 단위를 시간으로 맞췄는가?"
+        },
+        "en": {
+          "title": "Equate travel times",
+          "steps": [
+            "Let the meeting point be x miles from A, with 5≤x≤10.",
+            "The times are 1/5 + (x−5)/40 and 1/4 + (10−x)/40.",
+            "Equating and multiplying by 40 gives 2x=17, hence x=8.5.",
+            "This lies in the assumed middle section."
+          ],
+          "check": "Did you verify the section assumed in the equation?"
+        },
+        "zh-Hans": {
+          "title": "列出相等的行驶时间",
+          "steps": [
+            "设相遇处距A为x英里，先取5≤x≤10。",
+            "两车所用时间分别为1/5 + (x−5)/40和1/4 + (10−x)/40。",
+            "令两者相等并乘以40，得2x=17，所以x=8.5。",
+            "结果位于假设的中间路段。"
+          ],
+          "check": "是否检验结果落在所设路段内？"
+        }
+      },
+      "answer": "D"
+    },
+    {
+      "number": 20,
+      "result": "4/7",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/20",
+      "versions": {
+        "ko": {
+          "title": "반복 구조를 방정식으로",
+          "steps": [
+            "첫 사람이 먹는 전체 비율을 S라 하자. 세 사람이 한 번씩 먹으면 처음 양의 1/8이 남는다.",
+            "그 뒤의 과정은 같은 순서로 반복되므로 첫 사람은 남은 양의 S만큼을 다시 먹는다.",
+            "S = 1/2 + S/8에서 8S = 4 + S, 따라서 S=4/7이다."
+          ],
+          "check": "처음 순서로 돌아올 때 남은 양은 왜 1/8인가?"
+        },
+        "en": {
+          "title": "Use a self-similar equation",
+          "steps": [
+            "Let S be the first person’s total share. After one round, 1/8 remains.",
+            "The same process repeats on that remainder, so S = 1/2 + S/8.",
+            "Solving 8S = 4 + S gives S=4/7."
+          ],
+          "check": "Why does a complete round leave exactly 1/8?"
+        },
+        "zh-Hans": {
+          "title": "用重复结构列方程",
+          "steps": [
+            "设第一人最终吃到的比例为S。一轮后剩下原来的1/8。",
+            "余下部分重复相同过程，因此S = 1/2 + S/8。",
+            "由8S = 4 + S，得S=4/7。"
+          ],
+          "check": "为何完整一轮后恰好剩下1/8？"
+        }
+      },
+      "answer": "A"
+    },
+    {
+      "number": 21,
+      "result": "12",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/21",
+      "versions": {
+        "ko": {
+          "title": "연속 학년을 거꾸로 배치하기",
+          "steps": [
+            "연속 학년끼리는 통로가 없어야 한다. C는 G와만, F는 D와만 통로가 없으므로 C와 F는 1학년·7학년의 양 끝이어야 한다.",
+            "C를 1학년으로 놓으면 2학년은 G, 6학년은 D, 7학년은 F이다. 남은 A·B·E를 3·4·5학년에 배치한다.",
+            "통로가 없는 쌍만 연속하게 놓으면 순서는 C→G→B→E→A→D→F이다. 역순도 가능하다.",
+            "어느 방향이든 C와 F의 합은 8이고 E는 4이므로 C+E+F=12이다."
+          ],
+          "check": "C가 중간 학년이면 바로 앞뒤 두 학년을 모두 이웃하지 않게 놓을 수 있는가?"
+        },
+        "en": {
+          "title": "Order the consecutive grades",
+          "steps": [
+            "Consecutive grades need unconnected pods. C’s only non-neighbour is G; F’s is D, so C and F occupy grades 1 and 7.",
+            "Between C→G and D→F, only B→E→A fits the missing-edge conditions.",
+            "Thus the order is C,G,B,E,A,D,F or its reverse.",
+            "C+F=8 and E=4, giving 12."
+          ],
+          "check": "Why cannot C hold an interior grade?"
+        },
+        "zh-Hans": {
+          "title": "按连续年级逆向安排",
+          "steps": [
+            "连续年级必须放在没有通道相连的区域。C只与G不相连，F只与D不相连，所以C、F分别位于1年级与7年级。",
+            "在C→G和D→F之间，只有B→E→A符合不相连条件。",
+            "年级顺序为C、G、B、E、A、D、F，或完全反向。",
+            "因此C+F=8、E=4，所求和为12。"
+          ],
+          "check": "若C放在中间年级，能为前后两个年级都找到不相连区域吗？"
+        }
+      },
+      "answer": "A"
+    },
+    {
+      "number": 22,
+      "result": "7",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/22",
+      "versions": {
+        "ko": {
+          "title": "빈칸도 포함한 곱셈식",
+          "steps": [
+            "옷 수를 c, 빈 고리 수를 각 구간마다 e라 하면 빈 구간은 c+1개이다.",
+            "c + e(c+1) = 35를 정리하면 (c+1)(e+1) = 36이다.",
+            "c,e≥1이므로 c+1은 36의 약수 중 1과 36을 제외한 2,3,4,6,9,12,18이다.",
+            "따라서 가능한 옷 수 c는 1,2,3,5,8,11,17의 일곱 가지이다."
+          ],
+          "check": "양 끝의 빈 구간을 모두 셌는가?"
+        },
+        "en": {
+          "title": "Include both end gaps",
+          "steps": [
+            "For c coats and e empty hooks per gap, there are c+1 gaps.",
+            "The equation c + e(c+1) = 35 becomes (c+1)(e+1) = 36.",
+            "Both factors exceed 1, so c can be 1,2,3,5,8,11,17: seven values."
+          ],
+          "check": "Did you include the gaps before and after all coats?"
+        },
+        "zh-Hans": {
+          "title": "把两端空位也计入",
+          "steps": [
+            "设有c件衣服，每段有e个空钩，则共有c+1段空位。",
+            "由c + e(c+1) = 35，得(c+1)(e+1) = 36。",
+            "两因数均大于1，因此c可为1、2、3、5、8、11、17，共7种。"
+          ],
+          "check": "是否计入第一件之前和最后一件之后的空位？"
+        }
+      },
+      "answer": "D"
+    },
+    {
+      "number": 23,
+      "result": "1",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/23",
+      "versions": {
+        "ko": {
+          "title": "제곱의 차와 소인수",
+          "steps": [
+            "구하는 수를 k²−1이라 하면 끝 두 자리가 99이므로 k²은 100의 배수이다. 따라서 k는 10의 배수이다.",
+            "네 자리 조건에서 k는 40,50,60,70,80,90,100이다. k²−1 = (k−1)(k+1)이므로 두 인수가 모두 소수여야 한다.",
+            "39,49,69,81,91,99가 각각 다른 후보를 제외한다. k=60일 때만 59와 61이 모두 소수이다.",
+            "해당 수는 3599 하나이다."
+          ],
+          "check": "두 인수 중 하나가 합성수이면 소인수의 개수는 어떻게 되는가?"
+        },
+        "en": {
+          "title": "Factor the difference of squares",
+          "steps": [
+            "Write the number as k²−1. Its final digits force k² to be divisible by 100, so k is a multiple of 10.",
+            "The candidates are 40,50,60,70,80,90,100. Both k−1 and k+1 must be prime.",
+            "Composite neighbours eliminate every candidate except 60; 59 × 61 = 3599.",
+            "Exactly one number works."
+          ],
+          "check": "Why would a composite neighbour give too many prime factors?"
+        },
+        "zh-Hans": {
+          "title": "平方差与质因数",
+          "steps": [
+            "设所求数为k²−1。末两位条件使k²是100的倍数，所以k是10的倍数。",
+            "四位数条件给出k=40、50、60、70、80、90、100；且(k−1)(k+1)的两个因数都必须是质数。",
+            "其余候选均有合数邻项，只有60的两侧59与61都是质数。",
+            "符合条件的数只有3599，共1个。"
+          ],
+          "check": "若其中一个因数为合数，为何质因数会超过两个？"
+        }
+      },
+      "answer": "B"
+    },
+    {
+      "number": 24,
+      "result": "4",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/24",
+      "versions": {
+        "ko": {
+          "title": "기하 조건을 정수식으로",
+          "steps": [
+            "같은 두 빗변의 길이를 a, 윗변 길이를 b라 하자. 밑각이 60°이므로 각 빗변의 가로 방향 길이는 a/2이다.",
+            "아랫변은 b+a이고 둘레는 3a+2b=30이다.",
+            "a는 양의 짝수이고 b>0이므로 a=2,4,6,8이다. 각각 b=12,9,6,3이다.",
+            "서로 다른 네 쌍이 서로 합동이 아닌 사다리꼴 네 개를 정한다."
+          ],
+          "check": "a=10일 때 왜 사다리꼴이 될 수 없는가?"
+        },
+        "en": {
+          "title": "Turn geometry into integers",
+          "steps": [
+            "Let each leg be a and the upper base b. Each 60° leg contributes horizontal length a/2.",
+            "The lower base is b+a, giving perimeter 3a+2b=30.",
+            "Positive integer solutions are (a,b)=(2,12),(4,9),(6,6),(8,3).",
+            "These determine four non-congruent trapezoids."
+          ],
+          "check": "Why must the case a=10 be excluded?"
+        },
+        "zh-Hans": {
+          "title": "把几何条件化为整数方程",
+          "steps": [
+            "设两腰均为a，上底为b。每条腰与下底成60°，水平投影为a/2。",
+            "下底为b+a，故周长满足3a+2b=30。",
+            "正整数解为(a,b)=(2,12)、(4,9)、(6,6)、(8,3)。",
+            "它们确定4个互不全等的梯形。"
+          ],
+          "check": "为何必须排除a=10的情况？"
+        }
+      },
+      "answer": "E"
+    },
+    {
+      "number": 25,
+      "result": "3150",
+      "sourceUrl": "https://live.poshenloh.com/past-contests/amc8/2025/problem/25",
+      "versions": {
+        "ko": {
+          "title": "대칭으로 넓이의 합 구하기",
+          "steps": [
+            "각 경로는 두 방향 이동을 각각 다섯 번씩 한다. 열 자리 중 한 방향의 다섯 자리를 고르는 수는 252이다.",
+            "모든 경로를 좌우로 반사하면 경로들의 모임은 그대로이고, 오른쪽 넓이의 합은 왼쪽 넓이의 합과 같다.",
+            "두 합을 더하면 각 경로마다 전체 넓이 25가 한 번씩 나온다.",
+            "따라서 구하는 합은 252 × 25 ÷ 2 = 3150이다."
+          ],
+          "check": "252가 경로의 수인지, 서로 다른 넓이 값의 수인지 구분했는가?"
+        },
+        "en": {
+          "title": "Sum by reflection symmetry",
+          "steps": [
+            "Every path uses five steps in each direction, giving 252 choices of their ten-position order.",
+            "Reflection swaps the total right-hand area with the total left-hand area.",
+            "Together the two totals count area 25 once for every path.",
+            "The requested sum is 252 × 25 ÷ 2 = 3150."
+          ],
+          "check": "Does 252 count paths or distinct area values?"
+        },
+        "zh-Hans": {
+          "title": "用反射对称求面积总和",
+          "steps": [
+            "每条路径在两个方向各走5步，10步的排列共有252种。",
+            "左右反射交换所有路径的右侧面积总和与左侧面积总和。",
+            "两者相加，每条路径恰好贡献整个面积25。",
+            "所求为252 × 25 ÷ 2 = 3150。"
+          ],
+          "check": "252表示路径数，还是不同面积值的个数？"
+        }
+      },
+      "answer": "B"
+    }
+  ]
+}

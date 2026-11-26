@@ -730,6 +730,7 @@ const COUNT_CAP = {
   'NL36@6':24,
   'NL37@8':30,
   'NL54@3':24,
+  'MD77@3':12,   // 적용(모형) 칸에서만 쓰인다 — 중고등 하루 20문항으로 18까지 늘리자 1배에서도 같은 문제가 났다(2026-11-25, check-amount-sheets C37-S4)
 };
 const SESSION_SEC = 1800;
 /* 유아(5~7세)는 20분 — 시간을 재지 않는 단계이고 한 번에 앉아 있는 시간이 짧다(원장 확인 필요, GPT 보고에 적음) */
@@ -795,26 +796,63 @@ function planCounts(ss, tier, maxLevel){
      교과가 상한에 막히면 문장제·독셈 칸을 늘린다. 유아(과정 0)는 이미 60문항·3일이라 이 길을 타지 않는다. */
   if(DAILY_MIN_TIERS[tier]){
     const days = Math.max(1, Math.ceil(total() / 600));
-    const count = () => [...ss.school, ...ss.strategy.practice, ...ss.application].reduce((a, d) => a + d.count, 0);
-    /* 같은 스레드의 여러 레벨(ML3 L4·L5 — 곱셈구구 같은 단)은 서로 같은 문제를 낼 수 있어, 한 회차 안 그 스레드의 합도 42까지만(문장제 6 포함) */
-    const threadSum = t => [...ss.school, ...ss.strategy.practice, ...ss.application].filter(x => x.t === t).reduce((a, x) => a + x.count, 0);
-    /* 쉬운 유형은 어려운 유형보다 많아지지 않게(check-session-roles 「어려운 유형이 쉬운 유형보다 적게」) */
-    const hardMin = () => { const h = own.filter(d => d.difficulty === 'hard'); return h.length ? Math.min(...h.map(d => d.count)) : Infinity; };
-    const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 42 && !(d.difficulty === 'easy' && d.count + 6 > hardMin());
-    /* 그래도 모자라면 복습 칸을 18까지 늘린다 — 교과·적용·독셈이 모두 상한에 막힌 회차(과정 26~28 등) */
-    const reviews = ss.school.filter(d => d.review);
-    for(let guard = 0; guard < 60 && count() < DAILY_MIN * days; guard++){
-      const c = own.slice().sort((a, b) => a.count - b.count || (b.difficulty === 'hard') - (a.difficulty === 'hard')).find(room)
-        || more.slice().sort((a, b) => a.count - b.count).find(room)
-        || reviews.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(18, cap(d)) && threadSum(d.t) + 6 <= 42);
-      if(!c) break; c.count += 6;
-    }
+    for(let guard = 0; guard < 60 && sessionCount(ss) < DAILY_MIN * days; guard++) if(!growSession(ss)) break;
     ss.studyDays = days;
   }
   ss.minutes = Math.round(total() / 60);
 }
 const DAILY_MIN = 20;
 const DAILY_MIN_TIERS = { level1:1, level2:1, level3:1, challenge:1 };
+const sessionCount = ss => [...ss.school, ...ss.strategy.practice, ...ss.application].reduce((a, d) => a + d.count, 0);
+/* 하루 20문항 채우기 한 걸음 — 한 칸을 6 늘리면 true(초등 회차 · 중고등 학습 묶음이 같이 쓴다).
+   차례: 교과(적은 것부터, 같으면 어려운 것) → 적용·독셈(그리기 제외) → 복습(18까지). */
+function growSession(ss, moreMax){
+  const cap = d => COUNT_CAP[d.t + '@' + d.lv] || 36;
+  const all = [...ss.school, ...ss.strategy.practice, ...ss.application];
+  const own = ss.school.filter(d => !d.review);
+  const more = [...ss.application.filter(d => d.kind !== 'drawing'), ...ss.strategy.practice];
+  /* 같은 스레드의 여러 레벨(ML3 L4·L5 — 곱셈구구 같은 단)은 서로 같은 문제를 낼 수 있어, 한 회차 안 그 스레드의 합도 42까지만(문장제 6 포함) */
+  const threadSum = t => all.filter(x => x.t === t).reduce((a, x) => a + x.count, 0);
+  /* 쉬운 유형은 어려운 유형보다 많아지지 않게(check-session-roles 「어려운 유형이 쉬운 유형보다 적게」) */
+  const hard = own.filter(d => d.difficulty === 'hard'), hardMin = hard.length ? Math.min(...hard.map(d => d.count)) : Infinity;
+  const room = d => d.count + 6 <= cap(d) && threadSum(d.t) + 6 <= 42 && !(d.difficulty === 'easy' && d.count + 6 > hardMin);
+  /* 그래도 모자라면 복습 칸을 18까지 늘린다 — 교과·적용·독셈이 모두 상한에 막힌 회차(과정 26~28 등) */
+  const reviews = ss.school.filter(d => d.review);
+  const c = own.slice().sort((a, b) => a.count - b.count || (b.difficulty === 'hard') - (a.difficulty === 'hard')).find(room)
+    || more.slice().sort((a, b) => a.count - b.count).find(d => room(d) && !(d.count + 6 > (moreMax || Infinity)))
+    || reviews.slice().sort((a, b) => a.count - b.count).find(d => d.count + 6 <= Math.min(18, cap(d)) && threadSum(d.t) + 6 <= 42);
+  if(!c) return false;
+  c.count += 6; return true;
+}
+function sessionSeconds(ss, tier){
+  const sec = SEC_BY_TIER[tier] || 45;
+  const cost = d => d.kind === 'drawing' ? 90 : d.kind === 'word' ? sec * 1.6 : sec;
+  return [...ss.school, ...ss.strategy.practice].reduce((a, d) => a + d.count * sec * (ss.strategy.practice.indexOf(d) >= 0 ? 1.2 : 1), 0)
+    + ss.application.reduce((a, d) => a + d.count * cost(d), 0);
+}
+/* 중·고등 하루 20문항(2026-11-25, 원장 「만들어」 — 초등 하루 20문항의 다음 걸음).
+   중고등 학습지는 회차가 아니라 학습 묶음(studyPlan lesson, 1~4회차) 하나가 한 장이고, 주 1회면 한 묶음을 5일에 푼다.
+   그래서 묶음마다 5일 × 20 = 100문항이 될 때까지, 그 묶음 회차 중 가장 적은 회차부터 한 칸씩 6 늘린다(초등과 같은 growSession).
+   묶음 나누기(high-pacing.js)는 채우기 전 시간(baseMinutes)으로 하므로 몇 번 불러도 같은 묶음이다. */
+const LESSON_DAILY_DAYS = 5;
+function fillLessonDaily(course, sourceIndices){
+  const tier = course && course.tier;
+  const list = (sourceIndices || []).map(i => course.sessions[i]).filter(ss => ss && !ss.test && ss.school && ss.strategy && ss.application);
+  if(!list.length) return 0;
+  const target = DAILY_MIN * LESSON_DAILY_DAYS;
+  const lessonCount = () => list.reduce((a, ss) => a + sessionCount(ss), 0);
+  for(let guard = 0; guard < 400 && lessonCount() < target; guard++){
+    /* 중고등 적용·독셈 칸은 18까지만 — 적용 칸은 서로 다른 문항이 교과보다 적어 30이면 1배에서도 같은 문제가 났다(C33 MD71 L3 · C37 MD77 L3) */
+    const grew = list.slice().sort((a, b) => sessionCount(a) - sessionCount(b)).some(ss => growSession(ss, 18));
+    if(!grew) break;
+  }
+  list.forEach(ss => {
+    if(ss.baseMinutes == null) ss.baseMinutes = ss.minutes;
+    ss.minutes = Math.round(sessionSeconds(ss, tier) / 60);
+    ss.lessonDaily = { target, lessonDays:LESSON_DAILY_DAYS, group:sourceIndices.slice() };
+  });
+  return lessonCount();
+}
 
 function composeSession(ss, i, spec, lists, maxLevel){
   if(ss.test) return;
@@ -1227,11 +1265,64 @@ function buildCourses(NM_THREADS){
       ownDrills.forEach(d => { if(!seenPool[d.t]){ seenPool[d.t]=true; priorPool.push(d.t); poolBand[d.t]=BAND_OF[spec.tier]; } });
   });
 
+  fillDailyLessons(OUT);
   return OUT;
+}
+
+/* 중·고등 학습 묶음 나누기 — data/high-pacing.js attach 와 **같은 나누기**(묶음 수 6·8 / 2·4, 시간 고르게 나누는 DP)를
+   채우기 전 시간으로 계산해, 그 묶음마다 하루 20문항을 채운다. high-pacing.js 는 원본 회차를 바꾸지 않는 보기라
+   채우기는 여기(원본을 만드는 곳)에서 한다. 두 나누기가 같은지는 check-session-roles H 가 본다. */
+const PACE_TEST_SECONDS = {middle1:40, middle2:45, middle3:50, highmath1:60, highmath2:60, algebra:65, calculus1:70};
+function paceWeight(course, ss){
+  if(!ss.test || ss.minutes != null) return Number(ss.minutes) > 0 ? Number(ss.minutes) : 0;
+  const sec = PACE_TEST_SECONDS[course.tier];
+  return sec ? (ss.pool || []).reduce((n, d) => n + (Number(d.n) > 0 ? Number(d.n) : 8), 0) * sec / 60 : 0;
+}
+function paceGroups(course, count){
+  const n = course.sessions.length; if(!n) return [];
+  count = Math.min(count, n);
+  const weights = course.sessions.map(ss => paceWeight(course, ss));
+  if(!weights.some(Boolean)) weights.fill(1);
+  const prefix = [0]; weights.forEach(x => prefix.push(prefix[prefix.length - 1] + x));
+  const target = prefix[n] / count;
+  const dp = Array.from({length:count + 1}, () => Array(n + 1).fill(null));
+  dp[0][0] = {max:0, sq:0, cuts:[]};
+  for(let g = 1; g <= count; g++) for(let end = g; end <= n; end++) for(let from = g - 1; from < end; from++){
+    const prev = dp[g - 1][from]; if(!prev) continue;
+    const load = prefix[end] - prefix[from];
+    const cand = {max:Math.max(prev.max, load), sq:prev.sq + (load - target) ** 2, cuts:prev.cuts.concat(end)};
+    const best = dp[g][end];
+    if(!best || cand.max < best.max - 1e-9 || Math.abs(cand.max - best.max) < 1e-9 && cand.sq < best.sq - 1e-9) dp[g][end] = cand;
+  }
+  const out = []; let from = 0;
+  dp[count][n].cuts.forEach(to => { out.push(Array.from({length:to - from}, (_, i) => from + i)); from = to; });
+  return out;
+}
+function fillDailyLessons(OUT){
+  const list = Object.values(OUT).filter(c => c && !c.comingSoon && Array.isArray(c.sessions) && c.sessions.length);
+  const total = c => c.sessions.reduce((n, ss) => n + (Number(ss.minutes) > 0 ? Number(ss.minutes) : 0), 0);
+  const size = c => c.sessions.reduce((n, ss) => n + (ss.magic || []).length + (ss.drills || []).length + (ss.creative || []).length + (ss.pool || []).length, 0);
+  const groups = [];
+  ['highmath1', 'highmath2', 'algebra'].forEach(tier => {
+    const band = list.filter(c => c.tier === tier).sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0));
+    if(!band.length) return;
+    const extraPairs = Math.max(0, Math.min(band.length, (24 - band.length * 2) / 2));
+    const larger = band.slice().sort((a, b) => b.sessions.length - a.sessions.length || total(b) - total(a) || size(b) - size(a)
+      || (Number(a.order) || 0) - (Number(b.order) || 0));
+    const four = new Set(larger.slice(0, Math.floor(extraPairs)));
+    band.forEach(c => paceGroups(c, four.has(c) ? 4 : 2).forEach(g => groups.push([c, g])));
+  });
+  ['middle1', 'middle2', 'middle3'].forEach(tier => {
+    list.filter(c => c.tier === tier).sort((a, b) => (Number(a.order) || 0) - (Number(b.order) || 0))
+      .forEach((c, i) => paceGroups(c, i === 2 ? 8 : 6).forEach(g => groups.push([c, g])));
+  });
+  list.filter(c => c.tier === 'calculus1').forEach(c => c.sessions.forEach((_, i) => groups.push([c, [i]])));
+  groups.forEach(([c, g]) => fillLessonDaily(c, g));
 }
 
 window.NM_COURSE_SPEC = COURSE_SPEC;   // 검증 하네스·향후 편집용 원본 노출
 window.NM_COUNT_CAP = COUNT_CAP;       // 학습량 배수(exam.js)도 같은 상한을 지킨다
+window.NM_FILL_LESSON_DAILY = fillLessonDaily;   // 중고등 학습 묶음 하루 20문항(high-pacing.js attach)
 window.NM_COURSES = buildCourses(window.NM_THREADS);
 
 if(typeof module!=='undefined'&&module.exports)module.exports={COURSE_SPEC,buildCourses,NM_COURSES:window.NM_COURSES};

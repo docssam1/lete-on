@@ -129,7 +129,7 @@
       programCode: "DG",
       trackId: "high-advance",
       scopeKey: "middle-common-math-mixed",
-      scopeLabel: "대치 2027 예비고1 · 공통수학1 + 공통수학2 도형의 방정식",
+      scopeLabel: "대치 2027 예비고1 · 공통수학1 + 공통수학2 전 범위",
       evidenceStatus: "verified",
       evidenceRefs: ["PUBLIC:DG-DAECHI-PREHIGH-2027-OFFICIAL"]
     },
@@ -162,7 +162,7 @@
       programCode: "SM",
       trackId: "common-math-entry",
       scopeKey: "middle2-2-to-middle3-2",
-      scopeLabel: "중2-2·중3-1·중3-2 · 대수 15 + 기하 15",
+      scopeLabel: "중2-2·중3-1·중3-2 · 자체 연습 구성",
       evidenceStatus: "verified",
       evidenceRefs: ["PUBLIC:SM-CM1-ENTRY-2026"]
     },

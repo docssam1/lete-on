@@ -15,6 +15,7 @@ const mocks = [
   { id: "dg-pre-high1-r01", programId: "DG", title: "깊은생각 예비고1 입학 대비 1회", scope: "공통수학1·공통수학2", questionCount: 30, durationMinutes: 90, mode: "released" },
   { id: "dg-middle1-entry-r01", programId: "DG", title: "깊은생각 중1 시작반 입반 대비 1회", scope: "초5·초6 누적", questionCount: 30, durationMinutes: 70, mode: "released" },
   { id: "dg-middle1-entry-r02", programId: "DG", title: "깊은생각 중1 시작반 입반 대비 2회", scope: "초5·초6 누적", questionCount: 30, durationMinutes: 70, mode: "released" },
+  { id: "dg-middle1-entry-r03", programId: "DG", title: "깊은생각 중1 시작반 입반 대비 3회", scope: "초5·초6 누적", questionCount: 30, durationMinutes: 70, mode: "released" },
   { id: "dp-common1-v14-pilot", programId: "DP", title: "돌파 1회", scope: "중2·중3", questionCount: 30, durationMinutes: 150, mode: "released" }
 ];
 
@@ -68,12 +69,12 @@ test("DG starts with separate course banners before showing actual rounds", () =
   const { stage } = promo();
   assert.match(stage, /class="course-banner is-ready" href="#academy=DG&amp;course=middle1"/);
   assert.match(stage, /class="course-banner is-ready" href="#academy=DG&amp;course=pre-high1"/);
-  assert.match(stage, /2회/);
+  assert.match(stage, /3회/);
   assert.match(stage, /1회/);
   assert.doesNotMatch(stage, /exam=/);
 });
 
-test("middle1 course detail offers both actual rounds and the official elementary duration", () => {
+test("middle1 course detail offers all three actual rounds and the official elementary duration", () => {
   const { stage } = promo("#academy=DG&course=middle1");
   const detail = stage.match(/<section class="course-detail"[\s\S]*?<\/section>/)?.[0];
   assert.ok(detail);
@@ -81,8 +82,10 @@ test("middle1 course detail offers both actual rounds and the official elementar
   assert.match(detail, /aria-labelledby="round-list-title"/);
   assert.match(detail, /exam=dg-middle1-entry-r01/);
   assert.match(detail, /exam=dg-middle1-entry-r02/);
+  assert.match(detail, /exam=dg-middle1-entry-r03/);
   assert.match(detail, />1회</);
   assert.match(detail, />2회</);
+  assert.match(detail, />3회</);
   assert.doesNotMatch(detail, /exam=dg-pre-high1-r01/);
   assert.doesNotMatch(stage, /class="course-banner-grid"/);
   assert.doesNotMatch(stage, /data-admission-jump/, "Do not show a jump to an absent admission section");

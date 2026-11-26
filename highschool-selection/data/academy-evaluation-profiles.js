@@ -75,13 +75,13 @@
     DG: Object.freeze({
       programId: "DG",
       displayName: "깊생",
-      paperStyle: "대치 2027 예비고1 공통수학1·공통수학2 도형의 방정식 입학 시험",
+      paperStyle: "대치 2027 예비고1 공통수학1·공통수학2 전 범위 입학 시험",
       defaultDuration: "대치 초등관70분 · 중고등90분",
       difficultyFlow: "이차함수와 여러 가지 부등식의 연결, 도형의 방정식까지 심화",
       reportTitle: "깊생 심화 연결 진단",
       primaryAxes: Object.freeze(["과정별 수행률", "개념 연결", "복합 조건", "세부유형", "심화 난도"]),
       evaluationCriteria: Object.freeze([
-        "대치 2027 예비고1은 공통수학1과 공통수학2 도형의 방정식으로 평가",
+        "대치 2027 예비고1은 공통수학1과 공통수학2 전 범위로 평가",
         "여러 가지 부등식과 함수 해석의 연결 구조를 별도 평가",
         "원본 시험·답안 확보 전에는 공식 레벨 판정을 만들지 않음"
       ]),
@@ -90,13 +90,13 @@
     SM: Object.freeze({
       programId: "SM",
       displayName: "생수",
-      paperStyle: "중2-2·중3-1·중3-2를 대수 15문항과 기하 15문항으로 나누는 30문항 입반형",
+      paperStyle: "중2-2·중3-1·중3-2의 대수·기하를 다루는 30문항 입반 대비",
       defaultDuration: "180분 · 공통수학1 기본 입반",
       difficultyFlow: "2022 구판 모의 참고지의 유형 구조를 유지하되 조건 결합·풀이 단계·역추론을 강화",
       reportTitle: "생수 공통수학1 입반 진단",
       primaryAxes: Object.freeze(["대수 수행률", "기하 수행률", "학년·학기", "단원·세부유형", "난이도", "유사문제 준비도"]),
       evaluationCriteria: Object.freeze([
-        "중2-2·중3-1·중3-2 범위와 대수 15·기하 15 균형을 함께 평가",
+        "중2-2·중3-1·중3-2 범위를 연결하는 연습 구성을 점검",
         "2022 구판 모의 참고지 2회는 현행 공식 기출과 구분하고 범위 밖 문항은 대표본에서 제외",
         "현재 시험이 구판보다 어렵다는 사용자 직접 관찰은 제작 난도 보정에만 쓰고 학원 공식 발표로 표시하지 않음"
       ]),
@@ -113,7 +113,7 @@
     "wm-algebra-geometry-diagnostic": Object.freeze({ scope: "중등대수 25 + 중등기하 25 목표", duration: "대수90분·기하90분 + 휴식20분 · 2026년 12월 공지", paperVariant: "원수학 대수·기하" }),
     "ed-middle1-entry": Object.freeze({ scope: "초5·초6 전 과정 · 서술형 30문항", duration: "100분", paperVariant: "이든 중1 시작" }),
     "ed-high-advance-entry": Object.freeze({ scope: "중2·중3 전 과정 · 대수 20 + 기하 10", duration: "100분", paperVariant: "이든 공통수학1 기본반 입반 대비" }),
-    "sm-common1-entry": Object.freeze({ scope: "중2-2·중3-1·중3-2 · 대수 15 + 기하 15", duration: "180분", paperVariant: "생수형 공통수학1 입반 대비 추정 구성" })
+    "sm-common1-entry": Object.freeze({ scope: "중2-2·중3-1·중3-2", duration: "180분", paperVariant: "생수형 공통수학1 입반 대비 추정 구성" })
   });
 
   function resolve(examId, programId) {
