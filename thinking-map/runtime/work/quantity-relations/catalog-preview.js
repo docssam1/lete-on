@@ -148,6 +148,7 @@
     if ((match = book.match(/^RAY (B[12])-1$/))) return {series:'소마',stage:'RAY',volume:match[1]+'-1',book};
     if ((match = book.match(/^필즈 (킨더|베이직|입문|초급|중급|실력)\s*(.*)$/))) return {series:'필즈',stage:match[1],volume:match[2]||'본문',book};
     if ((match = book.match(/^3% 올림피아드 (\d+과정)$/))) return {series:'3% 올림피아드',stage:match[1],volume:'본문·단원 자료',book};
+    if ((match = book.match(/^초등팩토\s*원리\s*([123])([ABC])(?:\s+(\d{4}))?$/))) return {series:'팩토',stage:'초등 '+match[1],volume:'원리 '+match[2]+(match[3]?' '+match[3]:''),book};
     return {series:book,stage:'연결 자료',volume:'본문',book};
   }
   const scope = TEXTBOOK_SCOPE, seriesLabel = name => scope.seriesLabels[name] || name;
@@ -164,7 +165,12 @@
       const book = prefix(volume);
       const existing = navBooks.find(r => r.book === book);
       if (existing) existing.entryTitle = entryTitle;
-      else navBooks.push({series,stage,volume,book,entryTitle});
+      else {
+        const normalize = value => String(value).toLocaleLowerCase().replace(/\b20\d{2}\b/g,'').replace(/[\s_-]+/g,'');
+        const alias = navBooks.find(r => r.series===series && r.stage===stage && normalize(r.volume)===normalize(volume));
+        if (alias) alias.entryTitle = entryTitle;
+        else navBooks.push({series,stage,volume,book,entryTitle});
+      }
     }
   }
   for (const level of ['Pre','입문','초급','중급']) register('1031',level,['A권','B권','C권','D권'],v=>'1031 '+level+' '+v[0],'1031 '+level);
@@ -247,7 +253,7 @@
     else if (!stage) cards = (series==='소마'?scope.somaStages:[...new Set(filtered.map(r => r.stage))]).map(name => card(name, seriesLabel(series), name));
     else cards = filtered.sort((a,b)=>a.volume.localeCompare(b.volume,'ko',{numeric:true})).map(r => card(r.volume, sourceBooks.some(b=>b.book===r.book)?r.book+' · 파일 장부 기준':r.book, r.book, r.volume.replace('권','')));
     const scopeEntries = catalogEntries.filter(r=>!series||r.series===series);
-    home.innerHTML = `<header class="catalog-mast"><a class="catalog-brand" id="catalog-brand" href="#"><i>GF</i><span>통합 사고력 문제은행</span></a><button id="catalog-search">문제로 유형 찾기</button></header><nav class="catalog-path"><button id="catalog-root">전체 교재</button>${series ? '<span>›</span><button id="catalog-series">'+escape(seriesLabel(series))+'</button>' : ''}${stage ? '<span>›</span><span>'+escape(stage)+'</span>' : ''}</nav><section class="catalog-stage"><div class="catalog-heading"><p>${stage ? '권을 선택하세요' : series ? '단계를 선택하세요' : '교재를 선택하세요'}</p><h1>${escape(stage ? seriesLabel(series)+' '+stage : seriesLabel(series) || '생각을 잇는 수학')}</h1></div><div class="catalog-giant" aria-hidden="true">${stage ? escape(stage) : series ? escape(seriesLabel(series)) : 'THINKING MATH'}</div><section class="catalog-grid">${cards.join('')}</section>${series==='소마'?'<p class="catalog-footnote">소마 사고력 학원 교재: 레이 · 프리즘 · 프리미어 초급·중급·고급. 레이의 기존 Ray Kids·플러스북 표기는 권 선택에서 구별합니다.</p>':''}</section><details class="catalog-status-list" ${series?'open':''}><summary>전체 작업 현황 · ${scopeEntries.length}개 교재·단계 묶음</summary><p>기존 분석과 미검토 범위를 함께 표시합니다. 아래 항목 수는 권수나 전체 문항 수가 아닙니다.</p><div class="catalog-table-scroll"><table><thead><tr><th>교재</th><th>확인한 범위</th><th>현재 작업</th><th>남은 작업</th></tr></thead><tbody>${scopeEntries.map(r=>`<tr><th>${escape(r.title)}</th><td>${escape(r.scope)}</td><td>${escape(r.current)}</td><td>${escape(r.remaining)}</td></tr>`).join('')}</tbody></table></div></details><p class="catalog-footnote">1031 · 소마 · 3% 올림피아드 · 필즈 더 클래식 · 필즈를 다룹니다. 필즈와 필즈 더 클래식은 서로 다른 교재입니다.</p>`;
+  home.innerHTML = `<header class="catalog-mast"><a class="catalog-brand" id="catalog-brand" href="#"><i>GF</i><span>통합 사고력 문제은행</span></a><button id="catalog-search">문제로 유형 찾기</button></header><nav class="catalog-path"><button id="catalog-root">전체 교재</button>${series ? '<span>›</span><button id="catalog-series">'+escape(seriesLabel(series))+'</button>' : ''}${stage ? '<span>›</span><span>'+escape(stage)+'</span>' : ''}</nav><section class="catalog-stage"><div class="catalog-heading"><p>${stage ? '권을 선택하세요' : series ? '단계를 선택하세요' : '교재를 선택하세요'}</p><h1>${escape(stage ? seriesLabel(series)+' '+stage : seriesLabel(series) || '생각을 잇는 수학')}</h1></div><div class="catalog-giant" aria-hidden="true">${stage ? escape(stage) : series ? escape(seriesLabel(series)) : 'THINKING MATH'}</div><section class="catalog-grid">${cards.join('')}</section>${series==='소마'?'<p class="catalog-footnote">소마 사고력 학원 교재: 레이 · 프리즘 · 프리미어 초급·중급·고급. 레이의 기존 Ray Kids·플러스북 표기는 권 선택에서 구별합니다.</p>':''}</section><details class="catalog-status-list" ${series?'open':''}><summary>전체 작업 현황 · ${scopeEntries.length}개 교재·단계 묶음</summary><p>기존 분석과 미검토 범위를 함께 표시합니다. 아래 항목 수는 권수나 전체 문항 수가 아닙니다.</p><div class="catalog-table-scroll"><table><thead><tr><th>교재</th><th>확인한 범위</th><th>현재 작업</th><th>남은 작업</th></tr></thead><tbody>${scopeEntries.map(r=>`<tr><th>${escape(r.title)}</th><td>${escape(r.scope)}</td><td>${escape(r.current)}</td><td>${escape(r.remaining)}</td></tr>`).join('')}</tbody></table></div></details><p class="catalog-footnote">1031 · 소마 · 3% 올림피아드 · 필즈 더 클래식 · 필즈 · 팩토를 다룹니다. 필즈와 필즈 더 클래식은 서로 다른 교재입니다.</p>`;
     document.querySelector('#catalog-brand').onclick = event => { event.preventDefault(); series='';stage='';drawHome(); };
     home.querySelector('.catalog-status-list').insertAdjacentHTML('afterend',inventoryMarkup());bindInventory();
     document.querySelector('#catalog-root').onclick = () => { series = ''; stage = ''; drawHome(); };

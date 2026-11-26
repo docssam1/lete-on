@@ -1,7 +1,7 @@
 {
   "schema": "gfield-thinking-map-code/v1",
-  "date": "2026-11-25",
-  "sourceCheckpoint": 78,
+  "date": "2026-11-26",
+  "sourceCheckpoint": 79,
   "repository": "docssam1/lete-on",
   "files": [
     {
@@ -37,8 +37,8 @@
     {
       "path": "work/quantity-relations/catalog-preview.js",
       "storedPath": "runtime/work/quantity-relations/catalog-preview.js",
-      "bytes": 36457,
-      "sha256": "cefb7ad53276243a1915e5fd4a193c36e5f84e9e057b5a9185b01ea6c2eed966"
+      "bytes": 36979,
+      "sha256": "41d8a1a5084385addcc678ced993d2a93f3523048117ef7227bef2d2e372c60d"
     },
     {
       "path": "work/quantity-relations/crossbook-alignment-ui.js",
@@ -253,8 +253,8 @@
     {
       "path": "work/quantity-relations/textbook-scope.json",
       "storedPath": "runtime/work/quantity-relations/textbook-scope.json",
-      "bytes": 905,
-      "sha256": "df1ecdbe713c090b8c8af8b497ca4afac5822d7dd4a9782ca0dbf25e0ec2ae35"
+      "bytes": 1168,
+      "sha256": "0962706a3f783174aeea9ab65f824fd96be068810d0d7bc1c27d6ae1e87cd8e7"
     },
     {
       "path": "work/quantity-relations/textbook-workbench.css",

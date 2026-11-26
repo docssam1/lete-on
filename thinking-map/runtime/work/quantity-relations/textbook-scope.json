@@ -7,10 +7,12 @@
     "소마",
     "3% 올림피아드",
     "필즈 더클래식",
-    "필즈"
+    "필즈",
+    "팩토"
   ],
   "seriesLabels": {
-    "필즈 더클래식": "필즈 더 클래식"
+    "필즈 더클래식": "필즈 더 클래식",
+    "팩토": "팩토"
   },
   "somaStages": [
     "레이",
@@ -33,5 +35,12 @@
   "excludeMissionsTestsHwpAndStandaloneArithmetic": true,
   "legacyBookGroupAliases": {
     "필즈 시중교재": "필즈"
+  },
+  "factoStageAliases": {
+    "초등팩토 1": "초등팩토 1",
+    "초등팩토 2": "초등팩토 2",
+    "초등팩토 3": "초등팩토 3",
+    "팩토 키즈": "팩토 키즈",
+    "팩토 킨더": "팩토 킨더"
   }
 }
