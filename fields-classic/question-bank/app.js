@@ -430,9 +430,10 @@ function showTypePreview(anchor) {
   const sourcePreview = unitTestPreviewContext(anchor);
   const previewLabel = sourcePreview?.label || item.label;
   // 미리보기는 문제만(원장 2026-10-27 「문제만 보이면 되지 너무 복잡해」): 이름 한 줄 + 문제 글 + 그림
+  // 그림은 학습지와 같은 규칙(worksheetVisualMarkup) — 문장제를 다시 그린 풀이 그림은 미리보기에도 안 싣는다(원장 2026-11-26 「또 문제를 설명하는 그림이 있잖아」)
   panel.innerHTML = `<div class="type-preview-head"><span>${domain.label} · ${item.middle}</span><strong>${previewLabel}</strong></div>
     <p>${problem.prompt.replaceAll("\n", "<br>")}</p>
-    ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : visualMarkup(problem.visual)}`;
+    ${problem.image ? `<img src="${problem.image}" alt="${item.label} 예시 그림" />` : worksheetVisualMarkup({ ...problem, image: null, parts: problem.parts, type: problem.type || item })}`;
   panel.hidden = false;
   typePreviewAnchor?.removeAttribute("aria-describedby");
   typePreviewAnchor = anchor;
@@ -2942,7 +2943,24 @@ function statementListMarkup(visual) {
 }
 
 function balanceOrderChainMarkup(visual) {
-  const scale = (row) => `<div class="balance-compare ${row.heavier}"><div class="balance-load">${row.left}</div><div class="balance-beam"><i></i></div><div class="balance-load">${row.right}</div></div>`;
+  // 막대가 기울면 접시도 함께 내려간다. 접시는 평평한 판 + 줄 둘(곡선 접시 ✕), 땅 선·접시 밑줄은 그리지 않는다.
+  const W = 180, H = 128, cx = 90, cy = 36, half = 62, tilt = 10 * Math.PI / 180;
+  const scale = (row) => {
+    const dir = row.heavier === "left" ? 1 : -1;
+    const dx = half * Math.cos(tilt), dy = half * Math.sin(tilt) * dir;
+    const ends = [{ x: cx - dx, y: cy + dy, load: row.left }, { x: cx + dx, y: cy - dy, load: row.right }];
+    const pan = (end) => {
+      const py = end.y + 38;
+      return `<line x1="${end.x}" y1="${end.y}" x2="${end.x - 22}" y2="${py}"/><line x1="${end.x}" y1="${end.y}" x2="${end.x + 22}" y2="${py}"/>` +
+        `<line x1="${end.x - 26}" y1="${py}" x2="${end.x + 26}" y2="${py}" stroke-width="3.5"/>` +
+        `<text x="${end.x}" y="${py - 5}" text-anchor="middle" font-size="25" font-weight="900" stroke="none" fill="#54493a">${end.load}</text>`;
+    };
+    return `<svg class="balance-compare-svg" viewBox="0 0 ${W} ${H}" role="img" aria-label="${row.heavier === "left" ? row.left : row.right} 쪽으로 기운 양팔저울" stroke="#837763" stroke-width="2" stroke-linecap="round">` +
+      `<polygon points="${cx},${cy} ${cx - 15},${H - 6} ${cx + 15},${H - 6}" fill="#f9d66e" stroke="#c9a640" stroke-width="1.5"/>` +
+      `<line x1="${ends[0].x}" y1="${ends[0].y}" x2="${ends[1].x}" y2="${ends[1].y}" stroke-width="3.5"/>` +
+      `<circle cx="${cx}" cy="${cy}" r="3.5" fill="#837763" stroke="none"/>` +
+      ends.map(pan).join("") + `</svg>`;
+  };
   return `<div class="balance-order-work">${visual.relations.map(scale).join("")}</div>`;
 }
 
@@ -3448,7 +3466,7 @@ function visualMarkup(visual) {
 // (원장 2026-11-01 「이렇게 문제를 설명하면 안 돼」). 2026-11-01 전 유형을 띄워 「그림 글의 수가 모두 문제 글에 있고 그림 자체(모눈·도형)가 없는」 것을
 // 찾아 하나씩 보고 고름. 그림을 보고 푸는 문제(조건표·저울·색종이·세로셈·「그림의」「다음」이 들어간 문제)는 남김.
 // 원문 그대로 옮긴 문항(generationCase.mode === "source")은 교재 모양대로 둔다.
-const TEXT_ONLY_TYPES = new Set(["digit-sum-enumeration", "walking-step-ratio", "route-distance-multiple", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count", "proportional-rods-common-total", "difference-unit-measure", "binary-weight-selection", "two-digit-digit-sum-rank", "two-digit-digit-difference-rank", "symbol-product-pair", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio", "stride-ratio-total", "repeated-unit-length-total", "near-round-multiplication", "facing-page-number", "consecutive-numbers-from-sum", "newspaper-page-pair", "digit-occurrence-count", "digit-exclusion-count", "remove-plus-concatenation", "weekday-after-days-b7", "time-unit-conversion-b7", "reverse-linear-equation-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7", "correct-wrong-score-assumption-b7", "shared-consumption-assumption-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7", "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-two-start-earlier-b7", "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7", "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7", "three-digit-palindrome-digit-sum-b7", "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7", "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7", "palindrome-adjacent-digit-difference-b7", "total-difference-bars-b8", "future-age-sum-b8", "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8", "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8", "three-container-condition-b8", "fraction-subgroup-count-b8", "multi-count-consecutive-decomposition-b10", "consecutive-page-range-b10", "catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10", "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10", "monotone-digit-count-b10", "most-frequent-digit-b10", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10"]);
+const TEXT_ONLY_TYPES = new Set(["digit-sum-enumeration", "walking-step-ratio", "route-distance-multiple", "unit-object-length", "equivalent-object-length", "object-combination-equivalent-count", "proportional-rods-common-total", "difference-unit-measure", "binary-weight-selection", "two-digit-digit-sum-rank", "two-digit-digit-difference-rank", "symbol-product-pair", "bar-ratio-total-length", "balance-ratio-book6", "balance-weight-ratio", "stride-ratio-total", "repeated-unit-length-total", "near-round-multiplication", "facing-page-number", "consecutive-numbers-from-sum", "newspaper-page-pair", "digit-occurrence-count", "digit-exclusion-count", "remove-plus-concatenation", "weekday-after-days-b7", "time-unit-conversion-b7", "reverse-linear-equation-b7", "two-score-value-assumption-b7", "two-coin-value-assumption-b7", "correct-wrong-score-assumption-b7", "shared-consumption-assumption-b7", "exchange-container-total-b7", "reverse-doubling-target-day-b7", "doubling-fraction-start-count-b7", "doubling-start-count-b7", "doubling-two-start-earlier-b7", "closed-perimeter-object-count-b7", "closed-perimeter-from-spacing-count-b7", "between-objects-subdivision-count-b7", "perimeter-capacity-b7", "between-object-perimeter-b7", "three-digit-palindrome-digit-sum-b7", "clock-time-palindrome-b7", "reversed-two-digit-difference-enumeration-b7", "reversed-two-digit-difference-extreme-b7", "reversed-digit-given-tens-b7", "palindrome-adjacent-digit-difference-b7", "total-difference-bars-b8", "future-age-sum-b8", "sum-multiple-bars-b8", "difference-multiple-bars-b8", "sum-multiple-offset-b8", "three-person-difference-b8", "transfer-to-multiple-b8", "conditional-three-share-b8", "fraction-share-difference-b8", "reverse-two-container-transfers-b8", "three-container-condition-b8", "fraction-subgroup-count-b8", "multi-count-consecutive-decomposition-b10", "consecutive-page-range-b10", "catch-up-growing-amount-b10", "catch-up-shrinking-amount-b10", "catch-up-distance-b10", "delayed-start-catch-up-b10", "digit-sum-three-digit-count-b10", "digit-sum-ranked-number-b10", "three-digit-step-count-b10", "monotone-digit-count-b10", "most-frequent-digit-b10", "digit-occurrence-range-b10", "positive-range-number-digit-count-b10", "calendar-week-span-weekday-b10", "digit-sum-ranked-large-b10", "disjoint-groups-rest-b7", "give-as-much-equal-b8", "near-ten-times-b6", "neither-set-count", "new-people-reverse-b10", "palindrome-range-digit-sum-b7", "same-budget-reverse-b10"]);
 function worksheetVisualMarkup(question) {
   if (TEXT_ONLY_TYPES.has(question.type?.id) && question.generationCase?.mode !== "source") return "";
   if (question.image) return `<img class="legacy-image" src="${question.image}" alt="${question.type.label} 문제 그림" />`;
