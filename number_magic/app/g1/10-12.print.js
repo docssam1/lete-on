@@ -355,15 +355,18 @@
     const g = G(), all = g.partitions(p.whole, p.parts, p.min || 1);
     const givenIdx = Object.keys(p.given || {}).map(Number), givenVals = givenIdx.map(i => p.given[i]);
     if (p.equal) return new Array(p.parts).fill(p.whole / p.parts);
+    /* 맞는 가르기 중 가장 고른 것(가장 큰 수 − 가장 작은 수가 작은 것)을 예로 든다 — 「1+1+1+43」처럼 한쪽으로 치우친 예가 나오지 않게(2026-11-26) */
+    let best = null, bestSpread = Infinity;
     for (const part of all) {
       const rest = part.slice(); let ok = true;
       for (const v of givenVals) { const at = rest.indexOf(v); if (at < 0) { ok = false; break; } rest.splice(at, 1); }
       if (!ok) continue;
       const out = new Array(p.parts); givenIdx.forEach(i => { out[i] = p.given[i]; });
       let k = 0; for (let i = 0; i < p.parts; i++) if (out[i] === undefined) out[i] = rest[k++];
-      return out;
+      const spread = Math.max.apply(null, out) - Math.min.apply(null, out);
+      if (spread < bestSpread) { best = out; bestSpread = spread; }
     }
-    return all[0];
+    return best || all[0];
   }
   P.g12_partsFill = {
     visual(p, K) {

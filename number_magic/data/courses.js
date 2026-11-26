@@ -137,14 +137,20 @@ const COURSE_SPEC = [
     magic[i] 와 creative[i] 가 짝이다. 레벨은 전부 @ 로 고정해 과정 사이 자동 오르기가 순서를 흔들지 않게 했다. */
  {id:1, tier:'level1', title:{ko:'100까지의 수와 받아올림 시작',en:'Numbers to 100 & First Carrying',zh:'100以内的数与进位入门'},
    drills:['NS1@7','NS3@2', 'AD2@1','AD10@1', 'AD3@1','NS4@1', 'SB2@1','SB3@1', 'AD4@1','AD3@2'], minSessions:5,
+   /* 두 자리 수를 세 수로 가르기(NL54@9, 원장 2026-11-26) — 세 수 덧셈 회차에 셋째 드릴로 */
+   perSessionDrills:[['NS1@7','NS3@2'],['AD2@1','AD10@1','NL54@9'],['AD3@1','NS4@1'],['SB2@1','SB3@1'],['AD4@1','AD3@2']],
    magic:[['A-01'],['A-02'],['A-03'],['A-10'],['A-04']],
    creative:['AD8@1','AD11@1','AD9@1','SB8@1','AD12@1']},
  {id:2, tier:'level1', title:{ko:'받아내림과 1학년 마무리',en:'Borrowing & Grade 1 Wrap-up',zh:'退位与一年级总结'},
    drills:['AD2@2','SB3@2', 'AD10@2','SB2@2', 'AD3@5','SB3@3', 'NS5@1','AD10@3', 'EL1@4','NS5@2'], minSessions:5,
+   /* 두 자리 수를 세 수(NL54@10, 두 자리 가로셈 회차)·네 수(NL54@11, 네 수 연이은 덧뺄 회차)로 가르기 */
+   perSessionDrills:[['AD2@2','SB3@2'],['AD10@2','SB2@2'],['AD3@5','SB3@3','NL54@10'],['NS5@1','AD10@3','NL54@11'],['EL1@4','NS5@2']],
    magic:[['A-11'],['A-19'],[],[],['A-05']],
    creative:['SB8@2','SB9@1','AD8@2','SB5@1','AD11@2','WP1@1','WP1@2','WP2@1']},
  {id:3, tier:'level1', title:{ko:'세 자리 수와 두 자리 덧뺄셈',en:'Three-digit Numbers & Two-digit ±',zh:'三位数与两位数加减'},
    drills:['NS1@1','AD4@2', 'AD5@1','SB4@1', 'AD5@2','NS1@4', 'SB4@2','AD5@3', 'AD5@4','SB4@3', 'AD5@5','SB4@4', 'AD5@7','NS4@2'], minSessions:7,
+   /* 두 자리 수(50까지)를 네 수로 가르기(NL54@12) — 몇십 덧뺄 회차에 */
+   perSessionDrills:[['NS1@1','AD4@2','NL54@12'],['AD5@1','SB4@1'],['AD5@2','NS1@4'],['SB4@2','AD5@3'],['AD5@4','SB4@3'],['AD5@5','SB4@4'],['AD5@7','NS4@2']],
    magic:[['A-06'],['A-07'],['A-08'],['A-20'],['A-09'],['A-21'],['A-12']],
    creative:['AD8@3','AD13@1','AD11@3','SB12@1','AD8@4','SB12@2','MX7@1']},
  {id:4, tier:'level1', title:{ko:'곱셈구구',en:'Times Tables',zh:'乘法口诀'},
@@ -730,6 +736,8 @@ const COUNT_CAP = {
   'NL36@6':24,
   'NL37@8':30,
   'NL54@3':24,
+  /* 두 자리 수 가르기(2026-11-26) — 교과 두 갈래 옆에 붙는 셋째 드릴이라 12문항까지(회차가 3일을 넘지 않게) */
+  'NL54@9':12, 'NL54@10':12, 'NL54@11':12, 'NL54@12':12,
   'MD77@3':12,   // 적용(모형) 칸에서만 쓰인다 — 중고등 하루 20문항으로 18까지 늘리자 1배에서도 같은 문제가 났다(2026-11-25, check-amount-sheets C37-S4)
 };
 const SESSION_SEC = 1800;

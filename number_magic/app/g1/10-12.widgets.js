@@ -507,7 +507,7 @@
       else boxes.push({ node: stage.querySelector(`.${NS}-pf-in[data-i="${i}"]`) });
     }
     const found = []; let lock = false;
-    const bp = boxPad(root, K, boxes, 1, vals => {
+    const bp = boxPad(root, K, boxes, p.whole >= 10 ? 2 : 1, vals => {   /* 두 자리 수 가르기(NL54 9~12)는 칸마다 두 자리까지 */
       if (lock) return;
       if (vals.some(v => v === null)) { K.shake(stage); return; }
       const sum = vals.reduce((a, b) => a + b, 0);

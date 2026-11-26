@@ -239,7 +239,24 @@
       lv(8, L3('여러 가지 방법 찾기', 'Find several ways', '找出多种分法'), { arts: ['ladybug', 'tree'], parts: 3, wmin: 5, wmax: 9, distinct: 'all' },
         L3('같은 수를 갈라도 방법이 여러 가지예요. 순서만 바꾼 것은 같은 방법이에요(1,2,3과 3,2,1은 하나).',
           'One number can be split in many ways. Just swapping the order is the same way (1,2,3 and 3,2,1 count once).',
-          '同一个数可以有很多种分法。只是换了顺序算同一种(1,2,3和3,2,1算一种)。'))
+          '同一个数可以有很多种分法。只是换了顺序算同一种(1,2,3和3,2,1算一种)。')),
+      /* 두 자리 수 가르기(원장 2026-11-26 「두자리수 3,4수로 가르기가 필요해」) — 과정 1·2·3 에 싣는다(9 → 과정 1 세 수 덧셈, 10 → 과정 2 세 수 받아올림, 11 → 과정 2 네 수, 12 → 과정 3) */
+      lv(9, L3('두 자리 수를 세 수로(한 칸 보여 줌)', 'Two-digit number into three (one shown)', '两位数分成三个数(给出一个)'), { arts: ['ladybug', 'plane', 'tree'], parts: 3, wmin: 11, wmax: 20, given: 1, pmin: 2 },
+        L3('보여 준 수를 먼저 빼고, 남은 수를 두 수로 갈라요. 15에서 5를 빼면 10이 남고, 10은 3과 7로 가를 수 있어요.',
+          'Take away the number that is shown first, then split what is left into two numbers. 15 take away 5 leaves 10, and 10 splits into 3 and 7.',
+          '先减去给出的数，再把剩下的数分成两个数。15减去5剩10，10可以分成3和7。')),
+      lv(10, L3('두 자리 수를 세 수로 가르기', 'Split a two-digit number into three', '两位数分成三个数'), { arts: ['ladybug', 'plane', 'tree'], parts: 3, wmin: 12, wmax: 30 },
+        L3('10을 한 덩어리로 써 보면 쉬워요. 23은 10과 13으로, 13은 다시 6과 7로 — 10, 6, 7이에요. 세 칸을 모두 더해 23이 되는지 확인해요.',
+          'Using a ten as one part makes it easy. 23 is 10 and 13, and 13 is 6 and 7 — so 10, 6, 7. Add all three spaces to check you get 23.',
+          '把10当作一份就容易了。23是10和13，13再分成6和7——就是10、6、7。把三个格加起来，看是不是23。')),
+      lv(11, L3('두 자리 수를 네 수로(두 칸 보여 줌)', 'Two-digit number into four (two shown)', '两位数分成四个数(给出两个)'), { arts: ['ladybug', 'plane', 'tree'], parts: 4, wmin: 12, wmax: 30, given: 2, pmin: 2 },
+        L3('보여 준 두 수를 더해 전체에서 빼면 남은 두 칸의 합이 나와요. 그 수를 두 수로 갈라 써요.',
+          'Add the two numbers shown and take that away from the whole. What is left is the total of the two empty spaces — split it into two numbers.',
+          '把给出的两个数加起来，从总数里减去，就得到两个空格的和。再把它分成两个数写进去。')),
+      lv(12, L3('두 자리 수를 네 수로 가르기', 'Split a two-digit number into four', '两位数分成四个数'), { arts: ['ladybug', 'plane', 'tree'], parts: 4, wmin: 20, wmax: 50 },
+        L3('몇십을 먼저 나눠 써요. 36이면 10, 10, 10을 먼저 쓰고 남은 6을 넷째 칸에 — 10+10+10+6이에요. 다른 방법도 맞아요.',
+          'Share out the tens first. For 36, write 10, 10, 10 and put the 6 left over in the fourth space — 10+10+10+6. Other ways are right too.',
+          '先把几十分开写。36就先写10、10、10，剩下的6写进第四格——10+10+10+6。别的分法也对。'))
     ]
   };
 

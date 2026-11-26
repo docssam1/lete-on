@@ -24,7 +24,13 @@
   }
   G.josa = josa;
   /* 숫자 뒤 조사 — 우리말 읽기(영·일·삼·육·칠·팔은 받침 있음, 이·사·오·구는 없음)로 고른다 */
-  function josaN(n, withB, noB) { return String(n) + ([0, 1, 3, 6, 7, 8].indexOf(+n) >= 0 ? withB : noB); }
+  /* 받침 판단은 끝자리 한자어 읽기로 — 일·삼·육·칠·팔·영은 받침, 이·사·오·구는 없음, 끝이 0인 두 자리 이상(십·백·천)은 받침.
+     전에는 한 자리만 보아 「13를」「20를」이 나왔다(2026-11-26, 두 자리 수 가르기에서 처음 드러남) */
+  function josaN(n, withB, noB) {
+    const v = Math.abs(Math.trunc(+n)), d = v % 10;
+    const b = (v >= 10 && d === 0) || [0, 1, 3, 6, 7, 8].indexOf(d) >= 0;
+    return String(n) + (b ? withB : noB);
+  }
   G.josaN = josaN;
 
   /* ── 세는 물건 사전 — [토큰] → 3개 언어 낱말과 세는 단위 ── */
@@ -845,7 +851,9 @@
       }
       let given = {};
       if (P.given && !P.equal && distinct === 1) {
-        const base = pick(rng, all), order = shuffle(rng, base);
+        /* 보여 줄 수는 너무 치우치지 않은 가르기에서 고른다(두 자리 수를 1+1+48처럼 보여 주지 않게) — 답은 여전히 1 이상이면 다 맞다 */
+        const pool = P.pmin ? all.filter(x => x.every(v => v >= P.pmin)) : all;
+        const base = pick(rng, pool.length ? pool : all), order = shuffle(rng, base);
         const idx = shuffle(rng, order.map((_, i) => i)).slice(0, P.given);
         idx.forEach(i => { given[i] = order[i]; });
       } else if (P.equal) {

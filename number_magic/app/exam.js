@@ -5518,7 +5518,7 @@ function penAnswerSpec(p, layoutType){
     if(t != null) return /^-?\d+$/.test(t) ? {a:[Number(t)], w:1} : null;
     const a = ints(p.answer); return a && a.length === 1 ? {a, w:1} : null;
   }
-  if(p.choices || p.options || /paint|match|dotToDot|split|group|tapMake|Rep$|compare|choice|order/i.test(p.widget || '')) return null;
+  if(p.choices || p.options || /paint|match|dotToDot|split|group|tapMake|Rep$|compare|choice|order|partsFill/i.test(p.widget || '')) return null;
   const a = ints(p.answer);
   return a && a.length <= 4 ? {a} : null;
 }
