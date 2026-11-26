@@ -23,13 +23,13 @@
  function teacherIdentity(value){const id=value.trim();return id.includes('@')?id:id.toLowerCase()+'@auth.gfield.invalid';}
  $('teacher-login').onsubmit=run(async()=>{const response=await fetch(BASE+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:teacherIdentity($('teacher-email').value),password:$('teacher-password').value})});const result=await response.json();if(!response.ok||!result.access_token)throw Error('아이디 또는 이메일과 비밀번호를 확인해 주세요.');staff=result.access_token;await api('admin-list',{teacher:true});token='';sessionStorage.setItem('highselectExamStaff',staff);sessionStorage.removeItem('highselectExamToken');$('teacher-password').value='';await admin();});
  async function library({record=true,preferRequested=true}={}){
-  examRequest++;documentRequest++;const data=await api('exams');const wanted=preferRequested?requestedExam:null;requestedExam=null;
+  const request=++examRequest;documentRequest++;const wanted=preferRequested?requestedExam:null;requestedExam=null;const data=await api('exams');if(request!==examRequest)return;
   show('library-view',{record,replace:document.body.dataset.view==='login-view'});document.title='내 모의고사 | LETE-ON';$('welcome').textContent=data.name+' · 내 모의고사';
   $('exam-list').innerHTML=data.exams.length?data.exams.map(e=>`<button class="exam-link" data-exam="${esc(e.id)}"><span><span class="mode">${e.mode==='pilot'?'시범 응시':'모의고사'}</span><strong>${esc(examTitle(e))}</strong><small>${e.questionCount}문항${e.durationMinutes?' · '+timeLabel(e):''}</small></span><span aria-hidden="true">→</span></button>`).join(''):'<p>아직 배정된 시험이 없습니다. 담당 선생님께 응시 승인을 요청해 주세요.</p>';
-  await pastResults();if(wanted){if(data.exams.some(e=>e.id===wanted))await openExam(wanted,{record});else message('선택한 시험의 응시 승인이 필요합니다. 배정된 시험을 선택해 주세요.');}
+  await pastResults(request);if(request!==examRequest)return;if(wanted){if(data.exams.some(e=>e.id===wanted))await openExam(wanted,{record});else message('선택한 시험의 응시 승인이 필요합니다. 배정된 시험을 선택해 주세요.');}
  }
  $('exam-list').onclick=run(async e=>{const b=e.target.closest('[data-exam]');if(b)await openExam(b.dataset.exam);});
- async function pastResults(){const data=await api('attempts');$('past-results').innerHTML=data.attempts.map(a=>`<button class="exam-link" data-result="${esc(a.id)}"><span><strong>${esc(examTitle(a.report.exam))}</strong><small>${a.report.gradingMethod==='self-reported'?'자가채점 O':'정답'} ${a.report.correctCount}/${a.report.total}${a.report.reviewCount?' · 풀이 확인 필요 '+a.report.reviewCount:''}</small></span><span>결과 보기</span></button>`).join('')||'<p>아직 응시 결과가 없습니다.</p>';}
+ async function pastResults(request=null){const data=await api('attempts');if(request!==null&&request!==examRequest)return;$('past-results').innerHTML=data.attempts.map(a=>`<button class="exam-link" data-result="${esc(a.id)}"><span><strong>${esc(examTitle(a.report.exam))}</strong><small>${a.report.gradingMethod==='self-reported'?'자가채점 O':'정답'} ${a.report.correctCount}/${a.report.total}${a.report.reviewCount?' · 풀이 확인 필요 '+a.report.reviewCount:''}</small></span><span>결과 보기</span></button>`).join('')||'<p>아직 응시 결과가 없습니다.</p>';}
  $('past-results').onclick=run(async event=>{const b=event.target.closest('[data-result]');if(b){const data=await api('attempt',{query:{id:b.dataset.result}});displayReport(data.report,data.id||b.dataset.result);}});
  const assetLabels={paper:'시험지',answers:'정답·풀이',analysis:'학습분석지'};
  const assetAction=kind=>kind==='paper'?'manifest':kind;
@@ -58,10 +58,10 @@
  }
  function displayReport(report,id,{saved=false,record=true}={}){reportAttemptId=id||'';renderReport(report);$('saved-result-status').hidden=!saved;$('saved-result-status').textContent=saved?'O/X 결과를 저장했습니다. 내 시험 목록의 응시 결과에서 다시 볼 수 있습니다.':'';show('report-view',{record});document.title='학습 결과 | LETE-ON';}
  async function restoreRoute(state){
-  $('save-confirm').close();examRequest++;documentRequest++;
+  $('save-confirm').close();const request=++examRequest;documentRequest++;
   if(!token&&!staff){show('login-view',{record:false});renderEntrySelection();return;}
   if(state?.highselectView==='exam-view'&&state.examId&&token){await openExam(state.examId,{record:false});return;}
-  if(state?.highselectView==='report-view'&&state.attemptId&&token){const data=await api('attempt',{query:{id:state.attemptId}});displayReport(data.report,data.id||state.attemptId,{record:false});return;}
+  if(state?.highselectView==='report-view'&&state.attemptId&&token){const data=await api('attempt',{query:{id:state.attemptId}});if(request!==examRequest)return;displayReport(data.report,data.id||state.attemptId,{record:false});return;}
   if(staff){await admin();return;}await library({record:false,preferRequested:false});
  }
  window.addEventListener('popstate',event=>run(()=>restoreRoute(event.state))());
