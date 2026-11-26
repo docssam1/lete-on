@@ -123,7 +123,7 @@ assert(new Set(book05MultiplicationTypes.map((typeId) => typeById(typeId).genera
   "book 5 multiplication structures share a generator");
 
 const precisionBookTypeCounts = new Map([
-  ["book-05", 75],
+  ["book-05", 78],
   ["book-06", 94],
   ["book-07", 113],
   ["book-08", 101],

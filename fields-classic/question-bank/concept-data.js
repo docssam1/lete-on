@@ -1203,7 +1203,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "칸을 가로로만 읽거나 길이 꺾이는 곳에서 순서를 건너뛰지 않았는지 확인합니다.",
     [book5Evidence("수 배열표와 달력", 1, [1])]
   ),
-  "diagonal-fill-number-grid": sourceLesson(
+  "diagonal-one-way-b5": sourceLesson(
     "concept:pattern:path-indexed-number-grid",
     [
       beat("find-diagonal-start", "대각선의 시작을 찾아요", "수가 처음 놓인 칸과 대각선이 시작되는 방향을 표시합니다."),

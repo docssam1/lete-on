@@ -515,6 +515,49 @@ function validate(type, problem, difficulty) {
     case "route-strip-set-b5":
       assert(meta.heights.every((h, i) => meta.answers[i] === countPaths(h + 1, 2)), id, difficulty, "strip route count mismatch");
       return;
+    case "diagonal-one-way-b5": {
+      // 대각선을 하나씩 실제로 채워 다시 센다
+      const cells = new Map();
+      let v = meta.start;
+      for (let d = 0; d <= 30; d += 1) {
+        const line = [];
+        for (let r = 0; r <= d; r += 1) line.push([r, d - r]);
+        if (!meta.fromTop) line.reverse();
+        for (const [r, c] of line) cells.set(`${r},${c}`, v++);
+      }
+      assert(meta.answers[0] === cells.get(meta.a.join(",")) && meta.answers[1] === cells.get(meta.b.join(",")), id, difficulty, "diagonal cell value mismatch");
+      assert(cells.get(meta.nCell.join(",")) === meta.N, id, difficulty, "diagonal position mismatch");
+      return;
+    }
+    case "spiral-variant-b5": {
+      const n = meta.n;
+      const grid = Array.from({ length: n }, () => Array(n).fill(null));
+      let r = meta.corner < 2 ? 0 : n - 1, c = meta.corner === 0 || meta.corner === 3 ? 0 : n - 1;
+      const cw = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+      const ccw = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+      const dirs = meta.clockwise ? cw : ccw;
+      let d = meta.clockwise ? meta.corner : [0, 3, 2, 1][meta.corner];
+      const inside = (y, x) => y >= 0 && x >= 0 && y < n && x < n && grid[y][x] === null;
+      for (let k = 0; k < n * n; k += 1) {
+        grid[r][c] = meta.start + k;
+        if (k === n * n - 1) break;
+        if (!inside(r + dirs[d][0], c + dirs[d][1])) d = (d + 1) % 4;
+        assert(inside(r + dirs[d][0], c + dirs[d][1]), id, difficulty, "spiral walk stuck");
+        r += dirs[d][0]; c += dirs[d][1];
+      }
+      assert(grid.flat().every((x) => x !== null), id, difficulty, "spiral did not cover grid");
+      assert(String(meta.start + meta.targetIndex) === String(problem.answer), id, difficulty, "spiral answer mismatch");
+      return;
+    }
+    case "finger-double-end-b5": {
+      const seq = [];
+      for (let i = 0; seq.length < 400; i += 1) { const up = ["엄지", "검지", "중지", "약지", "새끼"]; seq.push(...up, ...up.slice().reverse()); }
+      assert(seq[meta.N - 1] === meta.finger, id, difficulty, "finger at N mismatch");
+      let count = 0, at = 0;
+      for (let i = 0; i < seq.length; i += 1) if (seq[i] === meta.askFinger && ++count === meta.k) { at = i + 1; break; }
+      assert(at === meta.kth, id, difficulty, "kth finger mismatch");
+      return;
+    }
     case "digit-card-ranked-mix-b5": {
       const brute = [];
       for (let n = 10 ** (meta.length - 1); n < 10 ** meta.length; n += 1) {
@@ -543,7 +586,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
-if (typeIds.length !== 75) throw new Error(`book-05 type count ${typeIds.length}`);
+if (typeIds.length !== 78) throw new Error(`book-05 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);

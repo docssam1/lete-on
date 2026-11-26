@@ -1199,7 +1199,105 @@ function digitDirectedDifferenceB5({ difficulty = 2 }) {
   }
 }
 
+
+// ── 남은 번호(2차) — 1단원: 한 방향 대각선 · 나선 크기·모서리·방향 · 끝을 두 번 세는 손가락 ─────────────
+const KO_ORD = ["첫째", "둘째", "셋째", "넷째", "다섯째", "여섯째", "일곱째", "여덟째", "아홉째", "열째", "열한째", "열두째"];
+function gridSvg(rows, cols, cell, label, cellText) {
+  const s = 40, W = cols * s + 2, H = rows * s + 2;
+  let body = "";
+  for (let r = 0; r < rows; r += 1) for (let c = 0; c < cols; c += 1) {
+    const v = cellText(r, c);
+    body += `<rect x="${1 + c * s}" y="${1 + r * s}" width="${s}" height="${s}" style="fill:${v === "?" ? "#fff4d6" : "#fff"};stroke:#8a7e68;stroke-width:1"/>`;
+    if (v !== "") body += text(1 + c * s + s / 2, 1 + r * s + s / 2 + 6, v, 16, v === "?" ? 'font-weight="700"' : "");
+  }
+  return `${svgOpen(W, H, label)}${body}</svg>`;
+}
+function diagonalOneWayB5({ difficulty = 2 }) {
+  const start = randomInt(1, difficulty === 3 ? 20 : 5);
+  const fromTop = randomInt(0, 1) === 1; // 대각선마다 위(오른쪽)에서 아래(왼쪽)로 / 왼쪽 아래에서 오른쪽 위로
+  const value = (r, c) => { const d = r + c; return start + (d * (d + 1)) / 2 + (fromTop ? r : c); };
+  const shownDiag = 3;
+  const view = 6;
+  const far = difficulty === 1 ? [4, 7] : difficulty === 2 ? [5, 9] : [7, 12];
+  const pickCell = () => { for (;;) { const r = randomInt(0, far[1] - 1), c = randomInt(0, far[1] - 1); if (r + c >= far[0] && r + c <= far[1]) return [r, c]; } };
+  const a = pickCell();
+  let b = pickCell();
+  while (b[0] === a[0] && b[1] === a[1]) b = pickCell();
+  const nCell = pickCell();
+  const N = value(...nCell);
+  const answers = [value(...a), value(...b)];
+  const pos = (r, c) => `${KO_ORD[r]} 줄 ${KO_ORD[c]} 칸`;
+  const fig = gridSvg(view, view, 40, "대각선 방향으로 수를 채운 표", (r, c) => (r + c <= shownDiag ? value(r, c) : ""));
+  return {
+    prompt: `수를 대각선 방향으로 한쪽으로만 차례로 채운 표입니다. 같은 규칙으로 계속 채울 때 (1) ${pos(...a)}의 수 (2) ${pos(...b)}의 수 (3) ${josa(N, "이", "가")} 있는 자리를 구하세요.`,
+    visual: { kind: "fig", html: fig },
+    answer: `(1) ${answers[0]} (2) ${answers[1]} (3) ${pos(...nCell)}`,
+    solution: `대각선마다 칸 수가 1, 2, 3, …씩 늘고, 한 대각선 안에서는 늘 ${fromTop ? "위에서 아래로" : "아래에서 위로"} 갑니다. 줄 번호 + 칸 번호가 같은 칸이 한 대각선이므로, 앞 대각선의 칸 수를 모두 더한 뒤 그 대각선 안에서 몇째인지 셉니다. (1) ${answers[0]} (2) ${answers[1]} (3) ${josa(N, "은", "는")} ${pos(...nCell)}입니다.`,
+    meta: { family: "diagonal-one-way-b5", start, fromTop, a, b, nCell, N, answers }
+  };
+}
+function spiralCells(n, corner, clockwise) {
+  // corner: 0 왼쪽 위, 1 오른쪽 위, 2 오른쪽 아래, 3 왼쪽 아래 — 바깥에서 안으로 감는 나선
+  const dirsCW = [[0, 1], [1, 0], [0, -1], [-1, 0]];
+  const order = [];
+  const seen = Array.from({ length: n }, () => Array(n).fill(false));
+  let r = corner === 0 || corner === 1 ? 0 : n - 1;
+  let c = corner === 0 || corner === 3 ? 0 : n - 1;
+  let d = clockwise ? corner : (corner + 1) % 4;
+  const dirs = clockwise ? dirsCW : [[1, 0], [0, 1], [-1, 0], [0, -1]];
+  if (!clockwise) d = [0, 3, 2, 1][corner];
+  for (let k = 0; k < n * n; k += 1) {
+    order.push([r, c]); seen[r][c] = true;
+    let [dr, dc] = dirs[d];
+    if (r + dr < 0 || r + dr >= n || c + dc < 0 || c + dc >= n || seen[r + dr][c + dc]) { d = (d + 1) % 4; [dr, dc] = dirs[d]; }
+    r += dr; c += dc;
+  }
+  return order;
+}
+function spiralVariantB5({ difficulty = 2 }) {
+  const n = difficulty === 1 ? 4 : difficulty === 2 ? pick([4, 5]) : pick([5, 6]);
+  const corner = randomInt(0, 3);
+  const clockwise = randomInt(0, 1) === 1;
+  const start = randomInt(1, difficulty === 3 ? 30 : 10);
+  const order = spiralCells(n, corner, clockwise);
+  const value = new Map(order.map(([r, c], i) => [`${r},${c}`, start + i]));
+  const shown = new Set([0, 1, 2, n - 1, n, 2 * n - 2].map((i) => `${order[i][0]},${order[i][1]}`));
+  const targetIndex = randomInt(Math.floor((n * n) / 2), n * n - 1);
+  const [tr, tc] = order[targetIndex];
+  const fig = gridSvg(n, n, 40, `${n}칸 나선 수 배열`, (r, c) => (r === tr && c === tc ? "?" : shown.has(`${r},${c}`) ? value.get(`${r},${c}`) : ""));
+  const cornerName = ["왼쪽 위", "오른쪽 위", "오른쪽 아래", "왼쪽 아래"][corner];
+  return {
+    prompt: `${n}×${n} 표의 ${cornerName} 칸에서 시작해 ${clockwise ? "시계 방향" : "시계 반대 방향"}으로 바깥부터 안쪽으로 감아 들어가며 수를 차례로 썼습니다. 물음표 칸의 수를 구하세요.`,
+    visual: { kind: "fig", html: fig },
+    answer: String(start + targetIndex),
+    solution: `${cornerName} 칸의 ${start}에서 시작해 한 줄 끝에 닿으면 ${clockwise ? "오른쪽으로" : "왼쪽으로"} 꺾어 이미 쓴 칸 앞에서 다시 꺾습니다. 바깥 테두리 ${4 * n - 4}칸을 먼저 세고 안쪽으로 이어 세면 물음표 칸은 ${targetIndex + 1}번째 칸이라 ${start + targetIndex}입니다.`,
+    meta: { family: "spiral-variant-b5", n, corner, clockwise, start, targetIndex }
+  };
+}
+const FINGERS = ["엄지", "검지", "중지", "약지", "새끼"];
+function fingerDoubleEndB5({ difficulty = 2 }) {
+  const cycle = ["엄지", "검지", "중지", "약지", "새끼", "새끼", "약지", "중지", "검지", "엄지"];
+  const N = randomInt(difficulty === 1 ? 20 : 40, difficulty === 3 ? 300 : 120);
+  const finger = cycle[(N - 1) % 10];
+  const askFinger = pick(FINGERS);
+  const k = randomInt(3, difficulty === 3 ? 12 : 7);
+  const hits = [];
+  for (let n = 1; hits.length < k; n += 1) if (cycle[(n - 1) % 10] === askFinger) hits.push(n);
+  const kth = hits[k - 1];
+  return {
+    prompt: `엄지부터 새끼손가락까지 세고, 새끼손가락을 한 번 더 센 뒤 엄지 쪽으로 돌아와 엄지도 한 번 더 세며 계속 셉니다. (1) ${eul(N)} 말할 때 어느 손가락인가요? (2) ${askFinger}를 ${k}번째로 셀 때 말하는 수는 무엇인가요?`,
+    visual: { kind: "fig", html: `${svgOpen(520, 70, "손가락 세기 순서")}${cycle.map((f, i) => `<rect x="${4 + i * 51}" y="8" width="46" height="34" rx="6" style="fill:#fff;stroke:#2f6b4f;stroke-width:1.4"/>${text(27 + i * 51, 31, f, 14)}${text(27 + i * 51, 62, i + 1, 13)}`).join("")}</svg>` },
+    answer: `(1) ${finger} (2) ${kth}`,
+    solution: `끝 손가락을 두 번 세므로 10번마다 같은 차례가 되풀이됩니다. (1) ${N} ÷ 10의 나머지 ${N % 10 || 10}번째 → ${finger}. (2) ${askFinger}는 한 바퀴(10)에 ${askFinger === "엄지" || askFinger === "새끼" ? "두 번(끝에서 이어서)" : "두 번"} 나오므로 차례로 세면 ${hits.slice(0, Math.min(k, 6)).join(", ")}${k > 6 ? ", …" : ""} → ${k}번째는 ${kth}.`,
+    meta: { family: "finger-double-end-b5", N, finger, askFinger, k, kth }
+  };
+}
+const eul = (n) => `${n}${hasBatchim(n) ? "을" : "를"}`;
+
 export const BOOK05_STRUCTURE_GENERATORS = {
+  diagonalOneWayB5,
+  spiralVariantB5,
+  fingerDoubleEndB5,
   digitCardRankedMixB5,
   digitDirectedDifferenceB5,
   symbolCardListNetworkB5,
@@ -1231,6 +1329,9 @@ const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, mi
 
 export const BOOK05_STRUCTURE_TYPE_ROWS = [
   // domain/middle은 같은 단원 기존 유형 값을 따른다
+  row("diagonal-one-way-b5", "pattern", "수 배열 경로", "한 방향 대각선으로 채운 표의 세 물음(칸의 수·수의 자리)", "diagonalOneWayB5", ["대각선 수 배열", "자리 찾기"]),
+  row("spiral-variant-b5", "pattern", "수 배열 경로", "크기·시작 모서리·방향이 다른 나선 수 배열", "spiralVariantB5", ["나선", "수 배열"]),
+  row("finger-double-end-b5", "pattern", "수열의 활용", "끝 손가락을 두 번 세는 왕복 세기(주기 10)", "fingerDoubleEndB5", ["손가락 세기", "주기"]),
   row("digit-card-ranked-mix-b5", "number", "숫자 카드", "카드 수·자리 수를 바꿔 만든 수의 큰(작은) 수부터 순서", "digitCardRankedMixB5", ["숫자 카드", "큰 수부터", "순서"]),
   row("digit-directed-difference-b5", "number", "숫자 카드", "한쪽 자리 숫자가 정해진 만큼 큰 두 자리 수 모두·순서", "digitDirectedDifferenceB5", ["자리 숫자의 차", "방향"]),
   row("symbol-card-list-network-b5", "number", "도형 곱셈식", "수 카드로 푸는 도형식 여러 개", "symbolCardListNetworkB5", ["도형식", "수 카드", "같은 모양 같은 수"]),
@@ -1256,6 +1357,9 @@ export const BOOK05_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK05_STRUCTURE_GUIDES = {
+  "diagonal-one-way-b5": "줄 번호 + 칸 번호가 같은 칸이 한 대각선입니다. 앞 대각선 칸 수(1+2+…)를 더하고 그 대각선 안에서 몇째인지 셉니다.",
+  "spiral-variant-b5": "시작 칸과 도는 방향을 확인하고 바깥 테두리부터 칸 수를 세어 안쪽으로 이어 갑니다.",
+  "finger-double-end-b5": "끝을 두 번 세면 한 바퀴가 10입니다. 10으로 나눈 나머지로 손가락을 찾습니다.",
   "digit-card-ranked-mix-b5": "맨 앞자리 숫자마다 만들어지는 수의 개수를 묶어 세어 몇 번째인지 찾습니다.",
   "digit-directed-difference-b5": "어느 자리가 더 큰지 정해져 있으면 한 방향만 셉니다. 작은 쪽 숫자를 0(또는 1)부터 올려 가며 씁니다.",
   "symbol-card-list-network-b5": "될 수 있는 경우가 가장 적은 식부터 카드를 넣어 보고, 정해진 수는 다른 모양에서 지웁니다.",
@@ -1281,6 +1385,11 @@ export const BOOK05_STRUCTURE_GUIDES = {
 };
 
 export const BOOK05_STRUCTURE_REMAPS = [
+  // (2차) 1단원 — 한 방향 대각선 세 물음, 나선 변형, 끝을 두 번 세는 손가락
+  ["book-05", 1, "activity", 1, [3], "diagonal-one-way-b5"],
+  ["book-05", 1, "practice", 1, [5], "diagonal-one-way-b5"],
+  ["book-05", 1, "practice", 1, [1], "spiral-variant-b5"],
+  ["book-05", 1, "advanced", 1, [2], "finger-double-end-b5"],
   // (2차) 2단원 숫자 카드 — 모두 쓰기·0 넣기·3장 세 자리는 10권과 같은 꼴, 큰 수부터·카드 수 조합, 방향 있는 차
   ["book-05", 2, "activity", 2, [1, 2], "digit-cards-list-all-b10"],
   ["book-05", 2, "practice", 1, [12, 13], "digit-cards-list-all-b10"],
