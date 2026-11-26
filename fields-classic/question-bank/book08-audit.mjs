@@ -444,7 +444,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 101) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 105) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -695,6 +695,44 @@ function validateStructure(problem, id, difficulty) {
       let [x, y] = meta.start;
       for (let r = 0; r < meta.rounds; r += 1) { if (r % 2 === 0) { x -= y; y *= 2; } else { y -= x; x *= 2; } assert(x > 0 && y > 0, id, difficulty, "옮기는 중 0 이하"); }
       assert(x === meta.n && y === meta.n, id, difficulty, "서로 가진 만큼 옮기기 결과 오류");
+      return;
+    }
+    case "symbol-chain-four-b8": {
+      // 네 미지수 연립식을 1~40 범위 완전 탐색으로 다시 푼다
+      let count = 0, hit = null;
+      const v = [0, 0, 0, 0];
+      const rec = (k) => {
+        if (count > 1) return;
+        if (k === 4) { if (meta.eqs.every((e) => e.terms.reduce((s, x) => s + v[x], 0) === e.total)) { count += 1; hit = v.slice(); } return; }
+        for (let x = 1; x <= 40; x += 1) { v[k] = x; if (meta.eqs.slice(0, k + 1).every((e) => e.terms.every((y) => y <= k) ? e.terms.reduce((s, y) => s + v[y], 0) === e.total : true)) rec(k + 1); }
+      };
+      rec(0);
+      assert(count === 1 && String(hit[meta.ask]) === String(problem.answer), id, difficulty, "네 식 사슬 답 오류");
+      return;
+    }
+    case "row-sums-only-matrix-b8": {
+      let count = 0, hit = null;
+      const lim = 15;
+      for (let a = 1; a <= lim; a += 1) for (let b = 1; b <= lim; b += 1) for (let c = 1; c <= lim; c += 1) for (let d = 1; d <= lim; d += 1) {
+        const v = [a, b, c, d];
+        if (meta.grid.every((row, r) => row.reduce((s, x) => s + v[x], 0) === meta.sums[r])) { count += 1; hit = v; }
+      }
+      assert(count === 1, id, difficulty, `가로합 표 답 ${count}개`);
+      assert(String(problem.answer) === String(meta.askAll ? hit.reduce((s, x) => s + x, 0) : hit[meta.ask]), id, difficulty, "가로합 표 답 오류");
+      return;
+    }
+    case "digit-swap-add-b8":
+      assert(meta.fits.length === 1 && meta.fits[0][0] === meta.A && meta.fits[0][1] === meta.B && meta.fits[0][2] === 9, id, difficulty, `자리 바뀐 수 답 ${meta.fits.length}개`);
+      assert(problem.answer === `${10 * meta.A + meta.B} + 9 = ${10 * meta.B + meta.A}`, id, difficulty, "자리 바뀐 수 식 오류");
+      return;
+    case "card-sum-all-b8": {
+      const s = new Set();
+      const c = meta.cards;
+      for (let i = 0; i < 4; i += 1) for (let j = 0; j < 4; j += 1) for (let k = 0; k < 4; k += 1) for (let l = 0; l < 4; l += 1) {
+        if (new Set([i, j, k, l]).size !== 4 || c[i] === 0 || c[k] === 0) continue;
+        s.add(10 * c[i] + c[j] + 10 * c[k] + c[l]);
+      }
+      assert([...s].sort((x, y) => x - y).join(", ") === String(problem.answer), id, difficulty, "카드 합 모두 오류");
       return;
     }
     default:
