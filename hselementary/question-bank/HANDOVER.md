@@ -1,3 +1,10 @@
+## 2026-11-26 — Windows E: 증거 감사 6개 재실행 통과 (Claude Code / Opus 5.5, Mac)
+
+- Windows Codex가 main 커밋 c29f35b67(감사 수정 PR #1513 병합본)로 다시 실행: 6개 모두 통과(결과: Drive 코딩관련/windows-audit-result-codex-20261125-rerun.txt, 2026-11-26 18:26 KST).
+  - border-mission3-contracts, stair-mission1-contracts, t-pattern-example2-contracts, pentacube-mission4-renderer-compatibility, colored-cut-mission1-questions, plane-cut-questions.
+- 작업본 E:/Codex/lete-on-main, 실행 전후 git status 깨끗, 코드 SHA-256 보존 검사 통과, 커밋·푸시 없음. 감사별 로그: E:\Codex\audit-out\20261126\windows-audit-logs-codex-20261125-rerun\.
+- 이로써 Windows E: 증거 감사 27개 중 26개 통과. stack-operation-learner 1개만 review html이 없어 실행할 수 없는 상태로 남는다(저장소에 없는 파일).
+
 ## 2026-11-25 — A4 인쇄 글꼴 명조로 통일 (Claude Code / Opus 5.5, Mac)
 
 - 근거: Windows Codex 글꼴 실측(Drive 코딩관련/황소문제은행_글꼴표시_Windows실측_20261125.md). 인쇄 기본 글꼴이 Pretendard이고 명조는 문항별로만 지정되어, 바깥 .question-prompt는 명조인데 안쪽 <p>·SVG는 Pretendard였고, ㉮·㉯는 Windows에서 Malgun Gothic으로 그려졌다.
