@@ -14,7 +14,7 @@
   const q=new URLSearchParams({action,...query}),headers={apikey:KEY};if(teacher?staff:token)headers.Authorization='Bearer '+(teacher?staff:token);if(body)headers['Content-Type']='application/json';
   const response=await fetch(ENDPOINT+'?'+q,{method,headers,body:body?JSON.stringify(body):undefined,cache:'no-store'});const data=await response.json();if(!response.ok)throw Object.assign(new Error(errors[data.error]||'연결하지 못했습니다. 잠시 후 다시 시도해 주세요.'),{code:data.error});return data;
  }
- function run(fn){return async event=>{event?.preventDefault();const button=event?.submitter||(event?.type==='click'?event.target.closest?.('button'):null);try{if(button){button.disabled=true;button.setAttribute('aria-busy','true');}message('');await fn(event);}catch(error){if(error.code==='login_required')logout(false);if(error.code==='exam_version_changed')versionChanged();message(error.message||'연결을 확인해 주세요.');if($('save-confirm').open)$('save-error').textContent=error.message;}finally{if(button){button.disabled=!versionValid&&['submit-responses','confirm-save'].includes(button.id);button.removeAttribute('aria-busy');}}};}
+ function run(fn){return async event=>{event?.preventDefault();const button=event?.submitter||(event?.type==='click'?event.target.closest?.('button'):null);try{if(button){button.disabled=true;button.setAttribute('aria-busy','true');}message('');await fn(event);}catch(error){if(error.code==='login_required')logout(false);if(error.code==='exam_version_changed')versionChanged();message(error.message||'연결을 확인해 주세요.');if($('save-confirm').open)$('save-error').textContent=error.message;}finally{if(button){button.disabled=(!versionValid&&['submit-responses','confirm-save'].includes(button.id))||($('exam-view').getAttribute('aria-busy')==='true'&&['view-paper','view-answers','view-analysis'].includes(button.id));button.removeAttribute('aria-busy');}}};}
  function logout(server=true){if(server&&token)api('logout',{method:'POST'}).catch(()=>{});token='';staff='';sessionStorage.removeItem('highselectExamToken');sessionStorage.removeItem('highselectExamStaff');for(const key of Object.keys(sessionStorage))if(key.startsWith('highselectDraft:')||key.startsWith('highselectReading:'))sessionStorage.removeItem(key);requestedExam=(document.body.dataset.view==='report-view'&&reportExamId)||current?.exam?.id||requestedExam||new URLSearchParams(location.search).get('exam');current=null;reportExamId='';reportAttemptId='';savedMarks.clear();mountedVersion='';documentRequest++;examRequest++;pageGeneration++;pagePositions={};$('paper-pages').replaceChildren();$('response-fields').replaceChildren();$('report-content').replaceChildren();$('exam-list').replaceChildren();$('past-results').replaceChildren();$('save-confirm').close();if(requestedExam){const url=new URL(location.href);url.searchParams.set('exam',requestedExam);history.replaceState(null,'',url.pathname+url.search);}show('login-view',{replace:true});document.title='모의고사 | LETE-ON';renderEntrySelection();}
  $('logout').onclick=()=>logout();
  function tab(teacher){$('student-login').hidden=teacher;$('teacher-login').hidden=!teacher;$('student-tab').setAttribute('aria-pressed',String(!teacher));$('teacher-tab').setAttribute('aria-pressed',String(teacher));message('');}
@@ -23,13 +23,13 @@
  function teacherIdentity(value){const id=value.trim();return id.includes('@')?id:id.toLowerCase()+'@auth.gfield.invalid';}
  $('teacher-login').onsubmit=run(async()=>{const response=await fetch(BASE+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:KEY,'Content-Type':'application/json'},body:JSON.stringify({email:teacherIdentity($('teacher-email').value),password:$('teacher-password').value})});const result=await response.json();if(!response.ok||!result.access_token)throw Error('아이디 또는 이메일과 비밀번호를 확인해 주세요.');staff=result.access_token;await api('admin-list',{teacher:true});token='';sessionStorage.setItem('highselectExamStaff',staff);sessionStorage.removeItem('highselectExamToken');$('teacher-password').value='';await admin();});
  async function library({record=true,preferRequested=true}={}){
-  examRequest++;documentRequest++;const data=await api('exams');const wanted=preferRequested?requestedExam:null;requestedExam=null;
+  const request=++examRequest;documentRequest++;const wanted=preferRequested?requestedExam:null;requestedExam=null;const data=await api('exams');if(request!==examRequest)return;
   show('library-view',{record,replace:document.body.dataset.view==='login-view'});document.title='내 모의고사 | LETE-ON';$('welcome').textContent=data.name+' · 내 모의고사';
   $('exam-list').innerHTML=data.exams.length?data.exams.map(e=>`<button class="exam-link" data-exam="${esc(e.id)}"><span><span class="mode">${e.mode==='pilot'?'시범 응시':'모의고사'}</span><strong>${esc(examTitle(e))}</strong><small>${e.questionCount}문항${e.durationMinutes?' · '+timeLabel(e):''}</small></span><span aria-hidden="true">→</span></button>`).join(''):'<p>아직 배정된 시험이 없습니다. 담당 선생님께 응시 승인을 요청해 주세요.</p>';
-  await pastResults();if(wanted){if(data.exams.some(e=>e.id===wanted))await openExam(wanted,{record});else message('선택한 시험의 응시 승인이 필요합니다. 배정된 시험을 선택해 주세요.');}
+  await pastResults(request);if(request!==examRequest)return;if(wanted){if(data.exams.some(e=>e.id===wanted))await openExam(wanted,{record});else message('선택한 시험의 응시 승인이 필요합니다. 배정된 시험을 선택해 주세요.');}
  }
  $('exam-list').onclick=run(async e=>{const b=e.target.closest('[data-exam]');if(b)await openExam(b.dataset.exam);});
- async function pastResults(){const data=await api('attempts');$('past-results').innerHTML=data.attempts.map(a=>`<button class="exam-link" data-result="${esc(a.id)}"><span><strong>${esc(examTitle(a.report.exam))}</strong><small>${a.report.gradingMethod==='self-reported'?'자가채점 O':'정답'} ${a.report.correctCount}/${a.report.total}${a.report.reviewCount?' · 풀이 확인 필요 '+a.report.reviewCount:''}</small></span><span>결과 보기</span></button>`).join('')||'<p>아직 응시 결과가 없습니다.</p>';}
+ async function pastResults(request=null){const data=await api('attempts');if(request!==null&&request!==examRequest)return;$('past-results').innerHTML=data.attempts.map(a=>`<button class="exam-link" data-result="${esc(a.id)}"><span><strong>${esc(examTitle(a.report.exam))}</strong><small>${a.report.gradingMethod==='self-reported'?'자가채점 O':'정답'} ${a.report.correctCount}/${a.report.total}${a.report.reviewCount?' · 풀이 확인 필요 '+a.report.reviewCount:''}</small></span><span>결과 보기</span></button>`).join('')||'<p>아직 응시 결과가 없습니다.</p>';}
  $('past-results').onclick=run(async event=>{const b=event.target.closest('[data-result]');if(b){const data=await api('attempt',{query:{id:b.dataset.result}});displayReport(data.report,data.id||b.dataset.result);}});
  const assetLabels={paper:'시험지',answers:'정답·풀이',analysis:'학습분석지'};
  const assetAction=kind=>kind==='paper'?'manifest':kind;
@@ -58,10 +58,10 @@
  }
  function displayReport(report,id,{saved=false,record=true}={}){reportAttemptId=id||'';renderReport(report);$('saved-result-status').hidden=!saved;$('saved-result-status').textContent=saved?'O/X 결과를 저장했습니다. 내 시험 목록의 응시 결과에서 다시 볼 수 있습니다.':'';show('report-view',{record});document.title='학습 결과 | LETE-ON';}
  async function restoreRoute(state){
-  $('save-confirm').close();examRequest++;documentRequest++;
+  $('save-confirm').close();const request=++examRequest;documentRequest++;
   if(!token&&!staff){show('login-view',{record:false});renderEntrySelection();return;}
   if(state?.highselectView==='exam-view'&&state.examId&&token){await openExam(state.examId,{record:false});return;}
-  if(state?.highselectView==='report-view'&&state.attemptId&&token){const data=await api('attempt',{query:{id:state.attemptId}});displayReport(data.report,data.id||state.attemptId,{record:false});return;}
+  if(state?.highselectView==='report-view'&&state.attemptId&&token){const data=await api('attempt',{query:{id:state.attemptId}});if(request!==examRequest)return;displayReport(data.report,data.id||state.attemptId,{record:false});return;}
   if(staff){await admin();return;}await library({record:false,preferRequested:false});
  }
  window.addEventListener('popstate',event=>run(()=>restoreRoute(event.state))());
@@ -155,8 +155,12 @@
    return false;
   }catch(error){if(error.code==='login_required')throw error;return true;}
  }
+ function setExamLoading(loading){
+  $('exam-view').setAttribute('aria-busy',String(loading));for(const kind of ['paper','answers','analysis'])$('view-'+kind).disabled=loading;
+ }
  async function openExam(id,{record=true}={}){
-  rememberReading();const request=++examRequest;const data=await api('manifest',{query:{exam:id}});if(request!==examRequest)return;
+  rememberReading();const request=++examRequest;setExamLoading(true);try{
+  const data=await api('manifest',{query:{exam:id}});if(request!==examRequest)return;
   const savedLoadFailed=await loadSavedMarks(data,request);if(request!==examRequest)return;
   current=data;assetKind='paper';pagePositions={};readingPositions={};const reading=loadReading();readingPositions=reading?.positions||{};mountedVersion='';versionValid=true;documentRequest++;show('exam-view',{record});const e=current.exam;
   $('exam-title').textContent=examTitle(e);document.title=examTitle(e)+' | LETE-ON';setPane('paper');
@@ -168,6 +172,7 @@
   $('submit-responses').disabled=false;$('confirm-save').disabled=false;updateCheck();fitViewport();
   if(matchMedia('(max-width:800px)').matches&&innerHeight-$('paper-viewport').getBoundingClientRect().top-144<200)focusReadingArea();
   scheduleRenew();if(reading&&reading.kind!=='paper'&&current.exam[{answers:'answerPageCount',analysis:'analysisPageCount'}[reading.kind]])await showDocument(reading.kind,{capture:false});
+  }finally{if(request===examRequest)setExamLoading(false);}
  }
  function saveDraft(){updateCheck();try{sessionStorage.setItem(draftKey(),JSON.stringify(responses()));$('draft-status').textContent='이 탭에 임시 저장됨 · 결과 저장 전';}catch{$('draft-status').textContent='임시 저장을 사용할 수 없습니다. 결과 저장을 눌러 주세요.';}}
  $('response-fields').onchange=saveDraft;
