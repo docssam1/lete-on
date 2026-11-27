@@ -7,7 +7,7 @@
 //   BOOK01_STRUCTURE_REMAPS     — [[권 id, 단원, 묶음, 묶음 번호, 번호들, 유형 id]] (textbook-remaps.js와 같은 꼴)
 // 모든 생성기는 답이 하나인지(또는 「모두」를 묻는 꼴이면 그 목록 전부인지) 완전 탐색으로 확인하고, 안 되면 다시 뽑는다.
 
-import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261119a";
+import { BOOK01_INTERNALS } from "./book01-generators.js?v=20261127b";
 import { foldWordStrip } from "./fold-visuals.js?v=20261123a";
 
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
@@ -1455,7 +1455,494 @@ function foldDiagonalTwiceUnfoldDraw({ difficulty = 2 }) {
 // ─────────────────────────────────────────────────────────────
 // 내보내기
 // ─────────────────────────────────────────────────────────────
+// ── (3차) 1단원 돌려 나누기 판 세 가지 · 도토리 판 나누기 · 숫자판 두 번 뒤집기 ─────────────
+
+// 판 = 칸 집합. 가운데 점을 중심으로 fold번 돌리면 판이 제자리에 겹친다.
+// 주어진 선(가운데 점 → 판 둘레)을 돌린 선들이 서로 만나지 않으면 판은 모양과 크기가 같은 fold조각으로 나뉜다.
+const ROT_BOARDS = {
+  square4: () => ({ cols: 4, rows: 4, cells: (c, r) => c >= 0 && c < 4 && r >= 0 && r < 4, center: [2, 2], fold: 4 }),
+  rect43: () => ({ cols: 4, rows: 3, cells: (c, r) => c >= 0 && c < 4 && r >= 0 && r < 3, center: [2, 1.5], fold: 2 }),
+  stagger: () => {
+    const [w, h, sh] = sample([[3, 2, 1], [4, 2, 2], [5, 2, 1], [3, 3, 1], [5, 2, 3]]);
+    return { cols: sh + w, rows: 2 * h, cells: (c, r) => (r >= 0 && r < h && c >= 0 && c < w) || (r >= h && r < 2 * h && c >= sh && c < sh + w), center: [(sh + w) / 2, h], fold: 2 };
+  }
+};
+
+const rotPoint = ([x, y], [cx, cy], quarter) => {
+  let px = x, py = y;
+  for (let t = 0; t < quarter; t += 1) [px, py] = [cx - (py - cy), cy + (px - cx)];
+  return [Math.round(px * 2) / 2, Math.round(py * 2) / 2];
+};
+const ptKey = ([x, y]) => `${x},${y}`;
+
+function vertexInterior(board, [x, y]) {
+  return board.cells(x - 1, y - 1) && board.cells(x, y - 1) && board.cells(x - 1, y) && board.cells(x, y);
+}
+function vertexOnBoard(board, [x, y]) {
+  return board.cells(x - 1, y - 1) || board.cells(x, y - 1) || board.cells(x - 1, y) || board.cells(x, y);
+}
+function segmentInside(board, [x1, y1], [x2, y2]) {
+  if (x1 !== x2 && y1 !== y2) return board.cells(Math.min(x1, x2), Math.min(y1, y2)); // 대각선: 지나는 칸
+  if (x1 === x2) { const r = Math.floor(Math.min(y1, y2)); return board.cells(x1 - 1, r) && board.cells(x1, r); }
+  const c = Math.floor(Math.min(x1, x2)); return board.cells(c, y1 - 1) && board.cells(c, y1);
+}
+const diagCell = ([x1, y1], [x2, y2]) => (x1 !== x2 && y1 !== y2 ? `${Math.min(x1, x2)},${Math.min(y1, y2)}` : null);
+
+function randomRotPath(board, { minSeg, maxSeg, diag }) {
+  const [cx, cy] = board.center;
+  const quarterStep = 4 / board.fold;
+  for (let tries = 0; tries < 300; tries += 1) {
+    const path = [[cx, cy]];
+    if (!Number.isInteger(cy)) path.push([cx, sample([Math.floor(cy), Math.ceil(cy)])]);
+    else if (!Number.isInteger(cx)) path.push([sample([Math.floor(cx), Math.ceil(cx)]), cy]);
+    let ok = true;
+    while (ok) {
+      const last = path.at(-1);
+      if (path.length > 1 && !vertexInterior(board, last)) break;
+      if (path.length - 1 >= maxSeg) { ok = false; break; }
+      const dirs = [[1, 0], [-1, 0], [0, 1], [0, -1], ...(diag && Math.random() < 0.6 ? [[1, 1], [1, -1], [-1, 1], [-1, -1]] : [])];
+      const options = shuffle(dirs).map(([dx, dy]) => [last[0] + dx, last[1] + dy])
+        .filter((next) => vertexOnBoard(board, next) && segmentInside(board, last, next) && !path.some((p) => ptKey(p) === ptKey(next)));
+      if (!options.length) { ok = false; break; }
+      path.push(options[0]);
+    }
+    if (!ok) continue;
+    const segs = path.length - 1;
+    if (segs < minSeg || segs > maxSeg) continue;
+    const turns = path.slice(2).filter((p, i) => (p[0] - path[i + 1][0]) !== (path[i + 1][0] - path[i][0]) || (p[1] - path[i + 1][1]) !== (path[i + 1][1] - path[i][1])).length;
+    if (turns < 1) continue;
+    const copies = Array.from({ length: board.fold }, (_, k) => path.map((pt) => rotPoint(pt, board.center, k * quarterStep)));
+    const used = new Set();
+    const diags = new Set();
+    let clash = false;
+    copies.forEach((copy) => {
+      copy.slice(1).forEach((pt) => { const key = ptKey(pt); if (used.has(key)) clash = true; used.add(key); });
+      copy.slice(1).forEach((pt, i) => { const d = diagCell(copy[i], pt); if (d) { if (diags.has(d)) clash = true; diags.add(d); } });
+    });
+    if (ptKey(copies[0].at(-1)) === ptKey(copies[Math.min(1, board.fold - 1)].at(-1))) clash = true;
+    if (clash) continue;
+    return { path, copies };
+  }
+  return null;
+}
+
+function rotBoardSvg(board, paths, { label, answer = false }) {
+  const cell = 26, pad = 10;
+  const W = board.cols * cell + pad * 2, H = board.rows * cell + pad * 2 + 18;
+  const X = (x) => pad + x * cell, Y = (y) => pad + y * cell;
+  let body = "";
+  for (let r = 0; r < board.rows; r += 1) for (let c = 0; c < board.cols; c += 1) {
+    if (!board.cells(c, r)) continue;
+    body += `<rect x="${X(c)}" y="${Y(r)}" width="${cell}" height="${cell}" style="fill:#fff;stroke:#9fb4bc;stroke-width:0.8;stroke-dasharray:2 2"/>`;
+  }
+  // 바깥 둘레: 판 칸과 바깥이 맞닿는 변만 굵게
+  for (let r = 0; r < board.rows; r += 1) for (let c = 0; c < board.cols; c += 1) {
+    if (!board.cells(c, r)) continue;
+    if (!board.cells(c, r - 1)) body += `<line x1="${X(c)}" y1="${Y(r)}" x2="${X(c + 1)}" y2="${Y(r)}" style="stroke:#3d7d8c;stroke-width:1.8"/>`;
+    if (!board.cells(c, r + 1)) body += `<line x1="${X(c)}" y1="${Y(r + 1)}" x2="${X(c + 1)}" y2="${Y(r + 1)}" style="stroke:#3d7d8c;stroke-width:1.8"/>`;
+    if (!board.cells(c - 1, r)) body += `<line x1="${X(c)}" y1="${Y(r)}" x2="${X(c)}" y2="${Y(r + 1)}" style="stroke:#3d7d8c;stroke-width:1.8"/>`;
+    if (!board.cells(c + 1, r)) body += `<line x1="${X(c + 1)}" y1="${Y(r)}" x2="${X(c + 1)}" y2="${Y(r + 1)}" style="stroke:#3d7d8c;stroke-width:1.8"/>`;
+  }
+  const colors = ["#d93a2b", "#2456c4", "#2d8a6c", "#c27a12"];
+  paths.forEach((path, i) => {
+    body += `<polyline points="${path.map(([x, y]) => `${X(x)},${Y(y)}`).join(" ")}" style="fill:none;stroke:${colors[i]};stroke-width:3;stroke-linecap:round;stroke-linejoin:round"/>`;
+  });
+  body += `<circle cx="${X(board.center[0])}" cy="${Y(board.center[1])}" r="4.5" style="fill:#d93a2b"/>`;
+  body += svgText(W / 2, H - 8, label, { size: 12 });
+  return `${svgOpen(W, H, `${label} ${answer ? "완성한 분할선" : "돌려 나눌 판"}`)}${body}</svg>`;
+}
+
+const PART_LABELS = ["(1)", "(2)", "(3)", "(4)"];
+const gridOf = (svgs) => `<div style="display:grid;grid-template-columns:repeat(2,auto);gap:14px 26px;justify-content:center">${svgs.join("")}</div>`;
+
+function rotationSplitSet(boardName, { difficulty = 2 } = {}) {
+  const board = ROT_BOARDS[boardName]();
+  const segRange = difficulty === 1 ? [2, 3] : difficulty === 2 ? [2, 4] : [3, 6];
+  const diag = boardName !== "stagger" && difficulty >= 2;
+  const parts = [];
+  const seen = new Set();
+  for (let guard = 0; parts.length < 4 && guard < 200; guard += 1) {
+    const made = randomRotPath(board, { minSeg: segRange[0], maxSeg: segRange[1], diag: diag || (boardName === "rect43" && difficulty === 1 && Math.random() < 0.3) });
+    if (!made) continue;
+    const key = made.copies.map((c) => c.map(ptKey).join(";")).sort().join("|");
+    if (seen.has(key)) continue;
+    seen.add(key);
+    parts.push(made);
+  }
+  if (parts.length < 4) return null;
+  const turnWord = board.fold === 4 ? "시계 방향으로 반의 반 바퀴씩 3번" : "반 바퀴";
+  const pieceWord = board.fold === 4 ? "4조각" : "2조각";
+  return {
+    prompt: `빨간 선을 가운데 점을 중심으로 ${turnWord} 돌린 선을 그려, 판을 모양과 크기가 같은 ${pieceWord}으로 나누세요.`,
+    visual: fig(gridOf(parts.map((q, i) => rotBoardSvg(board, [q.path], { label: PART_LABELS[i] })))),
+    answer: "그림과 같이 나눕니다.",
+    answerVisual: fig(gridOf(parts.map((q, i) => rotBoardSvg(board, q.copies, { label: PART_LABELS[i], answer: true })))),
+    solution: `빨간 선의 꺾인 점을 하나씩 가운데 점 둘레로 ${board.fold === 4 ? "반의 반 바퀴씩" : "반 바퀴"} 옮겨 찍고 이어 그립니다. 그린 선들이 서로 만나지 않으므로 판이 ${pieceWord}으로 나뉘고, 조각을 돌리면 서로 꼭 겹칩니다.`,
+    responseKind: "drawing",
+    meta: { family: "rot-split-b1", boardName, cols: board.cols, rows: board.rows, center: board.center, fold: board.fold, parts: parts.map((q) => q.copies) }
+  };
+}
+const rotationSplitSquareFourB1 = (o) => rotationSplitSet("square4", o);
+const rotationSplitRectTwoB1 = (o) => rotationSplitSet("rect43", o);
+const rotationSplitStaggerTwoB1 = (o) => rotationSplitSet("stagger", o);
+
+// 도토리가 있는 4×4 판을, 모양과 크기가 같고 도토리 수가 같은 네 조각으로 나누기(답 하나).
+const ACORN_PARTITIONS = (() => {
+  const shapes = [];
+  const canon = (cells) => {
+    const forms = [];
+    for (let f = 0; f < 2; f += 1) for (let t = 0; t < 4; t += 1) {
+      let pts = cells.map(([r, c]) => (f ? [r, -c] : [r, c]));
+      for (let k = 0; k < t; k += 1) pts = pts.map(([r, c]) => [c, -r]);
+      const mr = Math.min(...pts.map((p) => p[0])), mc = Math.min(...pts.map((p) => p[1]));
+      forms.push(pts.map(([r, c]) => [r - mr, c - mc]).sort((a, b) => a[0] - b[0] || a[1] - b[1]).map((p) => p.join(".")).join("/"));
+    }
+    return forms.sort()[0];
+  };
+  const connected = (set) => {
+    const list = [...set];
+    const seen = new Set([list[0]]); const queue = [list[0]];
+    while (queue.length) { const v = queue.pop(); const r = Math.floor(v / 4), c = v % 4;
+      [[r - 1, c], [r + 1, c], [r, c - 1], [r, c + 1]].forEach(([a, b]) => { const w = a * 4 + b; if (a >= 0 && a < 4 && b >= 0 && b < 4 && set.has(w) && !seen.has(w)) { seen.add(w); queue.push(w); } }); }
+    return seen.size === set.size;
+  };
+  const pieces = [];
+  for (let a = 0; a < 16; a += 1) for (let b = a + 1; b < 16; b += 1) for (let c = b + 1; c < 16; c += 1) for (let d = c + 1; d < 16; d += 1) {
+    const set = new Set([a, b, c, d]);
+    if (!connected(set)) continue;
+    pieces.push({ mask: (1 << a) | (1 << b) | (1 << c) | (1 << d), cells: [a, b, c, d], key: canon([a, b, c, d].map((v) => [Math.floor(v / 4), v % 4])) });
+  }
+  const result = [];
+  const solve = (used, chosen, key) => {
+    if (used === 0xffff) { result.push(chosen.slice()); return; }
+    let first = 0; while (used & (1 << first)) first += 1;
+    pieces.forEach((p) => { if ((p.mask & (1 << first)) && !(p.mask & used) && (!key || p.key === key)) { chosen.push(p); solve(used | p.mask, chosen, key || p.key); chosen.pop(); } });
+  };
+  solve(0, [], null);
+  shapes.push(...result);
+  return shapes;
+})();
+
+function acornSvg(acorns, labels) {
+  const cell = 38, pad = 10, W = 4 * cell + pad * 2, H = W;
+  let body = "";
+  for (let v = 0; v < 16; v += 1) {
+    const r = Math.floor(v / 4), c = v % 4, x = pad + c * cell, y = pad + r * cell;
+    body += `<rect x="${x}" y="${y}" width="${cell}" height="${cell}" style="fill:#fff;stroke:#9fb4bc;stroke-width:0.8;stroke-dasharray:2 2"/>`;
+    if (acorns.has(v)) {
+      const cx = x + cell / 2, cy = y + cell / 2 + 3;
+      body += `<ellipse cx="${cx}" cy="${cy + 2}" rx="8" ry="9.5" style="fill:#c98a4b;stroke:#7a4a1e;stroke-width:1"/><path d="M${cx - 10} ${cy - 4} Q${cx} ${cy - 15} ${cx + 10} ${cy - 4} Z" style="fill:#7a5530;stroke:#5a3a18;stroke-width:1"/><line x1="${cx}" y1="${cy - 10}" x2="${cx + 2}" y2="${cy - 15}" style="stroke:#5a3a18;stroke-width:1.6"/>`;
+    }
+  }
+  if (labels) {
+    for (let v = 0; v < 16; v += 1) {
+      const r = Math.floor(v / 4), c = v % 4, x = pad + c * cell, y = pad + r * cell;
+      if (c < 3 && labels[v] !== labels[v + 1]) body += `<line x1="${x + cell}" y1="${y}" x2="${x + cell}" y2="${y + cell}" style="stroke:#d93a2b;stroke-width:3;stroke-linecap:round"/>`;
+      if (r < 3 && labels[v] !== labels[v + 4]) body += `<line x1="${x}" y1="${y + cell}" x2="${x + cell}" y2="${y + cell}" style="stroke:#d93a2b;stroke-width:3;stroke-linecap:round"/>`;
+    }
+  }
+  body += `<rect x="${pad}" y="${pad}" width="${4 * cell}" height="${4 * cell}" style="fill:none;stroke:#3d7d8c;stroke-width:2"/>`;
+  return `${svgOpen(W, H, labels ? "네 조각으로 나눈 도토리 판" : "도토리가 놓인 판")}${body}</svg>`;
+}
+
+function acornEqualSplitB1({ difficulty = 2 } = {}) {
+  const k = difficulty === 1 ? 1 : difficulty === 2 ? sample([2, 3]) : sample([2, 3]);
+  for (let tries = 0; tries < 400; tries += 1) {
+    const partition = sample(ACORN_PARTITIONS);
+    const acorns = new Set();
+    partition.forEach((p) => shuffle(p.cells).slice(0, k).forEach((v) => acorns.add(v)));
+    const fits = ACORN_PARTITIONS.filter((q) => q.every((p) => p.cells.filter((v) => acorns.has(v)).length === k));
+    if (fits.length !== 1) continue;
+    const labels = Array(16).fill("");
+    partition.forEach((p, i) => p.cells.forEach((v) => { labels[v] = String(i); }));
+    return {
+      prompt: `판에 도토리가 놓여 있습니다. 판을 모양과 크기가 같은 4조각으로 나누려고 합니다. 조각마다 도토리가 ${k}개씩 들어가도록 선을 그어 나누세요. (조각 안 도토리의 자리는 같지 않아도 됩니다.)`,
+      visual: fig(acornSvg(acorns, null)),
+      answer: "그림과 같이 나눕니다.",
+      answerVisual: fig(acornSvg(acorns, labels)),
+      solution: `16칸을 4조각으로 나누므로 한 조각은 4칸입니다. 도토리가 ${acorns.size}개이므로 조각마다 ${k}개씩입니다. 모서리 칸처럼 들어갈 조각이 적은 칸부터 4칸짜리 같은 모양을 놓아 보며 도토리 수를 맞춥니다.`,
+      responseKind: "drawing",
+      meta: { family: "acorn-split-b1", k, acorns: [...acorns], partition: partition.map((p) => p.cells), fits: fits.length }
+    };
+  }
+  return null;
+}
+
+// 숫자판을 위(아래)로 뒤집은 뒤 왼쪽(오른쪽)으로 뒤집기 — 두 번 뒤집기는 반 바퀴 돌리기와 같다.
+function digitalBoardDoubleFlipSumB1({ difficulty = 2 } = {}) {
+  const made = BOOK01_INTERNALS.makeDigitalBoardSum("rotate-half", difficulty);
+  const [first, second] = sample([["위로", "왼쪽으로"], ["아래로", "오른쪽으로"], ["왼쪽으로", "위로"], ["오른쪽으로", "아래로"]]);
+  return {
+    ...made,
+    prompt: `다음 숫자판을 ${first} 뒤집은 뒤 다시 ${second} 뒤집었을 때, 똑바로 놓이는 수들의 합을 구하세요.`,
+    solution: `${first} 뒤집고 ${second} 뒤집으면 반 바퀴 돌린 것과 같습니다. ${made.solution}`
+  };
+}
+
+// ── (3차) 2단원 접기 — 접기를 실제로 계산해 펼친다(펼치기 = 마지막 접은 선부터 거울에 비추기) ─────────
+
+const fSide = (L, p) => (L.b.x - L.a.x) * (p.y - L.a.y) - (L.b.y - L.a.y) * (p.x - L.a.x);
+const fReflect = (L, p) => {
+  const dx = L.b.x - L.a.x, dy = L.b.y - L.a.y;
+  const t = ((p.x - L.a.x) * dx + (p.y - L.a.y) * dy) / (dx * dx + dy * dy);
+  return { x: 2 * (L.a.x + t * dx) - p.x, y: 2 * (L.a.y + t * dy) - p.y };
+};
+const fBox = (poly) => ({ x0: Math.min(...poly.map((p) => p.x)), x1: Math.max(...poly.map((p) => p.x)), y0: Math.min(...poly.map((p) => p.y)), y1: Math.max(...poly.map((p) => p.y)) });
+function fWordLine(word, box) {
+  const mx = (box.x0 + box.x1) / 2, my = (box.y0 + box.y1) / 2;
+  if (word === "아래로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keep: { x: mx, y: box.y1 } };
+  if (word === "위로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keep: { x: mx, y: box.y0 } };
+  if (word === "왼쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keep: { x: box.x0, y: my } };
+  if (word === "오른쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keep: { x: box.x1, y: my } };
+  if (word === "대각선-내림") return { a: { x: box.x0, y: box.y0 }, b: { x: box.x1, y: box.y1 }, keep: { x: box.x0, y: box.y1 } };
+  if (word === "대각선-오름") return { a: { x: box.x0, y: box.y1 }, b: { x: box.x1, y: box.y0 }, keep: { x: box.x0, y: box.y0 } };
+  return null;
+}
+function fClip(poly, L, sign) {
+  const out = [];
+  for (let i = 0; i < poly.length; i += 1) {
+    const a = poly[i], b = poly[(i + 1) % poly.length];
+    const da = sign * fSide(L, a), db = sign * fSide(L, b);
+    if (da >= -1e-9) out.push(a);
+    if ((da > 1e-9 && db < -1e-9) || (da < -1e-9 && db > 1e-9)) { const t = da / (da - db); out.push({ x: a.x + (b.x - a.x) * t, y: a.y + (b.y - a.y) * t }); }
+  }
+  return out;
+}
+// 접는 말 차례 → 접는 선들(종이 좌표 그대로 — 남는 쪽은 움직이지 않는다)과 마지막 모양
+function foldPlan(words) {
+  let poly = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const lines = [];
+  words.forEach((word) => {
+    const L = fWordLine(word, fBox(poly));
+    const sign = Math.sign(fSide(L, L.keep)) || 1;
+    lines.push(L);
+    poly = fClip(poly, L, sign);
+  });
+  return { lines, final: poly };
+}
+// 마지막 모양 위의 점(또는 선분) → 펼친 종이 위의 모든 자리
+function unfoldPoints(points, lines) {
+  let set = points.slice();
+  for (let j = lines.length - 1; j >= 0; j -= 1) set = set.concat(set.map((p) => fReflect(lines[j], p)));
+  const seen = new Map();
+  set.forEach((p) => { const key = `${p.x.toFixed(4)},${p.y.toFixed(4)}`; if (!seen.has(key)) seen.set(key, p); });
+  return [...seen.values()];
+}
+function unfoldSegments(segments, lines) {
+  let set = segments.slice();
+  for (let j = lines.length - 1; j >= 0; j -= 1) set = set.concat(set.map(([a, b]) => [fReflect(lines[j], a), fReflect(lines[j], b)]));
+  return set;
+}
+const PAPER = "#f9c8c4", PAPER_EDGE = "#e8968f", CUT = "#b03a5b";
+let foldIdSeed = 0;
+const foldId = (tag) => `${tag}${Date.now().toString(36)}${(foldIdSeed += 1)}`;
+function paperSquare(size, inner, { grid = 0, label = "처음 색종이", lines = [] } = {}) {
+  const X = (v) => 4 + v * size;
+  const gridLines = grid ? Array.from({ length: grid - 1 }, (_, i) => { const v = X((i + 1) / grid); return `<line x1="${v}" y1="4" x2="${v}" y2="${4 + size}" stroke="#e8968f" stroke-width="0.8"/><line x1="4" y1="${v}" x2="${4 + size}" y2="${v}" stroke="#e8968f" stroke-width="0.8"/>`; }).join("") : "";
+  const foldLines = lines.map((L) => {
+    const ends = [L.a, L.b].map((p) => ({ x: p.x, y: p.y }));
+    return `<line x1="${X(ends[0].x)}" y1="${X(ends[0].y)}" x2="${X(ends[1].x)}" y2="${X(ends[1].y)}" stroke="#c87d76" stroke-width="1.1" stroke-dasharray="5 4"/>`;
+  }).join("");
+  return `<svg viewBox="0 0 ${size + 8} ${size + 30}" style="width:${size + 8}px;max-width:100%;height:auto;display:block" role="img" aria-label="${esc(label)}"><rect x="4" y="4" width="${size}" height="${size}" fill="${PAPER}" stroke="${PAPER_EDGE}" stroke-width="2"/>${gridLines}${foldLines}${inner(X)}${svgText(4 + size / 2, size + 20, label, { size: 12, weight: 800, fill: "#7a4a44" })}</svg>`;
+}
+// 펼친 종이에 보이는 접힌 선(점선) — 처음 접은 선은 종이 전체를, 다음 선들도 펼치면 거울에 비친 자리까지
+function unfoldedCreases(lines) {
+  const out = [];
+  lines.forEach((L, j) => { unfoldSegments([[L.a, L.b]], lines.slice(0, j)).forEach(([a, b]) => out.push({ a, b })); });
+  return out;
+}
+
+// (연습 18) 반으로 두 번 접고 한 모서리를 둥글게(또는 비스듬히) 잘라 펼친 모양 그리기 — 작은 문제 둘
+function cornerCutPolygon(corner, inward, r, shape) {
+  const pts = [];
+  if (shape === "arc") {
+    for (let i = 0; i <= 12; i += 1) {
+      const t = (Math.PI / 2) * (i / 12);
+      pts.push({ x: corner.x + inward.x * r * Math.cos(t), y: corner.y + inward.y * r * Math.sin(t) });
+    }
+    pts.push(corner);
+  } else {
+    pts.push(corner, { x: corner.x + inward.x * r, y: corner.y }, { x: corner.x, y: corner.y + inward.y * r });
+  }
+  return pts;
+}
+function foldTwiceCornerCutDrawB1({ difficulty = 2 } = {}) {
+  const parts = [];
+  const seen = new Set();
+  for (let guard = 0; parts.length < 2 && guard < 60; guard += 1) {
+    const words = [sample(["아래로", "위로"]), sample(["왼쪽으로", "오른쪽으로"])];
+    if (Math.random() < 0.5) words.reverse();
+    const plan = foldPlan(words);
+    const box = fBox(plan.final);
+    const corners = [{ x: box.x0, y: box.y0 }, { x: box.x1, y: box.y0 }, { x: box.x1, y: box.y1 }, { x: box.x0, y: box.y1 }];
+    const corner = sample(corners);
+    const inward = { x: corner.x === box.x0 ? 1 : -1, y: corner.y === box.y0 ? 1 : -1 };
+    const shape = difficulty === 1 ? "arc" : sample(["arc", "tri"]);
+    const r = sample([0.18, 0.22, 0.26]);
+    const centerCorner = Math.abs(corner.x - 0.5) < 1e-9 && Math.abs(corner.y - 0.5) < 1e-9;
+    const key = `${words.join()}|${corner.x},${corner.y}|${shape}`;
+    if (seen.has(key)) continue;
+    if (parts.length === 1 && parts[0].centerCorner === centerCorner && difficulty >= 2) continue; // 두 문제는 가운데 구멍 / 가장자리 홈으로 갈리게
+    seen.add(key);
+    const cut = cornerCutPolygon(corner, inward, r, shape);
+    let polys = [cut];
+    for (let j = plan.lines.length - 1; j >= 0; j -= 1) polys = polys.concat(polys.map((poly) => poly.map((p) => fReflect(plan.lines[j], p))));
+    parts.push({ words, plan, cut, polys, shape, r, corner, centerCorner });
+  }
+  if (parts.length < 2) return null;
+  const labels = ["(1)", "(2)"];
+  const blocks = parts.map((q, i) => {
+    const strip = foldWordStrip(q.words, {
+      label: `${labels[i]} 색종이를 두 번 접고 색칠한 부분 자르기`,
+      finalExtra: "자르기",
+      final: (shift, top, size) => `<polygon points="${q.cut.map((p) => `${(shift + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ")}" fill="${CUT}" stroke="${CUT}" stroke-width="1"/>`
+    });
+    return `<div style="display:grid;gap:6px;justify-items:center"><strong style="font-size:13px">${labels[i]}</strong>${strip}${paperSquare(110, () => "", { label: "펼친 모양을 그릴 색종이", lines: unfoldedCreases(q.plan.lines) })}</div>`;
+  });
+  const answers = parts.map((q, i) => `<div style="display:grid;gap:4px;justify-items:center"><strong style="font-size:13px">${labels[i]}</strong>${paperSquare(110, (X) => q.polys.map((poly) => `<polygon points="${poly.map((p) => `${X(p.x).toFixed(1)},${X(p.y).toFixed(1)}`).join(" ")}" fill="#fff" stroke="none"/>`).join(""), { label: "펼친 모양", lines: unfoldedCreases(q.plan.lines) })}</div>`);
+  const where = (q) => (q.centerCorner ? "가운데에 구멍 하나" : Math.abs(q.corner.x - 0.5) < 1e-9 || Math.abs(q.corner.y - 0.5) < 1e-9 ? "두 변의 가운데에 홈" : "네 모서리가 잘린 모양");
+  return {
+    prompt: "색종이를 두 번 접은 뒤 색칠한 부분을 잘라 냈습니다. 남은 부분을 펼쳤을 때의 모양을 그리세요.",
+    visual: fig(`<div style="display:grid;gap:18px">${blocks.join("")}</div>`),
+    answer: parts.map((q, i) => `${labels[i]} ${where(q)}`).join(", "),
+    answerVisual: fig(`<div style="display:flex;gap:24px;flex-wrap:wrap;justify-content:center">${answers.join("")}</div>`),
+    solution: `마지막에 접은 선부터 거울처럼 펼칩니다. 자른 자리가 두 접은 선이 만나는 모서리면 가운데에 구멍 하나, 접은 선 하나에만 닿으면 변의 가운데에 홈 두 개, 접은 선에 닿지 않는 모서리면 네 모서리가 잘립니다.`,
+    responseKind: "drawing",
+    meta: { family: "fold-corner-cut-b1", parts: parts.map((q) => ({ words: q.words, corner: q.corner, shape: q.shape, r: q.r, copies: q.polys.length, centerCorner: q.centerCorner })) }
+  };
+}
+
+// (연습 20 · 도전 1) 반으로 두 번 접고 대각선을 따라 잘랐을 때 나오는 도형의 종류와 개수
+function rasterPieces(segments, N = 180) {
+  const blocked = new Uint8Array(N * N);
+  const near = (px, py) => segments.some(([a, b]) => {
+    const dx = b.x - a.x, dy = b.y - a.y;
+    const t = Math.max(0, Math.min(1, ((px - a.x) * dx + (py - a.y) * dy) / (dx * dx + dy * dy)));
+    return Math.hypot(a.x + t * dx - px, a.y + t * dy - py) < 0.9 / N;
+  });
+  for (let i = 0; i < N; i += 1) for (let j = 0; j < N; j += 1) if (near((j + 0.5) / N, (i + 0.5) / N)) blocked[i * N + j] = 1;
+  const seen = new Uint8Array(N * N);
+  const pieces = [];
+  for (let start = 0; start < N * N; start += 1) {
+    if (blocked[start] || seen[start]) continue;
+    const stack = [start]; seen[start] = 1;
+    let area = 0, sx = 0, sy = 0, x0 = N, x1 = 0, y0 = N, y1 = 0;
+    while (stack.length) {
+      const v = stack.pop(); const i = Math.floor(v / N), j = v % N;
+      area += 1; sx += j; sy += i; x0 = Math.min(x0, j); x1 = Math.max(x1, j); y0 = Math.min(y0, i); y1 = Math.max(y1, i);
+      [[i - 1, j], [i + 1, j], [i, j - 1], [i, j + 1]].forEach(([a, b]) => { if (a >= 0 && a < N && b >= 0 && b < N) { const w = a * N + b; if (!blocked[w] && !seen[w]) { seen[w] = 1; stack.push(w); } } });
+    }
+    if (area < 30) continue;
+    const w = x1 - x0 + 1, h = y1 - y0 + 1;
+    const fill = area / (w * h);
+    const cx = sx / area - (x0 + x1) / 2, cy = sy / area - (y0 + y1) / 2;
+    const centered = Math.hypot(cx, cy) < 0.08 * Math.max(w, h);
+    const kind = fill > 0.8 ? "사각형" : centered ? "사각형" : "삼각형";
+    pieces.push({ kind, area });
+  }
+  return pieces;
+}
+function foldTwiceDiagonalCutCountB1({ difficulty = 2 } = {}) {
+  const words = [sample(["아래로", "위로"]), sample(["왼쪽으로", "오른쪽으로"])];
+  if (Math.random() < 0.5) words.reverse();
+  const plan = foldPlan(words);
+  const box = fBox(plan.final);
+  const c = { x: 0.5, y: 0.5 };
+  const far = { x: box.x0 === 0.5 ? box.x1 : box.x0, y: box.y0 === 0.5 ? box.y1 : box.y0 };
+  const d1 = [c, far];                                            // 두 접은 선이 만나는 모서리를 지나는 대각선
+  const d2 = [{ x: far.x, y: c.y }, { x: c.x, y: far.y }];        // 다른 대각선
+  const cutSets = difficulty === 1 ? [["d1"], ["d2"]] : difficulty === 2 ? [["d2"], ["d1", "d2"]] : [["d1", "d2"]];
+  const cutNames = sample(cutSets);
+  const cuts = cutNames.map((n) => (n === "d1" ? d1 : d2));
+  const unfolded = unfoldSegments(cuts, plan.lines);
+  const pieces = rasterPieces(unfolded);
+  const count = (k) => pieces.filter((p) => p.kind === k).length;
+  const tri = count("삼각형"), quad = count("사각형");
+  const answer = [tri ? `삼각형 ${tri}개` : "", quad ? `사각형 ${quad}개` : ""].filter(Boolean).join(", ");
+  const strip = foldWordStrip(words, {
+    label: "색종이를 두 번 접고 선을 따라 자르기",
+    finalExtra: "자르기",
+    final: (shift, top, size) => cuts.map(([a, b]) => `<line x1="${(shift + a.x * size).toFixed(1)}" y1="${(top + a.y * size).toFixed(1)}" x2="${(shift + b.x * size).toFixed(1)}" y2="${(top + b.y * size).toFixed(1)}" stroke="${CUT}" stroke-width="2.4"/>`).join("")
+  });
+  const drawLines = (X) => unfolded.map(([a, b]) => `<line x1="${X(a.x).toFixed(1)}" y1="${X(a.y).toFixed(1)}" x2="${X(b.x).toFixed(1)}" y2="${X(b.y).toFixed(1)}" stroke="${CUT}" stroke-width="2.4"/>`).join("");
+  return {
+    prompt: "정사각형 모양의 색종이를 그림과 같이 두 번 접은 뒤 선을 따라 잘랐습니다. 잘린 선을 펼친 색종이에 그리고, 나오는 도형의 종류와 개수를 각각 구하세요.",
+    visual: fig(`<div style="display:grid;gap:10px;justify-items:center">${strip}${paperSquare(120, () => "", { label: "잘린 선을 그릴 색종이", lines: unfoldedCreases(plan.lines) })}</div>`),
+    answer,
+    answerVisual: fig(paperSquare(120, drawLines, { label: "펼친 색종이와 잘린 선", lines: unfoldedCreases(plan.lines) })),
+    solution: `자른 선을 마지막에 접은 선부터 거울처럼 비추어 펼치면 잘린 선이 ${unfolded.length}개가 됩니다. 그 선으로 나뉜 조각을 세면 ${answer}입니다.`,
+    responseKind: "drawing",
+    meta: { family: "fold-diagonal-cut-count-b1", words, cutNames, triangles: tri, quads: quad, pieces: pieces.length }
+  };
+}
+
+// (도전 3 · 4) 격자 색종이를 대각선으로 두 번(세 번) 접고 구멍을 뚫어 펼친 구멍 수 — 접힌 선 위 구멍은 펼쳐도 하나
+function foldDiagonalPunch(folds, { difficulty = 2 } = {}) {
+  const first = sample(["대각선-내림", "대각선-오름"]);
+  const words = [first, first === "대각선-내림" ? "대각선-오름" : "대각선-내림"];
+  if (folds === 3) {
+    const box = fBox(foldPlan(words).final);
+    words.push(box.x1 - box.x0 < box.y1 - box.y0 ? sample(["아래로", "위로"]) : sample(["왼쪽으로", "오른쪽으로"]));
+  }
+  const plan = foldPlan(words);
+  const poly = plan.final;
+  const rho = 0.04;
+  const edges = poly.map((a, i) => [a, poly[(i + 1) % poly.length]]);
+  const onPaperEdge = ([a, b]) => (Math.abs(a.x - b.x) < 1e-9 && (Math.abs(a.x) < 1e-9 || Math.abs(a.x - 1) < 1e-9)) || (Math.abs(a.y - b.y) < 1e-9 && (Math.abs(a.y) < 1e-9 || Math.abs(a.y - 1) < 1e-9));
+  const foldEdges = edges.filter((e) => !onPaperEdge(e));
+  const distSeg = (p, [a, b]) => { const dx = b.x - a.x, dy = b.y - a.y; const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy))); return Math.hypot(a.x + t * dx - p.x, a.y + t * dy - p.y); };
+  const inside = (p) => edges.every(([a, b]) => fSide({ a, b }, p) * fSide({ a, b }, { x: poly.reduce((t, q) => t + q.x, 0) / poly.length, y: poly.reduce((t, q) => t + q.y, 0) / poly.length }) > 0);
+  const candidates = [];
+  for (let i = 1; i < 16; i += 1) for (let j = 1; j < 16; j += 1) {
+    const p = { x: j / 16, y: i / 16 };
+    const dEdge = Math.min(...edges.map((e) => distSeg(p, e)));
+    if (inside(p) && dEdge > rho + 0.03) candidates.push({ p, on: false });
+    const onFold = foldEdges.find((e) => distSeg(p, e) < 1e-9);
+    if (onFold && Math.min(...poly.map((v) => Math.hypot(v.x - p.x, v.y - p.y))) > rho + 0.04 && Math.min(...edges.filter((e) => e !== onFold).map((e) => distSeg(p, e))) > rho + 0.03) candidates.push({ p, on: true });
+  }
+  const want = difficulty === 1 ? 1 : 2;
+  for (let tries = 0; tries < 200; tries += 1) {
+    const picked = shuffle(candidates).slice(0, want);
+    if (picked.length < want) return null;
+    if (want === 2 && picked[0].on === picked[1].on && difficulty >= 2 && Math.random() < 0.7) continue; // 안쪽 하나 + 접힌 선 위 하나가 되도록
+    if (want === 2 && Math.hypot(picked[0].p.x - picked[1].p.x, picked[0].p.y - picked[1].p.y) < 2 * rho + 0.05) continue;
+    const holes = unfoldPoints(picked.map((q) => q.p), plan.lines);
+    let tooClose = false;
+    for (let a = 0; a < holes.length; a += 1) for (let b = a + 1; b < holes.length; b += 1) if (Math.hypot(holes[a].x - holes[b].x, holes[a].y - holes[b].y) < 2 * rho + 0.02) tooClose = true;
+    if (tooClose) continue;
+    const clipId = foldId("b1pc");
+    const strip = foldWordStrip(words, {
+      label: `격자 색종이를 ${folds}번 접고 펀치로 구멍 뚫기`,
+      finalExtra: "구멍 뚫기",
+      final: (shift, top, size) => `<clipPath id="${clipId}"><polygon points="${poly.map((v) => `${(shift + v.x * size).toFixed(1)},${(top + v.y * size).toFixed(1)}`).join(" ")}"/></clipPath><g clip-path="url(#${clipId})">${picked.map((q) => `<circle cx="${(shift + q.p.x * size).toFixed(1)}" cy="${(top + q.p.y * size).toFixed(1)}" r="${(rho * size).toFixed(1)}" fill="#fff" stroke="${CUT}" stroke-width="1.4"/>`).join("")}</g>`
+    });
+    const holesSvg = (X) => holes.map((h) => `<circle cx="${X(h.x).toFixed(1)}" cy="${X(h.y).toFixed(1)}" r="${(rho * 120).toFixed(1)}" fill="#fff" stroke="${CUT}" stroke-width="1.4"/>`).join("");
+    const onCount = picked.filter((q) => q.on).length;
+    return {
+      prompt: `격자 무늬 색종이를 그림과 같이 ${folds}번 접은 뒤 펀치로 구멍을 뚫었습니다. 색종이를 펼쳤을 때의 모양을 그리고, 구멍이 몇 개인지 구하세요.`,
+      visual: fig(`<div style="display:grid;gap:10px;justify-items:center">${strip}${paperSquare(120, () => "", { grid: 4, label: "펼친 모양을 그릴 색종이", lines: unfoldedCreases(plan.lines) })}</div>`),
+      answer: `${holes.length}개`,
+      answerVisual: fig(paperSquare(120, holesSvg, { grid: 4, label: "펼친 모양", lines: unfoldedCreases(plan.lines) })),
+      solution: `${folds}번 접었으므로 종이가 ${2 ** folds}겹입니다. 접힌 선에 닿지 않은 구멍은 펼치면 ${2 ** folds}개가 되고, 접힌 선 위에 뚫은 구멍은 양쪽이 합쳐져 그 절반이 됩니다.${onCount ? ` 접힌 선 위 구멍이 ${onCount}개 있습니다.` : ""} 펼친 구멍은 모두 ${holes.length}개입니다.`,
+      responseKind: "drawing",
+      meta: { family: "fold-diagonal-punch-b1", folds, words, punches: picked.map((q) => ({ x: q.p.x, y: q.p.y, on: q.on })), holes: holes.length }
+    };
+  }
+  return null;
+}
+const foldDiagonalPunchTwoB1 = (o) => foldDiagonalPunch(2, o);
+const foldDiagonalPunchThreeB1 = (o) => foldDiagonalPunch(3, o);
+
 export const BOOK01_STRUCTURE_GENERATORS = {
+  foldTwiceCornerCutDrawB1,
+  foldTwiceDiagonalCutCountB1,
+  foldDiagonalPunchTwoB1,
+  foldDiagonalPunchThreeB1,
+  rotationSplitSquareFourB1,
+  rotationSplitRectTwoB1,
+  rotationSplitStaggerTwoB1,
+  acornEqualSplitB1,
+  digitalBoardDoubleFlipSumB1,
   placeValueClueThree,
   rankOrderFour,
   personItemThree,
@@ -1484,6 +1971,15 @@ export const BOOK01_STRUCTURE_GENERATORS = {
 const row = (id, domain, middle, label, generator, searchAliases = []) => ({ id, domain, middle, label, generator, searchAliases });
 
 export const BOOK01_STRUCTURE_TYPE_ROWS = [
+  row("fold-twice-corner-cut-draw-b1", "geometry", "색종이 접기", "두 번 접고 모서리를 둥글게·비스듬히 잘라 펼친 모양 그리기", "foldTwiceCornerCutDrawB1", ["접어 자르기", "펼친 모양 그리기"]),
+  row("fold-twice-diagonal-cut-count-b1", "geometry", "색종이 접기", "두 번 접고 대각선으로 잘라 나온 도형의 종류와 개수", "foldTwiceDiagonalCutCountB1", ["접어 자르기", "조각 세기"]),
+  row("fold-diagonal-punch-two-b1", "geometry", "색종이 접기", "대각선으로 두 번 접고 뚫은 구멍 펼치기", "foldDiagonalPunchTwoB1", ["구멍 뚫기", "접힌 선 위 구멍"]),
+  row("fold-diagonal-punch-three-b1", "geometry", "색종이 접기", "대각선으로 두 번, 반으로 한 번 접고 뚫은 구멍 펼치기", "foldDiagonalPunchThreeB1", ["구멍 뚫기", "세 번 접기"]),
+  row("rotation-split-square-four-b1", "geometry", "도형 움직이기", "4×4 판을 반의 반 바퀴씩 돌린 선으로 네 조각 나누기", "rotationSplitSquareFourB1", ["바람개비 나누기", "돌려 나누기"]),
+  row("rotation-split-rect-two-b1", "geometry", "도형 움직이기", "직사각형 판을 반 바퀴 돌린 선으로 두 조각 나누기", "rotationSplitRectTwoB1", ["돌려 나누기", "반 바퀴"]),
+  row("rotation-split-stagger-two-b1", "geometry", "도형 움직이기", "엇갈려 붙은 판을 반 바퀴 돌린 선으로 두 조각 나누기", "rotationSplitStaggerTwoB1", ["돌려 나누기", "반 바퀴"]),
+  row("acorn-equal-split-b1", "geometry", "도형 움직이기", "도토리 수가 같도록 합동인 네 조각으로 나누기", "acornEqualSplitB1", ["합동 나누기", "같은 개수"]),
+  row("digital-board-double-flip-sum-b1", "geometry", "도형 움직이기", "숫자판을 두 번 뒤집었을 때 바로 놓이는 수의 합", "digitalBoardDoubleFlipSumB1", ["디지털 숫자", "두 번 뒤집기"]),
   row("place-value-clue-three-b1", "number", "조건에 맞는 수", "여러 가지 조건으로 세 자리 수 하나 찾기", "placeValueClueThree", ["수 추리", "세 자리 수 조건"]),
   row("three-digit-equal-step-table-b1", "pattern", "수 추리", "각 자리 숫자가 같은 크기만큼 변하는 세 자리 수 표 채우기", "threeDigitEqualStepTable", ["수 추리 표"]),
   row("digit-sum-table-fill-b1", "number", "조건에 맞는 수", "각 자리 숫자의 합이 같은 두 자리 수 표 채우기", "digitSumTableFill", ["자리 숫자의 합 표"]),
@@ -1510,6 +2006,15 @@ export const BOOK01_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK01_STRUCTURE_GUIDES = {
+  "fold-twice-corner-cut-draw-b1": "마지막에 접은 선부터 거울처럼 펼칩니다. 자른 모서리가 접은 선과 몇 번 닿는지 봅니다.",
+  "fold-twice-diagonal-cut-count-b1": "잘린 선을 접은 선마다 거울에 비춰 펼쳐 그린 뒤 조각을 셉니다.",
+  "fold-diagonal-punch-two-b1": "두 번 접으면 4겹입니다. 접힌 선 위 구멍은 펼치면 양쪽이 합쳐져 하나가 됩니다.",
+  "fold-diagonal-punch-three-b1": "세 번 접으면 8겹입니다. 접힌 선 위 구멍은 펼치면 양쪽이 합쳐집니다.",
+  "rotation-split-square-four-b1": "빨간 선의 꺾인 점을 가운데 점 둘레로 반의 반 바퀴씩 옮겨 찍고 이어 그립니다.",
+  "rotation-split-rect-two-b1": "빨간 선의 꺾인 점을 가운데 점의 맞은편으로 옮겨 찍고 이어 그립니다.",
+  "rotation-split-stagger-two-b1": "빨간 선의 꺾인 점을 가운데 점의 맞은편으로 옮겨 찍고 이어 그립니다.",
+  "acorn-equal-split-b1": "한 조각의 칸 수와 도토리 수를 먼저 정하고, 모서리 칸부터 같은 모양을 놓아 봅니다.",
+  "digital-board-double-flip-sum-b1": "위아래로 한 번, 옆으로 한 번 뒤집으면 반 바퀴 돌린 것과 같습니다.",
   "place-value-clue-three-b1": "범위를 가장 많이 줄여 주는 조건부터 적용해 남는 수를 하나씩 지웁니다.",
   "three-digit-equal-step-table-b1": "백의 자리 숫자를 차례로 정하고 같은 수만큼 더하거나 빼서, 일의 자리가 0~9를 벗어나기 전까지 씁니다.",
   "digit-sum-table-fill-b1": "십의 자리를 1부터 바꾸고 일의 자리는 합에서 십의 자리를 뺀 수로 정합니다(일의 자리는 0~9).",
@@ -1536,6 +2041,18 @@ export const BOOK01_STRUCTURE_GUIDES = {
 };
 
 export const BOOK01_STRUCTURE_REMAPS = [
+  // (3차) 2단원 — 두 번 접어 모서리 자르기, 대각선 자르기 조각 세기, 대각선 접기 구멍
+  ["book-01", 2, "practice", 1, [18], "fold-twice-corner-cut-draw-b1"],
+  ["book-01", 2, "practice", 1, [20], "fold-twice-diagonal-cut-count-b1"],
+  ["book-01", 2, "advanced", 1, [1], "fold-twice-diagonal-cut-count-b1"],
+  ["book-01", 2, "advanced", 1, [3], "fold-diagonal-punch-two-b1"],
+  ["book-01", 2, "advanced", 1, [4], "fold-diagonal-punch-three-b1"],
+  // (3차) 1단원 — 돌려 나누기 판 세 가지, 도토리 판, 숫자판 두 번 뒤집기
+  ["book-01", 1, "check", 1, [2], "rotation-split-square-four-b1"],
+  ["book-01", 1, "practice", 1, [6], "rotation-split-rect-two-b1"],
+  ["book-01", 1, "advanced", 1, [1], "rotation-split-stagger-two-b1"],
+  ["book-01", 1, "advanced", 1, [3], "acorn-equal-split-b1"],
+  ["book-01", 1, "advanced", 1, [4], "digital-board-double-flip-sum-b1"],
   ["book-01", 1, "activity", 1, [1], "line-letter-flip-four-b1"],
   ["book-01", 1, "practice", 1, [1], "line-letter-flip-four-b1"],
   ["book-01", 1, "activity", 1, [2], "clock-hour-hand-turn-b1"],

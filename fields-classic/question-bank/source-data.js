@@ -1,13 +1,13 @@
 import { CONCEPT_DEFINITION_BY_ID, TYPE_CONCEPT_LESSONS } from "./concept-data.js";
 import { applyTextbookRemaps, TEXTBOOK_REMAPS } from "./textbook-remaps.js?v=20261125b";
-import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261125f";
+import { BOOK01_STRUCTURE_TYPE_ROWS, BOOK01_STRUCTURE_GUIDES, BOOK01_STRUCTURE_REMAPS } from "./book01-structure-generators.js?v=20261127b";
 import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_REMAPS } from "./book02-structure-generators.js?v=20261125e";
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125g";
 import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
-import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261126b";
+import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261127a";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125j";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125q";
-import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261126c";
+import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261127b";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
 import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125r";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
@@ -1016,7 +1016,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "height-order": Object.freeze(["g1-height-order-four", "g1-summer-height-order-five"]),
   "multi-person-transfer": Object.freeze(["g1-fall-three-person-total-transfer"]),
   "cryptarithm": Object.freeze(["two-digit-letter-cryptarithm", "diagnostic-two-digit-cryptarithm", "vertical-shape-cryptarithm-values"]),
-  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-pair", "symbol-card-list-network-b5"]),
+  "multiplicative-symbol-equation": Object.freeze(["g1-multiplicative-symbol-chain", "symbol-product-sum-diff-set-b5", "symbol-card-list-network-b5"]),
   "rod-length-ratio": Object.freeze(["g1-rod-ratio-total", "rod-ratio-total-book3", "rod-comparison-total-unit-test"]),
   "colored-triangle-difference": Object.freeze(["g1-triangle-color-difference", "g1-summer-triangular-color-difference"]),
   "polygon-stone-rearrangement": Object.freeze(["g1-polygon-stone-rearrangement", "polygon-border-shape-conversion-b7"]),

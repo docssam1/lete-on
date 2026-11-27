@@ -21,8 +21,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 796, `expected 796 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 866, `expected 866 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 812, `expected 812 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 882, `expected 882 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
 assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 80, `expected 80 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
@@ -368,7 +368,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
   }),
-  "symbol-product-pair": Object.freeze({
+  "symbol-product-sum-diff-set-b5": Object.freeze({
     conceptId: "concept:number:symbol-product-equation-chain",
     sourceBookId: "book-05",
     placementBooks: Object.freeze(["book-05"])
@@ -437,7 +437,7 @@ const expectedBook05ConceptTypes = Object.freeze([
   "handshake-pair-count", "inverse-pair-count", "mountain-row-sum-b5", "pair-selection-count",
   "product-cycle-fill-polygon-b5", "product-cycle-fill-triangles-b5", "route-strip-set-b5", "row-major-grid-two-target-sum-book5",
   "shortest-path-rectangle", "square-layer-number-grid-b5", "square-number-odd-sum", "square-product-cycle-fill-book5",
-  "symbol-card-cross-pair-sum-b5", "symbol-cross-network-book5", "symbol-product-pair", "symbol-square-product-network-book5",
+  "symbol-card-cross-pair-sum-b5", "symbol-cross-network-book5", "symbol-product-sum-diff-set-b5", "symbol-square-product-network-book5",
   "symbol-zero-one-network-book5", "times-table-window-b5", "triangular-number-table-b5", "wide-snake-number-grid-b5"
 ].sort());
 const actualBook05ConceptTypes = CURRICULUM.find((book) => book.id === "book-05").units.flatMap((unit) =>
@@ -557,7 +557,7 @@ for (const typeId of curriculumTypeIds) {
 }
 
 assert(sourceBackedCount === 80, `expected 80 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 716, `expected 716 principle-only types, got ${principleOnlyCount}`);
+assert(principleOnlyCount === 732, `expected 732 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

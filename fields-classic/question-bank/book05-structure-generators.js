@@ -1393,7 +1393,151 @@ function symbolProductDifferenceB5({ difficulty = 2 }) {
   }
 }
 
+// ── (3차) 3단원 활동 2-1 · 4단원 확인 2-1 · 연습 1-9·1-10·1-11 ─────────────────────
+
+// 곱과 합(또는 차)으로 두 모양의 수 찾기 — 작은 문제 넷, 합과 차를 섞는다. 식은 문제 글에 쓴다(그림 없음).
+function symbolProductSumDiffSetB5({ difficulty = 2 }) {
+  const hi = difficulty === 1 ? 6 : 9;
+  const ops = shuffle(["+", "+", "−", "−"]);
+  const parts = [];
+  const seen = new Set();
+  for (let guard = 0; parts.length < 4 && guard < 400; guard += 1) {
+    const big = randomInt(3, hi), small = randomInt(difficulty === 3 ? 2 : 1, big - 1);
+    const op = ops[parts.length];
+    const P = big * small, S = op === "+" ? big + small : big - small;
+    const key = `${P}${op}${S}`;
+    if (seen.has(key) || seen.has(`${big},${small}`)) continue;
+    const fits = [];
+    for (let x = 1; x <= 9; x += 1) for (let y = 1; y < x; y += 1) if (x * y === P && (op === "+" ? x + y : x - y) === S) fits.push([x, y]);
+    if (fits.length !== 1) continue;
+    seen.add(key); seen.add(`${big},${small}`);
+    parts.push({ big, small, P, op, S });
+  }
+  if (parts.length < 4) return symbolProductSumDiffSetB5({ difficulty });
+  const lines = parts.map((q, i) => `${PARTS[i]} ● × ▲ = ${q.P}, ● ${q.op} ▲ = ${q.S}`);
+  return {
+    prompt: `같은 모양은 같은 수를, 다른 모양은 다른 수를 나타냅니다. ●와 ▲가 나타내는 수를 각각 구하세요. (단, ●가 ▲보다 큽니다.)\n${lines.join("\n")}`,
+    answer: parts.map((q, i) => `${PARTS[i]} ●=${q.big}, ▲=${q.small}`).join(" "),
+    solution: parts.map((q, i) => `${PARTS[i]} 곱이 ${q.P}인 두 수의 짝 가운데 ${q.op === "+" ? "합" : "차"}이 ${q.S}인 짝은 ${josa(q.big, "과", "와")} ${q.small}이므로 ●=${q.big}, ▲=${q.small}입니다.`).join(" "),
+    meta: { family: "symbol-product-sum-diff-set-b5", parts }
+  };
+}
+
+// 줄마다 1, 3, 5, …장씩 가운데 맞춰 쌓은 계단 피라미드 — n번째 모양은 n × n장.
+function pyramidTilesSvg(stages, theme) {
+  const cell = 13, gap = 22;
+  const widths = stages.map((k) => (2 * k - 1) * cell);
+  const height = stages.at(-1) * cell + 26;
+  const width = widths.reduce((a, b) => a + b, 0) + gap * (stages.length + 1) + 18;
+  let x = gap, body = "";
+  stages.forEach((k, idx) => {
+    const base = 4 + stages.at(-1) * cell;
+    for (let r = 1; r <= k; r += 1) {
+      const len = 2 * r - 1;
+      const x0 = x + (k - r) * cell;
+      const y = base - (k - r + 1) * cell;
+      for (let i = 0; i < len; i += 1) body += `<rect x="${x0 + i * cell}" y="${y}" width="${cell}" height="${cell}" style="fill:${theme};stroke:#2f6f7e;stroke-width:1"/>`;
+    }
+    body += text(x + widths[idx] / 2, base + 18, `${k}번째`, 11);
+    x += widths[idx] + gap;
+  });
+  body += text(x + 2, 4 + stages.at(-1) * cell - 4, "…", 16);
+  return `${svgOpen(width, height, "줄마다 홀수 장씩 쌓은 색종이 모양")}${body}</svg>`;
+}
+
+function squarePyramidTileGrowthB5({ difficulty = 2 }) {
+  const shown = difficulty === 1 ? 3 : 4;
+  const target = difficulty === 1 ? randomInt(5, 7) : difficulty === 2 ? randomInt(6, 10) : randomInt(10, 15);
+  const stages = Array.from({ length: shown }, (_, i) => i + 1);
+  return {
+    prompt: `작은 정사각형 색종이를 이어 붙여 그림과 같은 규칙으로 모양을 만들어 나갑니다. ${target}번째 모양에는 작은 정사각형 색종이가 몇 장 필요한가요?`,
+    visual: { kind: "fig", html: pyramidTilesSvg(stages, pick(["#e4f2f4", "#fdf3d8", "#eef3e6"])) },
+    answer: `${target * target}장`,
+    solution: `줄마다 1장, 3장, 5장, …처럼 홀수 장이 놓입니다. 1 + 3 = 4, 1 + 3 + 5 = 9처럼 n번째 모양은 n × n장이므로 ${target}번째 모양은 ${target} × ${target} = ${target * target}장입니다.`,
+    meta: { family: "square-pyramid-tile-growth-b5", target, shown, result: target * target }
+  };
+}
+
+// 바깥 테두리는 검은 돌, 안쪽은 흰 돌인 삼각형 — 한 변의 돌이 하나씩 늘어난다. 어느 색이 몇 개 더 많은지.
+const triangleNumber = (n) => (n * (n + 1)) / 2;
+const borderStones = (side) => (side <= 1 ? side : 3 * (side - 1));
+function stoneTriangleSvg(sides) {
+  const r = 5.2, step = 12.5, rowH = 11;
+  const maxSide = sides.at(-1);
+  const height = maxSide * rowH + 24;
+  let x = 14, body = "";
+  sides.forEach((side, idx) => {
+    const w = (side - 1) * step + 2 * r;
+    for (let row = 0; row < side; row += 1) {
+      for (let j = 0; j <= row; j += 1) {
+        const onEdge = row === side - 1 || j === 0 || j === row;
+        const cx = x + r + (side - 1 - row) * step / 2 + j * step;
+        const cy = 4 + r + (maxSide - side + row) * rowH;
+        body += `<circle cx="${cx}" cy="${cy}" r="${r}" style="fill:${onEdge ? "#2f2a24" : "#fff"};stroke:#2f2a24;stroke-width:1"/>`;
+      }
+    }
+    body += text(x + w / 2, maxSide * rowH + 20, `(${idx + 1})`, 11);
+    x += w + 20;
+  });
+  body += text(x, maxSide * rowH - 2, "…", 16);
+  return `${svgOpen(x + 16, height, "테두리는 검은 돌, 안쪽은 흰 돌인 삼각형 모양")}${body}</svg>`;
+}
+
+function triangleBorderStoneDiffB5({ difficulty = 2 }) {
+  const firstSide = difficulty === 1 ? 4 : pick([4, 5]);
+  for (;;) {
+    const target = difficulty === 1 ? randomInt(4, 6) : difficulty === 2 ? randomInt(5, 9) : randomInt(8, 13);
+    const side = firstSide + target - 1;
+    const black = borderStones(side), white = triangleNumber(side) - black;
+    if (black === white) continue;
+    const more = black > white ? "검은 돌" : "흰 돌";
+    const diff = Math.abs(black - white);
+    const sides = [0, 1, 2, 3].map((i) => firstSide + i);
+    return {
+      prompt: `그림과 같은 규칙으로 바둑돌을 삼각형 모양으로 늘어놓습니다. 바깥 둘레에는 검은 돌을, 안쪽에는 흰 돌을 놓습니다. ${target}번째 모양에서는 어떤 색 바둑돌이 몇 개 더 많은지 구하세요.`,
+      visual: { kind: "fig", html: stoneTriangleSvg(sides) },
+      answer: `${more}, ${diff}개`,
+      solution: `${target}번째 모양은 한 변에 돌이 ${side}개입니다. 전체 돌은 1부터 ${side}까지의 합인 ${triangleNumber(side)}개, 검은 돌은 세 변에서 꼭짓점을 한 번씩만 세어 ${side - 1} × 3 = ${black}개, 흰 돌은 ${triangleNumber(side)} − ${black} = ${white}개입니다. 따라서 ${more}이 ${diff}개 더 많습니다.`,
+      meta: { family: "triangle-border-stone-diff-b5", firstSide, target, side, black, white, more, diff }
+    };
+  }
+}
+
+// n층까지 다 쌓은 한 겹 계단(위에서부터 1, 2, 3, …개) 하나를 보여 주고 전체 개수를 묻는다.
+function stairWallSvg(n) {
+  const s = 20, dx = 9, dy = 7;
+  const width = n * s + dx + 8, height = n * s + dy + 8;
+  const ox = 4, oy = height - 4;
+  let body = "";
+  for (let i = 0; i < n; i += 1) {
+    const h = n - i;
+    for (let k = 0; k < h; k += 1) {
+      const x = ox + i * s, y = oy - (k + 1) * s;
+      body += `<polygon points="${x},${y} ${x + dx},${y - dy} ${x + s + dx},${y - dy} ${x + s},${y}" style="fill:#e8f3f6;stroke:#3d7d8c;stroke-width:1"/>`;
+      body += `<polygon points="${x + s},${y} ${x + s + dx},${y - dy} ${x + s + dx},${y + s - dy} ${x + s},${y + s}" style="fill:#a9cbd4;stroke:#3d7d8c;stroke-width:1"/>`;
+      body += `<rect x="${x}" y="${y}" width="${s}" height="${s}" style="fill:#d4eaf0;stroke:#3d7d8c;stroke-width:1"/>`;
+    }
+  }
+  return `${svgOpen(width, height, `${n}층까지 쌓은 계단 모양 쌓기나무`)}${body}</svg>`;
+}
+
+function cubeStairWallTotalB5({ difficulty = 2 }) {
+  const n = difficulty === 1 ? randomInt(3, 6) : difficulty === 2 ? randomInt(5, 8) : randomInt(7, 10);
+  const total = triangleNumber(n);
+  return {
+    prompt: `그림은 일정한 규칙으로 쌓기나무를 ${n}층까지 쌓은 것입니다. 쌓기나무는 모두 몇 개인가요?`,
+    visual: { kind: "fig", html: stairWallSvg(n) },
+    answer: `${total}개`,
+    solution: `맨 위층부터 1개, 2개, 3개, …, ${n}개가 있습니다. 1부터 ${n}까지 더하면 ${Array.from({ length: n }, (_, i) => i + 1).join(" + ")} = ${total}개입니다.`,
+    meta: { family: "cube-stair-wall-total-b5", n, result: total }
+  };
+}
+
 export const BOOK05_STRUCTURE_GENERATORS = {
+  symbolProductSumDiffSetB5,
+  squarePyramidTileGrowthB5,
+  triangleBorderStoneDiffB5,
+  cubeStairWallTotalB5,
   timesTableWindowB5,
   productMatrixPlaceAllB5,
   productMatrixWriteB5,
@@ -1460,10 +1604,18 @@ export const BOOK05_STRUCTURE_TYPE_ROWS = [
   row("calendar-three-questions-b5", "pattern", "달력 규칙", "달력 일부로 요일과 몇 번째 요일 날짜 찾기", "calendarThreeQuestionsB5", ["달력", "몇 번째 요일", "요일 찾기"]),
   row("route-joined-boards-b5", "logic", "최단거리", "붙은 두 길을 지나는 가장 짧은 방법 수", "routeJoinedBoardsB5", ["최단거리", "거쳐 가는 길", "곱의 법칙"]),
   row("route-strip-set-b5", "logic", "최단거리", "한 줄 띠 길의 가장 짧은 방법 수", "routeStripSetB5", ["최단거리", "한 줄 길"]),
+  row("symbol-product-sum-diff-set-b5", "logic", "도형이 나타내는 수", "곱과 합·차로 두 모양의 수 찾기(작은 문제 넷)", "symbolProductSumDiffSetB5", ["도형 식", "곱과 합", "곱과 차"]),
+  row("square-pyramid-tile-growth-b5", "pattern", "수 배열 규칙", "홀수 장씩 쌓은 계단 피라미드 색종이 수", "squarePyramidTileGrowthB5", ["사각수", "제곱수", "색종이 규칙"]),
+  row("triangle-border-stone-diff-b5", "pattern", "수 배열 규칙", "삼각형 바둑돌의 테두리와 안쪽 개수 차", "triangleBorderStoneDiffB5", ["삼각수", "바둑돌 규칙", "검은 돌 흰 돌"]),
+  row("cube-stair-wall-total-b5", "geometry", "쌓기나무 규칙", "n층까지 쌓은 계단 쌓기나무 전체 개수", "cubeStairWallTotalB5", ["삼각수", "쌓기나무 계단"]),
   row("triangular-number-table-b5", "pattern", "수 배열 규칙", "1부터 이어 더한 삼각수 표 채우기", "triangularTableB5", ["삼각수", "연속한 수의 합"])
 ];
 
 export const BOOK05_STRUCTURE_GUIDES = {
+  "symbol-product-sum-diff-set-b5": "곱이 같은 두 수의 짝을 모두 적고, 합(또는 차)이 맞는 짝을 고릅니다.",
+  "square-pyramid-tile-growth-b5": "줄마다 1, 3, 5, …장이므로 n번째 모양은 n × n장입니다.",
+  "triangle-border-stone-diff-b5": "전체는 1부터 한 변의 수까지의 합, 테두리는 (한 변 − 1) × 3, 안쪽은 전체 − 테두리입니다.",
+  "cube-stair-wall-total-b5": "위층부터 1개, 2개, 3개, …이므로 1부터 층 수까지 더합니다.",
   "times-table-window-b5": "이웃한 두 수의 차가 그 줄의 단입니다. 줄의 단 × 칸의 단으로 빈칸을 채웁니다.",
   "product-matrix-place-all-b5": "두 곱을 모두 나누어떨어지게 하는 카드로 모서리 칸을 먼저 정하고 나눗셈으로 나머지를 채웁니다.",
   "product-matrix-write-b5": "줄마다 수를 차례로 곱합니다. 큰 수끼리 먼저 곱하지 말고 쉬운 짝부터 곱해도 됩니다.",
@@ -1496,6 +1648,12 @@ export const BOOK05_STRUCTURE_GUIDES = {
 };
 
 export const BOOK05_STRUCTURE_REMAPS = [
+  // (3차) 원본 쪽 확인 — 곱과 합·차 작은 문제 넷, 계단 피라미드 색종이, 삼각형 바둑돌 테두리, 다 쌓은 계단 쌓기나무
+  ["book-05", 3, "activity", 2, [1], "symbol-product-sum-diff-set-b5"],
+  ["book-05", 4, "check", 2, [1], "square-pyramid-tile-growth-b5"],
+  ["book-05", 4, "practice", 1, [11], "square-pyramid-tile-growth-b5"],
+  ["book-05", 4, "practice", 1, [9], "triangle-border-stone-diff-b5"],
+  ["book-05", 4, "practice", 1, [10], "cube-stair-wall-total-b5"],
   // (2차) 3단원 — 곱셈표 조각, 2×2 배치 모두, 곱 쓰기, 곱과 차
   ["book-05", 3, "activity", 1, [1], "times-table-window-b5"],
   ["book-05", 3, "check", 1, [1], "product-matrix-place-all-b5"],
