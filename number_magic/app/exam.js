@@ -4248,7 +4248,11 @@ function nlPrintAsk(p){
     if(ext && typeof ext.ask === 'function'){ const r = ext.ask(p, nlPrintKit()); if(r != null) return r; } }
   let s = String(pickL(p.prompt) || '');
   NL_PRINT_WORDS.forEach(([a, b]) => { if(a && s.indexOf(a) >= 0) s = s.split(a).join(b); });
-  if(p.widget==='numberBond'&&p.dir==='split')s+=' '+(/무당벌레/.test(p.prompt?.ko||'')?lk('빈 날개에 점도 그려 보세요.','Draw the spots on the empty wing too.','也在空翅膀上画出点。'):lk('빈 접시에 그림도 그려 보세요.','Draw the objects on the empty plate too.','也在空盘子里画出物品。'));
+  /* 영어 지시문은 한국어보다 길어 4줄이 되며 그림 칸을 밀어 넘쳤다(과정 0 10회차, 2026-11-27) — 인쇄에서만 한국어만큼 짧게 */
+  if(p.widget==='numberBond'&&p.dir==='split'&&examLang()==='en')
+    s=s.replace(/^Split (\d+) (.+?) onto two plates\. One has (\d+) — how many on the other\? (?:Tap|Fill) the empty circle!$/,'$1 $2 on two plates. One has $3. How many on the other?')
+      .replace(/ — how many on the (left|right) wing\? (?:Tap|Fill) the empty circle!$/,'. How many on the $1 wing?');
+  if(p.widget==='numberBond'&&p.dir==='split')s+=' '+(/무당벌레/.test(p.prompt?.ko||'')?lk('빈 날개에 점도 그려 보세요.','Draw the spots on the empty wing too.','也在空翅膀上画出点。'):lk('빈 접시에 그림도 그려 보세요.','Draw them on the empty plate too.','也在空盘子里画出物品。'));
   if(p.widget==='tapCount'&&p.step===10)s=s.replace('한 닢','한 개');
   /* 점 잇기·길 잇기의 답은 "점이 모두 몇 개"다(생성기 계약) — 화면에선 다 이으면 끝이라 물음이
      프롬프트에 없다. 인쇄물엔 답 칸이 있으니 무엇을 쓰는지 한 줄 덧붙인다(2026-09-19). */
