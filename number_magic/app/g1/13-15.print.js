@@ -89,6 +89,8 @@
     '.nm-nl .' + PRE + '-ex,.nm-nl .' + PRE + '-ex b{color:' + C.sub + '}',
     /* 이야기 */
     '.nm-nl .' + PRE + '-story{font-size:13px;line-height:1.8;font-weight:600;color:' + C.ink + ';text-align:left;max-width:62mm}',
+    /* 영어 이야기는 한국어보다 길어 62mm 폭에서 줄이 많아져 칸을 넘쳤다(과정 0 13회차, 2026-11-27) — 칸 폭을 다 쓴다 */
+    '.nm-print-sheet[lang="en"] .nm-nl .' + PRE + '-story{max-width:none;line-height:1.65}',
     '.nm-nl .' + PRE + '-story .' + PRE + '-nb{min-width:7mm;height:6.4mm;vertical-align:middle;margin:0 .6mm}',
     '.nm-nl .' + PRE + '-pouch{display:flex;align-items:center;gap:2mm;justify-content:center;margin-top:1mm}',
     '.nm-nl .' + PRE + '-pouch .' + PRE + '-psv{display:block;width:11mm;height:11mm}',
@@ -207,7 +209,7 @@
     visual: function(p,K){return K.nlCard(K.nlStage(pathGrid(p,K)),K.nlAnsBox(K.lk('합','total','和')));},
     label: function(p,K){return p.answer+' ('+p.minPath.map(c=>p.cells[c[0]][c[1]]).join('→')+')';},
     ask: function(p,K){return K.lk('화살표를 따라 출발부터 도착까지 길을 이어요. 지나는 수를 모두 더해 가장 작은 합을 써요. 출발과 도착의 수도 더해요.',
-      'Follow the arrows from Start to Finish. Draw the path with the smallest total and write that total. Count the start and finish numbers too.',
+      'Go from Start to Finish along the arrows. Write the smallest total, counting Start and Finish too.',
       '从起点沿箭头走到终点。画出和最小的路，写下和。起点和终点的数也要加。');},
     worked: function(p,K){
       if(p.rows!==2||p.cols!==2)throw new Error('The introductory path example must have two routes.');
@@ -343,7 +345,13 @@
         K.nlAnsBox(K.lk('가지', 'ways', '种')));
     },
     label: function (p, K) { return p.pairs.map(function (q) { return q[0] + '·' + q[1]; }).join(', ') + ' → ' + p.k + K.lk('가지', ' ways', '种'); },
-    ask: function (p, K) { return K.pickL(p.prompt) + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.', /* 마침표까지 같아야 c0-paper가 쪽 안내로 끌어올린다(2026-11-04 C0 12주차 넘침) */ (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
+    ask: function (p, K) {
+      /* 영어·중국어 지시문이 한국어보다 길어 과정 0 12회차 칸을 넘쳤다(2026-11-27) — 인쇄에서는 한국어만큼 짧게 */
+      var pr = K.pickL(p.prompt), short = pr
+        .replace(/^Find every way to share (\d+) (.+?) between two plates\. The same two numbers in a different order count once\.?$/, 'Find every way to share $1 $2 on two plates. Order does not matter.')
+        .replace(/^(找出把\d+个.+?分到两个盘子里的所有方法)。两个数一样只是顺序不同算同一种。?$/, '$1（顺序不同算同一种）。');
+      if (short !== pr) return short + K.lk('', (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Write the ways and how many.', (p.minPart===0?'盘子可以是空的。':'每个盘子至少一个。')+'写出所有分法和一共几种。');
+      return pr + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.', /* 마침표까지 같아야 c0-paper가 쪽 안내로 끌어올린다(2026-11-04 C0 12주차 넘침) */ (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
   };
 
   P.seqGap = {

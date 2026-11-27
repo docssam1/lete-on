@@ -597,7 +597,7 @@
         : style === 'plain'
           ? T3('화살표 위의 수만큼 더하거나 빼서 빈 원을 채워요', 'Add or subtract the number on each arrow to fill the blank circles', '按箭头上的数加或减，填空圆')
           : T3(`화살표 규칙대로 빈 원을 채워요. 실선은 ${a} 큰 수, 점선은 ${b} 작은 수`,
-            `Follow the arrow rule to fill the blank circles. Solid = ${a} more, dashed = ${b} less`,
+            `Fill the blank circles. Solid arrow: ${a} more. Dashed arrow: ${b} less.`,
             `按箭头规则填空圆。实线是多${a}，虚线是少${b}`);
       return {
         prompt, answer, answerType: 'number', widget: 'arrowChain',
@@ -666,8 +666,8 @@
       const example = pick(rng, pairs);
       const fr = pick(rng, FRUITS);
       if (!prompt) prompt = T3(`${josa(fr[1], '을', '를')} ${whole}개 두 접시에 나눠 담는 방법을 모두 찾아요. 순서가 달라도 같은 방법이에요.`,
-        `Find every way to share ${whole} ${fr[2]} between two plates. The same two numbers in a different order count once`,
-        `找出把${whole}个${fr[3]}分到两个盘子里的所有方法。两个数一样只是顺序不同算同一种`);
+        `Find every way to share ${whole} ${fr[2]} between two plates. The same two numbers in a different order count once.`,
+        `找出把${whole}个${fr[3]}分到两个盘子里的所有方法。两个数一样只是顺序不同算同一种。`);
       return {
         prompt, answer: pairs.length, answerType: 'number', widget: 'splitList',
         whole, example, ordered, minPart, caps, cmp, pairs, k: pairs.length, emoji: fr[0], keyFields: ['whole', 'example', 'cmp', 'caps', 'emoji']
