@@ -774,13 +774,13 @@
       const [tok, ko, en, zh] = an;
       const story = tmpl === 'score'
         ? T3(`${ko} 팀이 이겼어요. 이긴 팀은 {0}점, 진 팀은 {1}점이에요. 모두 합쳐 {2}점이에요.`,
-          `The ${en} team won. The winners scored {0}, the losers scored {1}, and together they scored {2}.`,
+          `The ${en} team won with {0}. Losers: {1}. Total: {2}.`,
           `${zh}队赢了。赢的队得了{0}分，输的队得了{1}分，一共{2}分。`)
         : T3(`${ko} 반 친구는 모두 {0}명이에요. 빨간 모자는 {1}명, 파란 모자는 {2}명이고, 빨간 모자가 {3}명 더 많아요.`,
-          `The ${en} class has {0} friends in all. {1} wear red hats and {2} wear blue hats, so {3} more wear red.`,
+          `The ${en} class has {0} friends. {1} wear red hats, {2} wear blue. Red has {3} more.`,
           `${zh}班一共有{0}个朋友。戴红帽子的有{1}个，戴蓝帽子的有{2}个，红帽子多{3}个。`);
       return {
-        prompt: T3('이야기에 알맞은 수를 주머니에서 찾아 빈 칸에 넣어요', 'Find the right number in the pouch for each blank in the story', '从口袋里找出合适的数，填进故事的空格'),
+        prompt: T3('이야기에 알맞은 수를 주머니에서 찾아 빈 칸에 넣어요', 'Put the right numbers from the pouch in the blanks', '从口袋里找出合适的数，填进故事的空格'),
         answer: enc(sol), answerType: 'number', widget: 'storyFill',
         tmpl, story, slots: sol.length, chips, sol, scene: { emoji: tok },
         sig: tmpl + ':' + sol.join('-') + ':' + tok, keyFields: ['sig']

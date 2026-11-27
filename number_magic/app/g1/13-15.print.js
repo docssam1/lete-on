@@ -348,9 +348,9 @@
     ask: function (p, K) {
       /* 영어·중국어 지시문이 한국어보다 길어 과정 0 12회차 칸을 넘쳤다(2026-11-27) — 인쇄에서는 한국어만큼 짧게 */
       var pr = K.pickL(p.prompt), short = pr
-        .replace(/^Find every way to share (\d+) (.+?) between two plates\. The same two numbers in a different order count once\.?$/, 'Find every way to share $1 $2 on two plates. Order does not matter.')
+        .replace(/^Find every way to share (\d+) (.+?) between two plates\. The same two numbers in a different order count once\.?$/, 'Share $1 $2 on two plates')
         .replace(/^(找出把\d+个.+?分到两个盘子里的所有方法)。两个数一样只是顺序不同算同一种。?$/, '$1（顺序不同算同一种）。');
-      if (short !== pr) return short + K.lk('', (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Write the ways and how many.', (p.minPart===0?'盘子可以是空的。':'每个盘子至少一个。')+'写出所有分法和一共几种。');
+      if (short !== pr) return short + K.lk('', (p.minPart===0?'; a plate may be empty.':', at least one each.')+' Write every way and how many. Order does not matter.', (p.minPart===0?'盘子可以是空的。':'每个盘子至少一个。')+'写出所有分法和一共几种。');
       return pr + K.lk((p.minPart===0?' 빈 접시도 가능해요.':' 각 접시에 한 개 이상씩 나눠요.')+' 예시를 포함해 방법을 쓰고, 모두 몇 가지인지 써요.', /* 마침표까지 같아야 c0-paper가 쪽 안내로 끌어올린다(2026-11-04 C0 12주차 넘침) */ (p.minPart===0?' An empty plate is allowed.':' Put at least one on each plate.')+' Include the example and write the other ways, then the total number of ways', (p.minPart===0?' 盘子可以是空的。':' 每个盘子至少一个。')+'算上例子，写出其他分法，再写一共几种'); }
   };
 
@@ -389,7 +389,7 @@
       return K.nlCard(K.nlStage('<div class="' + PRE + '-story">' + pic + story + '</div><div class="' + PRE + '-pouch"><span class="' + PRE + '-psv">' + K.nlObjHtml('g:pouch') + '</span>' + chips + '</div>'));
     },
     label: function (p, K) { return p.sol.join(', '); },
-    ask: function (p, K) { return K.lk('이야기에 알맞은 수를 주머니에서 찾아 빈 칸에 써요', 'Find the right number in the pouch for each blank in the story and write it', '从口袋里找出合适的数，写进故事的空格'); }
+    ask: function (p, K) { return K.lk('이야기에 알맞은 수를 주머니에서 찾아 빈 칸에 써요', 'Fill the blanks with numbers from the pouch.', '从口袋里找出合适的数，写进故事的空格'); }
   };
 
   function groupHtml(K, tok, n) { var s = ''; for (var i = 0; i < n; i++) s += '<span>' + K.nlObjHtml(tok) + '</span>'; return '<span class="' + PRE + '-grp">' + s + '</span>'; }
