@@ -1279,3 +1279,9 @@ Web search recovered the 2020 AMC 10A and AMC 12A MAA grade-score-percentile cha
 - 각 PDF의 정상 종료/실제 열림, 첫 쪽 연도·시험형 및 PDF.js의 완전한 1–25번 순차 문항 지도를 확인했다. 업로드 뒤 연도별 파일 이름·크기·MIME을 확인하고 25개 모두 Drive에서 다시 받아 SHA-256과 크기가 최초 다운로드 바이트와 일치함을 검증했다. 원문 PDF나 추출 본문은 Git에 넣지 않았다.
 - 파일별 Drive 링크·원 제공처·정답표·해설 링크·페이지 수·크기·SHA-256 목록: https://drive.google.com/file/d/1soVOzGu-fFgcXBGQY7UBHWsxjQDuJvHQ/view . 안내 파일은 ID `1Gjs8Bpukw0ho85Spo-4c8DgQ8i9LrAmT`이다. 루트에 연도 폴더 5개와 목록 CSV/안내 TXT를 재조회했다. 실제 PDF 25개 업로드 및 전체 바이트 재검수 완료이며 앱 본문 번역·추가 해설 제작 완료와는 구분한다.
 - 로컬 작업/검증: `/tmp/boarding-amc-5years-20261126/`의 `verified.json`, `receipt.json`, `verify-question-maps.log`. 연결 도구의 임시 다운로드 URL은 인수인계나 목록에 기록하지 않았다. 코드는 변경하지 않았으며 새 유료 API·OCR·하위 에이전트는 사용하지 않았다. Google Drive 스킬의 기존 위치 재사용 및 업로드 후 읽기 검증을 적용했다.
+
+### 2026-11-27 · 완료 로컬 작업본 정리 인수인계
+
+- 사용자 요청으로 GitHub에 병합된 완료 작업본 `continuations/boarding-main-20261117`과 지난 보딩 임시 작업 폴더 5개를 정리 대상으로 검증했다. 코드 커밋이 원격 main에 포함됨, 미커밋/미추적/ignored 0건, 삭제 대상의 LFS 없음, 실행 중 다른 프로세스/하위 에이전트 없음과 공유 Git 의존성을 확인했다. `.git` 공용 원본·로컬 브랜치·공유 stash는 보존한다. 이전 `continuations/boarding-school`의 변경 42건은 파일별 SHA-256을 기록하고 그대로 둔다.
+- 중요한 검수 자료 285개(원시 합계 22,415,845바이트)를 기존 Drive evidence 폴더에 압축 보관한 뒤 다시 내려받아 ZIP SHA-256·크기가 일치함을 확인했다. 보관본: https://drive.google.com/file/d/1BJfud-Tyeb94eU6-N9-aWEntxb5t4x-b/view . 임시 Python 글꼴 빌드 환경은 재생성 가능하며 원본/빌드 스크립트/고정 글꼴은 GitHub에 있다. AMC PDF 25개는 기존 연도별 Drive 파일을 전부 재다운로드하여 체크섬 일치를 다시 확인했다.
+- 삭제 실행 전 보존 검증 완료 상태이다. 실제 정리 결과·삭제 경로·회수량·보존 파일 무변경 검증은 같은 ID의 Drive 기록에 실행 후 갱신한다: https://drive.google.com/file/d/1Wi6jiXRWTMMSmLR4WokwRRzauHKezaZT/view . 이후 보딩 코드 작업은 원격 main/기존 로컬 브랜치에서 필요한 작업본을 복원하며, 보호한 이전 dirty 작업본을 덮어쓰지 않는다.
