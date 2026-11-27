@@ -1,0 +1,12 @@
+{
+  "animals": [
+    "cat",
+    "rabbit",
+    "bear"
+  ],
+  "heights": [
+    9,
+    3,
+    6
+  ]
+}

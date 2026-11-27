@@ -1,0 +1,30 @@
+{
+  "target_sh": "triangle",
+  "target_col": "#E74C3C",
+  "opts": [
+    [
+      "pentagon",
+      "#E91E63",
+      0.1,
+      0
+    ],
+    [
+      "triangle",
+      "#27AE60",
+      0.1,
+      0
+    ],
+    [
+      "triangle",
+      "#E74C3C",
+      0.1,
+      0
+    ],
+    [
+      "square",
+      "#E74C3C",
+      0.1,
+      0
+    ]
+  ]
+}

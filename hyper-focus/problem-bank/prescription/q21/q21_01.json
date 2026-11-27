@@ -1,0 +1,32 @@
+{
+  "shape": "star",
+  "color": "#F39C12",
+  "mode": "flip_v",
+  "angle": 0,
+  "opts": [
+    [
+      "flip_h",
+      "star",
+      "#F39C12",
+      0
+    ],
+    [
+      "flip_v",
+      "star",
+      "#F39C12",
+      0
+    ],
+    [
+      "orig",
+      "star",
+      "#F39C12",
+      0
+    ],
+    [
+      "rot90",
+      "star",
+      "#F39C12",
+      90
+    ]
+  ]
+}

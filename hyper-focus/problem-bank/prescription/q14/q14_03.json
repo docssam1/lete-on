@@ -1,0 +1,11 @@
+{
+  "shape": "cross",
+  "color": "#E74C3C",
+  "rot": 270,
+  "opts_angles": [
+    90,
+    0,
+    270,
+    0
+  ]
+}
