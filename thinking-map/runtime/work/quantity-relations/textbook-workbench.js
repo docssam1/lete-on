@@ -1,0 +1,37 @@
+(function(){
+ 'use strict';
+ if(!DATA.textbookItems?.length)return;
+ const originals=DATA.textbookItems,newItems=DATA.specimens.filter(s=>s.sourceItemIds?.some(id=>originals.some(o=>o.id===id)));
+ const groups=DATA.textbookGroups||[{id:'ray-b1-1-p13',book:'RAY B1-1',title:'3. 모양 맞히기',pdfPage:13,printedPage:16,itemIds:originals.map(i=>i.id),preview:originals[0].originalPreview}];
+ const requestedGroup=new URLSearchParams(location.search).get('group');
+ let current=groups.some(g=>g.id===requestedGroup)?requestedGroup:groups[0].id;
+ const page=document.createElement('main');page.id='textbook-workbench';page.className='textbook-workbench no-print';page.hidden=true;document.body.prepend(page);
+ function research(){page.hidden=true;document.body.classList.remove('textbook-items-open');ThinkingCatalog.openSearch();}
+ function basket(){research();document.querySelector('#basket').scrollIntoView({block:'start'});}
+ function draw(){
+  const group=groups.find(g=>g.id===current),items=originals.filter(i=>group.itemIds.includes(i.id));
+  const examples=newItems.filter(s=>s.sourceItemIds.some(id=>group.itemIds.includes(id)));
+  page.innerHTML=`<header class="item-workbench-head"><div><small>통합 사고력 문제은행</small><h1>교재 문항과 유사문제</h1><p>원문항 ${originals.length}개 · 유사문항 ${newItems.length}개 · 정답·풀이와 연결 지도</p></div><nav><button id="item-browse-books">교재에서 찾기</button><button id="item-open-map">유형지도·전체 문항</button><button id="item-open-basket">담은 문제 보기</button></nav></header><div class="textbook-group-control"><label for="textbook-page-selector">본문 지면</label><select id="textbook-page-selector">${groups.map(g=>`<option value="${escape(g.id)}" ${g.id===current?'selected':''}>${escape(g.book)}${g.printedIssue?' '+escape(g.printedIssue):''} · ${escape(g.title)} · 인쇄 ${g.printedPage}쪽 / PDF ${g.pdfPage}쪽</option>`).join('')}</select></div><section class="textbook-original-section"><header><div><p class="item-kind">원본 교재 · ${items.length}문항</p><h2>${escape(group.book)}${group.printedIssue?' '+escape(group.printedIssue):''} · ${escape(group.title)}</h2><p>인쇄 ${group.printedPage}쪽 / PDF ${group.pdfPage}쪽 · ${escape(group.positionNotice||'줄별 문항 · 별도 인쇄 문제번호 없음')}</p></div><button id="item-locate-type">연결 지도 보기</button></header><div class="textbook-original-layout"><div><img id="textbook-original-page" alt="${escape(group.book)} 인쇄${group.printedPage}쪽 원본 페이지"><p class="meta">원본 페이지 전체입니다. 인쇄된 풀이 예시는 별도 문항으로 세지 않습니다.</p></div><div>${items.map((o,index)=>`<article class="original-item-card"><p class="item-kind">원문항 ${index+1} · ${escape(o.questionNumber)}</p>${o.sourceSubtype?`<p class="meta">세부 유형 후보 · ${escape(o.sourceSubtype)}</p>`:''}<p>${escape(o.instruction)}</p>${o.visualMarkup?`<div class="given-visual original-item-visual">${o.visualMarkup}</div>`:''}${o.validation?.conditional&&o.validation.condition?`<p class="meta source-condition-note">조건 확인 · ${escape(o.validation.condition)}</p>`:''}<p class="meta">필요한 능력 · ${escape(o.minimumCurriculum)}</p><div class="original-map-actions">${o.typeIds.map(id=>`<button data-original-type="${escape(id)}" data-original-item="${escape(o.id)}">${o.typeIds.length>1?escape(byType[id].name)+' · ':''}이 문항의 지도·유사문제</button>`).join('')}</div><details class="source-item-answer"><summary>정답·풀이 보기</summary><p><b>${escape(o.answer)}</b></p><p>${escape(o.explanation)}</p>${o.solutionVisualMarkup||''}<p class="meta">${escape(o.validationNotice||'반복 배열로 독립 확인했습니다. 인쇄 정답지와 별첨 스티커 선택지는 대조하지 않았습니다.')}</p><p class="meta">난도 · ${escape(o.difficultyStatus)}</p></details></article>`).join('')}</div></div></section><section class="textbook-similar-section"><header><div><p class="item-kind">유사문제 · ${examples.length}문항</p><h2>${escape([...new Set(items.flatMap(o=>o.typeIds).map(id=>byType[id].name))].join(' · '))}</h2><p>${escape(group.similarNotice||'원본의 반복 원리를 사용한 새 문항입니다. 스티커 대신 제공된 보기의 번호를 씁니다.')}</p></div><button id="item-print-selected">선택한 문제지 보기</button></header><div class="textbook-problems">${examples.map(s=>problemCard(s)).join('')}</div></section>`;
+  const coverage=(DATA.textbookUnitCoverage||[]).find(c=>c.book===group.book&&c.unitNumber===group.preview.unitNumber);
+  if(coverage)page.querySelector('.textbook-original-section>header').insertAdjacentHTML('afterend',`<p class="unit-coverage-note">이 통합 화면에서 ${coverage.unitNumber}단원 ${coverage.indexedMainQuestionNumbers}번호 중 ${coverage.sourceAndAnswerConnected}번호의 원본 미리보기·상세 정답을 연결했습니다. 연결할 번호는 ${coverage.remainingMainQuestionNumbers}개입니다.${DATA.giftedBankReuseStatus?.bankSourceComplete&&/^필즈 더클래식 [12]과정/.test(group.book)?' 기존 기프티드 매쓰의 1·2과정은 구축이 완료돼 있습니다. 위 수치는 이 화면의 연결 진척입니다.':''}${coverage.additionalUnnumberedActivities?` 번호 없는 도입 활동 ${coverage.additionalUnnumberedActivities}개는 별도로 연결했습니다.`:''}${coverage.conditionalSourceActivities?` 조건 확인이 필요한 활동 ${coverage.conditionalSourceActivities}개는 개별 항목에 표시했습니다.`:''}</p>`);
+  bindItems(page);for(const [i,title]of [...page.querySelectorAll('.textbook-problems .question-title')].entries())title.textContent=(i+1)+'.';
+  for(const card of page.querySelectorAll('.textbook-problems .problem-card')){
+   const answer=card.querySelector('.answer'),details=document.createElement('details');details.className='generated-item-answer';
+   const summary=document.createElement('summary');summary.textContent='정답·풀이 보기';details.append(summary);answer.hidden=false;answer.replaceWith(details);details.append(answer);
+  }
+  page.querySelector('#textbook-page-selector').onchange=event=>{current=event.target.value;draw();};
+  page.querySelector('#item-browse-books').onclick=()=>{page.hidden=true;document.body.classList.remove('textbook-items-open');ThinkingCatalog.showHome();};
+  page.querySelector('#item-open-map').onclick=research;page.querySelector('#item-open-basket').onclick=basket;page.querySelector('#item-print-selected').onclick=basket;
+  for(const button of page.querySelectorAll('[data-original-type]'))button.onclick=()=>{research();const option=document.querySelector('#type');option.value=button.dataset.originalType;option.dispatchEvent(new Event('change'));document.querySelector('#type-position').scrollIntoView({block:'start'});};
+  page.querySelector('#item-locate-type').onclick=()=>{research();const option=document.querySelector('#type');option.value=items[0].typeIds[0];option.dispatchEvent(new Event('change'));document.querySelector('#type-position').scrollIntoView({block:'start'});};
+  const image=page.querySelector('#textbook-original-page');
+  if(!page.hidden&&/^https?:$/.test(location.protocol))image.src='/api/original/'+group.preview.assetId;
+  image.onerror=()=>{image.hidden=true;};
+ }
+ page.addEventListener('click',event=>{if(event.target.closest('[data-item]'))for(const button of page.querySelectorAll('[data-item]'))button.textContent=selected.has(button.dataset.item)?'문제지에서 빼기':'문제지에 담기';});
+ function show(){for(const main of document.querySelectorAll('body>main'))main.hidden=main!==page;document.body.classList.remove('catalog-open');document.body.classList.add('textbook-items-open');page.hidden=false;draw();window.scrollTo(0,0);}
+ const launch=document.createElement('button');launch.id='open-textbook-items';launch.className='open-textbook-items no-print';launch.textContent='본문 문항·유사문제';launch.onclick=show;document.body.append(launch);
+ const view=new URLSearchParams(location.search).get('view');
+ if(view==='items'||(!view&&/^https?:$/.test(location.protocol)))show();
+ window.TextbookWorkbench={show,originals,similar:newItems,groups};
+})();

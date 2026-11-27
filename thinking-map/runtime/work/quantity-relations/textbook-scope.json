@@ -1,0 +1,46 @@
+{
+  "schema": "thinking-bank-textbook-scope/v1",
+  "date": "2026-11-25",
+  "authority": "current-user-instruction",
+  "series": [
+    "1031",
+    "소마",
+    "3% 올림피아드",
+    "필즈 더클래식",
+    "필즈",
+    "팩토"
+  ],
+  "seriesLabels": {
+    "필즈 더클래식": "필즈 더 클래식",
+    "팩토": "팩토"
+  },
+  "somaStages": [
+    "레이",
+    "프리즘",
+    "프리미어 초급",
+    "프리미어 중급",
+    "프리미어 고급"
+  ],
+  "somaStageAliases": {
+    "RAY": "레이",
+    "Ray Kids": "레이",
+    "RAY 플러스북": "레이",
+    "Prism": "프리즘"
+  },
+  "fieldsAndFieldsClassicAreDistinct": true,
+  "premierBelongsToSomaAcademy": true,
+  "giftedMathBankSeries": "필즈 더클래식",
+  "excludedSeriesNewAnalysis": false,
+  "keepHistoricalRecords": true,
+  "excludeMissionsTestsHwpAndStandaloneArithmetic": true,
+  "legacyBookGroupAliases": {
+    "필즈 시중교재": "필즈"
+  },
+  "factoStageAliases": {
+    "초등팩토 1": "초등팩토 1",
+    "초등팩토 2": "초등팩토 2",
+    "초등팩토 3": "초등팩토 3",
+    "팩토 키즈": "팩토 키즈",
+    "팩토 킨더": "팩토 킨더"
+  }
+}

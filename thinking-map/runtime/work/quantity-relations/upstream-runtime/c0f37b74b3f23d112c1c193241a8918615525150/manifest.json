@@ -1,0 +1,275 @@
+{
+  "schema": "gfield.pinned-fields-runtime/1",
+  "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+  "repository": "docssam1/lete-on",
+  "basePath": "fields-classic/question-bank",
+  "files": [
+    {
+      "file": "generators.js",
+      "gitBlobSHA": "6cad020f560028bfad702ad093e103767677bed1",
+      "repositoryPath": "fields-classic/question-bank/generators.js"
+    },
+    {
+      "file": "course2-plain.js",
+      "gitBlobSHA": "2e602735603dcce07df037a8220f6fefb8e93d8d",
+      "repositoryPath": "fields-classic/question-bank/course2-plain.js"
+    },
+    {
+      "file": "course2-g1-generators.js",
+      "gitBlobSHA": "46e4e82c795b0430c0eb2f1ecaf08f426897ab9a",
+      "repositoryPath": "fields-classic/question-bank/course2-g1-generators.js"
+    },
+    {
+      "file": "course2-g2-generators.js",
+      "gitBlobSHA": "afdabb6233317cd749c9e179c149b162762bca3d",
+      "repositoryPath": "fields-classic/question-bank/course2-g2-generators.js"
+    },
+    {
+      "file": "course2-g3-generators.js",
+      "gitBlobSHA": "9717d78d9d65fb3bfe1fa91933473b1ee08d969d",
+      "repositoryPath": "fields-classic/question-bank/course2-g3-generators.js"
+    },
+    {
+      "file": "course2-g4-generators.js",
+      "gitBlobSHA": "a759c73c6eab4a2bf5a8fc7677c09bcdf4dd6859",
+      "repositoryPath": "fields-classic/question-bank/course2-g4-generators.js"
+    },
+    {
+      "file": "course2-g5-generators.js",
+      "gitBlobSHA": "06816f058baa4e426e5187637d87d312e119d7b9",
+      "repositoryPath": "fields-classic/question-bank/course2-g5-generators.js"
+    },
+    {
+      "file": "course2-a1-generators.js",
+      "gitBlobSHA": "11f51b09f2d5b0572239d8f999e2a5c8630c4c49",
+      "repositoryPath": "fields-classic/question-bank/course2-a1-generators.js"
+    },
+    {
+      "file": "course2-a2-generators.js",
+      "gitBlobSHA": "e16fec20bd73f316a70641a3e540a242603c7f28",
+      "repositoryPath": "fields-classic/question-bank/course2-a2-generators.js"
+    },
+    {
+      "file": "course2-a3-generators.js",
+      "gitBlobSHA": "b503e1a4c16e94db0c8aa1af82327f5509877d7e",
+      "repositoryPath": "fields-classic/question-bank/course2-a3-generators.js"
+    },
+    {
+      "file": "course2-a4-generators.js",
+      "gitBlobSHA": "778beebca32545dd7e97a26b8da61db91fcbe92b",
+      "repositoryPath": "fields-classic/question-bank/course2-a4-generators.js"
+    },
+    {
+      "file": "course2-a5-generators.js",
+      "gitBlobSHA": "ee29db6541820a061f5a1bb139db9e8bbe1d713a",
+      "repositoryPath": "fields-classic/question-bank/course2-a5-generators.js"
+    },
+    {
+      "file": "g1-generators.js",
+      "gitBlobSHA": "24240494e1c7dd213b95a5582e4eb07523cc703f",
+      "repositoryPath": "fields-classic/question-bank/g1-generators.js"
+    },
+    {
+      "file": "g1-winter-generators.js",
+      "gitBlobSHA": "ab8dac8e9cb2dfde5c432f1a222b49a12da17b33",
+      "repositoryPath": "fields-classic/question-bank/g1-winter-generators.js"
+    },
+    {
+      "file": "book01-generators.js",
+      "gitBlobSHA": "f13cb60b6c92502fba92812cf3a91e8175c43e6a",
+      "repositoryPath": "fields-classic/question-bank/book01-generators.js"
+    },
+    {
+      "file": "book03-generators.js",
+      "gitBlobSHA": "ef6f08b70eb92213d87308294655b50b3b1661ed",
+      "repositoryPath": "fields-classic/question-bank/book03-generators.js"
+    },
+    {
+      "file": "book04-generators.js",
+      "gitBlobSHA": "66a09a2bb5efdf2ebc97dc8b7f5c7b2a8bdf6110",
+      "repositoryPath": "fields-classic/question-bank/book04-generators.js"
+    },
+    {
+      "file": "book05-generators.js",
+      "gitBlobSHA": "1dfd9c26cefe2c8de0c9331800376da183f32ed3",
+      "repositoryPath": "fields-classic/question-bank/book05-generators.js"
+    },
+    {
+      "file": "book06-generators.js",
+      "gitBlobSHA": "e64c3aea0f59003258de54651359c70127c5904d",
+      "repositoryPath": "fields-classic/question-bank/book06-generators.js"
+    },
+    {
+      "file": "book07-generators.js",
+      "gitBlobSHA": "13f59beefd8f9c036aead21a72eefb0163c6a3d4",
+      "repositoryPath": "fields-classic/question-bank/book07-generators.js"
+    },
+    {
+      "file": "book08-generators.js",
+      "gitBlobSHA": "3715efb4f61f5cf895acb036b1c5c551930c4c18",
+      "repositoryPath": "fields-classic/question-bank/book08-generators.js"
+    },
+    {
+      "file": "book09-generators.js",
+      "gitBlobSHA": "1d36d788be0d6ff7a97818ff7e83a4e8429b356d",
+      "repositoryPath": "fields-classic/question-bank/book09-generators.js"
+    },
+    {
+      "file": "book10-generators.js",
+      "gitBlobSHA": "367ef279fd9350d036e05339ba3dd058e22766d6",
+      "repositoryPath": "fields-classic/question-bank/book10-generators.js"
+    },
+    {
+      "file": "mock06-generators.js",
+      "gitBlobSHA": "cb9d99f825f529dc02ca27757671a9adda85c9ff",
+      "repositoryPath": "fields-classic/question-bank/mock06-generators.js"
+    },
+    {
+      "file": "book02-unit-test-generators.js",
+      "gitBlobSHA": "b84a6fa17a26135de2e3501889dc23517986729b",
+      "repositoryPath": "fields-classic/question-bank/book02-unit-test-generators.js"
+    },
+    {
+      "file": "book01-unit-test-generators.js",
+      "gitBlobSHA": "3702d90db2fd4348932d884118bf3087ae788ad6",
+      "repositoryPath": "fields-classic/question-bank/book01-unit-test-generators.js"
+    },
+    {
+      "file": "fold-visuals.js",
+      "gitBlobSHA": "6e9c04b44f2d2d911e02a0ffe6cd05d9de6da301",
+      "repositoryPath": "fields-classic/question-bank/fold-visuals.js"
+    },
+    {
+      "file": "math-markup.js",
+      "gitBlobSHA": "e559713522baf39c4e45e1ef241c8a8d550a5268",
+      "repositoryPath": "fields-classic/question-bank/math-markup.js"
+    },
+    {
+      "file": "source-data.js",
+      "gitBlobSHA": "cacba0e51f980b941b226c669e067b7d720ead4a",
+      "repositoryPath": "fields-classic/question-bank/source-data.js"
+    },
+    {
+      "file": "geometry-worksheet-problem.js",
+      "gitBlobSHA": "b82ceba526447ddd127ba8388a9968db45b716d3",
+      "repositoryPath": "fields-classic/question-bank/geometry-worksheet-problem.js"
+    },
+    {
+      "file": "fields-question-bank-adapter.js",
+      "gitBlobSHA": "196820976db4c3251fec311ecc90c4d241c44a3f",
+      "repositoryPath": "fields-classic/question-bank/fields-question-bank-adapter.js"
+    },
+    {
+      "file": "question-bank-adapter.js",
+      "gitBlobSHA": "68301953b20955d7483cb1625b57eb6f50505138",
+      "repositoryPath": "fields-classic/question-bank/question-bank-adapter.js"
+    },
+    {
+      "file": "concept-data.js",
+      "gitBlobSHA": "14aad53e26e55941820d66eca2f21de8f0779b16",
+      "repositoryPath": "fields-classic/question-bank/concept-data.js"
+    },
+    {
+      "file": "book01-02-unit-test-links.js",
+      "gitBlobSHA": "06d9a552fb4a2d8811934f3fdf9f9c823066e67c",
+      "repositoryPath": "fields-classic/question-bank/book01-02-unit-test-links.js"
+    },
+    {
+      "file": "geometry-generators.js",
+      "gitBlobSHA": "5f3766fb4b9b5f69a9a8dbd70398cc7e6062d9c6",
+      "repositoryPath": "geometry/worksheet/generators.js"
+    },
+    {
+      "file": "geometry-render.js",
+      "gitBlobSHA": "56aa0f0adcb95f483bdf892f3e0841c828dc29f9",
+      "repositoryPath": "geometry/worksheet/render.js"
+    },
+    {
+      "file": "geometry-card.js",
+      "gitBlobSHA": "e56765d054d37cf53d30319d118fad7b80762643",
+      "repositoryPath": "geometry/worksheet/card.js"
+    },
+    {
+      "file": "geometry-question-bank.js",
+      "gitBlobSHA": "ef38db75f4fca998456edf0843fae0eb1cc76252",
+      "repositoryPath": "geometry/shared/question-bank.js"
+    },
+    {
+      "file": "book01-renderers.js",
+      "gitBlobSHA": "18a4f161c608645dcab7c81288dc460b56e46586",
+      "repositoryPath": "fields-classic/question-bank/book01-renderers.js"
+    },
+    {
+      "file": "book03-renderers.js",
+      "gitBlobSHA": "01e06b3fcdd8ba988a25f5a014d95c7c6d7add6c",
+      "repositoryPath": "fields-classic/question-bank/book03-renderers.js"
+    },
+    {
+      "file": "book04-renderers.js",
+      "gitBlobSHA": "67b927758d92c0fd079eb0bc4d1c111839876a68",
+      "repositoryPath": "fields-classic/question-bank/book04-renderers.js"
+    },
+    {
+      "file": "book05-renderers.js",
+      "gitBlobSHA": "4114dbdb73a40774dac125be0e3be4766b4a7b96",
+      "repositoryPath": "fields-classic/question-bank/book05-renderers.js"
+    },
+    {
+      "file": "book06-renderers.js",
+      "gitBlobSHA": "dd114e74f4bf6cd2c9d33d24b181b1f84bf1d73f",
+      "repositoryPath": "fields-classic/question-bank/book06-renderers.js"
+    },
+    {
+      "file": "book07-renderers.js",
+      "gitBlobSHA": "14d67f0705d6be7f98fd1b671c902ddf49fed3df",
+      "repositoryPath": "fields-classic/question-bank/book07-renderers.js"
+    },
+    {
+      "file": "book08-renderers.js",
+      "gitBlobSHA": "ae19aefa936dc93446e5e54e8c145be905e061b7",
+      "repositoryPath": "fields-classic/question-bank/book08-renderers.js"
+    },
+    {
+      "file": "book09-renderers.js",
+      "gitBlobSHA": "e81c12154fe88b71ce437f28c711fb771e542cad",
+      "repositoryPath": "fields-classic/question-bank/book09-renderers.js"
+    },
+    {
+      "file": "book10-renderers.js",
+      "gitBlobSHA": "51b596a01c6e7955ca38843ae3930f55481e8372",
+      "repositoryPath": "fields-classic/question-bank/book10-renderers.js"
+    },
+    {
+      "file": "book02-visuals.js",
+      "gitBlobSHA": "35b936d4fa4704fa44caa615fd114b8d189b8bd2",
+      "repositoryPath": "fields-classic/question-bank/book02-visuals.js"
+    },
+    {
+      "file": "book02-renderers.js",
+      "gitBlobSHA": "a45a320554be1d87a5447c6a268ab431fb7a9bb0",
+      "repositoryPath": "fields-classic/question-bank/book02-renderers.js"
+    },
+    {
+      "file": "mock06-renderers.js",
+      "gitBlobSHA": "0d7e604ffb21389da4e5a1d0d0b208cc869c3a44",
+      "repositoryPath": "fields-classic/question-bank/mock06-renderers.js"
+    },
+    {
+      "file": "upstream-app.js",
+      "gitBlobSHA": "fad9893cdf7dc72727632df3c901f5c0b3dd926e",
+      "repositoryPath": "fields-classic/question-bank/app.js"
+    },
+    {
+      "file": "styles.css",
+      "gitBlobSHA": "7d18f959da86917f694ea3712226d02c7029a04d",
+      "repositoryPath": "fields-classic/question-bank/styles.css"
+    },
+    {
+      "file": "math-markup.css",
+      "gitBlobSHA": "9608a9d53de718de4a3e19392b0d43e72c1922b2",
+      "repositoryPath": "fields-classic/question-bank/math-markup.css"
+    }
+  ],
+  "sourceScope": "completed textbook body registry only; no original test assets or test sourceCase invocation",
+  "generatedLocalPackageJSON": true
+}

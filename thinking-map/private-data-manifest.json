@@ -1,0 +1,174 @@
+{
+  "schema": "gfield-thinking-map-private-data/v1",
+  "date": "2026-11-25",
+  "files": [
+    {
+      "path": "outputs/1031-basic-b-shape-composition-items.json",
+      "bytes": 1867638,
+      "sha256": "f0a709673a006221d290e29c19033f05adba32010cb07d18851328fd603a1846",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-config.json",
+      "bytes": 50029,
+      "sha256": "17f578c9c322c9b7c7ce6a9ccdc7167dc740505351db75b9d35132f0413bee3f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-examples.json",
+      "bytes": 149180,
+      "sha256": "34a1aba7fa0738a9916afcfd3f7ab61cb1c23a412e14022041ea50aca701932d",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/native-runtime-manifest.json",
+      "bytes": 7556,
+      "sha256": "71772a4a34added10854647d32b55040c0adeaf9d2a8897df2c701893446847f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-crossbook-bank.html",
+      "bytes": 47661893,
+      "sha256": "461d8e7b8110af716ed592b349bced7d549d417f81b63167e4df917ddb7b8551",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-crossbook-bank.json",
+      "bytes": 60225526,
+      "sha256": "f285ab4fd611ea4cfc249d4aa14c63161b0a71896ed99f29ed050c82316d718d",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/quantity-relations-practice.html",
+      "bytes": 40428,
+      "sha256": "428586046cee388b2dc030403a910fae092fb43bcb936ee5802bbdab1222bfd3",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-constrained-variants.json",
+      "bytes": 810032,
+      "sha256": "334e630af57a6db429f0bc5e39b9b0f11313bcfd920b591854c17f7d527842fd",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-parameter-generator-manifest.json",
+      "bytes": 56030,
+      "sha256": "eb736c12089243520162842ad554f5942ae6eebd750328ea8d8ba32f9ad90457",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/soma-type-authored-examples.json",
+      "bytes": 260832,
+      "sha256": "945519c30dd6eff8e58b9a9fbe6ef38a99053ded36549b89b2448891eba9b82f",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "outputs/taxonomy-hierarchy.json",
+      "contentIncludedInGit": false,
+      "bytes": 70051,
+      "sha256": "1a5e7577741fd253a33b77560dae3ac06679e10f123633fdd0574933ef162c43"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-checkerboard-checkpoint.json",
+      "bytes": 663,
+      "sha256": "c85587a347bd7c0cec60d9272de1ca34503447e45e394610b86ec272b6c886d8",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-colored-squares-checkpoint.json",
+      "bytes": 1012,
+      "sha256": "3ec07d2bf2b9cbf35387ee10b29b55a8bc1083aa283b78eaf0cfa8e5124278aa",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-equilateral-four-checkpoint.json",
+      "bytes": 651,
+      "sha256": "6623e02c0a6bdf4f81790acc40ce553bb0d6e9d5c843c7c4a4d8c0437f3de3a1",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-overlap-checkpoint.json",
+      "bytes": 481,
+      "sha256": "a6b3a0902ce9e0ec21ac4783b01b45338b91b12d54f4d1048e68fb2de948f236",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page13-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 1851,
+      "sha256": "07f45caccc22ed5c8008c9828b55428089186848d477383ea337997a1145e2f5"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-rhombus-checkpoint.json",
+      "bytes": 544,
+      "sha256": "39f06901a6d7016edb8dbb74ceb481ead0144115b0ccadd679489435941a392a",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-right-isosceles-checkpoint.json",
+      "bytes": 951,
+      "sha256": "1e4fb5ab14a4d323e8b51c1d0abe73d25e1f8c7f00c522dc6ceb64d1afdb459b",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-triangle-edge-checkpoint.json",
+      "bytes": 1005,
+      "sha256": "311f51f03050fa73d20953b1ddbd3d256f97494aa27473a3c156d34b7ed0b91a"
+    },
+    {
+      "path": "work/quantity-relations/colored-triangle-enumeration-checkpoint.json",
+      "bytes": 605,
+      "sha256": "3d43daaab3c4f01961b9e79d123be1846f8a0a7d9afa264795e8be567dcd1cc5",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/right_isosceles_core.py",
+      "bytes": 6275,
+      "sha256": "42d81d62c45af7a8fdad8a9320bdfe9b26c062b3cf83fd1d91262637c5b60637",
+      "contentIncludedInGit": true
+    },
+    {
+      "path": "work/quantity-relations/soma-authoring-answer-check.json",
+      "bytes": 29095,
+      "sha256": "c13d2cb0ddde96103520b9075eb06b730544608972ed138d35c8afa080109714",
+      "contentIncludedInGit": false
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page12-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 1492,
+      "sha256": "4a7ce718c914540a94a03eb67dfd5cfee35b27fb4d2e254037be0468178afcab"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page12-check.json",
+      "contentIncludedInGit": false,
+      "bytes": 2270,
+      "sha256": "551281d8a82d357361ec29d1c5a72f6d445889b1e32c699221e44a86f0fbe936"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page15-checkpoint.json",
+      "contentIncludedInGit": false,
+      "bytes": 2120,
+      "sha256": "57d6f0b2a7d7e6033531c5da22fb824fed15ab91a24c25efcfe34b03521e0c67"
+    },
+    {
+      "path": "work/quantity-relations/1031-basic-b-page15-check.json",
+      "contentIncludedInGit": false,
+      "bytes": 1075,
+      "sha256": "ce60005b719661dfd9e5553c80c799e09fda6da44a9f58a5b15de1f3f098d331"
+    }
+  ],
+  "source": "Content-map private workspace · checkpoint 78 · 2026-11-25",
+  "optionalPrivateAssets": [
+    "work/quantity-relations/local-cache/original-preview-manifest.private.json",
+    "work/quantity-relations/local-cache/textbook-pages",
+    "work/quantity-relations/local-cache/ocr"
+  ],
+  "neverUpload": [
+    "work/quantity-relations/saved-bank",
+    "original textbook PDFs",
+    "teacher pages",
+    "credentials",
+    "sessions"
+  ]
+}

@@ -1,0 +1,749 @@
+{
+  "schema": "gfield-thinking-map-code/v1",
+  "date": "2026-11-26",
+  "sourceCheckpoint": 79,
+  "repository": "docssam1/lete-on",
+  "files": [
+    {
+      "path": "work/quantity-relations/a1-contracts.js",
+      "storedPath": "runtime/work/quantity-relations/a1-contracts.js",
+      "bytes": 2703,
+      "sha256": "22ebbb1aa0eee0876a9d5e7e5dae16ba1056c13c0950ec8ab20737fd2736f3d1"
+    },
+    {
+      "path": "work/quantity-relations/a2-search-contracts.js",
+      "storedPath": "runtime/work/quantity-relations/a2-search-contracts.js",
+      "bytes": 248,
+      "sha256": "100b0a32ae48410036139fa118566f37b74ee8b15bff018bc16990c544c24063"
+    },
+    {
+      "path": "work/quantity-relations/book2-normalization.css",
+      "storedPath": "runtime/work/quantity-relations/book2-normalization.css",
+      "bytes": 15139,
+      "sha256": "901b1bae70e0c75501f2d5bb82aa5a85fa98f4e81f90d5b589c46bff5b017133"
+    },
+    {
+      "path": "work/quantity-relations/build-taxonomy-hierarchy.py",
+      "storedPath": "runtime/work/quantity-relations/build-taxonomy-hierarchy.py",
+      "bytes": 3767,
+      "sha256": "0961c277f9b42b269db9e33259190f5e9981bbd928e0f0d6be2d797a261d3fbc"
+    },
+    {
+      "path": "work/quantity-relations/catalog-preview.css",
+      "storedPath": "runtime/work/quantity-relations/catalog-preview.css",
+      "bytes": 12756,
+      "sha256": "b71ef7f8975b99ab03ef8698bcfe6ee5e375d80852551449d2dfdc2970929e0c"
+    },
+    {
+      "path": "work/quantity-relations/catalog-preview.js",
+      "storedPath": "runtime/work/quantity-relations/catalog-preview.js",
+      "bytes": 36979,
+      "sha256": "41d8a1a5084385addcc678ced993d2a93f3523048117ef7227bef2d2e372c60d"
+    },
+    {
+      "path": "work/quantity-relations/crossbook-alignment-ui.js",
+      "storedPath": "runtime/work/quantity-relations/crossbook-alignment-ui.js",
+      "bytes": 6225,
+      "sha256": "23d6cdf1515aa8b3f6b2aeaf7dcdc095b3be96a5fba5b2130e171d88b029f327"
+    },
+    {
+      "path": "work/quantity-relations/edge_labeled_triangles.py",
+      "storedPath": "runtime/work/quantity-relations/edge_labeled_triangles.py",
+      "bytes": 8640,
+      "sha256": "8ebf857372e164c6603dffd30ace91b5bce14037678b7bd5dd5447e36c8fb24a"
+    },
+    {
+      "path": "work/quantity-relations/family-search.css",
+      "storedPath": "runtime/work/quantity-relations/family-search.css",
+      "bytes": 1948,
+      "sha256": "2bbf5f8ed7b24cc75870b0fa1b19d196820043f346b6c0386e7d5b80697cb1c4"
+    },
+    {
+      "path": "work/quantity-relations/generated-library-migration-ui.js",
+      "storedPath": "runtime/work/quantity-relations/generated-library-migration-ui.js",
+      "bytes": 5892,
+      "sha256": "30a734752656e4b5b45ab3d4355472aa294a6b69d026e65616aae417bf6fd319"
+    },
+    {
+      "path": "work/quantity-relations/generated-library-ui.js",
+      "storedPath": "runtime/work/quantity-relations/generated-library-ui.js",
+      "bytes": 18385,
+      "sha256": "9b7a38fa0234af9bcff83de6f3aaf1016cf60e6b7dbf56452212a9cb5b08e36c"
+    },
+    {
+      "path": "work/quantity-relations/generated_item_library.py",
+      "storedPath": "runtime/work/quantity-relations/generated_item_library.py",
+      "bytes": 12053,
+      "sha256": "176a3423f8b5392bd102ac23617932eec19d18787f9288c8a07ea36ef90c0a36"
+    },
+    {
+      "path": "work/quantity-relations/generated_library_migration.py",
+      "storedPath": "runtime/work/quantity-relations/generated_library_migration.py",
+      "bytes": 12104,
+      "sha256": "9774ffc2f6587be7ed9a56e4fdc2248df3e874b43207ebfa25885d88549725d2"
+    },
+    {
+      "path": "work/quantity-relations/generation_dispatch.py",
+      "storedPath": "runtime/work/quantity-relations/generation_dispatch.py",
+      "bytes": 703,
+      "sha256": "a9ded56dfc20321e696053f7b9683037db5ecc577854c936586ffc8729577b26"
+    },
+    {
+      "path": "work/quantity-relations/input-search.js",
+      "storedPath": "runtime/work/quantity-relations/input-search.js",
+      "bytes": 77779,
+      "sha256": "c18fec7329d2c497f26efd8c212924edc7aff189bc8090f0a79f532636fdf2d6"
+    },
+    {
+      "path": "work/quantity-relations/local-bank-server.py",
+      "storedPath": "runtime/work/quantity-relations/local-bank-server.py",
+      "bytes": 15286,
+      "sha256": "ba487c1d58a6b8716eeb9be4be8a5b16bb5fcab2e07c6f05513728584d388c95"
+    },
+    {
+      "path": "work/quantity-relations/mixed_polygon_assembly_core.py",
+      "storedPath": "runtime/work/quantity-relations/mixed_polygon_assembly_core.py",
+      "bytes": 11810,
+      "sha256": "795b2355578639e79a016d63a3a76ba7a4bcedaea2c7f776c2b61d091a03fb86"
+    },
+    {
+      "path": "work/quantity-relations/native-reused-verifiers.mjs",
+      "storedPath": "runtime/work/quantity-relations/native-reused-verifiers.mjs",
+      "bytes": 8309,
+      "sha256": "3cae7039a25f47b58f91f0bee057054c6f421be3bdb2dd70fc0ba68497678c88"
+    },
+    {
+      "path": "work/quantity-relations/native-runtime-ui.js",
+      "storedPath": "runtime/work/quantity-relations/native-runtime-ui.js",
+      "bytes": 8112,
+      "sha256": "bbf8e118b0bf27bad67ffd6ee4513a4585e5174d216aa07a47d179feac6b0825"
+    },
+    {
+      "path": "work/quantity-relations/native-runtime-worker.mjs",
+      "storedPath": "runtime/work/quantity-relations/native-runtime-worker.mjs",
+      "bytes": 6419,
+      "sha256": "4ce4c8989ec9bccd974dbe0ab5aef4a5e582924d4fd81d3143de2522f7ea5b46"
+    },
+    {
+      "path": "work/quantity-relations/native_generation_service.py",
+      "storedPath": "runtime/work/quantity-relations/native_generation_service.py",
+      "bytes": 7820,
+      "sha256": "648450422a1f1eee43bddb11e45e5711176a9cc20a951f3842dccafce3e581bf"
+    },
+    {
+      "path": "work/quantity-relations/native_runtime_proof.py",
+      "storedPath": "runtime/work/quantity-relations/native_runtime_proof.py",
+      "bytes": 2106,
+      "sha256": "6cdc374c0cfe138f27737028e189d010a2136899090f440f28d3cc34aff505a4"
+    },
+    {
+      "path": "work/quantity-relations/normalization-ui.js",
+      "storedPath": "runtime/work/quantity-relations/normalization-ui.js",
+      "bytes": 6030,
+      "sha256": "ed242c32aea019b6ac7a5d33e42d97b0dc146bc673543e54fef35d692831980c"
+    },
+    {
+      "path": "work/quantity-relations/polyiamond_core.py",
+      "storedPath": "runtime/work/quantity-relations/polyiamond_core.py",
+      "bytes": 4078,
+      "sha256": "753f6103e0b916b78d2d47077151f7140ffd3249e3f3c51e87846fd26f7dffcb"
+    },
+    {
+      "path": "work/quantity-relations/remaining-alignment.css",
+      "storedPath": "runtime/work/quantity-relations/remaining-alignment.css",
+      "bytes": 1898,
+      "sha256": "ab70ac7a6a64dc554fd7956b45f50a3ee46b6530f0f54faafbf399cdc4d58afe"
+    },
+    {
+      "path": "work/quantity-relations/render-crossbook-bank.py",
+      "storedPath": "runtime/work/quantity-relations/render-crossbook-bank.py",
+      "bytes": 27068,
+      "sha256": "4d1269b1e9d52119c862e914c76fc548160ed15dedab8e52989ccb3978436a47"
+    },
+    {
+      "path": "work/quantity-relations/reviewed-native-ui.js",
+      "storedPath": "runtime/work/quantity-relations/reviewed-native-ui.js",
+      "bytes": 1762,
+      "sha256": "9c43a7bee47c9230906618aeed1ead46c187b5c363c04f4dc82a1968ead91ec9"
+    },
+    {
+      "path": "work/quantity-relations/right_isosceles_core.py",
+      "storedPath": "runtime/work/quantity-relations/right_isosceles_core.py",
+      "bytes": 6275,
+      "sha256": "42d81d62c45af7a8fdad8a9320bdfe9b26c062b3cf83fd1d91262637c5b60637"
+    },
+    {
+      "path": "work/quantity-relations/soma-authoring.css",
+      "storedPath": "runtime/work/quantity-relations/soma-authoring.css",
+      "bytes": 1114,
+      "sha256": "2dc3c42fd7fc8fac254491fbddc45e057ab54a4711e313af45638dca7fa8f268"
+    },
+    {
+      "path": "work/quantity-relations/soma-parameters-ui.js",
+      "storedPath": "runtime/work/quantity-relations/soma-parameters-ui.js",
+      "bytes": 8807,
+      "sha256": "e210c886c4642ad6b8b9ae38dc23081372cf66a3022580d1fe04aac75904fb9a"
+    },
+    {
+      "path": "work/quantity-relations/soma-reuse-ui.js",
+      "storedPath": "runtime/work/quantity-relations/soma-reuse-ui.js",
+      "bytes": 2472,
+      "sha256": "1af9fd72d1e1ee3b1de9ccada6c2cfd8ad42872f548522142a208ad0d564d3a7"
+    },
+    {
+      "path": "work/quantity-relations/soma-variants-ui.js",
+      "storedPath": "runtime/work/quantity-relations/soma-variants-ui.js",
+      "bytes": 7461,
+      "sha256": "dc7b7a53bd2490ccb788ad225d8889978b45ab35905d6751f61cffa91e705a79"
+    },
+    {
+      "path": "work/quantity-relations/soma_authoring_figures.py",
+      "storedPath": "runtime/work/quantity-relations/soma_authoring_figures.py",
+      "bytes": 10354,
+      "sha256": "63640cd06be3877064f218d5477116678bf3014fda2b8a927d50800f59692877"
+    },
+    {
+      "path": "work/quantity-relations/soma_authoring_proofs.py",
+      "storedPath": "runtime/work/quantity-relations/soma_authoring_proofs.py",
+      "bytes": 22864,
+      "sha256": "8bef4de8b6f21d008ea5da2b2a4e0ff88684d31b672d8c22eb7b928aa91a22c2"
+    },
+    {
+      "path": "work/quantity-relations/soma_computational_profile.py",
+      "storedPath": "runtime/work/quantity-relations/soma_computational_profile.py",
+      "bytes": 4223,
+      "sha256": "aed443980fc5f041734c67c3b26cc81c71eb438634d839856e8a82454ef53ece"
+    },
+    {
+      "path": "work/quantity-relations/soma_generation_service.py",
+      "storedPath": "runtime/work/quantity-relations/soma_generation_service.py",
+      "bytes": 7018,
+      "sha256": "cd59f6067efd042fe4ccdd20c585bcde022b5364509776ff7fadd110d91d5421"
+    },
+    {
+      "path": "work/quantity-relations/soma_parameter_schema.py",
+      "storedPath": "runtime/work/quantity-relations/soma_parameter_schema.py",
+      "bytes": 10615,
+      "sha256": "d4ee94abd40ff629b78440270626f0c64939b8cd5c2c1593526d6eb46c2cdafb"
+    },
+    {
+      "path": "work/quantity-relations/soma_variant_figures.py",
+      "storedPath": "runtime/work/quantity-relations/soma_variant_figures.py",
+      "bytes": 7095,
+      "sha256": "66d95a5e6f09c31cd91bd800faa5fe32edf0d35ef24f30ab54db639ae541e796"
+    },
+    {
+      "path": "work/quantity-relations/soma_variant_models.py",
+      "storedPath": "runtime/work/quantity-relations/soma_variant_models.py",
+      "bytes": 45652,
+      "sha256": "8cbc18a0fae18a14d5d38064846868e4eda6f03e9bb27056c712200bd1697b2d"
+    },
+    {
+      "path": "work/quantity-relations/soma_variant_proofs.py",
+      "storedPath": "runtime/work/quantity-relations/soma_variant_proofs.py",
+      "bytes": 17526,
+      "sha256": "3b0ac161e4067a9b0c8289e4a1e5b4797b1bf981c85ef35857b23ef44fe345d5"
+    },
+    {
+      "path": "work/quantity-relations/student_presentation.py",
+      "storedPath": "runtime/work/quantity-relations/student_presentation.py",
+      "bytes": 1092,
+      "sha256": "8802582304f0c7034ba077851a160645f6314b19ba5e1f98a495716d9c89c54e"
+    },
+    {
+      "path": "work/quantity-relations/textbook-scope.json",
+      "storedPath": "runtime/work/quantity-relations/textbook-scope.json",
+      "bytes": 1168,
+      "sha256": "0962706a3f783174aeea9ab65f824fd96be068810d0d7bc1c27d6ae1e87cd8e7"
+    },
+    {
+      "path": "work/quantity-relations/textbook-workbench.css",
+      "storedPath": "runtime/work/quantity-relations/textbook-workbench.css",
+      "bytes": 8694,
+      "sha256": "9de5bb91650b03d41508f6ef3ef62d7b5daf557e12377034452c50251467373f"
+    },
+    {
+      "path": "work/quantity-relations/textbook-workbench.js",
+      "storedPath": "runtime/work/quantity-relations/textbook-workbench.js",
+      "bytes": 8322,
+      "sha256": "c0e1b00f75d85967a3d629d1d37c6c5138ec5ff1ffbadcc37cd803294f7beb7d"
+    },
+    {
+      "path": "work/quantity-relations/type-explorer.js",
+      "storedPath": "runtime/work/quantity-relations/type-explorer.js",
+      "bytes": 18969,
+      "sha256": "1700e5f3fc44a22fceeb1b2fa1c642ba76e429fbbc937c4a90dda2c5cbf99654"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/manifest.json",
+      "storedPath": "runtime/work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/manifest.json",
+      "bytes": 10436,
+      "sha256": "f91f52845459075b65e42fda7c493b265220ccf353bc45541790daba57fb488c"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/package.json",
+      "storedPath": "runtime/work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/package.json",
+      "bytes": 33,
+      "sha256": "89c47db7851f89caec72da4f215ebc21cf1e294aeef3b45d2583562d846ab035"
+    },
+    {
+      "path": "work/quantity-relations/vision-text-candidates.swift",
+      "storedPath": "runtime/work/quantity-relations/vision-text-candidates.swift",
+      "bytes": 5782,
+      "sha256": "9af89242b0e0407bc17728b230d94da7d62c411fa026916fa40e8376f73333f1"
+    }
+  ],
+  "pinnedGitFiles": [
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/generators.js",
+      "gitBlobSHA": "6cad020f560028bfad702ad093e103767677bed1",
+      "bytes": 368459,
+      "sha256": "28424bedfa139028973a48c6dd3398043deb94f30cab80f6b636715b0c1f2ab2"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-plain.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-plain.js",
+      "gitBlobSHA": "2e602735603dcce07df037a8220f6fefb8e93d8d",
+      "bytes": 2339,
+      "sha256": "e7c0f4feb67a84808fcbff0a7e2c664cdeb67a77c023d8002d8fcb3c371582d4"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-g1-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-g1-generators.js",
+      "gitBlobSHA": "46e4e82c795b0430c0eb2f1ecaf08f426897ab9a",
+      "bytes": 64351,
+      "sha256": "b807a57f2afbb1a42eaefdd628ba1b85f68634d5d260b54fd1e2163d5a0c18ef"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-g2-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-g2-generators.js",
+      "gitBlobSHA": "afdabb6233317cd749c9e179c149b162762bca3d",
+      "bytes": 60920,
+      "sha256": "6e75518623cae49a119635fcc144c6f7c178d3f516eab156499e5006c05551f7"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-g3-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-g3-generators.js",
+      "gitBlobSHA": "9717d78d9d65fb3bfe1fa91933473b1ee08d969d",
+      "bytes": 42122,
+      "sha256": "68fbd2de8336b579bdaa8ce54536e46892e36ca724a90f7de58939ed74bbb100"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-g4-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-g4-generators.js",
+      "gitBlobSHA": "a759c73c6eab4a2bf5a8fc7677c09bcdf4dd6859",
+      "bytes": 21811,
+      "sha256": "3567e8ae349a13bcd5d4826c9f284e5f749a2d2a0c06a554e50c0a02d7c95b16"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-g5-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-g5-generators.js",
+      "gitBlobSHA": "06816f058baa4e426e5187637d87d312e119d7b9",
+      "bytes": 25553,
+      "sha256": "57812fc6908d6222adc97fe73816d29b9ab751b23de02ae0779792bef5137fe9"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-a1-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-a1-generators.js",
+      "gitBlobSHA": "11f51b09f2d5b0572239d8f999e2a5c8630c4c49",
+      "bytes": 28276,
+      "sha256": "431fccc358ab5e599b08af22c9a2b2266c86858bfd96c249ce6c7a3d62618173"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-a2-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-a2-generators.js",
+      "gitBlobSHA": "e16fec20bd73f316a70641a3e540a242603c7f28",
+      "bytes": 26032,
+      "sha256": "d067d241adbc531e588fa12203968b134f7af0ba4d0dce42ce8e60ed851f730f"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-a3-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-a3-generators.js",
+      "gitBlobSHA": "b503e1a4c16e94db0c8aa1af82327f5509877d7e",
+      "bytes": 21637,
+      "sha256": "db29d9bbacb9f73c80e8f687f7ee83a5b56da771ab74c1a5bd7ffcdba0fd34f5"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-a4-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-a4-generators.js",
+      "gitBlobSHA": "778beebca32545dd7e97a26b8da61db91fcbe92b",
+      "bytes": 17785,
+      "sha256": "0fe097550ca99b43721fbc3af37d2a78c6b968b8e50933f362ade5c0c22861a3"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/course2-a5-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/course2-a5-generators.js",
+      "gitBlobSHA": "ee29db6541820a061f5a1bb139db9e8bbe1d713a",
+      "bytes": 26023,
+      "sha256": "a038bbdecd43de79559aade568913ba4f63d352b749d7355cfc1101f0e05d46e"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/g1-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/g1-generators.js",
+      "gitBlobSHA": "24240494e1c7dd213b95a5582e4eb07523cc703f",
+      "bytes": 69418,
+      "sha256": "585760eff11bd360032e7a0b01493e95371b189306c61ebfead14c09f539c5ca"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/g1-winter-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/g1-winter-generators.js",
+      "gitBlobSHA": "ab8dac8e9cb2dfde5c432f1a222b49a12da17b33",
+      "bytes": 17697,
+      "sha256": "d6417345699e7c300506ceadae2f499f112c226491da73ffb5e3c69ee016eacb"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book01-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book01-generators.js",
+      "gitBlobSHA": "f13cb60b6c92502fba92812cf3a91e8175c43e6a",
+      "bytes": 48567,
+      "sha256": "b3dc34bb9075cc983c9f0820d8aa6b426702f7d8a7f2a49cec3c1d1392c5c877"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book03-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book03-generators.js",
+      "gitBlobSHA": "ef6f08b70eb92213d87308294655b50b3b1661ed",
+      "bytes": 76719,
+      "sha256": "b5a149c797c533799aeca710e8840762d2cd1cadc94e9e639edb6caf3d2c66be"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book04-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book04-generators.js",
+      "gitBlobSHA": "66a09a2bb5efdf2ebc97dc8b7f5c7b2a8bdf6110",
+      "bytes": 44364,
+      "sha256": "bc59abedbf99483217f1831094f0940f7ffa6c6af874c6703938194f6d0d6157"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book05-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book05-generators.js",
+      "gitBlobSHA": "1dfd9c26cefe2c8de0c9331800376da183f32ed3",
+      "bytes": 63296,
+      "sha256": "0999302d0639adb86407a980675ca9f66f4a6b3bc25db76dcad1385566aea7e0"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book06-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book06-generators.js",
+      "gitBlobSHA": "e64c3aea0f59003258de54651359c70127c5904d",
+      "bytes": 82070,
+      "sha256": "54352e4cc46b8deda9a9c6cf43402125b378ce682d68655a1c1ad58e7e187cc6"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book07-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book07-generators.js",
+      "gitBlobSHA": "13f59beefd8f9c036aead21a72eefb0163c6a3d4",
+      "bytes": 73956,
+      "sha256": "8254de8cd4b2b88a1349ba6b3da8804d886ec250a536045152578976f7211e4b"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book08-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book08-generators.js",
+      "gitBlobSHA": "3715efb4f61f5cf895acb036b1c5c551930c4c18",
+      "bytes": 103466,
+      "sha256": "253320c234ac12ef3ad9b6d85ee7b942f9ac4c664c2ceb57643c6d1715ace9ba"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book09-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book09-generators.js",
+      "gitBlobSHA": "1d36d788be0d6ff7a97818ff7e83a4e8429b356d",
+      "bytes": 105339,
+      "sha256": "9def2e7a21f2e4bc4e1305ef4970118a240f801ec8be4ef1b461f04a34b2da9c"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book10-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book10-generators.js",
+      "gitBlobSHA": "367ef279fd9350d036e05339ba3dd058e22766d6",
+      "bytes": 70331,
+      "sha256": "0e20a407d9ad51fb4f47c2bdd8b668d8c88debbba82b3f246f95a974bb259379"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/mock06-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/mock06-generators.js",
+      "gitBlobSHA": "cb9d99f825f529dc02ca27757671a9adda85c9ff",
+      "bytes": 29464,
+      "sha256": "2012ced6e3414fe57f579157611a8a6631fdd15ad50cd86e7c2e49914c54fa8a"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book02-unit-test-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book02-unit-test-generators.js",
+      "gitBlobSHA": "b84a6fa17a26135de2e3501889dc23517986729b",
+      "bytes": 28362,
+      "sha256": "f1c01da72e06362c66bf732fd63c0bda0f0fd1a57dd6e1708902958b95e42c6a"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book01-unit-test-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book01-unit-test-generators.js",
+      "gitBlobSHA": "3702d90db2fd4348932d884118bf3087ae788ad6",
+      "bytes": 87742,
+      "sha256": "391bf82c261c3dae36f5c5d1cea39b6b86ab1a4d0dd025c51b147d74c04f3e17"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/fold-visuals.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/fold-visuals.js",
+      "gitBlobSHA": "6e9c04b44f2d2d911e02a0ffe6cd05d9de6da301",
+      "bytes": 23630,
+      "sha256": "7bda0be37877e0bc51edfb08651a6680f1b0fa9415d500690d6b9cd79c014733"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/math-markup.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/math-markup.js",
+      "gitBlobSHA": "e559713522baf39c4e45e1ef241c8a8d550a5268",
+      "bytes": 5792,
+      "sha256": "957a854f65af2c53bca7413e78f0ada02c66e607a346f88ee3626e2829e91c56"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/source-data.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/source-data.js",
+      "gitBlobSHA": "cacba0e51f980b941b226c669e067b7d720ead4a",
+      "bytes": 504966,
+      "sha256": "5876719d78397d41eade9bff337e3314551c779ef8c74f3020e62c89a447b678"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/geometry-worksheet-problem.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/geometry-worksheet-problem.js",
+      "gitBlobSHA": "b82ceba526447ddd127ba8388a9968db45b716d3",
+      "bytes": 7647,
+      "sha256": "f6bba764b630cf73d297774d5d87bfe1a09df21c79a222efc78ccaec769f3413"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/fields-question-bank-adapter.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/fields-question-bank-adapter.js",
+      "gitBlobSHA": "196820976db4c3251fec311ecc90c4d241c44a3f",
+      "bytes": 1186,
+      "sha256": "073f72be7e780c04c07acdbcb717897be80f8f5eaebaefa54adc80b636d36aa8"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/question-bank-adapter.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/question-bank-adapter.js",
+      "gitBlobSHA": "68301953b20955d7483cb1625b57eb6f50505138",
+      "bytes": 3287,
+      "sha256": "faf781c7210973beeaa7f3d564c607e356d1f96269eb8f1dc636fbbc3e85779e"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/concept-data.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/concept-data.js",
+      "gitBlobSHA": "14aad53e26e55941820d66eca2f21de8f0779b16",
+      "bytes": 112256,
+      "sha256": "e5682aba9f8562b85e577074646a3a7bab80048abec2b1cfb0f76915f46c54c2"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book01-02-unit-test-links.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book01-02-unit-test-links.js",
+      "gitBlobSHA": "06d9a552fb4a2d8811934f3fdf9f9c823066e67c",
+      "bytes": 24367,
+      "sha256": "7b9a16952266c3d9d7bc3274b1f6468132c2437d5e7922a9b6c473c86c8924fb"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/geometry-generators.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "geometry/worksheet/generators.js",
+      "gitBlobSHA": "5f3766fb4b9b5f69a9a8dbd70398cc7e6062d9c6",
+      "bytes": 147955,
+      "sha256": "5b408a4068ebb2a1bfa6d0e9b052dcfaeade8018ae85ae117d05c3d122d20061"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/geometry-render.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "geometry/worksheet/render.js",
+      "gitBlobSHA": "56aa0f0adcb95f483bdf892f3e0841c828dc29f9",
+      "bytes": 31724,
+      "sha256": "0ef4f872edb1c6e6ce641761c36246fa9315839026732ceff83dd40cfaacb632"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/geometry-card.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "geometry/worksheet/card.js",
+      "gitBlobSHA": "e56765d054d37cf53d30319d118fad7b80762643",
+      "bytes": 19499,
+      "sha256": "8c0d3009a7a93fcc8f219194962382a86229fd51e2e9b0e812f1a01a947a6919"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/geometry-question-bank.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "geometry/shared/question-bank.js",
+      "gitBlobSHA": "ef38db75f4fca998456edf0843fae0eb1cc76252",
+      "bytes": 7961,
+      "sha256": "1e3a026faf71d2a68348796fd0a599491ba768822755cb0d48874629607a82fc"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book01-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book01-renderers.js",
+      "gitBlobSHA": "18a4f161c608645dcab7c81288dc460b56e46586",
+      "bytes": 56796,
+      "sha256": "ffd423f992f80408406f2620674809fd7baeb6246145fdd4e66bb7fc6ffc79d8"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book03-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book03-renderers.js",
+      "gitBlobSHA": "01e06b3fcdd8ba988a25f5a014d95c7c6d7add6c",
+      "bytes": 71530,
+      "sha256": "dd40d814f166c5c1955875e3ec271757dfc17541421df0a08d2a6cb69d5ce58a"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book04-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book04-renderers.js",
+      "gitBlobSHA": "67b927758d92c0fd079eb0bc4d1c111839876a68",
+      "bytes": 60649,
+      "sha256": "04d9031557487d1586b755eba450c8bf93cda6b8c2f24d9369985e51a21ae0e8"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book05-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book05-renderers.js",
+      "gitBlobSHA": "4114dbdb73a40774dac125be0e3be4766b4a7b96",
+      "bytes": 123902,
+      "sha256": "7aa752993ca71672856be659127663c6c4bb923236d97b6af671ce89eaffec1b"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book06-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book06-renderers.js",
+      "gitBlobSHA": "dd114e74f4bf6cd2c9d33d24b181b1f84bf1d73f",
+      "bytes": 29655,
+      "sha256": "2a0b6cfc358a4db2ef986464e07bc597c21c8c32ca9b240e5c4134cca43f0064"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book07-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book07-renderers.js",
+      "gitBlobSHA": "14d67f0705d6be7f98fd1b671c902ddf49fed3df",
+      "bytes": 18551,
+      "sha256": "c18d027e75981c5a7b6d39a937b3719d19d493069f2b0b992781732b87f1fe24"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book08-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book08-renderers.js",
+      "gitBlobSHA": "ae19aefa936dc93446e5e54e8c145be905e061b7",
+      "bytes": 10600,
+      "sha256": "16e07381166f9d47cfde40df38c372430634066309aa40cabc037f0aa014b698"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book09-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book09-renderers.js",
+      "gitBlobSHA": "e81c12154fe88b71ce437f28c711fb771e542cad",
+      "bytes": 23264,
+      "sha256": "b2e982988873f083e966c98d86252c3ba2a93acbf8abd70c699b54c0be7e5f16"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book10-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book10-renderers.js",
+      "gitBlobSHA": "51b596a01c6e7955ca38843ae3930f55481e8372",
+      "bytes": 30584,
+      "sha256": "53ace6204d463973754b07adc2e85cf340b33d1c0d25b719907f8ef7f57ee966"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book02-visuals.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book02-visuals.js",
+      "gitBlobSHA": "35b936d4fa4704fa44caa615fd114b8d189b8bd2",
+      "bytes": 12799,
+      "sha256": "83e5e464b7885309a3e684ab03f0c187441da101d007b1566cc5a97701ac597c"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/book02-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/book02-renderers.js",
+      "gitBlobSHA": "a45a320554be1d87a5447c6a268ab431fb7a9bb0",
+      "bytes": 33995,
+      "sha256": "efeba0eb7ded85c86e238b66b9508092a785d67782f2caacd25c709dd4eb92c2"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/mock06-renderers.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/mock06-renderers.js",
+      "gitBlobSHA": "0d7e604ffb21389da4e5a1d0d0b208cc869c3a44",
+      "bytes": 10910,
+      "sha256": "374d07981c9bae25cbe68cefa3ef8ce8cb0d8e896234bcdf16b347c202247d70"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/upstream-app.js",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/app.js",
+      "gitBlobSHA": "fad9893cdf7dc72727632df3c901f5c0b3dd926e",
+      "bytes": 300728,
+      "sha256": "d0b094c3e8ce2ff40cae6a4912bdb30d3d75eef11ddaabf33d5d13748355412c"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/styles.css",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/styles.css",
+      "gitBlobSHA": "7d18f959da86917f694ea3712226d02c7029a04d",
+      "bytes": 423644,
+      "sha256": "8f3677c923cc7e805d90f49b5c2fce37a91ba6cebcda8b85117ff0c00111f965"
+    },
+    {
+      "path": "work/quantity-relations/upstream-runtime/c0f37b74b3f23d112c1c193241a8918615525150/math-markup.css",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/math-markup.css",
+      "gitBlobSHA": "9608a9d53de718de4a3e19392b0d43e72c1922b2",
+      "bytes": 1551,
+      "sha256": "0725131bedb1654b7f2432b20c0af59b30e1a946e0cf2915bbecbff85b58aabe"
+    },
+    {
+      "path": "work/quantity-relations/assets/front/orbi.webp",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/assets/front/orbi.webp",
+      "gitBlobSHA": "d618bbad3bc4613278b4acacda5970cb6066e91f",
+      "bytes": 10398,
+      "sha256": "d5db474c0ed13dbbc64541e4c3de64ded54826e0c5d4947d667cb9e5e6630f91"
+    },
+    {
+      "path": "work/quantity-relations/assets/front/foldy.webp",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/assets/front/foldy.webp",
+      "gitBlobSHA": "8a025f3167610dcbff8286ab9ccce58ff505748b",
+      "bytes": 30002,
+      "sha256": "5988c2f8083a857e95e2fe4806c81fac14e01ce3f1de0c163f801101ff457426"
+    },
+    {
+      "path": "work/quantity-relations/assets/front/cubi.webp",
+      "ref": "c0f37b74b3f23d112c1c193241a8918615525150",
+      "repositoryPath": "fields-classic/question-bank/assets/front/cubi.webp",
+      "gitBlobSHA": "6b69f0568ef525dc7c0847e652ee4807f5f94a02",
+      "bytes": 9282,
+      "sha256": "3976c18baa396fd1cc2c5e54a2799eda7b9cd8d849ee43c3d33a9e104a19a7b8"
+    }
+  ],
+  "originalPagesAndAnswersLedgersIncluded": false,
+  "userDatabaseIncluded": false,
+  "sourceResearchReopened": false
+}
