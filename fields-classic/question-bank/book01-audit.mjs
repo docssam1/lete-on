@@ -27,9 +27,9 @@ function permutations(values) {
 const book = CURRICULUM.find((item) => item.id === "book-01");
 assert(book, "book-01 curriculum missing");
 const typeIds = book.units.flatMap((unit) => unit.typeIds);
-// 49 + 교재 번호 꼴에 맞춘 새 유형 23(book01-structure-generators.js, 2026-11-25)
-assert(typeIds.length === 72, `expected 72 types, got ${typeIds.length}`);
-assert(new Set(typeIds).size === 72, "duplicate type in book-01 curriculum");
+// 49 + 교재 번호 꼴에 맞춘 새 유형 23(book01-structure-generators.js, 2026-11-25) + (3차) 9
+assert(typeIds.length === 81, `expected 81 types, got ${typeIds.length}`);
+assert(new Set(typeIds).size === 81, "duplicate type in book-01 curriculum");
 
 let sourceQuestionCount = 0;
 const sourceKeys = new Set();
@@ -208,6 +208,55 @@ function validateSequence(problem) {
   assert(hidden.map((index) => values[index]).join() === answerValues.join(), "sequence answer mismatch");
 }
 
+// (3차) 돌려 나누기: 각 복사본이 앞의 것을 정확히 돌린 것이고, 가운데 점 말고는 만나지 않으며, 끝점이 판 둘레에 있다.
+function validateRotSplit(typeId, problem) {
+  const { parts, fold, center } = problem.meta;
+  assert(parts.length === 4, `${typeId}: four parts`);
+  const step = 4 / fold;
+  const rot = ([x, y], q) => { let px = x, py = y; for (let t = 0; t < q; t += 1) [px, py] = [center[0] - (py - center[1]), center[1] + (px - center[0])]; return `${Math.round(px * 2) / 2},${Math.round(py * 2) / 2}`; };
+  const keys = new Set();
+  parts.forEach((copies) => {
+    assert(copies.length === fold, `${typeId}: copy count`);
+    copies.forEach((copy, k) => assert(copy.map((pt) => rot(pt, 0)).join(";") === copies[0].map((pt) => rot(pt, k * step)).join(";"), `${typeId}: copy is not a rotation`));
+    const seen = new Set();
+    copies.forEach((copy) => copy.slice(1).forEach((pt) => { const key = rot(pt, 0); assert(!seen.has(key), `${typeId}: copies touch`); seen.add(key); }));
+    assert(rot(copies[0][0], 0) === `${center[0]},${center[1]}`, `${typeId}: path must start at center`);
+    keys.add(copies.map((c) => c.map((pt) => rot(pt, 0)).join(";")).sort().join("|"));
+  });
+  assert(keys.size === 4, `${typeId}: duplicate parts`);
+  assert(/<svg/.test(problem.visual?.html || "") && /<svg/.test(problem.answerVisual?.html || ""), `${typeId}: missing picture`);
+}
+
+// (3차) 도토리 판: 4칸짜리 같은 모양 네 조각, 조각마다 도토리 k개, 그렇게 나누는 방법은 하나.
+function validateAcornSplit(typeId, problem) {
+  const { k, acorns, partition, fits } = problem.meta;
+  const set = new Set(acorns);
+  assert(fits === 1, `${typeId}: partition not unique`);
+  assert(partition.length === 4 && partition.every((piece) => piece.length === 4 && piece.filter((v) => set.has(v)).length === k), `${typeId}: acorn count per piece`);
+  assert(new Set(partition.flat()).size === 16, `${typeId}: pieces must cover the board`);
+  assert(acorns.length === 4 * k, `${typeId}: acorn total`);
+}
+
+// (3차) 두 번 접어 모서리 자르기: 펼치면 자른 조각이 4개 자리에 생기고, 두 문제는 서로 다르다.
+function validateFoldCornerCut(typeId, problem) {
+  const { parts } = problem.meta;
+  assert(parts.length === 2 && parts.every((q) => q.copies === 4 && q.words.length === 2), `${typeId}: corner cut copies`);
+  assert(/<svg/.test(problem.visual?.html || "") && /<svg/.test(problem.answerVisual?.html || ""), `${typeId}: missing picture`);
+}
+// (3차) 반으로 두 번 접고 대각선 자르기: 가운데를 지나는 대각선만 = 삼각형 4, 다른 대각선만 = 삼각형 4 + 사각형 1, 둘 다 = 삼각형 8 + 사각형 4.
+function validateFoldDiagonalCut(typeId, problem) {
+  const { cutNames, triangles, quads } = problem.meta;
+  const key = cutNames.slice().sort().join("+");
+  const expected = { d1: [4, 0], d2: [4, 1], "d1+d2": [8, 4] }[key];
+  assert(expected && triangles === expected[0] && quads === expected[1], `${typeId}: piece count ${key} ${triangles}/${quads}`);
+}
+// (3차) 대각선 접기 구멍: 안쪽 구멍은 2^접은 횟수, 접힌 선 위 구멍은 그 절반.
+function validateFoldPunch(typeId, problem) {
+  const { folds, punches, holes } = problem.meta;
+  const expected = punches.reduce((total, q) => total + (q.on ? 2 ** (folds - 1) : 2 ** folds), 0);
+  assert(holes === expected && problem.answer === `${expected}개`, `${typeId}: hole count ${holes} vs ${expected}`);
+}
+
 function validateNewProblem(typeId, problem) {
   assert(problem && typeof problem === "object", `${typeId}: null problem`);
   assert(problem.prompt && problem.answer !== "" && problem.solution, `${typeId}: incomplete problem`);
@@ -221,6 +270,11 @@ function validateNewProblem(typeId, problem) {
   if (family.startsWith("partition-") || family === "symbol-partition") validatePartition(problem);
   if (family.startsWith("digital-")) validateDigital(problem);
   if (["circle-magic", "five-card-magic", "ring-lines"].includes(family)) validateMagic(problem);
+  if (family === "rot-split-b1") validateRotSplit(typeId, problem);
+  if (family === "acorn-split-b1") validateAcornSplit(typeId, problem);
+  if (family === "fold-corner-cut-b1") validateFoldCornerCut(typeId, problem);
+  if (family === "fold-diagonal-cut-count-b1") validateFoldDiagonalCut(typeId, problem);
+  if (family === "fold-diagonal-punch-b1") validateFoldPunch(typeId, problem);
   if (family === "gakuro-layout") validateSumGrid(problem);
   if (family === "digit-sum-enumeration") validateEnumeration(problem);
   if (family === "three-digit-step") validateSequence(problem);

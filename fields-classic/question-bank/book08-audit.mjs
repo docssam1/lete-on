@@ -195,18 +195,6 @@ function validate(problem, id, difficulty) {
       assert(meta.start + meta.add - meta.subtract === meta.final && numeric === meta.start, id, difficulty, "덧뺄셈 거꾸로 오류"); return;
     case "reverse-transfer-events-b8":
       assert(meta.start - meta.gave + meta.received === meta.final && numeric === meta.start, id, difficulty, "주고받기 거꾸로 오류"); return;
-    case "reverse-give-receive-split-b8": {
-      const forward = meta.order === "trade-then-split" ? (meta.start - meta.give + meta.get) / 2 : meta.start / 2 + meta.get - meta.give;
-      assert(forward === meta.left && Number.isInteger(forward) && parseInt(problem.answer, 10) === meta.start, id, difficulty, "주고받기·나누기 거꾸로 오류"); return;
-    }
-    case "circle-fraction-marbles-b8":
-      assert(meta.parts.length === 4 && meta.parts.every((q) => q.shaded.length === q.k && q.k >= 1 && q.k < q.n && q.count * q.n === meta.total * q.k), id, difficulty, "원 분수 구슬 오류");
-      assert(((problem.visual?.html || "").match(/<path /g) || []).length === meta.parts.reduce((a, q) => a + q.n, 0), id, difficulty, "원 칸 수 그림 오류"); return;
-    case "sequential-fraction-chain-b8": {
-      let v = meta.start;
-      meta.dens.forEach((d) => { assert(v % d === 0, id, difficulty, "분수만큼 먹기 나누어떨어짐"); v -= v / d; });
-      assert(v === meta.left && meta.dens.length === meta.steps && parseInt(problem.answer, 10) === meta.start, id, difficulty, "분수 차례로 먹기 오류"); return;
-    }
     case "reverse-multiply-divide-b8":
       assert((meta.start * meta.multiplier + meta.added) / meta.divisor === meta.final && numeric === meta.start, id, difficulty, "곱셈 나눗셈 거꾸로 오류"); return;
     case "reverse-split-equal-b8":
@@ -534,10 +522,23 @@ const product = (list) => list.reduce((a, b) => a * b, 1);
 function validateStructure(problem, id, difficulty) {
   const meta = problem.meta;
   const numeric = numericAnswer(problem);
-  assert(problem.visual?.kind === "fig" && /<svg/.test(problem.visual.html), id, difficulty, "그림 없음");
+  // 거꾸로 생각하기는 흐름 그림 없이 글로만 낸다(원장 2026-11-27 「그림빼」).
+  if (!["reverse-give-receive-split-b8", "sequential-fraction-chain-b8"].includes(meta.family)) assert(problem.visual?.kind === "fig" && /<svg/.test(problem.visual.html), id, difficulty, "그림 없음");
   assert(!/\d\/\d/.test(problem.prompt), id, difficulty, "빗금 분수");
   assert(!hasWrongNumberParticle(problem.prompt) && !hasWrongNumberParticle(problem.solution), id, difficulty, "수 뒤 조사 오류");
   switch (meta.family) {
+    case "reverse-give-receive-split-b8": {
+      const forward = meta.order === "trade-then-split" ? (meta.start - meta.give + meta.get) / 2 : meta.start / 2 + meta.get - meta.give;
+      assert(forward === meta.left && Number.isInteger(forward) && parseInt(problem.answer, 10) === meta.start, id, difficulty, "주고받기·나누기 거꾸로 오류"); return;
+    }
+    case "circle-fraction-marbles-b8":
+      assert(meta.parts.length === 4 && meta.parts.every((q) => q.shaded.length === q.k && q.k >= 1 && q.k < q.n && q.count * q.n === meta.total * q.k), id, difficulty, "원 분수 구슬 오류");
+      assert(((problem.visual?.html || "").match(/<path /g) || []).length === meta.parts.reduce((a, q) => a + q.n, 0), id, difficulty, "원 칸 수 그림 오류"); return;
+    case "sequential-fraction-chain-b8": {
+      let v = meta.start;
+      meta.dens.forEach((d) => { assert(v % d === 0, id, difficulty, "분수만큼 먹기 나누어떨어짐"); v -= v / d; });
+      assert(v === meta.left && meta.dens.length === meta.steps && parseInt(problem.answer, 10) === meta.start, id, difficulty, "분수 차례로 먹기 오류"); return;
+    }
     case "symbol-network-b8": {
       const eqs = meta.equations;
       const sols = injectiveSolutions(meta.values.length, meta.pool, (vals) => eqs.every((eq) => {

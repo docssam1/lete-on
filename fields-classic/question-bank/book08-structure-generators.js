@@ -15,6 +15,7 @@
 //   2단원 모양 피라미드(줄 2~3, 모양 1~3) · 모두 모양인 덧셈 복면산 — 자리마다 받아올림을 따지는 풀이기로 답이 하나인지 센다.
 //   4단원 거꾸로 생각하기 — 세·네 단계 과정(버스 정류장·계단·주고받기·수) · 상대가 가진 만큼 준 뒤 「둘 다 N」.
 
+import { frac } from "./math-markup.js";
 const randomInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 const pick = (list) => list[randomInt(0, list.length - 1)];
 
@@ -1756,16 +1757,16 @@ function sequentialFractionChainB8({ difficulty = 2 }) {
   const left = unitsLeft * t;
   const people = shuffle(["아빠", "엄마", "오빠", "언니", "동생", "할머니", "형"]).slice(0, steps);
   const [item, buyer] = pick([["귤", "승우"], ["쿠키", "서진"], ["사탕", "하율"], ["떡", "지안"]]);
-  const lines = people.map((who, i) => `${i === 0 ? "먼저" : "다음에"} ${pp(who, "이", "가")} ${i === 0 ? "전체" : "남은 것"}의 1/${dens[i]}을`);
+  const lines = people.map((who, i) => `${i === 0 ? "먼저" : "다음에"} ${pp(who, "이", "가")} ${i === 0 ? "전체" : "남은 것"}의 ${frac(1, dens[i])}을`);
   const remains = [start];
   dens.forEach((d) => remains.push(remains.at(-1) - remains.at(-1) / d));
   if (remains.at(-1) !== left) throw new Error("fraction chain mismatch");
   const back = [];
-  for (let i = steps - 1; i >= 0; i -= 1) back.push(`${pp(people[i], "이", "가")} 먹기 전 ${remains[i]}개(${remains[i + 1]}개가 ${dens[i] - 1}/${dens[i]})`);
+  for (let i = steps - 1; i >= 0; i -= 1) back.push(`${pp(people[i], "이", "가")} 먹기 전 ${remains[i]}개(${remains[i + 1]}개가 ${frac(dens[i] - 1, dens[i])})`);
   return {
     prompt: `${pp(buyer, "이네", "네")} 상자에 든 ${pp(item, "을", "를")} 가족이 차례로 나누어 먹었습니다. ${lines.join(", ")} 먹었더니 상자에 ${pp(item, "이", "가")} ${left}개 남았습니다. 처음 상자에 든 ${pp(item, "은", "는")} 몇 개인가요?`,
     answer: `${start}개`,
-    solution: `남은 것에서 거꾸로 갑니다. 1/m을 먹으면 (m−1)/m이 남으므로 남은 수를 (m−1)로 나누고 m을 곱합니다. ${back.join(" → ")}. 처음은 ${start}개입니다.`,
+    solution: `남은 것에서 거꾸로 갑니다. 남은 것의 몇 분의 1을 먹으면 나머지가 남으므로, 남은 수를 나머지 칸 수로 나누어 한 칸을 구하고 전체 칸 수를 곱합니다. ${back.join(" → ")}. 처음은 ${start}개입니다.`,
     meta: { family: "sequential-fraction-chain-b8", steps, dens, start, left, remains, result: start }
   };
 }
@@ -1860,7 +1861,7 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
 export const BOOK08_STRUCTURE_GUIDES = {
   "reverse-give-receive-split-b8": "끝에서부터 거꾸로 갑니다. 똑같이 나눈 것은 두 배, 받은 것은 빼고, 준 것은 더합니다.",
   "circle-fraction-marbles-b8": "색칠한 칸 수가 분자, 나눈 칸 수가 분모입니다. 전체를 분모만큼 묶어 한 묶음을 구하고 분자만큼 곱합니다.",
-  "sequential-fraction-chain-b8": "남은 것의 1/m을 먹으면 (m−1)/m이 남습니다. 마지막 사람부터 거꾸로 먹기 전 수를 구합니다.",
+  "sequential-fraction-chain-b8": "남은 것을 똑같이 나눈 칸 수로 생각합니다. 마지막 사람부터 거꾸로 먹기 전 수를 구합니다.",
   "symbol-chain-four-b8": "한 가지 모양만 있는 식부터 풀고, 아는 모양을 빼며 새 모양을 하나씩 찾습니다.",
   "row-sums-only-matrix-b8": "한 가지 모양만 있는 줄로 첫 모양을 찾고, 새 모양이 하나씩 끼는 줄에서 아는 것을 뺍니다.",
   "digit-swap-add-b8": "자리가 바뀐 두 수의 차는 (두 숫자의 차) × 9입니다. 한 자리 수를 더했으니 차는 9뿐입니다.",
