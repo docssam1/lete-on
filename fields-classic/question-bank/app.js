@@ -42,7 +42,7 @@ const {
   course2Curriculum: COURSE2_CURRICULUM = [],
   textbookStages: TEXTBOOK_STAGES
 } = FIELDS_QUESTION_BANK_ADAPTER.catalog;
-// 2과정 권(본책 번호판·차시 학습지)도 같은 이름표로 찾는다. 1과정 권 목록(CURRICULUM) 화면에는 섞지 않는다.
+// 2과정 권(본책 번호판·차시 학습지)도 같은 이름표로 찾는다. 문제은행 첫 화면에서는 「과정」 단추로 1과정·2과정 권을 나눠 보인다(SHOWN_BOOKS).
 const bookById = (id) => CURRICULUM.find((book) => book.id === id) || COURSE2_CURRICULUM.find((book) => book.id === id) || null;
 const { types: TYPES, sourceItems: SOURCE_QUESTION_INDEX, typeById } = FIELDS_QUESTION_BANK_ADAPTER;
 const {
@@ -61,6 +61,31 @@ if (params.has("session") && !params.has("picks")) {
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
+// 문제은행 첫 화면(시험지 짜기·편집·인쇄)은 관리자와 「문제은행」 권한을 받은 승인번호만, 그 아이에게 열린 권만
+// (원장 2026-11-27 「권한을 열으면 학부모도 이 문제은행은 권별로 사용할 수 있도록」, fields-access.js bankGate).
+// 덱·유사문제·권별 테스트·입학 모의고사에서 이어지는 학습지 주소(아래 열쇠가 있는 주소)는 예전처럼 그대로 연다.
+const BANK_FLOW_KEYS = ["picks", "types", "build", "session", "as", "embed", "preview", "paper", "peek", "side", "testId", "only", "print", "week"];
+let bankBooks = null;   // null = 모든 권
+if (!BANK_FLOW_KEYS.some((key) => params.has(key))) {
+  const { bankGate, lockBank } = await import("./fields-access.js?v=20261127a");
+  const gate = await bankGate();
+  if (!gate.ok) {
+    lockBank(gate.why);
+    await new Promise(() => {});   // 여기서 멈춘다 — 문제은행 화면을 그리지 않는다
+  }
+  bankBooks = gate.books ? new Set(gate.books) : null;
+  if (bankBooks) {
+    document.body.classList.add("bank-limited");
+    // 학부모 화면에서는 「유형별」(모든 권이 섞임)·「시험 결과 진단」(모의고사용)을 감춘다
+    document.head.insertAdjacentHTML("beforeend", "<style>body.bank-limited #builderTabs [data-mode=\"type\"],body.bank-limited #resultDiagnosisLink{display:none!important}</style>");
+  }
+}
+// 이 화면에 보이는 권 — 1과정 10권 + 2과정 10권(G1 → A1 → G2 … 차례, 원장 2026-11-27 「왜 2과정은 문제은행이 없어?」). 학부모는 열린 권만.
+const C2_ORDER = ["g1", "a1", "g2", "a2", "g3", "a3", "g4", "a4", "g5", "a5"];
+const COURSE2_BANK = [...COURSE2_CURRICULUM].sort((a, b) => C2_ORDER.indexOf(a.id.slice(10)) - C2_ORDER.indexOf(b.id.slice(10)));
+const ALL_BANK_BOOKS = [...CURRICULUM, ...COURSE2_BANK];
+const SHOWN_BOOKS = bankBooks ? ALL_BANK_BOOKS.filter((book) => bankBooks.has(book.id)) : ALL_BANK_BOOKS;
+const courseOfBook = (book) => (String(book?.id).startsWith("course-02") ? 2 : 1);
 const student = params.get("student") || "DEMO";
 // 권별테스트를 「유사형」(같은 구조, 새 숫자)으로 만들 때. 기본은 늘 같은 문제가 나오는 원본형.
 const freshUnitTest = params.get("fresh") === "1";
@@ -139,7 +164,7 @@ const state = {
   academyStyles: new Set(ACADEMY_STYLES.map((item) => item.id)),
   count: 20,
   difficulty: "actual",
-  curriculumBookId: CURRICULUM[0]?.id || "book-01",
+  curriculumBookId: SHOWN_BOOKS[0]?.id || "book-01",
   curriculumStage: "type",
   // 교재 단원별 목록: "units"(교재 4단원) | "unit-test"(권별평가 25문항) — 심화 옆 「권별평가」 칸
   curriculumView: "units",
@@ -505,6 +530,7 @@ function initTypePreviews() {
 
 function setMode(mode) {
   if (mode === "exam") mode = "curriculum";   // 시험지별(모의고사) 숨김 — 원장 2026-10-28
+  if (bankBooks && mode === "type") mode = "curriculum";   // 학부모(권별)는 교재 단원별만 — 유형별은 모든 권의 유형이 섞인다
   state.mode = mode;
   document.querySelectorAll("#builderTabs button").forEach((button) => button.classList.toggle("active", button.dataset.mode === mode));
   $("examBuilder").hidden = mode !== "exam";
@@ -699,18 +725,26 @@ function curriculumSearchModel(book) {
 }
 
 function renderCurriculum() {
-  const activeBook = CURRICULUM.find((book) => book.id === state.curriculumBookId) || CURRICULUM[0];
+  const activeBook = SHOWN_BOOKS.find((book) => book.id === state.curriculumBookId) || SHOWN_BOOKS[0];
   const hasQuery = activeSearchTerms().length > 0;
-  if ($("goldenBellLink")) $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
-  const bookTabs = `<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${CURRICULUM.map((book) =>
-    `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label}</button>`
+  const activeCourse = courseOfBook(activeBook);
+  if ($("goldenBellLink")) {
+    $("goldenBellLink").href = `./golden-bell.html?student=${encodeURIComponent(student)}&book=${activeBook.id}`;
+    $("goldenBellLink").hidden = activeCourse === 2;   // 2과정에는 워밍업 원본이 없다
+  }
+  const courses = [...new Set(SHOWN_BOOKS.map(courseOfBook))];
+  const courseTabs = courses.length > 1 ? `<nav class="curriculum-book-tabs curriculum-course-tabs" aria-label="과정 선택">${courses.map((course) =>
+    `<button type="button" data-curriculum-course="${course}" class="${course === activeCourse ? "active" : ""}"><strong>${course}과정</strong></button>`
+  ).join("")}</nav>` : "";
+  const bookTabs = `${courseTabs}<nav class="curriculum-book-tabs" aria-label="교재 권 선택">${SHOWN_BOOKS.filter((book) => courseOfBook(book) === activeCourse).map((book) =>
+    `<button type="button" data-curriculum-book="${book.id}" class="${book.id === activeBook.id ? "active" : ""}">${book.label.replace(/^2과정 /u, "")}</button>`
   ).join("")}</nav>`;
   const unitTestView = state.curriculumView === "unit-test";
   const unitTestCount = activeBook.source.unitTestQuestions?.length || 0;
   const stageTabs = `<div class="curriculum-inline-stages" aria-label="교재 학습 단계 선택">${TEXTBOOK_STAGES.map((stage) =>
     `<button type="button" data-curriculum-stage="${stage.id}" class="${!unitTestView && stage.id === state.curriculumStage ? `active ${stage.id}` : stage.id}"><strong>${stage.label}</strong><span>${stage.sourceLabel}</span></button>`
   ).join("")}${unitTestCount ? `<button type="button" data-curriculum-view="unit-test" class="unit-test ${unitTestView ? "active" : ""}"><strong>권별평가</strong><span>단원 테스트 ${unitTestCount}문항</span></button>` : ""}</div>`;
-  const bookModels = (hasQuery ? CURRICULUM : [activeBook])
+  const bookModels = (hasQuery ? SHOWN_BOOKS : [activeBook])
     .map(curriculumSearchModel)
     .filter((model) => !hasQuery || model.matchCount > 0);
   const resultCount = bookModels.reduce((sum, model) => sum + model.matchCount, 0);
@@ -774,6 +808,13 @@ function renderCurriculum() {
   $("curriculumTree").innerHTML = `${bookTabs}${stageTabs}${activeBookMarkup}${emptyResult}`;
   installTouchPreviewButtons($("curriculumTree"));
 
+  $("curriculumTree").querySelectorAll("button[data-curriculum-course]").forEach((button) => button.addEventListener("click", () => {
+    const first = SHOWN_BOOKS.find((book) => courseOfBook(book) === Number(button.dataset.curriculumCourse));
+    if (!first || first.id === state.curriculumBookId) return;
+    state.curriculumBookId = first.id;
+    renderCurriculum();
+    updateSummary();
+  }));
   $("curriculumTree").querySelectorAll("button[data-curriculum-book]").forEach((button) => button.addEventListener("click", () => {
     state.curriculumBookId = button.dataset.curriculumBook;
     hideTypePreview();
@@ -3999,7 +4040,7 @@ setMode(params.get("mode") === "type" ? "type" : "curriculum");
 (function preselectCurriculum() {
   if (params.get("mode") !== "curriculum") return;
   const book = bookById(params.get("book"));
-  if (!book) return;
+  if (!book || (bankBooks && !bankBooks.has(book.id))) return;
   state.curriculumBookId = book.id;
   const stageId = params.get("stage");
   if (TEXTBOOK_STAGES.some((stage) => stage.id === stageId)) setCurriculumStage(stageId);

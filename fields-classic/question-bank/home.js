@@ -2,7 +2,7 @@
 import { createTimeline, stagger, splitText } from "./vendor/animejs-4.5.0/anime.esm.min.js";
 import { setIcon } from "./ui-icons.js?v=20261105b";
 import { loggedIn, loadLocalAll } from "./study-progress.js?v=20261117a";
-import { canTeach } from "./fields-access.js?v=20261118a";
+import { canTeach, BANK_PERMISSION } from "./fields-access.js?v=20261127a";
 
 // 인트로(원장 2026-11-04 「인트로에 필요 없어?」 — 영상 1 「로고·인트로는 Anime.js」, 스킬 web-ui-library-picks):
 // 로고 동그라미가 굴러 들어오고 → WELCOME TO → 뒤의 큰 글자 GIFTED MATH BANK가 한 글자씩 아래에서 올라온다. 카드 셋은 원래 CSS 등장(hm-in) 그대로.
@@ -32,6 +32,8 @@ if (me) {
   const login = document.getElementById("homeLogin");
   login.textContent = me.type === "admin" ? "Admin" : `${me.name} 로그인됨`;
   document.getElementById("homeClass").hidden = !canTeach();
+  // 문제은행(시험지 짜기·인쇄): 관리자 · 「문제은행」 권한을 받은 승인번호(원장 2026-11-27, 그 아이에게 열린 권만 보인다)
+  document.getElementById("homeBank").hidden = !(me.type === "admin" || (me.permissions || []).includes(BANK_PERMISSION));
   login.href = me.type === "admin" ? "./teacher.html" : "./login.html";
   document.getElementById("homeSignup").hidden = true;
 }

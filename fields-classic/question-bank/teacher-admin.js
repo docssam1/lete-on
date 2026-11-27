@@ -44,6 +44,7 @@ const PRODUCTS = [
   // 「모든 회차 열기」·온라인 추가에 넣지 않고 한 명씩 켠다. 화면에서는 따로 「입학 모의고사」 칸에 둔다.
   ...ENTRANCE_PRODUCTS.map((p) => ({ id: p.id, name: p.name.replace(/^초[12] 입학 · /u, ""), manualOnly: true, entrance: p.group })),
   { id: "강사용교안", name: "강사용 교안", manualOnly: true, other: true },
+  { id: "문제은행", name: "문제은행 (권별)", manualOnly: true, other: true },   // 원장 2026-11-27 — 학부모가 GM으로 열린 권의 문제로 시험지를 짠다(index.html)
   { id: BANK_ID, name: "입학 문제은행(추가 서비스)", manualOnly: true, other: true },   // 원장 2026-11-16 「문제은행 서비스는 추가 유료서비스」
 ];
 const MOCK_IDS = PRODUCTS.filter((p) => !p.other && !p.entrance).map((p) => p.id);   // 필즈 대비 회차(입학 모의고사는 따로 센다)
@@ -153,6 +154,10 @@ function renderGmDetail() {
       <p class="ad-preview ${pv.cls}">저장하면: <b>${esc(pv.text)}</b></p>
       <div class="ad-actions"><button type="button" class="ms-btn primary" data-act="save-gm">저장</button><button type="button" class="ms-btn" data-act="reset-gm">되돌리기</button></div>
     </section>
+    <section class="ad-block"><h4>문제은행 <small>누르면 바로 저장</small></h4>
+      <div class="ad-products"><button type="button" data-bank-toggle aria-pressed="${a.permissions.includes("문제은행")}"${a.active ? "" : " disabled"}>문제은행 (권별)</button></div>
+      <p class="ad-help">켜면 학부모가 이 승인번호로 로그인해 문제은행에서 <b>위에서 열린 권</b>의 문제로 학습지·시험지를 만들고 인쇄할 수 있어요.</p>
+    </section>
     ${m ? `<section class="ad-block"><h4>이메일 가입 회원</h4>
       <p class="ad-kv"><span>가입</span><b>${md(m.createdAt)} · ${m.level === "kinder" ? `유치 ${m.age}세` : `초${m.grade}`}</b></p>
       <p class="ad-kv"><span>연락</span><b>${esc(m.email)} · 보호자 ${esc(phone(m.guardianPhone))}${m.childPhone ? ` · 아이 ${esc(phone(m.childPhone))}` : ""}</b></p>
@@ -238,6 +243,12 @@ function wireGm() {
     if (t.dataset.books && d) { d.books = new Set(t.dataset.books === "all" ? FIELDS_BOOKS : []); renderGmDetail(); return; }
     if (t.dataset.months && d) { const n = Number(t.dataset.months); d.endsOn = n ? addMonthsYmd(d.startsOn || today(), n) : ""; renderGmDetail(); return; }
     if (t.dataset.extra && d) { d.extraBooks = Math.min(10, Math.max(0, d.extraBooks + Number(t.dataset.extra))); renderGmDetail(); return; }
+    if (t.hasAttribute("data-bank-toggle") && a && !t.disabled) {
+      const set = new Set(a.permissions);
+      if (set.has("문제은행")) set.delete("문제은행"); else set.add("문제은행");
+      setAccount(a.name, { permissions: [...set] }, "gmMsg", `${a.name} · 문제은행 ${set.has("문제은행") ? "열었어요" : "닫았어요"}.`, renderGm);
+      return;
+    }
     const act = t.dataset.act, op = t.dataset.op;
     if (act === "save-gm") saveGm();
     else if (act === "reset-gm") { gmView.draft = null; renderGmDetail(); say("gmMsg", "저장된 값으로 되돌렸어요."); }
