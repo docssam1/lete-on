@@ -21,10 +21,10 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 812, `expected 812 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 882, `expected 882 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 829, `expected 829 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 899, `expected 899 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
-assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 80, `expected 80 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
+assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 79, `expected 79 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
@@ -198,37 +198,32 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "repeating-number-sequence": Object.freeze({
+  "repeating-sequence-three-parts-b2": Object.freeze({
     conceptId: "concept:pattern:shortest-number-repeat-unit",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "repeating-symbol-sequence": Object.freeze({
-    conceptId: "concept:pattern:multi-attribute-repeat-unit",
+  "stone-run-pattern-b2": Object.freeze({
+    conceptId: "concept:pattern:shortest-number-repeat-unit",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "matchstick-shared-polygon-growth": Object.freeze({
+  "matchstick-growth-table-b2": Object.freeze({
     conceptId: "concept:pattern:shared-edge-linear-growth",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "triangular-stone-growth": Object.freeze({
-    conceptId: "concept:pattern:triangular-two-color-count",
-    sourceBookId: "book-02",
-    placementBooks: Object.freeze(["book-02", "book-05"])
-  }),
-  "square-border-stone-growth": Object.freeze({
+  "stone-overtake-table-b2": Object.freeze({
     conceptId: "concept:pattern:square-border-interior-count",
     sourceBookId: "book-02",
-    placementBooks: Object.freeze(["book-02", "book-05"])
+    placementBooks: Object.freeze(["book-02"])
   }),
   "number-grid-row-rule": Object.freeze({
     conceptId: "concept:number:uniform-row-operation",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
   }),
-  "two-digit-compose-rule": Object.freeze({
+  "compose-two-figures-b2": Object.freeze({
     conceptId: "concept:number:compose-two-digit-operation",
     sourceBookId: "book-02",
     placementBooks: Object.freeze(["book-02"])
@@ -556,8 +551,8 @@ for (const typeId of curriculumTypeIds) {
   conceptFanout.set(concept.id, (conceptFanout.get(concept.id) || 0) + 1);
 }
 
-assert(sourceBackedCount === 80, `expected 80 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 732, `expected 732 principle-only types, got ${principleOnlyCount}`);
+assert(sourceBackedCount === 79, `expected 79 source-backed types, got ${sourceBackedCount}`);
+assert(principleOnlyCount === 750, `expected 750 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 

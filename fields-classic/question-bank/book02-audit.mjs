@@ -281,6 +281,173 @@ function validateStructureB2(id, problem, difficulty) {
     assert(a !== b, id, difficulty, "digit pair same digits");
     return;
   }
+  // ── 2026-11-27 3·4단원 남은 번호 ──
+  if (id === "repeating-sequence-three-parts-b2") {
+    for (const part of meta.parts) {
+      const p = Number(part.rule.split(":")[1]);
+      const f = part.full;
+      assert(f.every((v, i) => v === f[i % p]), id, difficulty, "repeat rule broken");
+      assert(new Set(f.slice(0, p)).size === p, id, difficulty, "repeat cycle has same digits");
+      assert(f.length - 1 >= 2 * p + 1, id, difficulty, "repeat shown too short");
+      assert(part.answers[0] === f[part.blanks[0]], id, difficulty, "repeat answer mismatch");
+    }
+    return;
+  }
+  if (id === "stone-run-pattern-b2") {
+    meta.parts.forEach((part, k) => {
+      const s = part.stones;
+      // 맞는 마디(2배 이상 보임)가 모두 같은 다음 돌을 가리켜야 한다
+      const next = new Set();
+      for (let p = 1; 2 * p + 1 <= s.length; p += 1) if (s.every((v, i) => i < p || v === s[i - p])) next.add(s[s.length - p]);
+      assert(next.size === 1, id, difficulty, "stone run next not unique");
+      assert(part.answer === ([...next][0] ? "검은 돌" : "흰 돌"), id, difficulty, "stone run answer mismatch");
+      assert(String(problem.answer).includes(`(${k + 1}) ${part.answer}`), id, difficulty, "stone run answer text");
+    });
+    return;
+  }
+  if (id === "matchstick-growth-table-b2") {
+    const rule = { square: [4, 3], house: [5, 4], triangle: [3, 2], hexagon: [6, 5] }[meta.shape];
+    const f = (n) => rule[0] + rule[1] * (n - 1);
+    assert(meta.values.every((v, i) => v === f(i + 1)), id, difficulty, "matchstick table mismatch");
+    assert((html.match(/<line /g) || []).length === f(1) + f(2) + f(3), id, difficulty, "matchstick drawn sticks mismatch");
+    assert(meta.reverse ? problem.answer === `${meta.target}개` : problem.answer.endsWith(`/ ${f(meta.target)}개`), id, difficulty, "matchstick answer mismatch");
+    return;
+  }
+  if (id === "stone-overtake-table-b2") {
+    const grid = (n) => {
+      const s = n + meta.offset;
+      let black = 0;
+      let white = 0;
+      if (meta.shape === "triangle") {
+        for (let r = 0; r < s; r += 1) for (let k = 0; k <= r; k += 1) (r === s - 1 || k === 0 || k === r) ? (black += 1) : (white += 1);
+      } else {
+        const cols = meta.shape === "rect" ? s + 1 : s;
+        for (let r = 0; r < s; r += 1) for (let c = 0; c < cols; c += 1) (r === 0 || c === 0 || r === s - 1 || c === cols - 1) ? (black += 1) : (white += 1);
+      }
+      return { black, white };
+    };
+    let first = 1;
+    while (grid(first).white <= grid(first).black) first += 1;
+    assert(first === meta.first, id, difficulty, "overtake stage mismatch");
+    assert(meta.blacks.every((v, i) => v === grid(i + 1).black) && meta.whites.every((v, i) => v === grid(i + 1).white), id, difficulty, "overtake table mismatch");
+    assert(problem.answer.endsWith(`(3) ${first}번째`), id, difficulty, "overtake answer mismatch");
+    return;
+  }
+  if (id === "fold-pieces-to-folds-b2") {
+    assert(meta.pieces === 2 ** meta.folds, id, difficulty, "fold pieces mismatch");
+    if (meta.limit != null) assert(2 ** (meta.folds - 1) <= meta.limit && meta.limit < meta.pieces, id, difficulty, "fold limit mismatch");
+    assert(problem.answer === `${meta.folds}번`, id, difficulty, "fold answer mismatch");
+    return;
+  }
+  if (id === "mixed-rule-sequence-table-b2") {
+    const d = (f) => f.slice(1).map((v, i) => v - f[i]);
+    const check = {
+      add: (f) => new Set(d(f)).size === 1 && d(f)[0] > 0,
+      sub: (f) => new Set(d(f)).size === 1 && d(f)[0] < 0,
+      repeat: (f) => [3, 4].some((p) => f.every((v, i) => v === f[i % p])),
+      "grow-diff": (f) => d(d(f)).every((x) => x === 1),
+      "grow-diff-step": (f) => new Set(d(d(f))).size === 1 && d(d(f))[0] > 1,
+      fib: (f) => f.every((v, i) => i < 2 || v === f[i - 1] + f[i - 2]),
+      "two-strands": (f) => [0, 1].every((k) => new Set(d(f.filter((_, i) => i % 2 === k))).size === 1),
+      runs: (f) => { const want = []; for (let n = 1; want.length < f.length; n += 1) for (let k = 1; k <= n && want.length < f.length; k += 1) want.push(k); return want.join() === f.join(); }
+    };
+    meta.rows.forEach((r, i) => {
+      assert(check[r.id](r.full), id, difficulty, `sequence row rule broken ${r.id}`);
+      assert(String(problem.answer).includes(`${"①②③④⑤⑥⑦⑧"[i]} ${r.full[r.blank]}`), id, difficulty, "sequence table answer mismatch");
+    });
+    return;
+  }
+  if (id === "letter-shape-stone-growth-b2") {
+    const per = { "t-up": 3, cross: 4, ell: 2 }[meta.kind];
+    const f = (n) => 1 + per * (n - 1);
+    assert((html.match(/<circle /g) || []).length === f(1) + f(2) + f(3) + f(4), id, difficulty, "letter stones drawn mismatch");
+    assert(meta.reverse ? problem.answer === `${meta.target}번째` && problem.prompt.includes(`${f(meta.target)}개`) : problem.answer === `${f(meta.target)}개`, id, difficulty, "letter answer mismatch");
+    return;
+  }
+  // 보기 셋 + 마지막 하나의 약속 문제: 내가 따로 적은 후보 규칙 중 보기 셋에 맞는 것이 하나뿐이고, 빈칸이 그 규칙으로 하나만 나온다
+  const ruleCheck = (cands, items, outKey, answer, blankKey = outKey) => {
+    const shown = items.slice(0, 3);
+    const fits = Object.entries(cands).filter(([, f]) => shown.every((x) => f(x) === x[outKey]));
+    assert(fits.length === 1, id, difficulty, "rule not unique among examples");
+    const f = fits[0][1];
+    const last = items[3];
+    assert(f(last) === last[outKey], id, difficulty, "last item breaks rule");
+    const values = [];
+    for (let x = 0; x <= 99; x += 1) { const w = { ...last, [blankKey]: x }; if (blankKey === outKey ? f(last) === x : f(w) === w[outKey]) values.push(x); }
+    assert(values.length === 1 && values[0] === answer, id, difficulty, "blank not unique or wrong");
+  };
+  if (id === "triangle-center-rule-b2") {
+    const c = { sum: (v) => v.top + v.left + v.right };
+    for (const k of ["top", "left", "right"]) {
+      const [a, b] = ["top", "left", "right"].filter((x) => x !== k);
+      c[`m${k}`] = (v) => v[a] + v[b] - v[k];
+      c[`r${k}`] = (v) => v[k] - v[a] - v[b];
+    }
+    ruleCheck(c, meta.items, "out", Number(problem.answer), meta.blank);
+    return;
+  }
+  if (id === "pair-stack-rule-b2") {
+    const rules = { sum: ([a, b, c, d]) => a + b === c + d, diff: ([a, b, c, d]) => a - b === c - d, prod: ([a, b, c, d]) => a * b === c * d };
+    const shown = meta.items.slice(0, 3);
+    const fits = Object.values(rules).filter((f) => shown.every(f));
+    assert(fits.length === 1, id, difficulty, "stack rule not unique");
+    const [a, b, c] = meta.items[3];
+    const values = [];
+    for (let x = 0; x <= 99; x += 1) if (fits[0]([a, b, c, x])) values.push(x);
+    assert(values.length === 1 && values[0] === Number(problem.answer), id, difficulty, "stack blank mismatch");
+    return;
+  }
+  const triCands = { abc: (v) => 10 * v.a + v.b - v.c, abp: (v) => 10 * v.a + v.b + v.c, bac: (v) => 10 * v.b + v.a - v.c, sum: (v) => v.a + v.b + v.c };
+  const sqCands = { cols: (v) => 10 * v.tl + v.bl + 10 * v.tr + v.br, rows: (v) => 10 * v.tl + v.tr + 10 * v.bl + v.br, rev: (v) => 10 * v.bl + v.tl + 10 * v.br + v.tr };
+  const cornerCands = { sum: (v) => v.tl + v.tr + v.bl + v.br, dbl: (v) => 2 * (v.tl + v.tr + v.bl + v.br), row: (v) => (v.tl + v.tr) * (v.bl + v.br), col: (v) => (v.tl + v.bl) * (v.tr + v.br), diag: (v) => v.tl * v.br + v.tr * v.bl };
+  if (id === "triangle-circle-compose-b2") { ruleCheck(triCands, meta.items, "out", Number(problem.answer)); return; }
+  if (id === "compose-two-figures-b2") {
+    ruleCheck(triCands, meta.parts[0].items, "out", meta.parts[0].answer);
+    ruleCheck(sqCands, meta.parts[1].items, "out", meta.parts[1].answer);
+    assert(problem.answer === `(1) ${meta.parts[0].answer}, (2) ${meta.parts[1].answer}`, id, difficulty, "compose answer text");
+    return;
+  }
+  if (id === "corner-digit-compose-b2") {
+    const ok = (s, x) => (s <= 9 ? x : null);
+    ruleCheck({ a: (v) => ok(v.t + v.l, 10 * (v.t + v.l) + v.r), b: (v) => ok(v.t + v.r, 10 * (v.t + v.r) + v.l), c: (v) => ok(v.l + v.r, 10 * (v.l + v.r) + v.t), d: (v) => ok(v.l + v.r, 10 * v.t + v.l + v.r) }, meta.items, "out", Number(problem.answer));
+    return;
+  }
+  if (id === "row-two-digit-relation-b2") {
+    const rules = [(r) => r[0] + r[3] === 10 * r[1] + r[2], (r) => r[0] + r[3] === 10 * r[2] + r[1], (r) => r[0] - r[3] === 10 * r[1] + r[2], (r) => r[3] - r[0] === 10 * r[1] + r[2]];
+    const fits = rules.filter((f) => meta.rows.slice(0, 3).every(f));
+    assert(fits.length === 1 && fits[0](meta.rows[3]), id, difficulty, "row rule not unique");
+    const [, col] = meta.blank;
+    const values = [];
+    for (let x = 0; x <= 99; x += 1) { const w = [...meta.rows[3]]; w[col] = x; if (fits[0](w)) values.push(x); }
+    assert(values.length === 1 && values[0] === Number(problem.answer), id, difficulty, "row blank mismatch");
+    return;
+  }
+  if (id === "overlap-circle-flower-b2") {
+    const f = meta.op === "diff" ? (a, b) => Math.abs(a - b) : (a, b) => a + b;
+    const g = meta.op === "diff" ? (a, b) => a + b : (a, b) => Math.abs(a - b);
+    assert(meta.lens.every((v, i) => v === f(meta.values[i], meta.values[(i + 1) % 5])), id, difficulty, "flower lens mismatch");
+    const shown = [0, 1, 2, 3, 4].filter((i) => !meta.blanks.includes(i));
+    assert(!shown.every((i) => meta.lens[i] === g(meta.values[i], meta.values[(i + 1) % 5])), id, difficulty, "flower rule ambiguous");
+    assert(problem.answer === meta.blanks.map((i, k) => `${"㉠㉡㉢"[k]} ${meta.lens[i]}`).join(", "), id, difficulty, "flower answer mismatch");
+    return;
+  }
+  if (id === "sector-circle-corner-sum-b2") {
+    const [sec, cor] = meta.parts;
+    const f = sec.rule === "a-b" ? (a, b) => a - b : (a, b) => a + b;
+    assert(sec.rows.every(([a, b, c]) => f(a, b) === c), id, difficulty, "sector rule mismatch");
+    const want = [sec.rows[2][2], sec.blankKeys[1] === "a" ? sec.rows[3][0] : sec.rows[3][2]];
+    assert(want.join() === sec.answers.join(), id, difficulty, "sector answer mismatch");
+    ruleCheck({ sum: cornerCands.sum, dbl: cornerCands.dbl }, cor.items, "out", cor.answer);
+    return;
+  }
+  if (id === "square-corner-product-b2") { ruleCheck(cornerCands, meta.items, "out", Number(problem.answer)); return; }
+  if (id === "diamond-center-signed-b2") {
+    const keys = ["top", "right", "bottom", "left"];
+    const c = { half: (v) => { const t = keys.reduce((s, k) => s + v[k], 0); return t % 2 ? null : t / 2; } };
+    keys.forEach((k) => { c[k] = (v) => keys.filter((x) => x !== k).reduce((s, x) => s + v[x], 0) - v[k]; });
+    ruleCheck(c, meta.items, "out", Number(problem.answer));
+    return;
+  }
   fail(id, difficulty, "validator missing");
 }
 
@@ -474,7 +641,7 @@ function validate(type, problem, difficulty) {
 }
 
 assert(book, "book-02", 0, "curriculum book missing");
-assert(typeIds.length === 72, "book-02", 0, `expected 72 types, got ${typeIds.length}`);
+assert(typeIds.length === 89, "book-02", 0, `expected 89 types, got ${typeIds.length}`);
 assert(new Set(typeIds).size === typeIds.length, "book-02", 0, "duplicate type id");
 assert(types.every(Boolean), "book-02", 0, "unknown type id");
 const remappedIds = new Set(TEXTBOOK_REMAPS.filter((row) => row[0] === "book-02").map((row) => row[5]));

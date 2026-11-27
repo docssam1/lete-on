@@ -799,7 +799,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "그림 모양이 다른데 같은 값을 주거나 아직 모르는 도형을 먼저 계산하지 않았는지 확인합니다.",
     [book2Evidence("양팔저울", 2, [1, 2, 3, 4])]
   ),
-  "repeating-number-sequence": sourceLesson(
+  "repeating-sequence-three-parts-b2": sourceLesson(
     "concept:pattern:shortest-number-repeat-unit",
     [
       beat("find-cycle-restart", "처음 수가 다시 나오는 곳을 찾아요", "수열의 처음 수가 같은 순서로 다시 나타나는 위치를 표시합니다."),
@@ -809,17 +809,17 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "우연히 같은 수 하나만 보고 반복마디를 정하거나 묶음의 시작 위치를 바꾸지 않았는지 확인합니다.",
     [book2Evidence("규칙찾기와 수열", 1, [1])]
   ),
-  "repeating-symbol-sequence": sourceLesson(
-    "concept:pattern:multi-attribute-repeat-unit",
+  "stone-run-pattern-b2": sourceLesson(
+    "concept:pattern:shortest-number-repeat-unit",
     [
-      beat("separate-pattern-features", "모양·색·개수를 따로 봐요", "그림마다 모양, 색, 개수가 어떤 순서로 변하는지 각각 한 줄로 적습니다."),
-      beat("align-feature-cycles", "두 반복마디를 함께 맞춰요", "각 반복마디가 처음 상태로 함께 돌아오는 위치를 찾아 하나의 큰 마디로 묶습니다."),
-      beat("compose-next-symbol", "다음 그림을 합쳐 만들어요", "다음 위치의 모양과 색 또는 개수를 각각 찾은 뒤 한 그림으로 합칩니다.")
+      beat("group-same-color-runs", "같은 색끼리 묶어요", "검은 돌과 흰 돌이 몇 개씩 이어지는지 묶음으로 적습니다."),
+      beat("find-run-cycle", "되풀이되는 마디를 찾아요", "묶음의 차례가 처음과 똑같이 다시 시작되는 곳까지를 한 마디로 정합니다."),
+      beat("continue-run-cycle", "다음 자리를 마디에서 읽어요", "마지막 돌이 마디의 몇 번째인지 보고 그 다음 돌의 색을 정합니다.")
     ],
-    "모양 규칙만 맞고 색이나 개수 규칙은 틀린 그림을 고르지 않았는지 확인합니다.",
+    "돌 한두 개만 보고 마디를 짧게 정하거나 묶음의 개수를 잘못 세지 않았는지 확인합니다.",
     [book2Evidence("규칙찾기와 수열", 1, [2])]
   ),
-  "matchstick-shared-polygon-growth": sourceLesson(
+  "matchstick-growth-table-b2": sourceLesson(
     "concept:pattern:shared-edge-linear-growth",
     [
       beat("count-first-polygon", "첫 모양의 성냥개비를 세어요", "다각형 하나를 만드는 데 필요한 성냥개비 수를 빠짐없이 셉니다."),
@@ -829,25 +829,15 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "다각형마다 모든 변을 다시 세어 맞닿은 변을 두 번 세지 않았는지 확인합니다.",
     [book2Evidence("규칙찾기와 수열", 2, [1, 2])]
   ),
-  "triangular-stone-growth": sourceLesson(
-    "concept:pattern:triangular-two-color-count",
-    [
-      beat("read-triangle-rows", "삼각형의 줄 수를 확인해요", "해당 단계에서 위부터 각 줄에 놓인 바둑돌 수를 차례로 적습니다."),
-      beat("count-triangle-colors", "두 색을 따로 세어요", "줄마다 검은 돌과 흰 돌을 구분해 각각의 개수를 모두 더합니다."),
-      beat("compare-triangle-colors", "두 개수의 차를 구해요", "더 많은 색의 수에서 적은 색의 수를 빼고 두 색의 합이 전체와 같은지도 확인합니다.")
-    ],
-    "삼각형의 전체 수만 세고 색의 배치를 무시하거나 두 색의 차를 반대로 쓰지 않았는지 확인합니다.",
-    [book2Evidence("규칙찾기와 수열", 2, [3])]
-  ),
-  "square-border-stone-growth": sourceLesson(
+  "stone-overtake-table-b2": sourceLesson(
     "concept:pattern:square-border-interior-count",
     [
-      beat("find-square-side", "네모의 한 변 길이를 찾아요", "단계가 커질 때 한 변에 놓이는 바둑돌 수가 어떻게 늘어나는지 확인합니다."),
-      beat("count-border-interior", "테두리와 안쪽을 나눠 세어요", "모서리를 한 번씩만 세어 테두리 돌 수를 구하고 안쪽 정사각형의 돌을 따로 셉니다."),
-      beat("compare-square-colors", "두 색의 수를 비교해요", "테두리와 안쪽의 색별 개수를 비교하고 둘을 더해 전체 칸 수와 같은지 확인합니다.")
+      beat("count-border-stones", "테두리 돌을 세어요", "바깥 테두리에 놓인 검은 돌을 모서리를 한 번씩만 세어 단계마다 적습니다."),
+      beat("count-inside-stones", "안쪽 돌을 따로 세어요", "테두리 안에 놓인 흰 돌을 단계마다 세어 아래 줄에 적습니다."),
+      beat("compare-two-rows", "두 줄을 나란히 견줘요", "테두리는 같은 수만큼, 안쪽은 점점 더 많이 늘어나므로 흰 돌이 처음 더 많아지는 단계를 찾습니다.")
     ],
-    "테두리 네 변의 모서리를 두 번 세거나 안쪽 칸까지 테두리로 세지 않았는지 확인합니다.",
-    [book2Evidence("규칙찾기와 수열", 2, [4])]
+    "테두리 모서리를 두 번 세거나 안쪽 칸까지 테두리로 세지 않았는지 확인합니다.",
+    [book2Evidence("규칙찾기와 수열", 2, [3, 4])]
   ),
   "number-grid-row-rule": sourceLesson(
     "concept:number:uniform-row-operation",
@@ -857,9 +847,9 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("solve-hidden-row-cell", "빈 줄에도 같은 순서를 써요", "남은 한 계산 순서를 마지막 줄에 적용해 빈칸의 수를 구하고 전체 줄을 검산합니다.")
     ],
     "줄마다 다른 계산을 사용하거나 수의 순서를 바꿔 우연히 맞는 답을 고르지 않았는지 확인합니다.",
-    [book2Evidence("약속과 스도쿠", 1, [4, 5, 6])]
+    [book2Evidence("약속과 스도쿠", 1, [5, 6])]
   ),
-  "two-digit-compose-rule": sourceLesson(
+  "compose-two-figures-b2": sourceLesson(
     "concept:number:compose-two-digit-operation",
     [
       beat("compose-place-values", "숫자로 두 자리 수를 만들어요", "그림의 순서를 읽어 앞 숫자는 십의 자리, 뒤 숫자는 일의 자리에 놓습니다."),
@@ -867,7 +857,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("calculate-composed-numbers", "새 두 수를 계산해요", "마지막 그림의 두 자리 수를 정확히 적고 같은 계산을 한 뒤 자리별로 검산합니다.")
     ],
     "두 숫자를 더한 값을 두 자리 수로 잘못 읽거나 십의 자리와 일의 자리를 바꾸지 않았는지 확인합니다.",
-    [book2Evidence("약속과 스도쿠", 1, [2, 3])]
+    [book2Evidence("약속과 스도쿠", 1, [2])]
   ),
   "sudoku-fill-three-row-column-b2": sourceLesson(
     "concept:logic:latin-row-column-three",
