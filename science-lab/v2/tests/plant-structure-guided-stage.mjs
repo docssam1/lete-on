@@ -1,0 +1,6 @@
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{PLANT_STRUCTURE_GUIDED_VERSION}from'../plant-structure-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([6,11,12,15,16,22,27,28,31,32,38,43,44,47,48,54,59,60,63,64,70,75,76,79,80,86,91,92,95,96,102,107,108,111,112,118,123,124,127,128]);
+export function beforePlantStructureTask(q){if(q.contentVersion!==PLANT_STRUCTURE_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function plantStructureUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="c22-s61-u03-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,128);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,88);return kept;}
+
+export function plantStructureUnchangedQuickRows(html){const converted=new Set([6,11,22,27,28,38,47,59,60,63,70,75,79,86,92,95,107,111,123,124]);const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];assert.equal(rows.length,128);const kept=rows.filter(m=>!converted.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,108);return kept;}

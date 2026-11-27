@@ -1,0 +1,449 @@
+{
+  "date": "2026-11-02",
+  "base": "605dc9250e49e773a099241c11ad45d3ba11c829",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "c22-s32-u02",
+  "status": "local candidate; no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)",
+    "gfield-textbook-design (existing scoped layout and paper/green palette)"
+  ],
+  "curriculum": [
+    {
+      "code": "4과06-01",
+      "text": "지구가 대기로 둘러싸여 있음을 알고, 지구 표면을 구성하는 육지와 바다의 특징을 비교할 수 있다."
+    },
+    {
+      "code": "4과06-02",
+      "text": "바닷물의 특징을 육지의 물과 비교하고, 바닷가에서 볼 수 있는 다양한 지형을 조사할 수 있다."
+    },
+    {
+      "code": "4과06-03",
+      "text": "밀물과 썰물의 차이를 알고, 갯벌의 가치와 보전의 필요성을 설득·홍보할 수 있다."
+    }
+  ],
+  "curriculumSource": {
+    "title": "교육부 고시 제2022-33호 [별책9] 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "attachment": "https://www.moe.go.kr/boardCnts/fileDown.do?fileSeq=1512facbda6c234a1641ac7e9c156ca2&m=&s=moe",
+    "member": "[별책9] 과학과 교육과정.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "section": "나. 성취기준 > 초등학교3~4학년 > (6) 지구와 바다",
+    "checkedAt": "2026-10-17"
+  },
+  "changes": [
+    "학생33/교사34장·80분·12확인 수업과 Daily 연결",
+    "교재의 다섯 두 물 비교안을 그대로 사용하여 목적·양·접시 상태 판단",
+    "가열 결과 없는 계획에 관찰값을 만들지 않고 별도의 연습 관찰표와 구별",
+    "대기·육지/바다를 자료 범위와 정성적 넓이로 비교",
+    "해안 사진의 보이는 특징·밀물/썰물·미관찰 시각을 근거로 설명",
+    "조사한 갯벌의 가치·보전 행동으로 설득·홍보하고 질문으로 보완",
+    "기존 seawaterRows·실제 조사/홍보·보고서와 선택 기록34쪽 보존"
+  ],
+  "tests": {
+    "total": 379,
+    "passCount": 377,
+    "fail": 0,
+    "existingBrowserSkips": 2
+  },
+  "slides": {
+    "scope": "Actual withThink item augmentation and interaction modules supplied. Every other slide array is compared without normalization.",
+    "otherModesContentUnchanged": 18,
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 37,
+            "checks": 12
+          },
+          "teach": {
+            "slides": 38,
+            "checks": 12
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 30,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 30,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 31,
+            "checks": 12
+          },
+          "teach": {
+            "slides": 32,
+            "checks": 12
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 33,
+            "checks": 12,
+            "images": [
+              "../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+              "../assets/book/c22-s32-u02-photo-evap-kit.webp",
+              "../assets/book/c22-s32-u02-photo-tidal-flat.webp",
+              "../assets/activities/c22-s32-u02/coast-beach-reference.webp",
+              "../assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+              "../assets/activities/c22-s32-u02/coast-cave-reference.webp"
+            ]
+          },
+          "teach": {
+            "slides": 34,
+            "checks": 12,
+            "images": [
+              "../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+              "../assets/book/c22-s32-u02-photo-evap-kit.webp",
+              "../assets/book/c22-s32-u02-photo-tidal-flat.webp",
+              "../assets/activities/c22-s32-u02/coast-beach-reference.webp",
+              "../assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+              "../assets/activities/c22-s32-u02/coast-cave-reference.webp"
+            ]
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 29,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 29,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ]
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant/life/ecology/material/earth-sea comparison event handlers; actual withThink augmentation where configured and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u03",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "plantCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u04",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "lifeCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "ecologyCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "materialCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "earthSeaCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "records": {
+    "storageKey": "earthSeaCompareRows",
+    "originalStorageKey": "seawaterRows",
+    "supplement": 80,
+    "thinking": 12,
+    "similar": 0,
+    "originalRecordPages": 34,
+    "originalClassModes": {
+      "self": 29,
+      "teach": 29
+    },
+    "selectedCheckContractsUnchanged": true,
+    "protectedFiles": [
+      {
+        "file": "science-lab/data/book/c22-s32-u02.book.js",
+        "sha256": "be7057f55b69e03ff8655bc86e1c12680eb0feeb5aa114dd8e57a1ba1cf0b702"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u02.records-book.js",
+        "sha256": "5ada70f97bd39e8a705b007c9707d09456628decffc103129768b510d7324f50"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u02.workbook.js",
+        "sha256": "157c5c6b3b2ddc46f6d25e55e60d6a1bccaaa1dc4bf4c4ff87eaecfcd8627b7c"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u02.workbook-art.js",
+        "sha256": "38ebd1d5f504032eca04be6f5c2c2333257b084d90dc952b480c56cbde7ceb7e"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u02.js",
+        "sha256": "b39cb8e2ac07e60a816077fd5280cf73c0c74c1cafe16d3578dc87abdf0e7efe"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u02.similar.js",
+        "sha256": "02630892e4585e8f1c6e66eb08484b5ee94862a70c09ef4600181ec96bc36017"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u02.think.js",
+        "sha256": "0cdb022a713af7d503527e6a1e7b166810644c3421b4c80caf068c46e74444d8"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u02.lesson.js",
+        "sha256": "eefe4a9bd7beaf360030a52753032227ef054ad8a11538306e7f928f03dd3d4e"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u02.records.js",
+        "sha256": "b33c740a8f3077dfa78e62c30bbc6011f18df7b66dd0a03266b73b0e8bf59247"
+      },
+      {
+        "file": "science-lab/scenes/seawater-model.js",
+        "sha256": "0380fd8ff3fdcb6fa735687945a164271ed96daad480ccb5111c974ae035634f"
+      },
+      {
+        "file": "science-lab/scenes/evap-dishes.js",
+        "sha256": "5dc20b6eaaf9594f8fc4168f1315c51456a470bd86840519283c719bc728cc77"
+      },
+      {
+        "file": "science-lab/v2/lab-seawater.js",
+        "sha256": "81aaf84a9b2ca55a1a604f4de02ccf9c18335592510023639bbbad1683c8e50e"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+        "sha256": "36dad3314b64319ea75465c4293719eb131d943566eb462e8bac3281e02c3bd4"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u02-photo-evap-kit.webp",
+        "sha256": "7c52009cbb773516b0a071b54e582c158a6de1f4b39c984f252a8ec9f2c1bdf3"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u02-photo-tidal-flat.webp",
+        "sha256": "f0b3fe2d3fa00a8b3d85752154630d2b1b2af095e969665279782231b93e75d4"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+        "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+        "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+        "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27"
+      }
+    ]
+  },
+  "originalExamRequirement": {
+    "complete": false,
+    "pending": true,
+    "legacyDirectReuse": 0
+  },
+  "images": [
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+      "width": 1920,
+      "height": 1920,
+      "sha256": "36dad3314b64319ea75465c4293719eb131d943566eb462e8bac3281e02c3bd4",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u02-photo-evap-kit.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "7c52009cbb773516b0a071b54e582c158a6de1f4b39c984f252a8ec9f2c1bdf3",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u02-photo-tidal-flat.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "f0b3fe2d3fa00a8b3d85752154630d2b1b2af095e969665279782231b93e75d4",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+      "width": 1024,
+      "height": 768,
+      "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54",
+      "ocrPage": 4
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+      "width": 1024,
+      "height": 768,
+      "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e",
+      "ocrPage": 5
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+      "width": 1024,
+      "height": 768,
+      "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27",
+      "ocrPage": 6
+    }
+  ],
+  "appleVision": {
+    "actualImages": 6,
+    "words": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": 0,
+    "skipped": 0,
+    "humanReviewed": true
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase164",
+  "verificationScope": "Actual withThink augmentation and interaction modules supplied; other nine units/18 slide arrays exactly unchanged. Actual four route functions and comparison event handlers run in Node VM with rendering adapters captured; not browser/layout verification.",
+  "apis": 0,
+  "newImages": 0,
+  "newPdf": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "next": "3-2 소리·감염병 등 다른 학기 교재/수업 보완, v1/v2 역할과 교육과정/원문 요건 점검, 최신 main 통합 검토·실제 브라우저/A4 검수. 전체 목표 active."
+}

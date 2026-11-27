@@ -1,0 +1,55 @@
+import test from'node:test';import assert from'node:assert/strict';import fs from'node:fs';import vm from'node:vm';
+import{wireBookChoices}from'./book-choice.js';import{withThink}from'./think-merge.js';import{revisedTextbook,revisedTextbookUnits}from'./revised-textbook.js';import{renderChapter}from'./book.js';import{gradeDaily}from'./daily-grade.js';import{classify}from'./progress.js';
+const url=new URL('./v2.js',import.meta.url),code=fs.readFileSync(url,'utf8'),a=code.indexOf('const UNITS = ')+14,b=code.indexOf('\n// 문제은행만',a),loaders=new vm.Script('('+code.slice(a,b).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({withThink})),rs=code.indexOf('const RECORDS_BOOKS = ')+21,re=code.indexOf('\nconst BOOKS = ',rs),records=new vm.Script('('+code.slice(rs,re).trim().replace(/;$/,'')+')',{importModuleDynamically:s=>import(new URL(s,url).href)}).runInContext(vm.createContext({}));
+class Element{
+ constructor(tag,doc){this.tagName=tag.toUpperCase();this.ownerDocument=doc;this.children=[];this.parentElement=null;this.dataset={};this.attributes={};this.listeners=new Map();this.disabled=false;this.checked=false;this._text='';this.innerHTML='';}
+ get childNodes(){return this.children;}
+ get className(){return this._class||'';}set className(value){this._class=value;}
+ get classList(){return{add:v=>{this.className=[...new Set([...this.className.split(' ').filter(Boolean),v])].join(' ');},remove:v=>{this.className=this.className.split(' ').filter(x=>x!==v).join(' ');},toggle:(v,on)=>{const yes=on??!this.className.split(' ').includes(v);if(yes)this.classList.add(v);else this.classList.remove(v);}};}
+ get textContent(){return this._text+this.children.map(n=>n.textContent).join('');}set textContent(value){this._text=value;this.children=[];}
+ append(...nodes){for(const n of nodes){n.remove();n.parentElement=this;this.children.push(n);}}
+ after(n){n.remove();n.parentElement=this.parentElement;const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this)+1,0,n);}
+ remove(){if(this.parentElement){const siblings=this.parentElement.children;siblings.splice(siblings.indexOf(this),1);this.parentElement=null;}}
+ setAttribute(k,v){this.attributes[k]=String(v);}
+ addEventListener(k,fn){if(!this.listeners.has(k))this.listeners.set(k,new Set());this.listeners.get(k).add(fn);}
+ removeEventListener(k,fn){this.listeners.get(k)?.delete(fn);}
+ emit(k){for(const fn of this.listeners.get(k)||[])fn({stopPropagation(){}});}
+ click(){if(!this.disabled)this.emit('click');}
+ matches(s){return s==='.bk-choices[data-key]'?this.className.split(' ').includes('bk-choices')&&this.dataset.key!=null:s.startsWith('.')?this.className.split(' ').includes(s.slice(1)):this.tagName===s.toUpperCase();}
+ querySelectorAll(s){return this.children.flatMap(n=>[...(n.matches(s)?[n]:[]),...n.querySelectorAll(s)]);}
+ querySelector(s){return this.querySelectorAll(s)[0]||null;}
+}
+function fixture(q){const doc={createElement:tag=>new Element(tag,doc)},root=doc.createElement('main'),ol=doc.createElement('ol');ol.className='bk-choices';ol.dataset={id:q.id,key:(q.answerContract.answers||[q.answerContract.answer]).join(',')};root.append(ol);q.choices.forEach((text,j)=>{const li=doc.createElement('li');li.dataset.j=String(j);const number=doc.createElement('span');number.textContent=String(j+1)+'. ';const span=doc.createElement('span');span.textContent=text;li.append(number,span);ol.append(li);});return{root,ol,select(j,on=true){const input=ol.children[j].querySelector('input');input.checked=on;input.emit('change');},check(){root.querySelector('.bk-choice-check').click();}};}
+let rendered;
+const currentChoices=()=>rendered||=(async()=>{const rows=[];for(const unit of revisedTextbookUnits){if(!records[unit])continue;const mod=await loaders[unit](),pool=[...mod.similar,...mod.items],book=await records[unit](),html=renderChapter(book.chapter,book.art,pool,{teacher:false,live:true});for(const m of html.matchAll(/<ol\b[^>]*class="[^"]*\bbk-choices\b[^"]*"[^>]*>/g)){const id=/data-id="([^"]+)"/.exec(m[0])[1],q=pool.find(q=>q.id===id);assert(q);rows.push({unit,q,misc:mod.misc});}}return rows;})();
+
+test('all 20 actual web-book multi-choice questions require explicit confirmation and grade every subset against their existing contracts',async()=>{
+ const rows=(await currentChoices()).filter(r=>r.q.answerContract.type==='multi-choice');assert.equal(rows.length,20);let cases=0;
+ for(const{q,misc}of rows){const original=structuredClone(q);for(let mask=0;mask<1<<q.choices.length;mask++){
+  const f=fixture(q),events=[],release=wireBookChoices(f.root,{misc,onAnswer:(kind,p)=>events.push({kind,...p})}),selected=q.choices.flatMap((_,j)=>mask&(1<<j)?[j]:[]);for(const j of selected)f.select(j);assert.equal(events.length,0);assert(!f.ol.dataset.done);assert.equal(f.root.querySelector('.bk-choice-check').disabled,!selected.length);for(const li of f.ol.children){const checkbox=li.querySelector('input');assert.equal(checkbox.type,'checkbox');assert.equal(checkbox.parentElement.tagName,'LABEL');assert.equal(li.className.includes('ok'),false);}
+  f.check();cases++;if(!selected.length){assert.equal(events.length,0);release();continue;}assert.equal(events.length,1);const r=gradeDaily(q,selected,{misc}),event=events[0];assert.equal(event.kind,'item');assert.equal(event.ok,r.status==='correct');assert.deepEqual(event.selected,selected);if(!event.ok)assert.deepEqual(event.picked,r.detail.picked);assert.deepEqual(classify(q,misc,event.ok,{picked:event.picked}),classify(q,misc,event.ok,r.detail));assert.equal(f.ol.dataset.done,'1');assert(f.root.querySelectorAll('input').every(n=>n.disabled));assert(f.root.querySelector('.bk-choice-check').disabled);f.check();assert.equal(events.length,1);release();
+ }assert.deepEqual(q,original);}assert.equal(cases,640);
+});
+
+test('all 132 actual single-choice questions keep one-click grading and the same diagnosis while exposing native keyboard controls',async()=>{
+ const rows=(await currentChoices()).filter(r=>r.q.answerContract.type==='single-choice');assert.equal(rows.length,132);let cases=0;
+ for(const{q,misc}of rows)for(let j=0;j<q.choices.length;j++){const f=fixture(q),events=[],release=wireBookChoices(f.root,{misc,onAnswer:(_kind,p)=>events.push(p)}),button=f.ol.children[j].querySelector('button');assert.equal(button.type,'button');assert.equal(button.textContent,String(j+1)+'. '+q.choices[j]);assert.equal(f.root.querySelector('.bk-choice-check'),null);button.click();cases++;assert.equal(events.length,1);assert.equal(events[0].ok,j===q.answerContract.answer);assert.equal(events[0].picked,j);assert.deepEqual(classify(q,misc,events[0].ok,{picked:j}),classify(q,misc,j===q.answerContract.answer,{picked:j}));button.click();assert.equal(events.length,1);release();}
+ assert.equal(cases,660);
+});
+
+test('selection can be undone, listeners are released, rebinding preserves an unfinished selection without duplicate controls, and invalid keys create no attempts',()=>{
+ const q={id:'example',choices:['A','B','C'],answerContract:{type:'multi-choice',answers:[0,2]}},f=fixture(q),events=[],first=wireBookChoices(f.root,{onAnswer:(_k,p)=>events.push(p)});f.select(0);f.select(0,false);assert(f.root.querySelector('.bk-choice-check').disabled);f.select(0);first();const second=wireBookChoices(f.root,{onAnswer:(_k,p)=>events.push(p)});first();assert.equal(f.root.querySelectorAll('.bk-choice-tools').length,1);assert.equal(f.root.querySelectorAll('input').length,3);assert.equal(f.ol.children[0].querySelector('input').checked,true);f.select(2);f.check();assert.equal(events.length,1);assert.equal(events[0].ok,true);second();wireBookChoices(f.root,{onAnswer:()=>assert.fail('completed answer re-recorded')});assert.equal(f.root.querySelectorAll('.bk-choice-tools').length,1);
+ for(const key of['','   ','9','x','0,0']){const f=fixture(q);f.ol.dataset.key=key;wireBookChoices(f.root,{onAnswer:()=>assert.fail('invalid answer key graded')});assert.equal(f.root.querySelectorAll('input').length,0);assert.equal(f.root.querySelectorAll('.bk-choice-check').length,0);}
+ const released=fixture(q),stop=wireBookChoices(released.root,{onAnswer:()=>assert.fail('released page recorded')});released.select(0);stop();released.select(2);released.check();
+ const live=fs.readFileSync(new URL('./live.js',import.meta.url),'utf8'),view=fs.readFileSync(new URL('./book-view.js',import.meta.url),'utf8'),index=fs.readFileSync(new URL('./index.html',import.meta.url),'utf8');assert(live.includes("wireBookChoices(root,{misc,onAnswer,questions})"));assert(live.includes('releaseChoices()'));assert(view.includes('live.js?v=20261115-book-multi-choice'));assert(code.includes('book-view.js?v=20261115-book-multi-choice'));assert(index.includes('book.css?v=9&choices=20261115-book-multi-choice'));assert(index.includes('&book-choice=20261115-book-multi-choice'));
+});
+
+test('the actual web-book answer callback records student attempts and keeps teacher previews out of the student log',()=>{
+ const start=code.indexOf('  const onAnswer = ',code.indexOf('async function pageLabBook(')),end=code.indexOf('  // 학생용 교재에만',start),source=code.slice(start,end),q={id:'example',taxonomy:{element:'E1'}},misc={misconceptions:{M01:{element:'E1'}},bookChips:{대기:[['대기','바람'],'M01']}};
+ for(const teacherEd of[false,true]){const calls=[],ctx=vm.createContext({teacherEd,u:'unit',du:u=>u,I:{example:q},MISC:misc,record:(...args)=>calls.push(args)}),answer=new vm.Script(source+';onAnswer').runInContext(ctx);answer('item',{id:'example',ok:false,picked:[0,2]});answer('blank',{chip:'대기',ok:false,revealed:false});answer('item',{id:'missing',ok:true,picked:0});assert.equal(calls.length,teacherEd?0:2);if(!teacherEd){assert.equal(calls[0][2],'book');assert.deepEqual(Array.from(calls[0][4].picked),[0,2]);assert.equal(calls[1][2],'book-concept');assert.equal(calls[1][4].chip,'대기');}}
+});
+
+test('actual book fitting keeps long interactive pages scrollable while preserving the other page layouts',()=>{
+ const source=fs.readFileSync(new URL('./book-view.js',import.meta.url),'utf8'),start=source.indexOf('  function fit() {'),end=source.indexOf('  // ── 쪽 보이기',start),fitCode=source.slice(start,end);
+ for(const choice of[false,true]){const flags=new Set(),space={clientWidth:850,clientHeight:700,style:{},classList:{toggle(k,on){if(on)flags.add(k);else flags.delete(k);},remove:k=>flags.delete(k)}},sizer={style:{}},scaleEl={style:{}},ctx=vm.createContext({alive:true,mode:'fit',views:[{pages:[0]}],vi:0,pages:[{scrollHeight:1800,classList:{contains:()=>choice}}],root:{querySelector:()=>({}),style:{setProperty(){}}},space,sizer,scaleEl,split:false,zoom:false,PH:1100,PW:800,GAP:20,guide:null});new vm.Script(fitCode+';fit();').runInContext(ctx);assert.equal(flags.has('bv-choice-scroll'),choice);assert(scaleEl.style.cssText.includes('height:'+(choice?1800:1100)+'px'));if(choice)assert(parseFloat(sizer.style.cssText.match(/height:([0-9.]+)px/)[1])>700);else assert(sizer.style.cssText.includes('height:700px'));}
+});

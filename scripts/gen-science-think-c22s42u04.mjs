@@ -181,7 +181,7 @@ const interact = {
     answers: [0, 2, 4], summary: '기후는 평년과 비교해요. 해수면이 높아지면 낮은 땅부터 잠기고, 줄이기와 대비를 함께 해야 해요.' },
 };
 
-buildThink({ U, P, T, STD, NAME, Q, MISC, JUDGE, LINES, chapter, plan, interact, grade: 4, semester: 2, area: '환경', course: '4-2', title: '기후변화와 우리 생활',
+buildThink({ U, P, T, STD, NAME, Q, MISC, JUDGE, LINES, chapter, plan, interact, grade: 4, semester: 2, area: '과학과 사회', course: '4-2', title: '기후변화와 우리 생활',
   art: {
     opener: ['sea-hero', '해안 마을 모형 — 바다 바로 옆 언덕 위의 집 A와 바다 가까운 낮은 모래땅의 집 B, 지금의 바다(물높이 1 cm)', 1800, 820],
     step1: ['sea-build', '투명한 통 속 점토 해안과 집 다섯 채(A 언덕 위·B 낮은 모래땅·C 강가·D 평지·E 먼 언덕)', 1280, 600],

@@ -1,0 +1,73 @@
+{
+  "phase": 382,
+  "date": "2026-11-08",
+  "candidateBaseline": "4627e1414901f1118b2e15ef920f5d78b5715166",
+  "reviewParent": "b83de791d787d8fdb439d590f490f0a9c346c433",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "scope": "산과 염기 오른쪽 더 알아보기의 상위 학습 내용을 유지하며11설명을 쉬운 말로 풀었다.",
+  "validation": {
+    "phase": 382,
+    "date": "2026-11-08",
+    "baseline": "4627e1414901f1118b2e15ef920f5d78b5715166",
+    "studentFurtherReadingNotesInventoried": 2476,
+    "lexicalCandidatesManuallyRead": 54,
+    "doesNotClaimCompleteMeaningAudit": true,
+    "reviewedUnit": "c22-s61-u01",
+    "studentTextChanges": 11,
+    "teacherStudentTextChanges": 11,
+    "priorExportsAndWholeWorkbookPreserved": true,
+    "allOtherFieldsUnchanged": true,
+    "questionsPreserved": 3080,
+    "unchangedUnitModels": 31,
+    "printModes": {
+      "unchanged": 126,
+      "changedFurtherReadingOnly": 2
+    },
+    "webModes": {
+      "unchanged": 62,
+      "changedFurtherReadingOnly": 2
+    },
+    "classroomDecks": {
+      "unchanged": 64,
+      "changedFurtherReadingOnly": 0,
+      "slides": 3048
+    },
+    "rawInputsUnchanged": true,
+    "exactRoleUnitWordingAndFutureBoundariesVerified": true,
+    "actualBrowserUsed": false,
+    "actualA4VisualInspection": false
+  },
+  "nativeTests": {
+    "relatedFiles": 6,
+    "relatedTestsPassed": 80,
+    "firstRelatedCommandMissingVmFlag": true,
+    "properVmFlagRerunPassed": true,
+    "fullSuite": {
+      "exitCode": 0,
+      "files": 270,
+      "tests": 1449,
+      "suites": 0,
+      "pass": 1447,
+      "fail": 0,
+      "cancelled": 0,
+      "skipped": 2,
+      "todo": 0
+    },
+    "browserEnvironmentUnset": true,
+    "syntaxFiles": 6
+  },
+  "preservation": {
+    "priorWholeWorkbookAndAllPriorExportsPreserved": true,
+    "questionsAndAnswersFiguresWritingSpaceUnchanged": true,
+    "allOtherWorkbookFieldsUnchanged": true,
+    "other31UnitModelsUnchanged": true,
+    "all64ClassroomDecksUnchanged": true,
+    "assetsScenesReportsAndStorageCodeUnchanged": true
+  },
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "merged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

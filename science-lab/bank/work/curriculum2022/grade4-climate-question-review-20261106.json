@@ -1,0 +1,673 @@
+{
+  "phase": 300,
+  "date": "2026-11-06",
+  "unit": "c22-s42-u04",
+  "scope": "Elementary readability revision; existing model, standards, grading and saved attempts preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 80,
+    "reviewedCurrentClassroomContexts": 12,
+    "changedWorkbookQuestions": 80,
+    "changedQuestionFields": 122,
+    "changedExplanations": 80,
+    "unchangedOtherAnswerLabels": 3073,
+    "currentAnswerChanges": [
+      {
+        "unit": "c22-s42-u04",
+        "no": 8,
+        "before": "오늘 하루 추웠다는 관찰은 그때의 날씨이다. 그것만으로 오랜 기간의 기후변화를 부정할 수 없고 같은 지역·요소의 여러 해 자료와 평년 비교를 더 살펴야 한다.",
+        "after": "오늘 추웠다는 것만으로 여러 해 동안의 기후변화를 알 수는 없다. 같은 지역의 여러 해 기온 자료를 더 살펴봐야 한다."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 19,
+        "before": "두 집 모두 땅의 높이(A 4.5 cm, E 6 cm)가 물높이 4 cm보다 높은 언덕 위에 있다.",
+        "after": "A의 땅 높이는 4.5 cm, E는 6 cm로 둘 다 물높이 4 cm보다 높다."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 27,
+        "before": "① 뒤의 10년일수록 폭염 일수가 많아졌다",
+        "after": "① 뒤의 10년일수록 평균 폭염 일수가 많아졌다"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 28,
+        "before": "세 기간 모두 같은 장소와 같은 관측·집계 기준인지 확인한다. 장소나 폭염을 세는 기준이 바뀌면 일수 차이의 뜻이 달라질 수 있으므로 다른 기간의 자료도 함께 살핀다.",
+        "after": "같은 장소에서 같은 방법으로 조사했는지 확인한다. 장소나 폭염이 나타난 날을 세는 방법이 달라지면 일수도 달라질 수 있기 때문이다."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 39,
+        "before": "⑤ 실제 바다의 파도와 밀물·썰물은 나타내지 못한다",
+        "after": "⑤ 실제 바다의 파도와 밀물·썰물"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 53,
+        "before": "2025년의 전국 한 해 평균은 2024년보다 0.8 ℃ 낮다. 하지만 두 해의 비교만으로 장기 변화가 끝났다고 판단할 수 없다. 같은 지역·요소의 여러 해 자료와 평년 비교를 더 살펴야 한다.",
+        "after": "2025년의 전국 한 해 평균은 2024년보다 0.8 ℃ 낮지만 두 해 모두 평년보다 높다. 두 해만으로 기후변화가 끝났다고 할 수는 없으며, 같은 지역의 여러 해 자료를 더 살펴봐야 한다."
+      },
+      {
+        "unit": "c22-s42-u04",
+        "no": 77,
+        "before": "확정할 수 없다. 기록에는 확인 횟수만 있고 학교 전력량은 없다. 같은 기간의 전력량과 교실 사용 시간·사람 수·날씨·필요한 냉방 등의 조건도 더 확인해야 한다.",
+        "after": "이 기록만으로는 알 수 없다. 전등을 확인한 횟수만 있고 학교에서 쓴 전기의 양은 없기 때문이다. 전기의 양과 교실을 쓴 시간, 사람 수, 날씨 등도 더 살펴봐야 한다."
+      }
+    ],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s42-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s42-u04-b01",
+      "c22-s42-u04-b27",
+      "c22-s42-u04-b32",
+      "c22-s42-u04-b60",
+      "c22-s42-u04-b68",
+      "c22-s42-u04-b75",
+      "c22-s42-u04-b90",
+      "c22-s42-u04-b94",
+      "c22-s42-u04-b105",
+      "c22-s42-u04-t08",
+      "c22-s42-u04-t09"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s42-u04-b01",
+      "c22-s42-u04-b27",
+      "c22-s42-u04-b32",
+      "c22-s42-u04-t08",
+      "c22-s42-u04-t09",
+      "c22-s42-u04-b60",
+      "c22-s42-u04-b68",
+      "c22-s42-u04-b75",
+      "c22-s42-u04-b90",
+      "c22-s42-u04-b94",
+      "c22-s42-u04-b105"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [
+      {
+        "mode": "pages",
+        "page": 1,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 2,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 5,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 9,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 11,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 13,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 14,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 19,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 31,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 32,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 34,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 40,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 43,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 44,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 1,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 2,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 5,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 9,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 11,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 13,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 14,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 19,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 31,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 32,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 34,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 40,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 43,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 44,
+        "fields": [
+          "blocks"
+        ]
+      }
+    ],
+    "all52UpperRailsAndFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 27,
+    "explanationHtmlOccurrencesVerified": 160,
+    "syntaxFiles": 7,
+    "browserVerified": false
+  },
+  "tests": {
+    "exitCode": 0,
+    "testFiles": 215,
+    "seconds": 5.8
+  },
+  "testCounts": {
+    "total": 1238,
+    "passed": 1236,
+    "failed": 0,
+    "skipped": 2
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase300/../curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "lines": [
+        702,
+        716
+      ],
+      "standards": [
+        "4과16-01",
+        "4과16-02",
+        "4과16-03"
+      ],
+      "scope": "사례와 생활 영향, 인간 활동과의 관련성, 대응 조사·실천. 과학적 원인/완화·적응 분류는 이 학년에서 지도하지 않음. 기후 정의에 중점을 두지 않음."
+    },
+    "temperature": {
+      "title": "기상청 2025년 연 기후특성",
+      "url": "https://www.weather.go.kr/kma/flexer/html/press/2026/01/06/ATC202601060911462_7e624c59-f194-4470-91d0-20747cc19e92.hwp.files/Sections1.html",
+      "published": "2026-01-06",
+      "read": "2026-11-06",
+      "readRanges": [
+        [
+          0,
+          20
+        ],
+        [
+          322,
+          335
+        ]
+      ],
+      "verified": {
+        "nationalAnnual2025": 13.7,
+        "nationalAnnual2024": 14.5,
+        "normal1991to2020": 12.5,
+        "yearDifference": -0.8,
+        "normalDifference2025": 1.2
+      },
+      "imagesDownloaded": 0
+    },
+    "noNewScientificCausesInGrade4Assessment": true
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1280,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 11,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideSixteenUnitPass": {
+      "units": 16,
+      "questions": 1800,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To300": 555
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase300",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

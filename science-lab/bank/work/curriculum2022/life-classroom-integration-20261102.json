@@ -1,0 +1,385 @@
+{
+  "date": "2026-11-02",
+  "base": "660054151e97025ee45f6ef1ff69275ea10d3875",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "s31-u04",
+  "status": "local integration candidate, no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)"
+  ],
+  "curriculum": [
+    "4과04-01",
+    "4과04-02",
+    "4과04-03"
+  ],
+  "changes": [
+    "학생27/교사28장·80분·11확인문항 수업과 Daily 연결",
+    "싹트기의 물/온도와 자람의 물/햇빛을 각각 두 계획으로 비교",
+    "여덟 조건·계획의 서로 다른 비교를 마쳐야 가상 자료 비교 완료 안내",
+    "0개·미관찰과 실제 관찰·가상 자료를 구별",
+    "기존22쪽 실제 관찰 교재·돌봄·보고서를 선택 경로로 보존",
+    "Daily에도 보충 문항의 검수본을 사용하여 수업11문항과 동일 객체 연결"
+  ],
+  "tests": {
+    "total": 346,
+    "passed": 344,
+    "failed": 0,
+    "skipped": 2,
+    "skipScope": "기존 브라우저 검사2개"
+  },
+  "slides": {
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ],
+    "otherModesUnchanged": 18,
+    "sourceLifeMatchesExceptReviewedSpacingAndGivenListLayout": 2
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant/life comparison event handlers and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u03",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "plantCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u04",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "lifeCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "semesterMilestone": {
+    "units": [
+      {
+        "unit": "s31-u01",
+        "title": "힘과 우리 생활",
+        "studentPages": 53,
+        "workbookQuestions": 80,
+        "classroomChecks": 11,
+        "slides": {
+          "self": 26,
+          "teach": 27
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "title": "동물의 생활",
+        "studentPages": 56,
+        "workbookQuestions": 80,
+        "classroomChecks": 11,
+        "slides": {
+          "self": 27,
+          "teach": 28
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "title": "식물의 생활",
+        "studentPages": 66,
+        "workbookQuestions": 80,
+        "classroomChecks": 11,
+        "slides": {
+          "self": 27,
+          "teach": 28
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "title": "생물의 한살이",
+        "studentPages": 58,
+        "workbookQuestions": 80,
+        "classroomChecks": 11,
+        "slides": {
+          "self": 27,
+          "teach": 28
+        }
+      }
+    ],
+    "studentPages": 233,
+    "workbookQuestions": 320,
+    "studentSlides": 107,
+    "teacherSlides": 111,
+    "scope": "3-1 네 단원의 로컬 교재·사고력 수업·Daily 연결. 전체 프로그램·브라우저 화면·배포 완료가 아님."
+  },
+  "componentChecks": [
+    "판단 전 가상 결과 감춤",
+    "처음 판단을 점수로 채점하지 않음",
+    "같은 자료 반복/위조 행은 비교 진도를 늘리지 않음",
+    "여덟 비교의 진도와 완료 정보 전달",
+    "교사 비접근·학생 lifeCompareRows 기록·원래 labRows/보고서 보존",
+    "유효 행만 복구·사본 분리·pause/resume/isActive/dispose·고유 이름표"
+  ],
+  "images": [
+    {
+      "file": "science-lab/assets/bank/s31-u04/s2-q18.webp",
+      "width": 370,
+      "height": 265,
+      "sha256": "f430513580c4611875c9946a3220561a7e78384ce710f677caebd57a333444fb",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/bank/s31-u04/s2-q13.webp",
+      "width": 400,
+      "height": 285,
+      "sha256": "042c4d39616480f92d18a358d6742bc1fcc733f579807b8981cf830eb2096f15",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/bank/s31-u04/s4-q4.webp",
+      "width": 413,
+      "height": 297,
+      "sha256": "a323429438891c99d6c99fe53b109012b40bef9288d5b932b8189df015327a85",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/bank/s31-u04/s2-q8.webp",
+      "width": 226,
+      "height": 202,
+      "sha256": "85ba34e550441c5d1f73486c4b2f349f61c588f3c37d0af8168720d7d5ab9dab",
+      "ocrPage": 4
+    }
+  ],
+  "appleVision": {
+    "actualImages": 4,
+    "failed": 0,
+    "skipped": 0,
+    "detectedWords": [
+      0,
+      0,
+      2,
+      0
+    ],
+    "review": "배추흰나비·애벌레/번데기·봉숭아 단계·사육 상자를 직접 확인. 원래 사진의 가/나/다/라/마 이름표는 확대 그림과 본문 순서로 대조했으며 OCR에는 일부만 검출됨. 수업 화면 전체 OCR가 아님."
+  },
+  "preserved": [
+    "원래41similar·64보충·lesson·book·실제 관찰/돌봄/보고서 원본 파일",
+    "11문항 ID·정답·채점 계약·출처·분류",
+    "힘·동물·식물을 포함한 다른9단원18개 수업 원고",
+    "전체 workbook·해설·원본 사진 바이트",
+    "실제 관찰 저장키 labRows와 보고서 상태"
+  ],
+  "browserScope": "실제 BOOKS/RECORDS_BOOKS 및 pageStart/pageLabClass/pageDaily/pageLabBook 함수를 Node VM에서 실행하고 비교 활동 이벤트를 실행함. 화면/인쇄 레이아웃은 브라우저에서 미검증.",
+  "apiCalls": 0,
+  "newImages": 0,
+  "newPdfs": 0,
+  "next": "생물과 환경의 실제 수업·선택 기록 연결, 최신 main 재대조·통합 검토. 전체 프로그램 목표 active.",
+  "files": [
+    {
+      "path": "science-lab/v2/deck.js",
+      "sha256": "6d7eb537a760a2145ee1efb39355315a66d901e7470a4b083e4cdedba864048b"
+    },
+    {
+      "path": "science-lab/v2/index.html",
+      "sha256": "8a56716390a9254fdad7814fce4d16cd2dcb926ac484a6f2e2e93b415f6fe191"
+    },
+    {
+      "path": "science-lab/v2/revised-force-lesson.test.mjs",
+      "sha256": "76f83ce696f7cdbb01af07fed21e88b89518a1a8faf157d949d27688775b4884"
+    },
+    {
+      "path": "science-lab/v2/revised-lesson.js",
+      "sha256": "7ec9d036fbc34ecf45e687f425022adddd0fef2e1708ab42d3d9dba4766aa4a4"
+    },
+    {
+      "path": "science-lab/v2/v2.js",
+      "sha256": "4f857f0b06ff55f75cf41cb2703e9cf035d739e7f2a00eb88cfd2e0331dcff55"
+    },
+    {
+      "path": "science-lab/data/book/s31-u04.thinking-lesson.js",
+      "sha256": "391652d905e323362cf63b0ae808f4c72c4bab31192c409e53f3827f65223e0d"
+    },
+    {
+      "path": "science-lab/v2/deck-life-thinking.js",
+      "sha256": "da762625689ba484915a24ca1443002637b9674093574ccab039b268d908f0f7"
+    },
+    {
+      "path": "science-lab/v2/lab-life-compare.css",
+      "sha256": "e960e69a0e77b1b97e968a8efd54df309df48065a43459c4017ff3b590159171"
+    },
+    {
+      "path": "science-lab/v2/lab-life-compare.js",
+      "sha256": "b0150a993e13da5d8543ce4d8393c73a1d362d98156cae9b62fb656b5ae696da"
+    },
+    {
+      "path": "science-lab/v2/lab-life-compare.test.mjs",
+      "sha256": "63ddae5f28a8ef582128042178b6da8c1bc5e91beae4d331011830cd9b61f1de"
+    },
+    {
+      "path": "science-lab/v2/life-compare-model.js",
+      "sha256": "0de6cce7dbe2f9d96361208a2e2047707080d9002acd96c8bd0727afdab0e8c8"
+    },
+    {
+      "path": "science-lab/v2/revised-life-lesson.test.mjs",
+      "sha256": "80702a6afdf057a6418153cf9ad56b597fba0cc60c00f5b4b817dbee25c04f97"
+    }
+  ]
+}

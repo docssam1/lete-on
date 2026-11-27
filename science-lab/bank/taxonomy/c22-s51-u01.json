@@ -64,10 +64,13 @@
    "element": "E1",
    "name": "지층의 층·경계·색과 두께",
    "desc": "관찰 근거로 지층의 층·경계·색과 두께을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 2,
+   "similarCount": 2,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-1",
+    "2-1"
+   ]
   },
   {
    "id": "T02",
@@ -94,20 +97,28 @@
    "element": "E2",
    "name": "지층 형성 모형과 한계",
    "desc": "관찰 근거로 지층 형성 모형과 한계을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 1,
+   "similarCount": 1,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-2"
+   ]
   },
   {
    "id": "T05",
    "element": "E3",
    "name": "퇴적물과 퇴적암의 관계",
    "desc": "관찰 근거로 퇴적물과 퇴적암의 관계을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 5,
+   "similarCount": 5,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-3",
+    "1-4",
+    "1-5",
+    "4-1",
+    "4-2"
+   ]
   },
   {
    "id": "T06",
@@ -124,10 +135,12 @@
    "element": "E4",
    "name": "이암·사암·역암 분류",
    "desc": "관찰 근거로 이암·사암·역암 분류을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 1,
+   "similarCount": 1,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-6"
+   ]
   },
   {
    "id": "T08",
@@ -144,49 +157,66 @@
    "element": "E5",
    "name": "동물·식물·활동 흔적 화석",
    "desc": "관찰 근거로 동물·식물·활동 흔적 화석을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 1,
+   "similarCount": 1,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-7"
+   ]
   },
   {
    "id": "T10",
    "element": "E5",
    "name": "화석 생성 모형과 실제",
    "desc": "관찰 근거로 화석 생성 모형과 실제을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 3,
+   "similarCount": 3,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-8",
+    "2-3",
+    "2-4"
+   ]
   },
   {
    "id": "T11",
    "element": "E6",
    "name": "화석으로 과거 환경 추리",
    "desc": "관찰 근거로 화석으로 과거 환경 추리을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 3,
+   "similarCount": 3,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-9",
+    "2-2",
+    "3-1"
+   ]
   },
   {
    "id": "T12",
    "element": "E6",
    "name": "화석의 가치·보전·설명",
    "desc": "관찰 근거로 화석의 가치·보전·설명을 살피고 실제 수행과 자료를 구별한다.",
-   "sourceCount": 0,
-   "similarCount": 0,
+   "sourceCount": 1,
+   "similarCount": 1,
    "authoredCount": 8,
-   "source": []
+   "source": [
+    "1-10"
+   ]
   }
  ],
- "formatCounts": {},
- "sourceTotal": 0,
+ "formatCounts": {
+  "복수선택형": 5,
+  "선택형": 5,
+  "서술형": 6,
+  "단답형": 1
+ },
+ "sourceTotal": 17,
  "authoredTotal": 96,
  "authoredFormatCounts": {
   "선택형": 72,
   "단답형": 12,
   "서술형": 12
  },
- "note": "data/units/c22-s51-u01.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. 이 단원은 새로 쓴 창작 연습이며 원문 단원평가 대응이나 DB 수록을 주장하지 않는다."
+ "note": "data/units/c22-s51-u01.taxonomy.js에서 만든 파일이다(bank/taxonomy/build.mjs). 직접 고치지 말고 원본을 고친 뒤 다시 만든다. types[].source는 원문의 세트·번호다 — 원문 문장은 data/units/c22-s51-u01.source.js에 있다."
 }

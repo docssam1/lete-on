@@ -1,0 +1,77 @@
+{
+  "phase": 363,
+  "date": "2026-11-08",
+  "scope": "Elementary life-cycle question directions across workbook, bank and classroom while preserving all answer and source boundaries.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "5318b0951aa6739f979873ca8b401f6646ff79f2",
+    "reviewCommit": "672146c127c09822b00646280ca5293a1c0d6a18"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "validation": {
+    "phase": 363,
+    "workbookPromptsChanged": 50,
+    "bankPromptsChanged": 30,
+    "classroomPromptsChanged": 1,
+    "all80WorkbookNonPromptFieldsEqual": true,
+    "protectedWorkbookQuestionsEqual": 18,
+    "all64BankResponseAndContentFieldsEqual": true,
+    "gradingCases": 529,
+    "oldPresentationsRestored": 30,
+    "savedAnswerCases": 30,
+    "otherThirtyOneUnitsDataFilesByteEqual": 93,
+    "currentWorkbookModesMatch": 128,
+    "otherWorkbookModesByteEqual": 124,
+    "priorWorkbookModesRestorable": 128,
+    "allBankPrintModesByteEqual": 84,
+    "actualBrowserUsed": false
+  },
+  "originalSourceRegression": {
+    "phase": 363,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "nativeSuite": {
+    "testFiles": 262,
+    "exitCode": 0,
+    "tests": 1421,
+    "suites": 0,
+    "pass": 1419,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0
+  },
+  "preflight": {
+    "syntaxFiles": 6,
+    "diffCheck": true
+  },
+  "preservationPolicy": {
+    "onlyReviewedAuthoredQuestionPromptsChanged": true,
+    "allChoicesAnswersRubricsDataFiguresAndPagesUnchanged": true,
+    "similarAndOriginalQuestionsProtected": true,
+    "previousBankPresentationsRetained": true,
+    "priorWorkbookExported": true,
+    "noGraderStorageCssFontOrReportChanges": true
+  },
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

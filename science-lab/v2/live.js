@@ -1,3 +1,4 @@
+import{wireBookChoices}from'./book-choice.js?v=20261115-book-multi-choice&noise=20261115-sound-noise-practice';
 // 살아 있는 교재: renderChapter(..., { live:true }) 로 그린 쪽들에 생명을 넣는다.
 //  · 첫 쪽 그림 자리의 실제 영상이 쪽 안에서 재생
 //  · [data-pop] 버튼 → 3D 장면·체험 실험실이 누른 자리에서 책 밖으로 튀어나옴(닫으면 3D 정리)
@@ -10,11 +11,12 @@ const bindings = new WeakMap();
 
 // misc: 오개념표(data/units/<u>.misc.js) — 있으면 개념 정리 빈칸이 낱말 칩이 되고, 확인 문제를 틀리면 교정 상자(.bk-fix)가 붙는다. onAnswer(kind, payload)는 기록용.
 // panel: 교재 보기(book-view.js)의 오른쪽 살아 있는 화면 — panel.open(kind, from, data)가 true면 거기서 보이고 화면을 바꾸지 않는다.
-export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null, panel = null } = {}) {
+export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer = null, questions = null, panel = null } = {}) {
   bindings.get(root)?.();
   const workspace = lab ? createLabWorkspace(root, { title: title || '3D 체험 실험실', mount: lab }) : null;
   const releaseReading = wireReading(root, { openLab: from => panel?.open('lab', from) || workspace?.open(from) });
-  const release = () => { releaseReading(); workspace?.dispose(); };
+  const releaseChoices=wireBookChoices(root,{misc,onAnswer,questions});
+  const release = () => { releaseChoices(); releaseReading(); workspace?.dispose(); };
   bindings.set(root, release);
   const chips = misc?.bookChips || null;
   root.querySelectorAll('.bk-video').forEach((v) => v.querySelector('.bk-play')?.addEventListener('click', (e) => {
@@ -68,16 +70,6 @@ export function wireLive(root, { scene, lab, title = '', misc = null, onAnswer =
       pop.remove(); onAnswer?.('blank', { chip: a, ok, picked: bt.dataset.v });
     }));
   }));
-  root.querySelectorAll('.bk-choices[data-key]').forEach((ol) => {
-    const key = ol.dataset.key.split(',').filter(Boolean).map(Number); if (!key.length) return;
-    ol.querySelectorAll('li').forEach((li) => li.addEventListener('click', (e) => {
-      e.stopPropagation(); if (ol.dataset.done) return; ol.dataset.done = '1';
-      const j = +li.dataset.j; ol.querySelectorAll('li').forEach((x) => { if (key.includes(+x.dataset.j)) x.classList.add('ok'); });
-      if (!key.includes(j)) { li.classList.add('no'); const m = misc?.distractors?.[ol.dataset.id]?.[j], M = m && misc.misconceptions[m];
-        if (M) { const d = document.createElement('div'); d.className = 'bk-fix'; d.innerHTML = `<span class="mis-tag">${esc(M.label)}</span> ${M.fix}`; ol.after(d); } }
-      onAnswer?.('item', { id: ol.dataset.id, ok: key.includes(j), picked: j, el: ol });
-    }));
-  });
   return release;
 }
 

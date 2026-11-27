@@ -1,0 +1,916 @@
+{
+  "phase": 200,
+  "previousGoalTurn": "progress",
+  "date": "2026-11-04",
+  "unit": "c22-s61-u01",
+  "title": "산과 염기",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "1c89ee6964c32f30cfe511176e40352139a02313",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 25,
+  "integratedFullClassrooms": 25,
+  "curriculum": "교육부2022-33 별책9 6과09-01~04와 탐구/해설/고려 사항; 중성/pH/중화/이온은 기본 수업에서 제외",
+  "protection": {
+    "phase": 200,
+    "protectedFiles": 1897,
+    "unchangedOldPdfs": 64,
+    "unchangedWorkbookHtmlProducts": 100,
+    "unchangedOtherClassroomArrays": 48,
+    "newAcidClassroomArrays": 2,
+    "integratedWorkbooks": 25,
+    "integratedFullClassrooms": 25,
+    "studentSlides": 65,
+    "teacherSlides": 66,
+    "phases": 14,
+    "minutes": 325,
+    "manualActivities": 24,
+    "checks": 16,
+    "sourceAuthoredItems": 128,
+    "sourceQuestionsExactlyUnchanged": 98,
+    "versionedQuestions": 30,
+    "exactChecks": 7,
+    "versionedChecks": 9,
+    "changedAcceptedAnswerQuestions": [
+      39,
+      63,
+      79,
+      90,
+      115,
+      118
+    ],
+    "sourceAndPairCounts": [
+      69,
+      69
+    ],
+    "sourceReviewOnly": 3,
+    "priorQuestionPresentationsAndAnswersExactlyRetained": true,
+    "serializedCurrentPresentationsRetainDiagnosticRules": true,
+    "optionalActivityRecords": 12,
+    "observationRowsKey": "acidObservationRows",
+    "comparisonRowsKey": "acidCompareRows",
+    "actualInquiryRowsKey": "acidInquiryRows",
+    "newImages": 0,
+    "new3D": 0,
+    "newPdfs": 0,
+    "newPaidApiCalls": 0,
+    "newNativeVisionRuns": 0,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "tests": 658,
+      "pass": 656,
+      "fail": 0,
+      "skipped": 2
+    },
+    "bank": {
+      "tests": 299,
+      "pass": 299,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "routes": {
+    "unit": "c22-s61-u01",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 5,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "acidCompareRows",
+    "actualInquiryKey": "acidInquiryRows",
+    "originalRecordsBookExactlyUnchanged": true,
+    "originalReportAndObservationStatePreserved": true,
+    "missingOptionalReportSafelyRedirected": true,
+    "lateOptionalRecordCallbackCannotWrite": true,
+    "lateOptionalRecordHandleDisposed": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "workbookAndBankRoutes": {
+    "unit": "c22-s61-u01",
+    "actualStart": true,
+    "currentClassroomOffered": true,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "productionUnitLoaderExecuted": true,
+    "originalRecordsBookExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 24,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "questionDiagnostics": {
+    "oldVersionUsesOriginalRule": true,
+    "currentQuestionDoesNotInheritOpinionOrObservationRule": true,
+    "currentCorrectAnswersDoNotResolveOldMisconception": true,
+    "originalCorrectAnswersStillResolveOldMisconception": true,
+    "newLitmusUsesM03": true,
+    "remedyPoolSeparatesVersions": true,
+    "teacherKeyUsesMatchingVersion": true,
+    "pickedTextsUseMatchingVersion": true,
+    "syntheticProgressEvents": 10,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "htmlStructure": {
+    "comparison": {
+      "statesOrSlides": 18,
+      "tables": 18,
+      "scopeHeaders": 96,
+      "cells": 180,
+      "uniqueInstalledImages": 8,
+      "consistentTableWidthsAndCellParents": true
+    },
+    "classroom": {
+      "statesOrSlides": 131,
+      "tables": 18,
+      "scopeHeaders": 96,
+      "cells": 180,
+      "uniqueInstalledImages": 8,
+      "consistentTableWidthsAndCellParents": true
+    }
+  },
+  "references": {
+    "reusedFromPhase": 199,
+    "references": [
+      {
+        "title": "교육부 2022-33 별책9 과학과 교육과정",
+        "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+        "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+        "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+        "lines": [
+          [
+            843,
+            859
+          ],
+          [
+            1233,
+            1245
+          ],
+          [
+            1637,
+            1650
+          ],
+          [
+            2298,
+            2308
+          ]
+        ],
+        "use": "6과09-01~04; 지시약 분류, 탄산 칼슘/단백질, 혼합 색 변화, 생활 이용, 산성화 피해 소개/공유. 중성/pH/중화는 초등 핵심에서 제외"
+      },
+      {
+        "title": "ACS Red Cabbage Indicator",
+        "url": "https://www.acs.org/education/activities/red-cabbage-indicator.html",
+        "use": "안토시아닌과 색 변화, 깨끗한 용기와 새 추출액으로 비교; 외국 자료의 중성/pH·폐기 지침을 초등 핵심/국내 실험실 기준으로 옮기지 않음"
+      },
+      {
+        "title": "NOAA Ocean Acidification",
+        "url": "https://oceanservice.noaa.gov/facts/acidification.html",
+        "use": "이산화 탄소 흡수와 껍데기 형성/유지에 미칠 수 있는 영향"
+      },
+      {
+        "title": "EPA What is Acid Rain",
+        "url": "https://www.epa.gov/acidrain/what-acid-rain",
+        "use": "원인 물질과 이동·내림·토양/물 환경 영향"
+      },
+      {
+        "title": "EPA Effects of Acid Rain",
+        "url": "https://www.epa.gov/acidrain/effects-acid-rain",
+        "use": "토양의 영양분과 생물, 지역 토양의 조성/조건에 따른 차이"
+      }
+    ]
+  },
+  "assets": {
+    "reusedFromPhase": 199,
+    "installedAssets": [
+      {
+        "name": "observe",
+        "path": "science-lab/assets/activities/c22-s61-u01/observe.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "cee91f76aea5a7cb74b2de6868b42a6d6151c367e013a5f042fff4164b2243d3"
+      },
+      {
+        "name": "litmus",
+        "path": "science-lab/assets/activities/c22-s61-u01/litmus.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "e6fd0410b2229146e244398f4c811bb6197d982fd0ef09997d192d615e5ea107"
+      },
+      {
+        "name": "phenol",
+        "path": "science-lab/assets/activities/c22-s61-u01/phenol.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "414505619c2dfb11a0a7b0b016bb3451c97f0791fc3388adcb5fb97bbca2d995"
+      },
+      {
+        "name": "cabbage",
+        "path": "science-lab/assets/activities/c22-s61-u01/cabbage.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "b45ddf95740c5b75f9a22c0ac77623c1fd60a81b90c55bd57ec5d26e5aa74350"
+      },
+      {
+        "name": "carbonate",
+        "path": "science-lab/assets/activities/c22-s61-u01/carbonate.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "5c531400a16950532d0fb5ef8aeed4de6d6c58219161c5d8014489dc5fb32735"
+      },
+      {
+        "name": "protein",
+        "path": "science-lab/assets/activities/c22-s61-u01/protein.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "0633399853f3ecce9d213a70e1f5e3cc73bd5b57a5344d450d028d6544a06cc8"
+      },
+      {
+        "name": "mixing",
+        "path": "science-lab/assets/activities/c22-s61-u01/mixing.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "187ac63b5a21887532ffdb2f9a47b2b8d2e2ac55f26d0c312ea529041d4b91db"
+      },
+      {
+        "name": "environment",
+        "path": "science-lab/assets/activities/c22-s61-u01/environment.webp",
+        "size": [
+          1536,
+          1024
+        ],
+        "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680"
+      }
+    ],
+    "allEightIllustrationsPreviouslyReviewedAtFullSize": true,
+    "previousNativeVision": {
+      "engine": "Apple Vision on user Mac",
+      "assetRuns": 8,
+      "firstStudentPdfRuns": 99,
+      "finalStudentPdfRuns": 99,
+      "totalRuns": 206,
+      "skip": 0,
+      "failed": 0,
+      "finalPageCoverage": 99,
+      "finalTitleExactRecognition": 99,
+      "ocrIsCharacterRecognitionNotImageMeaningReview": true,
+      "allLowConfidenceWordsIndividuallyCertified": false,
+      "pages": [
+        {
+          "page": 1,
+          "words": 131,
+          "lowConfidence": 42,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 2,
+          "words": 140,
+          "lowConfidence": 44,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 3,
+          "words": 131,
+          "lowConfidence": 50,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 4,
+          "words": 133,
+          "lowConfidence": 23,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 5,
+          "words": 137,
+          "lowConfidence": 38,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 6,
+          "words": 119,
+          "lowConfidence": 30,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 7,
+          "words": 118,
+          "lowConfidence": 54,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 8,
+          "words": 144,
+          "lowConfidence": 78,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 9,
+          "words": 91,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 10,
+          "words": 147,
+          "lowConfidence": 49,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 11,
+          "words": 132,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 12,
+          "words": 122,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 13,
+          "words": 122,
+          "lowConfidence": 58,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 14,
+          "words": 97,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 15,
+          "words": 140,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 16,
+          "words": 121,
+          "lowConfidence": 46,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 17,
+          "words": 126,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 18,
+          "words": 140,
+          "lowConfidence": 58,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 19,
+          "words": 87,
+          "lowConfidence": 30,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 20,
+          "words": 148,
+          "lowConfidence": 40,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 21,
+          "words": 109,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 22,
+          "words": 117,
+          "lowConfidence": 20,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 23,
+          "words": 136,
+          "lowConfidence": 72,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 24,
+          "words": 88,
+          "lowConfidence": 36,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 25,
+          "words": 146,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 26,
+          "words": 127,
+          "lowConfidence": 54,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 27,
+          "words": 128,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 28,
+          "words": 135,
+          "lowConfidence": 53,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 29,
+          "words": 107,
+          "lowConfidence": 47,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 30,
+          "words": 149,
+          "lowConfidence": 50,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 31,
+          "words": 117,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 32,
+          "words": 127,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 33,
+          "words": 154,
+          "lowConfidence": 78,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 34,
+          "words": 109,
+          "lowConfidence": 42,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 35,
+          "words": 138,
+          "lowConfidence": 25,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 36,
+          "words": 132,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 37,
+          "words": 125,
+          "lowConfidence": 52,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 38,
+          "words": 140,
+          "lowConfidence": 47,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 39,
+          "words": 113,
+          "lowConfidence": 39,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 40,
+          "words": 164,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 41,
+          "words": 120,
+          "lowConfidence": 51,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 42,
+          "words": 137,
+          "lowConfidence": 63,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 43,
+          "words": 157,
+          "lowConfidence": 68,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 44,
+          "words": 106,
+          "lowConfidence": 24,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 45,
+          "words": 152,
+          "lowConfidence": 27,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 46,
+          "words": 126,
+          "lowConfidence": 30,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 47,
+          "words": 133,
+          "lowConfidence": 57,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 48,
+          "words": 162,
+          "lowConfidence": 60,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 49,
+          "words": 104,
+          "lowConfidence": 28,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 50,
+          "words": 160,
+          "lowConfidence": 26,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 51,
+          "words": 121,
+          "lowConfidence": 39,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 52,
+          "words": 132,
+          "lowConfidence": 48,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 53,
+          "words": 147,
+          "lowConfidence": 59,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 54,
+          "words": 110,
+          "lowConfidence": 49,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 55,
+          "words": 118,
+          "lowConfidence": 59,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 56,
+          "words": 129,
+          "lowConfidence": 35,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 57,
+          "words": 122,
+          "lowConfidence": 38,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 58,
+          "words": 126,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 59,
+          "words": 143,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 60,
+          "words": 105,
+          "lowConfidence": 45,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 61,
+          "words": 164,
+          "lowConfidence": 53,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 62,
+          "words": 142,
+          "lowConfidence": 69,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 63,
+          "words": 150,
+          "lowConfidence": 52,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 64,
+          "words": 125,
+          "lowConfidence": 53,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 65,
+          "words": 184,
+          "lowConfidence": 46,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 66,
+          "words": 101,
+          "lowConfidence": 33,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 67,
+          "words": 144,
+          "lowConfidence": 54,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 68,
+          "words": 84,
+          "lowConfidence": 39,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 69,
+          "words": 85,
+          "lowConfidence": 12,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 70,
+          "words": 109,
+          "lowConfidence": 38,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 71,
+          "words": 137,
+          "lowConfidence": 35,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 72,
+          "words": 82,
+          "lowConfidence": 37,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 73,
+          "words": 103,
+          "lowConfidence": 42,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 74,
+          "words": 93,
+          "lowConfidence": 29,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 75,
+          "words": 136,
+          "lowConfidence": 46,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 76,
+          "words": 130,
+          "lowConfidence": 59,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 77,
+          "words": 113,
+          "lowConfidence": 57,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 78,
+          "words": 100,
+          "lowConfidence": 58,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 79,
+          "words": 111,
+          "lowConfidence": 58,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 80,
+          "words": 91,
+          "lowConfidence": 39,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 81,
+          "words": 113,
+          "lowConfidence": 56,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 82,
+          "words": 138,
+          "lowConfidence": 53,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 83,
+          "words": 99,
+          "lowConfidence": 57,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 84,
+          "words": 128,
+          "lowConfidence": 36,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 85,
+          "words": 164,
+          "lowConfidence": 46,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 86,
+          "words": 108,
+          "lowConfidence": 52,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 87,
+          "words": 75,
+          "lowConfidence": 27,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 88,
+          "words": 93,
+          "lowConfidence": 26,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 89,
+          "words": 168,
+          "lowConfidence": 54,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 90,
+          "words": 115,
+          "lowConfidence": 75,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 91,
+          "words": 132,
+          "lowConfidence": 45,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 92,
+          "words": 96,
+          "lowConfidence": 34,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 93,
+          "words": 128,
+          "lowConfidence": 49,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 94,
+          "words": 91,
+          "lowConfidence": 35,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 95,
+          "words": 89,
+          "lowConfidence": 46,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 96,
+          "words": 81,
+          "lowConfidence": 35,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 97,
+          "words": 91,
+          "lowConfidence": 19,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 98,
+          "words": 98,
+          "lowConfidence": 29,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        },
+        {
+          "page": 99,
+          "words": 110,
+          "lowConfidence": 43,
+          "titleExactlyRecognizedAfterWhitespaceRemoval": true
+        }
+      ]
+    },
+    "newNativeVisionRuns": 0,
+    "newImages": 0,
+    "new3D": 0,
+    "newPdfs": 0,
+    "paidApiCalls": 0
+  },
+  "cache": "20261104-acid-class",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "gfield-textbook-design",
+    "frontend-design"
+  ],
+  "studentDataAccess": {
+    "actualReads": 0,
+    "actualWrites": 0,
+    "syntheticDiagnosticEvents": 10
+  },
+  "verificationLimit": "Node VM executes production route/event branches with partial DOM, audio, storage, view and print stubs. Actual browser/CSS/PC/mobile/audio/WebGL verification and pre-main 3D checker gate remain pending. Previously denied browser target was not bypassed.",
+  "next": [
+    "6-1 물체의 운동 workbook/classroom",
+    "Other remaining sixth-grade workbooks/classrooms",
+    "Latest main integration and permitted browser/mobile/3D/audio checks",
+    "Publishing within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

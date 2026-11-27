@@ -4,3 +4,5 @@
  .body-bank-paper,.body-bank-paper .solution-paper{page:body-bank}
  .body-bank-paper .bank-photo-figure{max-width:112mm}
 }
+
+.body-paper-blank{display:inline-block;min-width:14mm;border-bottom:1px solid #526784;height:1em;vertical-align:baseline}

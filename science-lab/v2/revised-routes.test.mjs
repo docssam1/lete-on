@@ -1,0 +1,7 @@
+import test from'node:test';import assert from'node:assert/strict';import{execFileSync}from'node:child_process';import{fileURLToPath}from'node:url';
+test('열두 단원의 실제 첫 화면·수업·Daily·선택 기록 교재 경로와 저장 내용을 대조한다',()=>{
+ const report=JSON.parse(execFileSync(process.execPath,['--experimental-vm-modules',fileURLToPath(new URL('./tests/revised-routes.mjs',import.meta.url))],{encoding:'utf8',timeout:15000,stdio:['ignore','pipe','pipe']}));
+ assert.deepEqual(report.units.map(x=>x.unit),['s31-u01','s31-u02','s31-u03','s31-u04','c22-s42-u02','c22-s32-u01','c22-s32-u02','c22-s32-u03','c22-s32-u04','c22-s42-u04','c22-s42-u01','c22-s51-u03']);
+ for(const row of report.units){assert(row.startLinks&&row.defaultThinkingClass&&row.optionalRecordBookOriginal&&row.originalReportAndObservationStatePreserved&&row.releaseDisposesMountedActivities);assert.equal(row.teacherStudentReads,0);assert.equal(row.teacherStudentWrites,0);assert.equal(row.checksSharedWithDaily,row.unit==='c22-s51-u03'?16:['c22-s42-u02','c22-s32-u01','c22-s32-u02','c22-s32-u03','c22-s32-u04','c22-s42-u04','c22-s42-u01','c22-s51-u03'].includes(row.unit)?12:11);}
+ assert.deepEqual(report.units.map(x=>x.studentStorageKey),['labRows','animalCompareRows','plantCompareRows','lifeCompareRows','ecologyCompareRows','materialCompareRows','earthSeaCompareRows','soundCompareRows','infectionCompareRows','climateCompareRows','skyCompareRows','solutionCompareRows']);
+});

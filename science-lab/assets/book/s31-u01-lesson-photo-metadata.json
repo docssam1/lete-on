@@ -1,0 +1,25 @@
+{
+  "assets": [
+    {
+      "file": "s31-u01-photo-balance-v2.png",
+      "sha256": "0d39afde7662c90951e8f457b25d072c45ae2a35e3168ff02b84ccba2cb75ffb",
+      "kind": "authored-photographic-scene",
+      "generator": "built-in image_gen",
+      "created": "2026-11-23",
+      "scene": "A horizontal wooden beam resting at its midpoint on a separate triangular fulcrum, with two wooden blocks.",
+      "observationRecord": false,
+      "prompt": "Use case: scientific-educational. Asset type: photographic scene for a Korean grade-3 science workbook explaining a balance beam and its central support. Create one photorealistic landscape photograph, 3:2 composition. On a clean pale classroom tabletop, a straight unmarked narrow wooden beam rests freely at its exact midpoint on the narrow upper ridge of a separate triangular wooden fulcrum. The beam is perfectly horizontal. Two identical small wooden cubes rest on top of the beam, one on each side, at clearly equal distances from the fulcrum. Both beam ends, both cubes, the fulcrum and the contact under the beam must be fully visible and in focus. Camera near tabletop level at a slight three-quarter angle so the balance arrangement is unmistakable. Real wood grain, soft natural daylight, neutral uncluttered background. Scientifically coherent physical support and symmetric placement. No hands, no extra objects, no arrows, no labels, no markings, no numbers, no text, no logo, no watermark. This must look like a clear real classroom apparatus photograph, not a line drawing, cartoon or glossy 3D render."
+    },
+    {
+      "file": "s31-u01-photo-lever-v2.png",
+      "sha256": "ed2be1d8dc1fe584ace813edfde5b7dbf7daf2e3c849660455763d2e64da2403",
+      "kind": "authored-photographic-scene",
+      "generator": "built-in image_gen",
+      "created": "2026-11-23",
+      "scene": "A bottle opener engaged under the rim of a juice-bottle cap, with the handle held by an adult hand.",
+      "observationRecord": false,
+      "prompt": "Use case: scientific-educational. Asset type: photorealistic close-up for a Korean grade-3 science workbook about a lever used in daily life. One landscape 3:2 photograph on a plain light tabletop. Show an unlabelled upright clear glass juice bottle with an intact metal crown cap, and a simple flat stainless-steel bottle opener being used correctly to lift the cap. A single natural adult hand holds the far end of the opener handle. The opener's small hooked lower edge is visibly engaged under the cap rim, and its curved upper contact rests on the top of the cap as a fulcrum; the long handle extends away from the cap and is tilted slightly upward as the cap begins to lift. Keep the cap, engaged hook, fulcrum contact and whole handle clearly visible and sharp. Physically plausible metal contact, normal fingers, realistic glass and metal textures, soft natural daylight, uncluttered neutral background. No diagrams, arrows, labels, measurements, logos, text or watermarks. No liquid spraying, no broken glass, no detached floating cap, no alcohol branding. This should look like a clear real product-use photograph, not an illustration or a glossy computer render."
+    }
+  ],
+  "studentCaptions": "Natural descriptions only; no numerical measurements inferred from the images."
+}

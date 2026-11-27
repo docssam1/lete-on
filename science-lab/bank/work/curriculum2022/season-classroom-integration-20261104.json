@@ -1,0 +1,202 @@
+{
+  "phase": 209,
+  "baseCommit": "41bc9e64dc37f0d4f844ba44048ad9efe9f0410c",
+  "previousGoalTurn": "progress",
+  "unit": "c22-s62-u01",
+  "scope": "측정기·하루 관측/그래프·계절 자료·빛 에너지·공전 모형의 사고력 수업 연결",
+  "curriculumStandards": [
+    "6과13-01",
+    "6과13-02",
+    "6과13-03"
+  ],
+  "references": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&statusYN=W",
+      "use": "로컬 HWP912~925줄 6과13-01~03·탐구·해설·고려 사항",
+      "hwpSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790"
+    },
+    {
+      "title": "OpenStax Astronomy2e 계절",
+      "url": "https://openstax.org/books/astronomy-2e/pages/4-2-the-seasons",
+      "use": "31~45줄 거리만의 설명 오류·축 방향 유지·빛의 각과 시간"
+    },
+    {
+      "title": "NOAA 태양 계산의 기준",
+      "url": "https://gml.noaa.gov/grad/solcalc/calcdetails.html",
+      "use": "43줄 실제 조건과 계산값 차이·71~79줄 굴절; 이 계산기를 현행 검증 도구로 호출하지 않음"
+    },
+    {
+      "title": "NIST 기온을 정확히 측정하기",
+      "url": "https://www.nist.gov/how-do-you-measure-it/how-do-you-measure-air-temperature-accurately",
+      "use": "128~137줄 일사 차폐·통풍·주변 가열 물체와 공기 온도 구별"
+    }
+  ],
+  "studentSlides": 56,
+  "teacherSlides": 57,
+  "phases": 12,
+  "minutesAcrossMultipleLessons": 305,
+  "realElapsedDayObservationTimeIncludedInMinutes": false,
+  "manualActivities": 18,
+  "autoAdvanceOnManualActivities": false,
+  "comparisonCases": 8,
+  "checksAndDaily": 16,
+  "checkResponseForms": 8,
+  "editedChecks": 7,
+  "unchangedChecks": 9,
+  "currentItemCount": 198,
+  "autoChecked": 160,
+  "teacherReview": 38,
+  "questionVersion": "20261104-season-book",
+  "warmupGraded": false,
+  "newQuestionVersions": 0,
+  "programLinksPerMode": 8,
+  "uniqueProgramURLsPerMode": 8,
+  "freshKasiResultPagesVerified": false,
+  "frozenKasiReadOn": "2026-10-21",
+  "comparesDisplayedDifferenceAndSiteDayLengthSeparately": true,
+  "comparisonKey": "seasonCompareRows",
+  "optionalInquiryKey": "seasonInquiryRows",
+  "optionalInquiryStorage": "sciLab.inquiry.c22-s62-u01",
+  "reportRequired": false,
+  "sourceHomeAdaptedFrom": {
+    "file": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on/science-lab/data/units/c22-s62-u01.lesson.js",
+    "sha256": "c596d6f140f23c7df21b54f9a4939cc89685736fa02185a9e74a757062e8dde2"
+  },
+  "sourceLessonCopiedByteForByte": false,
+  "sourceAuthoringCodeAndAssetsPreserved": 14,
+  "sourceHomeAdaptations": [
+    "교육과정 용어",
+    "305분 여러 차시 안내",
+    "새 현재16문항과 예비 단계 기본값"
+  ],
+  "routes": {
+    "unit": "c22-s62-u01",
+    "startLinks": true,
+    "priorBankOnlyDailyWasUnavailable": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 16,
+    "legacyDailyQuestions": 0,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "seasonCompareRows",
+    "actualInquiryKey": "seasonInquiryRows",
+    "noMissingRecordsBookLink": true,
+    "originalReportAndObservationStatePreserved": true,
+    "missingOptionalReportSafelyRedirected": true,
+    "lateOptionalRecordCallbackCannotWrite": true,
+    "lateOptionalRecordHandleDisposed": true,
+    "noNew3D": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "lateReleasedCallbackCannotWrite": true,
+    "browserVerified": false
+  },
+  "deckEvents": {
+    "teacherMounts": 1,
+    "teacherPersonal": false,
+    "staleLegacyBattleIgnored": true,
+    "comparisonClickDoesNotAdvance": true,
+    "outsideClickAdvances": true,
+    "manualActivities": 18,
+    "noTimerOnActivity": true,
+    "explicitNextWorks": true,
+    "browserVerified": false
+  },
+  "productionRouter": {
+    "unit": "c22-s62-u01",
+    "actualStart": true,
+    "currentClassroomOffered": true,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "actualClassroomRouterBranch": 2,
+    "productionUnitLoaderExecuted": true,
+    "currentQuestionRevisions": 76,
+    "currentGradingContractLoaded": true,
+    "fullClassroomPending": false,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "htmlStructure": {
+    "fullClassroomSlides": 113,
+    "slideTables": 44,
+    "slideScopedHeaders": 178,
+    "comparisonStates": 16,
+    "comparisonTables": 16,
+    "comparisonScopedHeaders": 106,
+    "programLinksAcrossStudentAndTeacher": 16,
+    "photoAssetsPreserved": [
+      "../assets/activities/c22-s61-u04/model-preparation.webp",
+      "../assets/activities/c22-s62-u01/measurement-materials.webp"
+    ],
+    "newPhotos": 0,
+    "realBrowserCSSVerified": false
+  },
+  "preservation": {
+    "baselineFiles": 6261,
+    "sameBytes": 6250,
+    "reviewedChangedFiles": [
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-season-workbook.test.mjs",
+      "science-lab/v2/tests/season-workbook-routes.mjs",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/v2.js"
+    ],
+    "unchangedWorkbookHTMLs": 116,
+    "unchangedClassroomSlideArrays": 56,
+    "newClassroomSlideArrays": 2,
+    "oldPDFsPreserved": 82,
+    "cacheOnlyFiles": [
+      "science-lab/v2/home.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/curriculum-place.js"
+    ]
+  },
+  "tests": {
+    "v2": {
+      "total": 738,
+      "pass": 736,
+      "fail": 0,
+      "skip": 2
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0,
+      "skip": 0
+    }
+  },
+  "bankAudit": "pass",
+  "seasonMiscAudit": "pass",
+  "reusedPhotos": 2,
+  "reusedNativeConceptDiagrams": 1,
+  "newImages": 0,
+  "new3D": 0,
+  "newPDFs": 0,
+  "newOCRInputs": 0,
+  "paidAPI": 0,
+  "previousGraphicReviewEvidence": [
+    "phase205/vision-review.json",
+    "phase208/vision-review.json"
+  ],
+  "directPhysicalPreparationPhotoRechecked": true,
+  "realBrowserCSSMobileAudioWebGLVerified": false,
+  "workbooksConnectedLocally": 29,
+  "fullClassroomsConnectedLocally": 29,
+  "remainingWorkbooks": 3,
+  "remainingClassrooms": 3,
+  "published": false,
+  "goalStatus": "active",
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase209"
+}

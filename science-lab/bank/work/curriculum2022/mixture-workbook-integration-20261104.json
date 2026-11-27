@@ -1,0 +1,365 @@
+{
+  "phase": 191,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u01",
+  "title": "혼합물의 분리 교재71쪽·96문항·교육과정 문장과 과학 심화",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "0bdd615ac4ca2b61169b41b5b896338e018e3802",
+  "localCommit": null,
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex · local Node VM/ReportLab/native Apple Vision; no API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "sourceWorkbookSha256": "abf03c8733f8d7bf362014893e6286dc0f26a31dabd442cc487d86dbf15a3d92",
+  "curriculum": [
+    {
+      "title": "교육부 2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localOriginalSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "sourceLines": [
+        [
+          781,
+          796
+        ],
+        [
+          1098,
+          1113
+        ]
+      ],
+      "use": "6과05-01~03·탐구/해설/고려 사항; 상위9과08의 물질 특성·혼합물 분리와 구별"
+    },
+    {
+      "title": "K-water 동화정수장 견학 안내",
+      "url": "https://www.kwater.or.kr/cust/sub02/sub02/sub03/tour33Page.do?s_mid=1086",
+      "use": "혼화·응집·침전·여과·소독 단계"
+    },
+    {
+      "title": "서울아리수본부 수돗물 수질검사결과",
+      "url": "https://arisu.seoul.go.kr/home/sub?menukey=7350",
+      "use": "처리와 검사/결과 공개 구별"
+    },
+    {
+      "title": "CDC How Water Treatment Works",
+      "url": "https://www.cdc.gov/drinking-water/about/how-water-treatment-works.html",
+      "use": "다단계 정수·여과/소독 역할·지역별 원수 차이"
+    },
+    {
+      "title": "EPA Overview of Drinking Water Treatment Technologies",
+      "url": "https://www.epa.gov/sdwa/overview-drinking-water-treatment-technologies",
+      "use": "활성탄 흡착·역삼투의 원리와 관리 조건"
+    }
+  ],
+  "integration": {
+    "protectedDataAssetsAndPriorPdfs": 1843,
+    "unchangedOldPdfs": 44,
+    "unchangedOtherWorkbookHtmlProducts": 80,
+    "unchangedOtherClassroomArrays": 40,
+    "newWorkbookHtmlProducts": 4,
+    "sourceQuestionsExactlyUnchanged": 94,
+    "questionLanguageExceptions": [
+      "mixture-book-87",
+      "mixture-book-92"
+    ],
+    "questionOrderIdsFormsAndKeysPreserved": true,
+    "sourceAnswerPagesAndQuickPagesUnchanged": true,
+    "unreviewedMixtureClassroomUnchanged": true,
+    "newPhotos": 0,
+    "new3D": 0,
+    "newPdfs": 4,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "workbook": {
+    "studentPages": 71,
+    "teacherPages": 104,
+    "teacherAnswerStarts": 73,
+    "answerPages": 32,
+    "quickPages": 4,
+    "questions": 96,
+    "questionForms": 8,
+    "authoredExamples": 8,
+    "pageSpecificRailTexts": 213,
+    "sourceQuestionsExactlyUnchanged": 94,
+    "languageExceptions": [
+      "mixture-book-87",
+      "mixture-book-92"
+    ],
+    "questionIdsOrderFormsKeysAndResponseContractsPreserved": true,
+    "activityDrawingFields": 2,
+    "drawingQuestions": 2
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 71,
+        "bytes": 27944287,
+        "sha256": "b5a08ccc3fbe33d698dcc74a1b9c20868465506c9aaf878e2e2834b6f29ec2b8",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 104,
+        "bytes": 28056837,
+        "sha256": "6bfb9f5d9047ca3ebf9f5af285f96b0f5a661b10d489b02be3183e1fdba1c311",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 32,
+        "bytes": 268652,
+        "sha256": "89e5ef382116691af4192b6c2d51e3e3a92f3fef6b176db318376c1bf5a0f3b9",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 4,
+        "bytes": 105289,
+        "sha256": "a8a4d1aaa2e0f1777d5abaadf399f4094c26670904b822afd5c89c096186d7c2",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 192,
+    "solutionExpressions": 192,
+    "teacherAnswerStartsOnRecto": 73
+  },
+  "pdfDetails": {
+    "fullRailTexts": 426,
+    "quickAnswerTableCells": 288,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 10,
+        "heightMm": 146.08,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 36,
+        "heightMm": 139.3,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 49,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 62,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "heightMm": 146.08,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 36,
+        "heightMm": 139.3,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 49,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 62,
+        "heightMm": 204.94,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "vision": {
+    "runs": [
+      {
+        "folder": "asset-vision",
+        "executions": 7,
+        "words": 0,
+        "lowConfidence": 0
+      },
+      {
+        "folder": "pdf-vision",
+        "executions": 71,
+        "words": 8986,
+        "lowConfidence": 2891
+      },
+      {
+        "folder": "pdf-vision-final",
+        "executions": 71,
+        "words": 9049,
+        "lowConfidence": 2924
+      },
+      {
+        "folder": "pdf-vision-complete-language",
+        "executions": 2,
+        "words": 289,
+        "lowConfidence": 66
+      }
+    ],
+    "totalExecutions": 151,
+    "studentPagesCovered": 71,
+    "finalChangedPages": [
+      25,
+      36
+    ],
+    "unchangedPagesFromPreviousFinalOcr": 69,
+    "imagesReviewedInContactSheet": 7,
+    "imagesDirectFullSizeReviewed": [
+      "filter",
+      "oil",
+      "dissolve"
+    ],
+    "scope": "Apple Vision is text recognition. Scientific content and selected page layout inspected directly; not every low-confidence word individually certified."
+  },
+  "visual": {
+    "renderedPdfPages": 211,
+    "renderedContactSheets": 11,
+    "directlyInspectedContactSheets": 11,
+    "renderedZoomPages": 22,
+    "directlyInspectedUniqueZoomPages": [
+      [
+        "student",
+        1
+      ],
+      [
+        "student",
+        2
+      ],
+      [
+        "student",
+        10
+      ],
+      [
+        "student",
+        15
+      ],
+      [
+        "student",
+        20
+      ],
+      [
+        "student",
+        25
+      ],
+      [
+        "student",
+        30
+      ],
+      [
+        "student",
+        36
+      ],
+      [
+        "student",
+        38
+      ],
+      [
+        "student",
+        40
+      ],
+      [
+        "student",
+        52
+      ],
+      [
+        "student",
+        67
+      ],
+      [
+        "student",
+        71
+      ],
+      [
+        "teacher",
+        73
+      ],
+      [
+        "quick",
+        4
+      ]
+    ],
+    "finalChangedPagesReinspected": [
+      25,
+      36
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "v2": {
+      "total": 577,
+      "passed": 575,
+      "skipped": 2,
+      "failed": 0
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "skipped": 0,
+      "failed": 0
+    },
+    "routes": {
+      "unit": "c22-s52-u01",
+      "actualStart": true,
+      "actualTeacherWebBook": true,
+      "actualWorkbookRouterBranch": 4,
+      "originalRecordsBookExactlyUnchanged": true,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "browserVerified": false,
+      "printReadinessComponentStubbedInRouter": true
+    }
+  },
+  "workbookUnits": 21,
+  "thinkingClassroomUnits": 20,
+  "newPhotos": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "push": false,
+  "deployment": false,
+  "browserVerified": false,
+  "goalStatus": "active",
+  "remaining": [
+    "혼합물 전체 사고력 수업 연결",
+    "다른 학기 교재·수업과 용어·그림·평가 검수",
+    "최신main 통합·실제 브라우저/CSS/모바일/소리·3D 검수와 승인 범위 배포"
+  ]
+}

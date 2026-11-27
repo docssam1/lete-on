@@ -1,0 +1,444 @@
+{
+  "phase": 250,
+  "date": "2026-11-05",
+  "baseCommit": "bfb69943140180a9e537d9237c65af848dd7601f",
+  "version": "20261105-observation-language",
+  "scope": "Review student-visible language in32 current workbooks. Apply22 exact string edits:18 question fields and4 shared lesson-block strings across11 units. Do not equate every flagged technical term with a curriculum error.",
+  "reviewDecisions": [
+    "Retain 생태계의 구성 요소 and 태양계의 구성원 as curriculum language.",
+    "Distinguish measured/observed zero from an observation that was not made.",
+    "Use 아직 의견을 받지 못함, 실제로 한 일/하지 못한 일/계획, 아직 확인하지 못한 내용 in the reviewed student labels.",
+    "Preserve a status term when it is an explicitly requested answer, rather than changing accepted answers as a side effect. The search is a bounded candidate-finding aid, not a full semantic check of every question."
+  ],
+  "preservation": {
+    "workbookUnits": 32,
+    "questions": 3080,
+    "affectedWorkbookUnits": 11,
+    "changedQuestions": [
+      {
+        "unit": "s31-u04",
+        "id": "s31-u04-w045",
+        "no": 45,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "unit": "s31-u04",
+        "id": "s31-u04-w065",
+        "no": 65,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "id": "c22-s42-u02-w053",
+        "no": 53,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "id": "c22-s42-u02-w076",
+        "no": 76,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "id": "c22-s42-u02-w080",
+        "no": 80,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "unit": "s41-u02",
+        "id": "s41-u02-w066",
+        "no": 66,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "s41-u03",
+        "id": "s41-u03-w057",
+        "no": 57,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "s41-u04",
+        "id": "s41-u04-w026",
+        "no": 26,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "c22-s51-u04",
+        "id": "body-book-44",
+        "no": 44,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "unit": "c22-s51-u04",
+        "id": "body-book-87",
+        "no": 87,
+        "fields": [
+          "given"
+        ]
+      },
+      {
+        "unit": "c22-s52-u01",
+        "id": "mixture-book-39",
+        "no": 39,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "unit": "c22-s52-u02",
+        "id": "c22-s52-u02-w054",
+        "no": 54,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "unit": "c22-s52-u02",
+        "id": "c22-s52-u02-w058",
+        "no": 58,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-w027",
+        "no": 27,
+        "fields": [
+          "choices"
+        ]
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-w031",
+        "no": 31,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-w104",
+        "no": 104,
+        "fields": [
+          "prompt"
+        ]
+      },
+      {
+        "unit": "c22-s61-u02",
+        "id": "c22-s61-u02-w079",
+        "no": 79,
+        "fields": [
+          "topic"
+        ]
+      },
+      {
+        "unit": "c22-s61-u04",
+        "id": "c22-s61-u04-w024",
+        "no": 24,
+        "fields": [
+          "prompt"
+        ]
+      }
+    ],
+    "changedQuestionCount": 18,
+    "changedSharedPages": [
+      {
+        "unit": "s31-u04",
+        "collection": "pages",
+        "page": 1,
+        "title": "조건과 자료로 설명하는 생물의 한살이"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "collection": "pages",
+        "page": 15,
+        "title": "내 행동과 확인한 효과를 나누어요"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "collection": "teacherStudentPages",
+        "page": 15,
+        "title": "내 행동과 확인한 효과를 나누어요"
+      },
+      {
+        "unit": "s41-u03",
+        "collection": "pages",
+        "page": 11,
+        "title": "구멍 하나만으로 정할 수 있을까요?"
+      },
+      {
+        "unit": "s41-u03",
+        "collection": "teacherStudentPages",
+        "page": 11,
+        "title": "구멍 하나만으로 정할 수 있을까요?"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "collection": "pages",
+        "page": 31,
+        "title": "소금을 처음 본 날은 언제인가요?"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "collection": "teacherStudentPages",
+        "page": 31,
+        "title": "소금을 처음 본 날은 언제인가요?"
+      }
+    ],
+    "htmlQuestionNodesVerified": 36,
+    "changedBankItems": [
+      {
+        "unit": "c22-s51-u04",
+        "id": "c22-s51-u04-b044"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "id": "c22-s51-u04-b087"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "id": "c22-s52-u01-b039"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "id": "c22-s52-u02-b054"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "id": "c22-s52-u02-b058"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-b027"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-b031"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-b104"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "id": "c22-s61-u02-b079"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "id": "c22-s61-u04-b024"
+      }
+    ],
+    "changedClassroomItems": [
+      {
+        "unit": "c22-s52-u02",
+        "id": "c22-s52-u02-b058"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "id": "c22-s52-u03-b031"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "id": "c22-s61-u02-b079"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "id": "c22-s61-u04-b024"
+      }
+    ],
+    "changedFrames": [
+      {
+        "unit": "c22-s52-u02",
+        "mode": "self",
+        "slide": "test8"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "teach",
+        "slide": "test8"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "self",
+        "slide": "test6"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teach",
+        "slide": "test6"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "self",
+        "slide": "test8"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "teach",
+        "slide": "test8"
+      }
+    ],
+    "paperProductsUnchanged": 104,
+    "changedProducts": [
+      {
+        "unit": "s31-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "mode": "teacher"
+      }
+    ],
+    "slideArraysUnchanged": 58,
+    "allAnswerContractsAnswersCriteriaStandardsExplanationsPreserved": true,
+    "allFigureRailLayoutAndWritingSpaceDataPreserved": true,
+    "all11PriorWorkbooksExactlyPreserved": true,
+    "unchangedAssetHashes": 1249,
+    "source": 1512,
+    "similar": 1512,
+    "currentItems": 3179,
+    "classroomItems": 1635,
+    "selectedChecks": 490,
+    "actualStudentStorageAccessed": false,
+    "browserOrA4Verified": false
+  },
+  "nativeRenderer": {
+    "units": 6,
+    "questionVersions": 10,
+    "actualItemHtmlAndPrintExecuted": 20,
+    "browserVerified": false
+  },
+  "syntaxAndGeneratorCheck": {
+    "syntaxFiles": 29,
+    "generatedWorkbookBodiesUnchanged": 11
+  },
+  "historySafety": "Export observationPriorWorkbook from11 workbook modules. Redirect the existing motion and Earth revision builders to that prior export so their earlier38/7 revisions and histories do not silently depend on newly edited workbook text. The11 prior objects exactly match the baseline. Apply the new layer afterward in6 actual UNITS loaders and revisedClassroom. Other units and canonical/source banks remain unchanged.",
+  "tests": {
+    "total": 842,
+    "passed": 840,
+    "failed": 0,
+    "skipped": 2,
+    "newTests": 2,
+    "coverage": "Original answer positions, accepted short answers, written-review behavior; source/similar exclusions; immutable inputs; previous question/choice restoration and restart grading/self-assessment history; future version guards; all11 prior workbooks and current contract fields; actual32-unit bank/classroom linkage.",
+    "existingRegressionUpdates": "Keep the existing motion38/Earth7 and heat2/energy1 revision assertions scoped to their original version tags, and separately restore the new observation-layer snapshots. Keep original activity/report/grade assertions. Across separate revisedClassroom invocations compare full question values instead of allocation identity; within-call pool identity checks remain. The older Earth workbook7-change assertion uses the frozen prior layer; current workbook/route behavior is independently checked. No product cache or special test-only behavior was added.",
+    "qaCorrection": "Removed a duplicate questionAtVersion import introduced while updating the heat regression. The final full test run executes the previously blocked file. HTML checks treat rendered blank placeholders as slots, including blanks nested in matching parts."
+  },
+  "evidence": "science-question-review/phase250: actual32-unit before/after VM states,32 workbooks/128 paper modes/64 slide arrays,11 exact prior workbook objects,36 changed question nodes in student/teacher HTML,20 native itemHtml online/print outputs, asset/source hashes and final test log. Native HTML checks are not browser/A4 layout verification.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mandatory3DRuntimeVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "remaining": "Other semantic/content and teacher-language review, actual PC/mobile/A4/audio/WebGL and mandatory3D gates, v1 consistency and main integration/deployment. Prior browser reauthorization has no observed reply; no browser workaround was used."
+}

@@ -1,0 +1,741 @@
+{
+  "phase": 244,
+  "date": "2026-11-05",
+  "baseCommit": "79df7fc021f30eb2b66787657e6f7d4cfc3b5837",
+  "units": [
+    "c22-s52-u02",
+    "c22-s52-u04"
+  ],
+  "scope": "Promote existing reviewed heat65/67 and energy51 classroom versions into the current production question-bank loaders; centralize the same revisions for the existing classroom checks.",
+  "changes": [
+    "Heat65 uses the reviewed design/build/compare/explain/improve activity sequence.",
+    "Heat67 reviews initially different water temperatures and a fair retest; its written response remains review-required.",
+    "Energy51 asks which energy is saved by switching off unused lights and accepts 전기 에너지/전기에너지. Its old opinion-receipt answer remains correct only in its restored historical version.",
+    "Keep the existing20261104 classroom version identifiers and exact reviewed question objects; preserve original/source/similar banks and all prior responses."
+  ],
+  "preservation": {
+    "workbooksUnchanged": 32,
+    "allWorkbookQuestionsAndAnswersUnchanged": 3080,
+    "productsUnchanged": 128,
+    "slideArraysUnchanged": 64,
+    "runtimeUnitsExecuted": 32,
+    "currentBankItems": 3179,
+    "currentBankItemsChanged": [
+      "c22-s52-u02-b065",
+      "c22-s52-u02-b067",
+      "c22-s52-u04-b051"
+    ],
+    "currentBankItemsUnchanged": 3176,
+    "originalBankItemsUnchanged": 1512,
+    "similarBankItemsUnchanged": 1512,
+    "classroomPoolItemsUnchanged": 1635,
+    "allSelectedClassroomChecksResolve": 490,
+    "changedItemsExactlyEqualExistingReviewedClassroomVersions": true,
+    "allOldBankPresentationsAndContractsPreserved": true,
+    "careerHistoryUnchanged": true,
+    "structureAndResolvedPoolFindings": 0,
+    "remainingRawPoolClassroomOverlays": 35,
+    "remainingAuthoredContextOverlays": [
+      {
+        "unit": "c22-s42-u02",
+        "id": "c22-s42-u02-b10",
+        "sourceType": "authored-supplement",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "c22-s32-u03",
+        "id": "c22-s32-u03-t01",
+        "sourceType": "authored-lesson",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      }
+    ],
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s52-u02.thinking-lesson.js",
+      "science-lab/data/book/c22-s52-u04.thinking-lesson.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "runtimeAudit": {
+    "units": [
+      {
+        "unit": "c22-s62-u04",
+        "title": "과학과 나의 진로",
+        "items": 128,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 128,
+        "currentPoolMatches": 128,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s62-u03",
+        "title": "전기의 이용",
+        "items": 186,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 186,
+        "currentPoolMatches": 186,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s62-u02",
+        "title": "물질의 연소",
+        "items": 198,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 198,
+        "currentPoolMatches": 198,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s62-u01",
+        "title": "계절의 변화",
+        "items": 198,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 198,
+        "currentPoolMatches": 198,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s32-u01",
+        "title": "물체와 물질",
+        "items": 76,
+        "source": 70,
+        "similar": 70,
+        "classroomPool": 12,
+        "currentPoolMatches": 12,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "c22-s32-u02",
+        "title": "지구와 바다",
+        "items": 92,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 12,
+        "currentPoolMatches": 12,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "s41-u01",
+        "title": "자석의 이용",
+        "items": 90,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 26,
+        "currentPoolMatches": 26,
+        "selectedChecks": 26
+      },
+      {
+        "unit": "c22-s42-u01",
+        "title": "밤하늘 관찰",
+        "items": 92,
+        "source": 95,
+        "similar": 95,
+        "classroomPool": 12,
+        "currentPoolMatches": 12,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "c22-s51-u03",
+        "title": "용해와 용액",
+        "items": 96,
+        "source": 75,
+        "similar": 75,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "s31-u01",
+        "title": "힘과 우리 생활",
+        "items": 0,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 11,
+        "currentPoolMatches": 0,
+        "selectedChecks": 8
+      },
+      {
+        "unit": "s31-u02",
+        "title": "같은 동물, 다른 기준으로 비교해요",
+        "items": 0,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 11,
+        "currentPoolMatches": 0,
+        "selectedChecks": 8
+      },
+      {
+        "unit": "s31-u03",
+        "title": "잎의 기준과 필요한 자료를 비교해요",
+        "items": 0,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 11,
+        "currentPoolMatches": 0,
+        "selectedChecks": 8
+      },
+      {
+        "unit": "s31-u04",
+        "title": "조건과 자료로 설명하는 생물의 한살이",
+        "items": 64,
+        "source": 41,
+        "similar": 41,
+        "classroomPool": 11,
+        "currentPoolMatches": 11,
+        "selectedChecks": 8
+      },
+      {
+        "unit": "c22-s42-u02",
+        "title": "생물과 환경",
+        "items": 92,
+        "source": 70,
+        "similar": 70,
+        "classroomPool": 12,
+        "currentPoolMatches": 11,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "c22-s32-u03",
+        "title": "소리의 성질",
+        "items": 76,
+        "source": 70,
+        "similar": 70,
+        "classroomPool": 12,
+        "currentPoolMatches": 11,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "c22-s32-u04",
+        "title": "감염병과 건강한 생활",
+        "items": 92,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 12,
+        "currentPoolMatches": 12,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "c22-s42-u04",
+        "title": "기후변화와 우리 생활",
+        "items": 120,
+        "source": 6,
+        "similar": 6,
+        "classroomPool": 12,
+        "currentPoolMatches": 12,
+        "selectedChecks": 12
+      },
+      {
+        "unit": "s41-u02",
+        "title": "물의 상태 변화",
+        "items": 78,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 26,
+        "currentPoolMatches": 26,
+        "selectedChecks": 26
+      },
+      {
+        "unit": "s41-u03",
+        "title": "땅의 변화",
+        "items": 82,
+        "source": 80,
+        "similar": 80,
+        "classroomPool": 25,
+        "currentPoolMatches": 25,
+        "selectedChecks": 25
+      },
+      {
+        "unit": "s41-u04",
+        "title": "다양한 생물과 우리 생활",
+        "items": 76,
+        "source": 75,
+        "similar": 75,
+        "classroomPool": 25,
+        "currentPoolMatches": 25,
+        "selectedChecks": 25
+      },
+      {
+        "unit": "c22-s42-u03",
+        "title": "여러 가지 기체",
+        "items": 96,
+        "source": 75,
+        "similar": 75,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s51-u01",
+        "title": "지층과 화석",
+        "items": 96,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s51-u02",
+        "title": "빛의 성질",
+        "items": 80,
+        "source": 40,
+        "similar": 40,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s51-u04",
+        "title": "우리 몸의 구조와 기능",
+        "items": 96,
+        "source": 58,
+        "similar": 58,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s52-u01",
+        "title": "혼합물의 분리",
+        "items": 96,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s52-u02",
+        "title": "열과 우리 생활",
+        "items": 104,
+        "source": 75,
+        "similar": 75,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s52-u03",
+        "title": "날씨와 우리 생활",
+        "items": 112,
+        "source": 57,
+        "similar": 57,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s52-u04",
+        "title": "자원과 에너지",
+        "items": 112,
+        "source": 11,
+        "similar": 11,
+        "classroomPool": 16,
+        "currentPoolMatches": 16,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s61-u01",
+        "title": "산과 염기",
+        "items": 128,
+        "source": 69,
+        "similar": 69,
+        "classroomPool": 128,
+        "currentPoolMatches": 128,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s61-u02",
+        "title": "물체의 운동",
+        "items": 128,
+        "source": 70,
+        "similar": 70,
+        "classroomPool": 128,
+        "currentPoolMatches": 128,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s61-u03",
+        "title": "식물의 구조와 기능",
+        "items": 128,
+        "source": 75,
+        "similar": 75,
+        "classroomPool": 128,
+        "currentPoolMatches": 128,
+        "selectedChecks": 16
+      },
+      {
+        "unit": "c22-s61-u04",
+        "title": "지구의 운동",
+        "items": 167,
+        "source": 0,
+        "similar": 0,
+        "classroomPool": 167,
+        "currentPoolMatches": 167,
+        "selectedChecks": 16
+      }
+    ],
+    "totals": {
+      "items": 3179,
+      "source": 1512,
+      "similar": 1512,
+      "classroomPool": 1635,
+      "currentPoolMatches": 1600,
+      "selectedChecks": 490
+    },
+    "findings": [],
+    "rawPoolOverrides": [
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v013",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v001",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v007",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v011",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v015",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v017",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v018",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u01",
+        "id": "s31-u01-v020",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v003",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "givens",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v001",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v005",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v011",
+        "sourceType": "similar",
+        "keys": [
+          "givens",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v012",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v013",
+        "sourceType": "similar",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v019",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u02",
+        "id": "s31-u02-v020",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v003",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v004",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v009",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v001",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v005",
+        "sourceType": "similar",
+        "keys": [
+          "choices",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v010",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v011",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v013",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v017",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v018",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "s31-u03",
+        "id": "s31-u03-v020",
+        "sourceType": "similar",
+        "keys": [
+          "explanation"
+        ]
+      },
+      {
+        "unit": "c22-s42-u02",
+        "id": "c22-s42-u02-b10",
+        "sourceType": "authored-supplement",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      },
+      {
+        "unit": "c22-s32-u03",
+        "id": "c22-s32-u03-t01",
+        "sourceType": "authored-lesson",
+        "keys": [
+          "prompt",
+          "explanation"
+        ]
+      }
+    ],
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkRequests": 0,
+    "browserAndLayoutVerified": false
+  },
+  "tests": {
+    "total": 829,
+    "pass": 827,
+    "fail": 0,
+    "existingBrowserSkips": 2,
+    "newTests": 2,
+    "purpose": "Execute actual two production loaders and native bank-paper HTML; match reviewed classroom objects, keep all other items by identity, preserve canonical banks, old answer grading and restoration/restart history, diagnostic exclusion, idempotency and future-version protection.",
+    "threeDRuntimeExecuted": false
+  },
+  "sourceBasis": {
+    "title": "Existing reviewed20261104 heat and energy classroom/editorial revisions",
+    "standards": [
+      "6과07-04",
+      "6과08-03"
+    ],
+    "scope": "No new questions or science changes; connect the reviewed workbook/classroom content to the current bank.",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe"
+  },
+  "editorialConnection": "heatEnergyCurrentItems is the single revision adapter used by two current unit loaders and their classroom checks. Raw data/units files remain unchanged.",
+  "cacheVersion": "20261105-current-bank-revisions",
+  "auditInterpretation": "Initial ID-only lookup falsely reported four legacy set-number check aliases as missing. The audit now follows the actual Daily bySrc alias rule. Classroom overlays are distinguished from missing or unresolved questions:35 remain, including33 canonical source/similar presentations and2 authored context changes (ecology b10/sound t01) that already resolve consistently in class/Daily but remain scoped rather than promoted here. All6203 loaded question contracts passed structural checks; this does not validate all scientific answers.",
+  "originalSourceCoverage": {
+    "zeroSourceUnitIds": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "interpretation": "Observed loader coverage only. Do not fabricate original exams or infer those units complete from the current authored count."
+  },
+  "remaining": "Review authored ecology/sound context layers and other quality work; actual PC/mobile/A4/audio/WebGL/mandatory3D gate; v1 consistency and main integration/deployment. Prior browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "evidence": "science-question-review/phase244:32 actual production-loader VM results; contract/pool/legacy-alias structure audit; before/after runtime states,32 workbook/128 product/64 deck exact preservation; native two-loader bank HTML regression and history grading checks; test logs; read-only upstream-main proposal."
+}

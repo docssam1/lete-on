@@ -1,0 +1,134 @@
+{
+  "phase": 235,
+  "date": "2026-11-05",
+  "baseCommit": "5c4adf48e199500d6f85cd13e15be3d5281b050c",
+  "unit": "c22-s51-u03",
+  "scope": "Student and teacher shared 75-page body: 27 page titles, prose, captions, tables and activity prompts edited. Questions, grading, embedded figure text, teaching deck and answer appendix are preserved.",
+  "changes": [
+    "Replace compressed words such as cumulative input, residual solid, free floating, upper/lower bounds and variable design with concrete student actions.",
+    "Align terms with 6과03 dissolution, solute, solvent, solution and relative concentration; make the subject of the alum temperature result correct.",
+    "Specify the same object in two sugar solutions at the same temperature, with free space from walls/bottom, to compare floating.",
+    "Correct the question field hint that listed preparation materials.",
+    "Replace the last page production memo with a glossary, everyday-use recap and useful lookup prompt. Retain all block/table shapes and writing lines."
+  ],
+  "preservation": {
+    "workbooks": 32,
+    "fullUnchangedWorkbooks": 31,
+    "questionsPreserved": 3080,
+    "targetQuestionsPreserved": 96,
+    "studentPages": 75,
+    "teacherPages": 75,
+    "revisedStudentBodyPages": [
+      2,
+      5,
+      6,
+      8,
+      10,
+      11,
+      12,
+      16,
+      17,
+      18,
+      21,
+      22,
+      23,
+      27,
+      28,
+      30,
+      32,
+      33,
+      35,
+      38,
+      39,
+      40,
+      45,
+      47,
+      53,
+      74,
+      75
+    ],
+    "writingSpaceBlocksTypesTablesBlankCellsQuestionsFiguresRailsAndNumbersPreserved": true,
+    "generatedBodyByteIdentical": true,
+    "productsChanged": [
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      }
+    ],
+    "productsUnchanged": 126,
+    "slidesUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "changedExistingFiles": [
+      "science-lab/HANDOFF-CLAUDE-TO-GPT-20261020.md",
+      "science-lab/HANDOFF-GPT.md",
+      "science-lab/HANDOFF.md",
+      "science-lab/bank/BANK-HANDOFF.md",
+      "science-lab/data/book/c22-s51-u03.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualBrowserOrA4Verified": false
+  },
+  "htmlChecks": [
+    {
+      "mode": "student",
+      "matchedEditedStrings": 148,
+      "sharedBodyPages": 75,
+      "teacherAppendixExcludedFromBodyAbsenceCheck": false,
+      "actualBrowserOrA4Verified": false
+    },
+    {
+      "mode": "teacher",
+      "matchedEditedStrings": 148,
+      "sharedBodyPages": 75,
+      "teacherAppendixExcludedFromBodyAbsenceCheck": true,
+      "actualBrowserOrA4Verified": false
+    }
+  ],
+  "tests": {
+    "v2": {
+      "pass": 815,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "newTests": 0,
+    "threeDRuntimeExecuted": false
+  },
+  "sources": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&m=0302&s=moe",
+      "localText": "Existing verified curriculum-standards/science-curriculum.txt lines749–764",
+      "scope": "6과03-01~03: dissolution terms, kind/temperature amount comparison, relative concentration, everyday use and sharing. No particle mechanism requirement added."
+    },
+    {
+      "title": "ACS Does Temperature Affect Dissolving",
+      "url": "https://www.acs.org/middleschoolchemistry/lessonplans/chapter5/lesson6.html",
+      "scope": "Temperature effects differ by solute. Do not conflate dissolution speed with the amount that can dissolve. Particle theory and experiment procedure are not copied into this elementary body."
+    },
+    {
+      "title": "ACS Density Student Reading",
+      "url": "https://www.acs.org/content/dam/acsorg/msc/downloads/chapter-3/ch3-student-reading.pdf",
+      "scope": "Liquid/object density relationship and dissolved salt affecting floating, used to cross-check the same-solution/same-object conditions. No density formula, mechanism or new procedure introduced."
+    }
+  ],
+  "editorialConnection": "Outer withSolutionBodyLanguage follows existing opening and rail editors. Source-generated data remains byte-identical after removing only this new import/wrapper. Page/title/block-type guards require review after regeneration.",
+  "cacheVersion": "20261105-solution-body-language",
+  "remaining": "Other initial-four body reviews; remaining question wording and embedded diagram captions; actual desktop/mobile/A4/audio/WebGL and mandatory 3D gate; main integration/deployment. Existing browser reauthorization has no observed reply; no bypass.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase235: full 32-book snapshots, 128 product hashes, 64 decks, body diffs, numerical/structural preservation validator, two generated production HTML fragments and text checks, v2 final test log. Initial HTML absence check mistakenly included teacher answer topics; final check explicitly scopes absence to the 75 shared body pages. Original questions were not changed to satisfy it."
+}

@@ -1,0 +1,138 @@
+{
+  "phase": 357,
+  "date": "2026-11-08",
+  "scope": "Supply the existing model data needed to solve seventeen authored lesson questions independently in the bank, review, Daily, and their three current classroom copies.",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "localCommit": "00864c5f8b6a8a30c71d9c835b26cc2bbf319d65",
+    "reviewCommit": "72e10a76c0c50cb7d500f7c86250204951070474"
+  },
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "candidateAudit": {
+    "authoredLessonCandidatesReviewed": 25,
+    "referenceDataAdded": 17,
+    "retainedSelfContainedQuestions": 8,
+    "all32RuntimeBanksInspected": true
+  },
+  "referenceDataValidation": {
+    "phase": 357,
+    "units": 8,
+    "bankQuestionsWithReference": 17,
+    "classroomQuestionsWithReference": 3,
+    "missingReferenceBefore": 17,
+    "requiredReferenceNowPresent": 17,
+    "gradingCases": 997,
+    "diagnosticCases": 997,
+    "restoredHistoricalVersions": 25,
+    "savedStates": 17,
+    "unchangedWorkbooks": 32,
+    "unchangedBankArrays": 24,
+    "unchangedClassrooms": 30,
+    "promptsAnswersChoicesExplanationsFiguresAndTaxonomyUnchanged": true,
+    "originalAndSimilarModulesUnmodified": true,
+    "referenceModelFiles": 8,
+    "referenceModelHashes": [
+      {
+        "file": "science-lab/scenes/material-model.js",
+        "sha256": "39c9f4b1522cd303c80e2289176889a9bf899df4b0e100fa971657e6be0d8662"
+      },
+      {
+        "file": "science-lab/scenes/seawater-model.js",
+        "sha256": "0380fd8ff3fdcb6fa735687945a164271ed96daad480ccb5111c974ae035634f"
+      },
+      {
+        "file": "science-lab/scenes/ruler-model.js",
+        "sha256": "be8d1edbd2d12d2f1b478b4651a54bbae9a29030a0bbbe0776271e8495780508"
+      },
+      {
+        "file": "science-lab/scenes/glitter-model.js",
+        "sha256": "6f228207fa620e573a08f1277a0efa52c825e89ae3946e1109989d5b419a3d53"
+      },
+      {
+        "file": "science-lab/scenes/moon-model.js",
+        "sha256": "0673310e24645c564121d204f5c8b1df4178fa743c69d9cbf8df42327b1c8dab"
+      },
+      {
+        "file": "science-lab/scenes/meadow-model.js",
+        "sha256": "7acfee9ee98751d21b2ca9fae57f2751e6d942e5bbce89fe3e36011654e28a27"
+      },
+      {
+        "file": "science-lab/scenes/sealevel-model.js",
+        "sha256": "d2232bca2da77994276b3b2f0f694bcf46f8fb36005b35422da9eaac70d13359"
+      },
+      {
+        "file": "science-lab/scenes/bread-model.js",
+        "sha256": "4241e9ff1f02ca75c52a838bd14e5ae1a52451a8b452b0e3faaa118761a395d4"
+      }
+    ],
+    "actualBrowserUsed": false,
+    "releaseReady": false,
+    "goalAchieved": false
+  },
+  "originalSourceRegression": {
+    "phase": 357,
+    "originalUnits": 23,
+    "originalQuestions": 1512,
+    "itemComparisons": 4536,
+    "dailyFragmentComparisons": 7560,
+    "actualDailyQuestionBodyComparisons": 3024,
+    "teacherKeysCompared": 23,
+    "randomizedChipsComparedWithSameDeterministicRandom": true,
+    "realWrittenPracticeHtmlComparedWithGeneratedIdsNormalized": true,
+    "originalObjectsUnmutated": true,
+    "allComparisonsEqual": true,
+    "nativeMarkupOnly": true,
+    "actualBrowserLayout": false
+  },
+  "currentNativeSuite": {
+    "tests": 1401,
+    "suites": 0,
+    "pass": 1399,
+    "fail": 0,
+    "cancelled": 0,
+    "skipped": 2,
+    "todo": 0,
+    "exitCode": 0,
+    "testFiles": 256
+  },
+  "preflight": {
+    "syntaxFiles": 10,
+    "diffCheck": true,
+    "existingModelFilesUnchanged": 8,
+    "reviewedCandidates": 25,
+    "referenceAttachments": 17
+  },
+  "nativePresentationChecks": {
+    "onlineQuestions": 17,
+    "printedQuestions": 17,
+    "dailyGivenFragments": 17,
+    "currentClassroomQuestions": 3,
+    "classroomModes": 2,
+    "historicalDailyPaperPreserved": true,
+    "currentDailyPaperIncludesReferenceData": true,
+    "deckSnapshotsIncludeReferenceData": true,
+    "realBrowserRendering": false
+  },
+  "preservationPolicy": {
+    "promptsAnswersChoicesExplanationsTaxonomyAndFiguresUnchanged": true,
+    "all32WorkbookManuscriptsUnchanged": true,
+    "dataReadFromExistingEightModelModules": true,
+    "existingModelModulesUnmodified": true,
+    "modelDataClearlyLabelled": true,
+    "allOldPresentationsPreserved": true,
+    "existingReferencesNotOverwritten": true,
+    "futureOrUnreviewedInputsExcluded": true,
+    "originalAndSimilarQuestionsExcluded": true
+  },
+  "cssChangedThisStage": false,
+  "newOriginalsAdded": 0,
+  "paidApiCalls": 0,
+  "keychainReads": 0,
+  "driveWrites": 0,
+  "cleanupActions": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "actualBrowserVerified": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

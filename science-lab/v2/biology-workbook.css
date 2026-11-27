@@ -1,0 +1,15 @@
+.bk-editorial[data-unit="s41-u04"] .ed-drawing.large{min-height:120mm;height:auto}
+.bk-editorial[data-unit="s41-u04"] .ed-drawing+.ed-lines{margin-top:3mm}
+@media screen and (max-width:700px){.bk-editorial[data-unit="s41-u04"] .ed-drawing.large{min-height:280px}}
+
+.bk-editorial[data-unit="s41-u04"]{--ed-ink:#2a241c;--ed-blue:#2f6b4a;--ed-muted:#7a6f5c;--ed-line:#c9bda2}
+.bk-editorial[data-unit="s41-u04"] .bk-band{background:#2f6b4a}
+.bk-editorial[data-unit="s41-u04"] :is(.ed-note h3,.ed-example h3,.ed-qhead b,.ed-solution h3){color:#2f6b4a;border-color:#2f6b4a}
+.bk-editorial[data-unit="s41-u04"] .ed-example{border-color:#2f6b4a;background:#e9f0e7}
+.bk-editorial[data-unit="s41-u04"] .ed-table th{background:#e9f0e7}
+.bk-editorial[data-unit="s41-u04"] :is(.ed-rail,.ed-example-answer,.ed-question,.ed-given,.ed-blank,.ed-lines i,.ed-response span,.ed-drawing,.ed-table th,.ed-table td,.ed-solution,.ed-photo-labels>div){border-color:#c9bda2}
+@media screen{.bk-editorial[data-unit="s41-u04"] .bk-page{background:#fdfbf5}}
+
+.bk-editorial[data-unit="s41-u04"] .ed-photo img:is([src$="s41-u04-source-spirogyra.webp"],[src$="s41-u04-paramecium-reischig.jpg"]){max-height:40mm;object-fit:contain}
+
+/* 본문·문제·보기 글꼴과 화면 크기는 revised-workbook.css의 공통 규칙을 따른다. */

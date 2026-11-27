@@ -188,6 +188,8 @@ textarea { width: 100%; min-height: 96px; border: 1px solid var(--line); border-
 .no { font-weight: 800; color: var(--navy); margin-right: 6px; }
 .book .q .no { color: #1E3A78; }
 .book .ans-line { border-bottom: 1px solid #999; height: 26px; }
+.source-part-list { display: grid; gap: .55em; margin: .75em 0; padding: 0; list-style: none; }
+.source-part-list > li { margin: 0; padding: 0; break-inside: avoid; }
 .book .blank-print { display: inline-block; min-width: 4em; border-bottom: 1.5px solid #333; text-align: center; }
 .book .ans { color: #E23B2E; font-weight: 700; }
 .book .cols { columns: 2; column-gap: 10mm; }

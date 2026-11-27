@@ -1,0 +1,2560 @@
+{
+  "phase": 284,
+  "date": "2026-11-05",
+  "status": "material-water-photo-language-native-verified",
+  "previousGoalTurn": {
+    "classification": "progress",
+    "evidence": "Sound/motion captions revised, 30 image records added, local2e411192/PR1337 remote2b2f3a0d verified."
+  },
+  "sourceCandidateBefore": "2e411192a7eaad97d8ad6da5fcaa29958d5535d0",
+  "sourceBranch": "codex/science-workbook-integration-20261102",
+  "reviewBranch": "codex/science-workbook-review-20261105",
+  "pullRequest": {
+    "number": 1337,
+    "draft": true,
+    "headBefore": "2b2f3a0da92b3e8a7c81a32dbe916aefef29223e",
+    "actualMainMerged": false,
+    "siteDeployed": false
+  },
+  "captionChanges": {
+    "units": [
+      {
+        "unit": "c22-s32-u01",
+        "file": "c22-s32-u01.rail-notes.js",
+        "constant": "MATERIAL_PHOTO_VERSION",
+        "function": "withMaterialPhotoLanguage",
+        "prior": "materialPhotoPriorWorkbook",
+        "oldExport": "withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withMaterialsBodyLanguage(withStudentOpeningLanguage(withMaterialsRails(baseWorkbook)))))",
+        "captions": {
+          "opener": [
+            "주변 물체를 살펴보는 설명 이미지예요. 사진만으로 모든 재료의 성질을 확정하지 않아요.",
+            "나무토막, 숟가락, 통, 지우개를 살펴보아요. 각 물체를 만드는 물질과 그 물질의 성질을 알아보아요."
+          ],
+          "states": [
+            "사진에서 제시한 나무·물·공기를 생각하며 세 상태를 비교해요. 사진의 크기로 실제 양을 재지 않아요.",
+            "나무토막은 고체, 컵에 담긴 물은 액체, 봉지에 담긴 공기는 기체의 예예요. 담는 그릇을 바꾸었을 때 각각의 모양과 부피가 어떻게 되는지 비교해 보아요."
+          ],
+          "materialSand": [
+            "알갱이 생김새를 살펴보는 학습용 사진이에요. 실제 쏟기 실험이나 양을 측정한 기록은 아니에요.",
+            "모래를 이루는 작은 알갱이의 모양을 살펴보아요. 모래를 다른 그릇에 옮겨 담을 때 알갱이 하나의 모양도 달라지는지 관찰해 보아요."
+          ]
+        }
+      },
+      {
+        "unit": "s41-u02",
+        "file": "s41-u02.editorial.js",
+        "constant": "WATER_PHOTO_VERSION",
+        "function": "withWaterPhotoLanguage",
+        "prior": "waterPhotoPriorWorkbook",
+        "oldExport": "withWaterUpperScience(waterUpperPriorWorkbook)",
+        "captions": {
+          "cups": [
+            "비교를 떠올리는 준비 장면이에요. 이 사진에서 실험 조건·물방울의 출처·수치를 읽었다고 하지 않아요.",
+            "물만 담긴 컵과 얼음을 넣은 컵의 바깥쪽을 비교해 보아요. 차가운 컵에 맺힌 물방울이 어디에서 왔는지 알아보아요."
+          ]
+        }
+      }
+    ],
+    "deckChanges": {
+      "물체의 모습과 그것을 만드는 물질을 나누어 살펴요.": "나무토막, 숟가락, 통, 지우개를 살펴보아요. 각 물체를 만드는 물질과 그 물질의 성질을 알아보아요.",
+      "나무·물·공기라는 제시 대상을 생각하며 관찰 근거를 비교해요.": "나무토막은 고체, 컵에 담긴 물은 액체, 봉지에 담긴 공기는 기체의 예예요. 담는 그릇을 바꾸었을 때 각각의 모양과 부피가 어떻게 되는지 비교해 보아요.",
+      "모래 무더기와 낱알 하나의 모양을 나누어 살펴요.": "모래를 이루는 작은 알갱이의 모양을 살펴보아요. 모래를 다른 그릇에 옮겨 담을 때 알갱이 하나의 모양도 달라지는지 관찰해 보아요.",
+      "사진은 비교를 떠올리는 설명 장면이에요. 사진만으로 물방울의 출처·실험 조건·수치를 읽었다고 하지 않아요. 주변 공기와 차가운 면,누수·흘림이 있었는지 생각해요.": "컵의 바깥 면을 닦은 뒤 잠시 두고 새로 생기는 물방울을 살펴보아요. 컵 안의 물이 새거나 흘러내린 것은 아닌지 확인하고, 공기 중 수증기와 차가운 컵의 관계를 생각해 보아요."
+    }
+  },
+  "visualReview": [
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/observe.webp",
+      "sha256": "cee91f76aea5a7cb74b2de6868b42a6d6151c367e013a5f042fff4164b2243d3",
+      "observation": "Three capped liquids differ in visible colour/transparency; acid/base nature requires indicator observations, not bottle colour.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/mixture-photo-v1.png",
+      "sha256": "c91d290223014e37aea11e3ca0ede328c35597c8789913f9e1937a580f239e5d",
+      "observation": "Sand and gravel with separated samples illustrate grain-size contrast, not a measured removal yield.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u02/candle-reference.webp",
+      "sha256": "7fcbf6e02b46894f97402d247fa12b7443ff22afb019c78f49a57b66ae62db11",
+      "observation": "Lit candle and remaining wax visible; still picture does not measure heat or identify all combustion products.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-handwash.webp",
+      "sha256": "90bb3949d5394995dbc385acf462ac16a6bb513e86241c5b5762d1404d268d1e",
+      "observation": "Soap-covered hands under running water illustrate washing; duration and pathogen removal not measured.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/cabbage.webp",
+      "sha256": "b45ddf95740c5b75f9a22c0ac77623c1fd60a81b90c55bd57ec5d26e5aa74350",
+      "observation": "Red cabbage, purple extract and filter tools illustrate prepared indicator, not calibrated pH or mixing result.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u04/camera-reference.webp",
+      "sha256": "0671c89e46d1c6fe298789eedc3db78c228d4dfd297c84676e7d5d2e2949e772",
+      "observation": "Camera body and lens visible; lens/sensor function explained through existing linked text, no sensor interior claimed visible.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u04/seedling-reference.webp",
+      "sha256": "4895cb6218100d4c47b667610d2a7c027e8a1873e4f8b7e3ffede73ec2401c51",
+      "observation": "Potted seedling illustrates plant-growing conditions; soil moisture and water need not inferred from colour alone.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-shake.webp",
+      "sha256": "3e9e019f7d1788b055e77678d7446d34e8cf2cead2996f49e34f7b31c8728476",
+      "observation": "Glitter on two shaking hands is contact-transfer model, not living pathogens or measured infection rate.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/s41-u02-photo-preparation.webp",
+      "sha256": "960f3cc5b2111808e92c1f0e6f27ec142df4fbec8ddb53ef1d1683dbe7666107",
+      "observation": "Container/lid, ice, marker and towel show freezing-observation preparation; product freezing limits not established by picture.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u01/sand-grains-reference.webp",
+      "sha256": "a03e36b4faa248bd3b78339568436346c69f959b3bae566da3779eb3cb6c7b52",
+      "observation": "Granular sand illustration: compare grain form rather than claim pouring/volume experiment; caption revised to a future observation task.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s42-u03/pump-tube-reference.webp",
+      "sha256": "d0e9e4d46a5145efa259b7f311f9616e27e4510ced87c0abb9cd0a27745b2547",
+      "observation": "Squeeze bulb and detached tube illustrate apparatus parts, not connected-system pressure or motion result.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/dissolve-photo-v1.png",
+      "sha256": "2e9d1e944a35ecdb455abc3544e0ab9d1a1e5065a1da3541171f82d63125b669",
+      "observation": "Salt/sand before adding water and sediment under solution illustrate solubility separation; grains alone do not chemically identify salts.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/evaporate-photo-v1.png",
+      "sha256": "127be38ec0a8ab8c60ad975cf4e75dd0d4c89e59529bbf9e531e578420bd61f8",
+      "observation": "Solution dish and crystallike residue illustrate evaporation separation; no tasting or measured yield inferred.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/filter-photo-v1.png",
+      "sha256": "33521293c9fd73aa1b30620b25eab9ca3766e2032b04be4fe1750ac5d62cd2d8",
+      "observation": "Filter paper retains sandy solid above clear filtrate; salt identity comes from stated materials, not transparency alone.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/oil-photo-v1.png",
+      "sha256": "99b119b19f59eda6a06dc3ca7bc31059db8df076f37abf82bef8d58f579675f2",
+      "observation": "Two liquid layers with upper yellow oil/lower water match labelled example.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/sieve-photo-v1.png",
+      "sha256": "f1e864bb70e0fe0d9b573c35305e7d9df5b69c4f24bdf71a9246fad86b902941",
+      "observation": "Large gravel retained in mesh with smaller sand below matches size-based separation.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u01/technology-photo-v1.png",
+      "sha256": "b28fb1472f809e9c73d983805b79c5bb74521a26ebb1d88f6e0781ec34595198",
+      "observation": "Water-treatment-style tanks and pipes illustrate technology context; full process order and water quality not inferable from one image.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/carbonate.webp",
+      "sha256": "5c531400a16950532d0fb5ef8aeed4de6d6c58219161c5d8014489dc5fb32735",
+      "observation": "Eggshell and white rock with clear liquids are preparation; rock composition and reaction outcome not proved by whiteness.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/environment.webp",
+      "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680",
+      "observation": "Shell-bearing organisms in coastal setting illustrate acidification investigation context, not a measured damage comparison.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/litmus.webp",
+      "sha256": "e6fd0410b2229146e244398f4c811bb6197d982fd0ef09997d192d615e5ea107",
+      "observation": "Red/blue litmus strips, forceps and spotting plates show unused materials; before/after colour comparison remains necessary.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/mixing.webp",
+      "sha256": "187ac63b5a21887532ffdb2f9a47b2b8d2e2ac55f26d0c312ea529041d4b91db",
+      "observation": "Red/purple/blue liquid arrangement lacks mixing chronology and dosages; existing caption correctly separates step records.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/phenol.webp",
+      "sha256": "414505619c2dfb11a0a7b0b016bb3451c97f0791fc3388adcb5fb97bbca2d995",
+      "observation": "Colourless/pink/colourless liquids and dropper illustrate indicator contrast; original solution colour must also be checked.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s61-u01/protein.webp",
+      "sha256": "0633399853f3ecce9d213a70e1f5e3cc73bd5b57a5344d450d028d6544a06cc8",
+      "observation": "Egg white and tofu are stated protein-containing materials before demonstration, not visible reaction outcomes.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s62-u02/shells-reference.webp",
+      "sha256": "52e06bdba63365ca5a38b8b791ccf84bd8691a12ccd85d8dc2ba6ddb0bc40340",
+      "observation": "Shells show external surfaces; not proof of acidification damage or organism growth.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+      "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3",
+      "observation": "Metal, wooden and glass cups correspond to stated illustrative materials; shape differences not used as all-property proof.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-materials.webp",
+      "sha256": "285b5a3c5e9df351a862143ce1c421767f7a45c84b713cbc296795aeb12fcdd9",
+      "observation": "Wood block, spoon, clear container and eraser match material-observation opener; caption revised from audit note to object/material comparison.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+      "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511",
+      "observation": "Metal blades and blue plastic handles illustrate different materials for different functions; composition supplied by exercise statement.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-states.webp",
+      "sha256": "64a58a1d1780b3ebe4f5693653ce98c89509bac9f4b52976868b7fd5743e27ec",
+      "observation": "Wood block, water in cup and closed air-filled bag fit solid/liquid/gas examples; caption revised to container-dependent shape/volume comparison.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-cough-kit.webp",
+      "sha256": "ad708270dd2203a9bf5b754b4ed9a5bc1ef53daac6110ac53934d05aac476b08",
+      "observation": "Tissue box and disposal bin are cough-etiquette preparation; no measured protection result.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-doorknob.webp",
+      "sha256": "5c29647e92968b11e9c08539f02f9375e43c4f9aca35827905200e5a6696834c",
+      "observation": "Hand on shared door handle illustrates contact opportunity; pathogen presence or actual transmission not visible.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-ventilation.webp",
+      "sha256": "ea88c7701159a56f293a5141e6decc00f9fe299bc205e44d09e60eaeef5e64eb",
+      "observation": "Open classroom windows and door illustrate ventilation; airflow rate/pathogen removal not measured.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u04-source-arm-bent.png",
+      "sha256": "a1f0afc22d70fd51eb5d332ef9ba7ad66d49d18d3ab68f3424ca4726b56d8295",
+      "observation": "Bent two-stick spring model visibly flexes, inner spring shorter/outer path longer; correct bent label verified against actual figure order.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s51-u04-source-arm-straight.png",
+      "sha256": "0d947e0ecc2f7e9d84450c6ac9811b85d2ec32b000bfd31b0303d3924d7edea9",
+      "observation": "Straight two-stick spring model has extended alignment; current figure presents straight first, bent second with matching labels.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/photos/s42-u02-cups.webp",
+      "sha256": "c421e0abca3140a5c9a99fdb3d50e7b6c18229225510a6ce20dd6e630a691413",
+      "observation": "Plain-water cup versus ice-water cup with external droplets: revised caption asks observation and investigation of droplet origin, not source/temperature measured from picture.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-cooking.webp",
+      "sha256": "bb1b19e4dad3a9468de16bf7c3d7ea1bd5151bc4521ed1fb46c70063d2151749",
+      "observation": "Vegetable washing and heated cooking setting illustrate food/water hygiene; no complete real clinical prevention effect is inferred.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-left.webp",
+      "sha256": "60eddb04d22aeff82582b10542d294d73d7370a1db2d4479c37fe51176bb79bb",
+      "observation": "Wet hands with residual glitter illustrate model particles remaining; not actual pathogen removal measurement.",
+      "bitmapEdited": false
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u04-photo-sneeze.webp",
+      "sha256": "eebd7d9f7c3c2a01c619b6d8c351ddd306dbabfbfe6bf587804c493dd82cab40",
+      "observation": "Droplet-like spray illustration represents cough/sneeze route; not calibrated particle sizes, distances or infection risks.",
+      "bitmapEdited": false
+    }
+  ],
+  "imageReviewCoverage": {
+    "currentReferencedBitmaps": 185,
+    "priorDocumentedManualViewHashes": 122,
+    "nativeImagesViewedThisPhase": 37,
+    "documentedManualViewHashesNow": 159,
+    "withoutMatchedManualViewEvidenceInSelectedRecords": 26,
+    "priorAppleVisionHashesMatchedThisPhase": 37,
+    "appleVisionRerun": false,
+    "scope": "Image-to-current-caption/gallery/question comparison, not all science content, clinical claims, layout or runtime verification.",
+    "covered": [
+      {
+        "path": "science-lab/assets/activities/c22-s42-u02/fungus-photo.webp",
+        "sha256": "ca02e7ddd6b564977deb9bea326e918dd0b537a5ff3536fd1bfabe4f2a0cbcbb",
+        "units": [
+          "c22-s42-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/communication-photo-v1.webp",
+        "sha256": "c1f74c95bf3c443a418844d2580cac51934b1e14f439f8a9b443c94da2ddabc3",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/concentration-photo-v1.webp",
+        "sha256": "a47c0a1b7b61106bda8520e3367f66edcc2d1ba78b9894cbf07f335e83a58303",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/floating-photo-v1.webp",
+        "sha256": "915c70401dfe02f177e9e116192ae98e44d8b30964d5d35a33f5c9d160f669b8",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/mass-photo-v1.webp",
+        "sha256": "69054d2a59ccb2c9727859bedfa39443dd1c1e69d62aa91134ffec5ed1c14195",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/mixing-photo-v1.webp",
+        "sha256": "e41e3022551224c6f764bc80d30914a2c992d2418021b4d42665c2ee016d8195",
+        "units": [
+          "c22-s51-u03",
+          "c22-s62-u02"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/residue-photo-v1.webp",
+        "sha256": "257b17e0fce12417ba35f64f1e1343eb0f824830bbc4450693579c17ce85d9f8",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u03/temperature-photo-v1.webp",
+        "sha256": "365f12e19f729648c368b0297c609b438c05edd538d2f1abf6bc96c5c5e70423",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/arm-model-photo-v1.webp",
+        "sha256": "142bf91b4054c032070fda324a321dc6c09c5b434799a03bf290348828ee1ada",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/breathing-model-photo-v1.webp",
+        "sha256": "65f734b5fcb80544418492fbbcd686eb4c40359e77488fd8039fbbc88b0acb08",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/health-model-photo-v1.webp",
+        "sha256": "d562eddf47488503da805c21923321f12e5246a7add961541cbed4b3930c089f",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/heart-model-photo-v1.webp",
+        "sha256": "33ef0a557bff5caaa46d3299276a0b0fe5f7d279870e926f67238609301bbacb",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/pulse-model-photo-v1.webp",
+        "sha256": "16dde3387322bdc16376d2f4d8351eba0cf6687f57774afad063b751c5c4f5dd",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/torso-model-photo-v1.webp",
+        "sha256": "3e44ab6dd49c19dbe61189d2baea3ff79937a3069c1e884c5fa69febd5a3d7e5",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s51-u04/urinary-model-photo-v1.webp",
+        "sha256": "3736c193a7b70f5682f17ab8017d56ea8eb99fa633f7bbb57a3bc8c73d75477e",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/cloud.webp",
+        "sha256": "f17693bbfcf7d96023a1826352b6a88eda6963607025d54e9c0ed30ce2a2dd88",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/coast-model.webp",
+        "sha256": "c8e2c80c2d5f3228d709031ed4ef7021293a917e7040e9b40d214fd9d8b74271",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/dew.webp",
+        "sha256": "0b40c5de42b28bd4d6d0638a175804371d4ef91bfb29531af93d8464a4593ef8",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/fog-model.webp",
+        "sha256": "817f3b50d6216507a5915cc82ca95a3220d3d26aeeafa3f6eed64c342880da04",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/fog.webp",
+        "sha256": "02dd682dc08dc894816e1ce9b6a3c7c1e1795099546fb88970dea458aa516b2e",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/wind.webp",
+        "sha256": "41d517a9021921cd0b080bc3a8a7e09dd3a24a7c8201483586b3fbc0e9cf0156",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 274,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/bat.webp",
+        "sha256": "05483c2a9a8a3b99490c77d6830efe1c2a27bdc5947f4d00812d0f2bd56b8f06",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/dragonfly.webp",
+        "sha256": "51962f7f7908c99e9fff233f104d0398a8266e19708a6e5fc750ce59e9d9fe03",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/frog.webp",
+        "sha256": "986f8d3e85ebb3645f064cf76e1ce2a842cf995cf47743a062f1ca3f4da1984c",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/lizard.webp",
+        "sha256": "6e767a2ff77d6e6b07cbcecade01fa239adc588da02e3d9b20374d0d7d1631dc",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/pigeon.webp",
+        "sha256": "95389c2e133130f3addc0d075103db59d353db99c095ae53bb754d7dd40556ad",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/shark.webp",
+        "sha256": "030128162474794c4a6e8ada239a27216b58ed89ab90c64a9cb962b7ad943fc2",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/squid.webp",
+        "sha256": "a90348420b5e14f55792b9dcfc6a26a46f7c50acb718c4e015f6d52db6adfd98",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u02/tiger.webp",
+        "sha256": "36da5198b94176eb24f9132035101cb42429dd8a17ce4b947b7033a6bac86dd1",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/clover-native.webp",
+        "sha256": "15436415f61eb4f197d94c19dd45993d2e20c0e27b611fb2c7396f1458207069",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/magnolia-native.webp",
+        "sha256": "9d151029739bbab61f2639905a20fd50941798ce15a556a3698c12f879fb481b",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s61-u03/s3-q09.webp",
+        "sha256": "82e441605c32a0d7323a2432e847cdaf04b9cd39e109e943b61342033c1d06c9",
+        "units": [
+          "c22-s61-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s61-u03/s4-q16.webp",
+        "sha256": "98454d5f839c9cbbe4117362861e367d09b18ca2240cb78c8b9c22c42e606caa",
+        "units": [
+          "c22-s61-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s31-u04/s4-q4.webp",
+        "sha256": "a323429438891c99d6c99fe53b109012b40bef9288d5b932b8189df015327a85",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u01/s3-q01.webp",
+        "sha256": "0460e58811550e28e0dbf66667f355433ce89aec420461f0d670aa37aa870ed3",
+        "units": [
+          "s41-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u02/s3-q01.webp",
+        "sha256": "a7eb784307a9ccb7484e5ab048b7385cbea755dbc02d3c6a2256d3d8b717d1c3",
+        "units": [
+          "s41-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u03/s3-q06.webp",
+        "sha256": "8b2e7282864626ce7ff92c90ba72f28767e469853c07e7757776614a5b8c10d1",
+        "units": [
+          "s41-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u03/s3-q11.webp",
+        "sha256": "1e7ce5836740400915eedc8037161499db9095620c177fd0fb04eb8799b28de3",
+        "units": [
+          "s41-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u01-nasa-north-guide.jpg",
+        "sha256": "b6bf9120da82525148a3bf9041c2879b374b2f5a7b6cea45c6c7af267e2f7a02",
+        "units": [
+          "c22-s42-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u03-syringe-nadine90.jpg",
+        "sha256": "cd46a7c13aee5235fe4cc5e3e3aa1775afcdeaa160bee4818b140aef2174e2fc",
+        "units": [
+          "c22-s42-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-coin.png",
+        "sha256": "b9cb42a4672d86e994a8dee3cbb6d78a4be3904c89829ae170447ddb9b2a13e6",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-lens.png",
+        "sha256": "14e85cc2711a3d52df5fc9222c3a4fb51dea56eb47bd5867f3a6b40777792ede",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-mirror.png",
+        "sha256": "311e4e17e6b83f1267e61e3f2d37d419ef8085326498714960b4936966367989",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-pencil.png",
+        "sha256": "5a6db3fd5ee76c855312aa18d238d42dd4b480317f881d531e8750ff4477fe61",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-periscope.png",
+        "sha256": "591f55f1dba5288acb2e1aa79c7fb431e64f1ef22fee3d60a05e44268ed2945f",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-seeing-object.png",
+        "sha256": "fb27b31ae4f01f5094c55593443861c017c9e98bfdff9089d03321382d0daa85",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u02-source-seeing-source.png",
+        "sha256": "43d92b86fd733c0a3c4a60139ad5b97e0356d60be398719dcf76a9d5af12f1dc",
+        "units": [
+          "c22-s51-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 278,
+          "basis": "explicit native image view and caption review"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u03-source-colored-water.png",
+        "sha256": "703cb2200d37f12e94d969dd69e11fba4f9782b1a91e0727d16abb46a4de20ec",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u03-source-mass.png",
+        "sha256": "0a8076e5b9a9f45596f8c8ca353b73973b108b98f7cac072e1dfd083776cdd5a",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u03-source-terms.png",
+        "sha256": "17facf3b9f976eb21317d69e809e21ffe24f25db2cf7d91f2a5a07c55ed7ccfa",
+        "units": [
+          "c22-s51-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 279,
+          "basis": "native source image and current caption/role comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/ecology-20261028/habitat.jpg",
+        "sha256": "9063f3555089a4b8a3d4051412ac911638ed4aa239def7e51efd9bd7cd75079e",
+        "units": [
+          "c22-s42-u02"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/ecology-20261028/meadow.jpg",
+        "sha256": "5ddcdac89de29aea5988f7ea86eb75934309bdf77f41e525f5b8cca100339114",
+        "units": [
+          "c22-s42-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/ecology-20261028/rice.jpg",
+        "sha256": "76c41da5b969ced651e24994d51ac55e40800c0c428f9741286407421b6a5638",
+        "units": [
+          "c22-s42-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/ecology-20261028/water-waste.jpg",
+        "sha256": "f673838420a0ab8058707502c7b3b7571d7f77d8d5a4f8b5ddc9e8b6bc76c3b7",
+        "units": [
+          "c22-s42-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/observation-20261102/duck.jpg",
+        "sha256": "9684089d110167b88e11609634fd4488717d59ada9b23818b97d43dfed7497bb",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/observation-20261102/fins.jpg",
+        "sha256": "657f6420be63918ad9cf5a2a00b91cbe612eb54cd70100182cfba91da5d9479b",
+        "units": [
+          "s31-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 280,
+          "basis": "native full source image and current caption/observation question comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u04-paramecium-reischig.jpg",
+        "sha256": "052b4b05926857512ac97424728f1c4feee2b54c62a3106222d4916e79b279f5",
+        "units": [
+          "s41-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 247,
+          "basis": "summary explicitly records manual viewing of all 15 text-bearing originals"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/cherry-native.webp",
+        "sha256": "9a33a56814066b645a06a68978d90fd14f2cb05fd87c6ec86f1e3b42e7a0d3b4",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/hyacinth-native.webp",
+        "sha256": "7dee6ebf8648c17347c21ab39a15f444171f43f750cdd01718b369ccd18fabc3",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/strawberry-native.webp",
+        "sha256": "d374edb0de39dcd6d199c9edf30d83a9ecbf8f49dfa032b86d50c37dc1517b56",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u03-photo-lotus.webp",
+        "sha256": "e9be247ef3bc544e3d2d684312e6857700399cdd54f12aca1bb806adc418bce2",
+        "units": [
+          "c22-s61-u03",
+          "s31-u03"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u03-photo-observe.webp",
+        "sha256": "73fa65302eb90877a71cebaf08963bacc8d7c65233b719f44b0bd6085865ef63",
+        "units": [
+          "c22-s61-u03",
+          "s31-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/s31-u03/rose-native.webp",
+        "sha256": "e994a9af85432ba438536a5fba1667285f11ae6a94e10e06ec62439bb69164d1",
+        "units": [
+          "s31-u03"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u04/s3-q11.webp",
+        "sha256": "0e25085d414a29f9a5fc462fcc863a4177787fb409b2e09e895e47b32aa304f0",
+        "units": [
+          "s41-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u04-photo-preparation.webp",
+        "sha256": "dc2d01b43fed70a9ca1007169ede7311016cec2543f136042791f7fddd490d94",
+        "units": [
+          "s41-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u04-source-spirogyra.webp",
+        "sha256": "5eb5ce3388a152cbd1d8854ac4fad6526ee29620b5361e46e7e60a8b481d40f4",
+        "units": [
+          "s41-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s31-u04/s2-q13.webp",
+        "sha256": "042c4d39616480f92d18a358d6742bc1fcc733f579807b8981cf830eb2096f15",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u04-photo-seedling.webp",
+        "sha256": "9ea4a501084f99d95ecb4ef6b73709f6834607b4abe449ceee9054e60f57930a",
+        "units": [
+          "c22-s61-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s31-u04/s2-q18.webp",
+        "sha256": "f430513580c4611875c9946a3220561a7e78384ce710f677caebd57a333444fb",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s31-u04/s2-q8.webp",
+        "sha256": "85ba34e550441c5d1f73486c4b2f349f61c588f3c37d0af8168720d7d5ab9dab",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s61-u03-apple-higginson.jpg",
+        "sha256": "d2e665ef4ab9ab613c5763748026cca1b80a33a8f704e6e85158653d7a7ebadf",
+        "units": [
+          "c22-s61-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s61-u03-onion-kot.jpg",
+        "sha256": "b5a7c77f488ea5e70fd177962760e933d30839276b22b8267f434ff558055800",
+        "units": [
+          "c22-s61-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/observation-20261102/beans.jpg",
+        "sha256": "959a76d4da8fb7379b640f173a5d4a443bf35526d6111f9d7cdd2f6243dc2e57",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/observation-20261102/seedling.jpg",
+        "sha256": "5e9bf12fbdc6ea12d09e5cf60e89a02b99542898212cfd6eeb93fff5f41456e8",
+        "units": [
+          "s31-u04"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 281,
+          "basis": "native full-size picture and current workbook caption/question/gallery scope comparison"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u01-source-horizontal.png",
+        "sha256": "133bcab4fdf3bf81681f642327aa92cf6c98f4d69c5584d395e1aceddab960b3",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 16,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/fossil-fish.png",
+        "sha256": "fddd707bc30fc3ffe2b90e2768e6d8bce3da90cd345ae992dd94a397cb013b87",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/rock-c.png",
+        "sha256": "5ef18a5c7efc00f9b8afe7c60ba7ff8500fe1ba6d26bcb46a640fc095d4c5dd1",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u01-source-bent.png",
+        "sha256": "10d978aa457ab208f53143e68e3151b8a6216e6efbd5c3d8a00fd9f5e82a7106",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u01-source-broken.png",
+        "sha256": "dab0b73fa1eb5fff2b0bd559a3fd5ba9c08ecd4cce35a9e8b1d578fb1f476414",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+        "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+        "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/rock-b.png",
+        "sha256": "9542dfbd7475c5bc57e3a662be6dd71e9fcf27401168ca63fb545732734c8007",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u03/s3-q04.webp",
+        "sha256": "7721c8fc6ff9f8dd94ee0d130eba6184088460de9a272a49b21a94ce3516bbd4",
+        "units": [
+          "s41-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+        "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg",
+        "sha256": "36dad3314b64319ea75465c4293719eb131d943566eb462e8bac3281e02c3bd4",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s51-u01/rock-a.png",
+        "sha256": "c43292f1f7cbf933032378e1b571f54eb58d0dd52b5038f4b7532cae4afaa636",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u03/s1-q05.webp",
+        "sha256": "2c8e21b775faaf37a440ec90561c93a211c67caa5420366b3f79e3baf56e5c14",
+        "units": [
+          "s41-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u02-photo-evap-kit.webp",
+        "sha256": "7c52009cbb773516b0a071b54e582c158a6de1f4b39c984f252a8ec9f2c1bdf3",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u02-photo-tidal-flat.webp",
+        "sha256": "f0b3fe2d3fa00a8b3d85752154630d2b1b2af095e969665279782231b93e75d4",
+        "units": [
+          "c22-s32-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u01-fern-nps.jpg",
+        "sha256": "7f15bedd829943b335febb597226b191626f000c0822434c91ddd15c3bb35f88",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u01-source-clay.png",
+        "sha256": "a5254bbcefab65c764370ca50609cea0150c69e2261932e1973e4da3f5cc80e9",
+        "units": [
+          "c22-s51-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u03-photo-preparation.webp",
+        "sha256": "fe226bf44e0045dd913cd28da1e9e2ba2dba863c99f268610b15df5b5700c9e7",
+        "units": [
+          "s41-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 282,
+          "basis": "native full-size picture and current caption/question comparison; ground captions revised for visible evidence"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u01-photo-cart.webp",
+        "sha256": "d4f7a65d2e963552a9d1ee8f12e8e67a643e7e254f6d7f0e74ef096621ab2ad6",
+        "units": [
+          "c22-s61-u02",
+          "s31-u01"
+        ],
+        "referenceCount": 16,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/resources.webp",
+        "sha256": "853e38fbcd72a4a9187237ee9f6f906a824cbc81aea4880ecb6613f840863afb",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 10,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/measure-photo-v1.webp",
+        "sha256": "2d4df8a1f4b77c7c40e5f6ee439a4e0e4775638f592d92dee9048ae329d1f885",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/house.webp",
+        "sha256": "6f0ab3cd817dadf5cd864132c792cf0dd78b67cbcd8d2070917c996415b7eeb4",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/hydro.webp",
+        "sha256": "0b763f1e23a621acecf9f537e50dc917bef33da8a21a4c1bfd6eb6958412eede",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/practice.webp",
+        "sha256": "562cce0ed077aeb7e8a6f4660adce4770e667898e6d4409dfb4f22e6c41426b6",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/reuse.webp",
+        "sha256": "44e2f6830b9922282a4dbe7f4305862740a9a67ecba28dd20c8f2d4251363d3a",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u03/bulb-reference.webp",
+        "sha256": "94c6b09140e992cf2009b4fac82a95e364d55e9fedff838cdc87b37fcba1ce5d",
+        "units": [
+          "c22-s62-u03"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/air-photo-v1.webp",
+        "sha256": "2d4df34be70c7f93075bb37ebed3717ccde5dbb230c0a5651de2fa59a04f46b2",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/conduction-photo-v1.webp",
+        "sha256": "950805d708fd4393d2fd534514b4fbc90b6811f08271843c7572a4c3319735af",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/contact-photo-v1.webp",
+        "sha256": "74717360c112c8d7b1a32f6dc4cc4bf533257c33cafb7a27f3353239969907cf",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/insulation-photo-v1.webp",
+        "sha256": "77941c95b3cf851df685952601ec7f9f764f819d42ba59fa3e72fb919aa829bf",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/light-photo-v1.webp",
+        "sha256": "2899c641cc08679aa41c273e6219dbc8d251137c36d67d91c8a17d8900afe80a",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/prototype-photo-v1.webp",
+        "sha256": "952fe95e40777778d3f4e5a36f3e687f16d2d507ffe9a074ce1578021dbf4d82",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u02/water-photo-v1.webp",
+        "sha256": "c04c5a3cc9627ae95997496feffaf8e3cbec4a1fde2bdc658d228a9acc0b9999",
+        "units": [
+          "c22-s52-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/ocean.webp",
+        "sha256": "69283233421ed125ccc1a61560058fbf90d3110c6dfb2b768853a07627d5dee5",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/solar.webp",
+        "sha256": "36ae82b79dff2359dd3e86b5820276b6b729a71f523a1cb0ce80c374f2515397",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u04/wind.webp",
+        "sha256": "d95d033fb0de8cf0ddc8404d4e7abb7a6c39dbfc948da5ddf5e11fcbac75e4ee",
+        "units": [
+          "c22-s52-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u03/coil-reference.webp",
+        "sha256": "071f7bdc2542da120d639adcc6c0039d5c49995c6c46d9d70e3bd6ec073e5af0",
+        "units": [
+          "c22-s62-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s61-u02/s2-q05.webp",
+        "sha256": "51098cd9ac3c5bfacd49f0a9124eb9958e36d1c95ef5faf8b896d2d903cdbb78",
+        "units": [
+          "c22-s61-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s61-u02/s4-q05.webp",
+        "sha256": "d4548e46dfc0d15e01a755c88f8f968430b3f3145c09208727529a1706bbf5f5",
+        "units": [
+          "c22-s61-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u01/s2-q09.webp",
+        "sha256": "05e6cca3205d01b3e27fd930f4753e13692198094ebb4ecc20039b5c30cc3920",
+        "units": [
+          "s41-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/s41-u01/s3-q19.webp",
+        "sha256": "ad64130a92c26c52ddcdfcd9a9a570434d8783c92307c883846ae77c17b5de4b",
+        "units": [
+          "s41-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u03-photo-chair.webp",
+        "sha256": "f9fac46cf65fdb8a2d457f66fa328e4a990438363375e905866cc77e25127d81",
+        "units": [
+          "c22-s32-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u03-photo-drum.webp",
+        "sha256": "144afc4194db7237b53c67bb0417482e983025b2b4c823b4a13b91095a36475e",
+        "units": [
+          "c22-s32-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u03-photo-ruler.webp",
+        "sha256": "c23f02d895dc0546cf6c35bb36efa74251e8e13e2983c4edfc8968c32fdc0570",
+        "units": [
+          "c22-s32-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u01-photo-ramp.webp",
+        "sha256": "c565917e9a2675f4f982dddb9a2091bd461e1745ea30471a932efbd36f92fa49",
+        "units": [
+          "s31-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s31-u01-photo-scale.webp",
+        "sha256": "d4cf426cce517975aaa0294841f61e56dcad40a83297704887d58dd7bcb240de",
+        "units": [
+          "s31-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u01-photo-preparation.webp",
+        "sha256": "80468c2550e20a3a39e7a1d1ebcfafd1e552ea8af9bff9b3a033e41435ef3749",
+        "units": [
+          "s41-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/bank/c22-s61-u02/s1-q05.webp",
+        "sha256": "e5884e70832e00440debd5c7a61c3128ec8cb7f7a91d8f95196aa26fabd73d10",
+        "units": [
+          "c22-s61-u02"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 283,
+          "basis": "native full-size picture and current instructional caption/question comparison; sound and aircraft captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/observe.webp",
+        "sha256": "cee91f76aea5a7cb74b2de6868b42a6d6151c367e013a5f042fff4164b2243d3",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 12,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/mixture-photo-v1.png",
+        "sha256": "c91d290223014e37aea11e3ca0ede328c35597c8789913f9e1937a580f239e5d",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u02/candle-reference.webp",
+        "sha256": "7fcbf6e02b46894f97402d247fa12b7443ff22afb019c78f49a57b66ae62db11",
+        "units": [
+          "c22-s62-u02"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-handwash.webp",
+        "sha256": "90bb3949d5394995dbc385acf462ac16a6bb513e86241c5b5762d1404d268d1e",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 8,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/cabbage.webp",
+        "sha256": "b45ddf95740c5b75f9a22c0ac77623c1fd60a81b90c55bd57ec5d26e5aa74350",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u04/camera-reference.webp",
+        "sha256": "0671c89e46d1c6fe298789eedc3db78c228d4dfd297c84676e7d5d2e2949e772",
+        "units": [
+          "c22-s62-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u04/seedling-reference.webp",
+        "sha256": "4895cb6218100d4c47b667610d2a7c027e8a1873e4f8b7e3ffede73ec2401c51",
+        "units": [
+          "c22-s62-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-shake.webp",
+        "sha256": "3e9e019f7d1788b055e77678d7446d34e8cf2cead2996f49e34f7b31c8728476",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/s41-u02-photo-preparation.webp",
+        "sha256": "960f3cc5b2111808e92c1f0e6f27ec142df4fbec8ddb53ef1d1683dbe7666107",
+        "units": [
+          "s41-u02"
+        ],
+        "referenceCount": 6,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s32-u01/sand-grains-reference.webp",
+        "sha256": "a03e36b4faa248bd3b78339568436346c69f959b3bae566da3779eb3cb6c7b52",
+        "units": [
+          "c22-s32-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s42-u03/pump-tube-reference.webp",
+        "sha256": "d0e9e4d46a5145efa259b7f311f9616e27e4510ced87c0abb9cd0a27745b2547",
+        "units": [
+          "c22-s42-u03"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/dissolve-photo-v1.png",
+        "sha256": "2e9d1e944a35ecdb455abc3544e0ab9d1a1e5065a1da3541171f82d63125b669",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/evaporate-photo-v1.png",
+        "sha256": "127be38ec0a8ab8c60ad975cf4e75dd0d4c89e59529bbf9e531e578420bd61f8",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/filter-photo-v1.png",
+        "sha256": "33521293c9fd73aa1b30620b25eab9ca3766e2032b04be4fe1750ac5d62cd2d8",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/oil-photo-v1.png",
+        "sha256": "99b119b19f59eda6a06dc3ca7bc31059db8df076f37abf82bef8d58f579675f2",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/sieve-photo-v1.png",
+        "sha256": "f1e864bb70e0fe0d9b573c35305e7d9df5b69c4f24bdf71a9246fad86b902941",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u01/technology-photo-v1.png",
+        "sha256": "b28fb1472f809e9c73d983805b79c5bb74521a26ebb1d88f6e0781ec34595198",
+        "units": [
+          "c22-s52-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/carbonate.webp",
+        "sha256": "5c531400a16950532d0fb5ef8aeed4de6d6c58219161c5d8014489dc5fb32735",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/environment.webp",
+        "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/litmus.webp",
+        "sha256": "e6fd0410b2229146e244398f4c811bb6197d982fd0ef09997d192d615e5ea107",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/mixing.webp",
+        "sha256": "187ac63b5a21887532ffdb2f9a47b2b8d2e2ac55f26d0c312ea529041d4b91db",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/phenol.webp",
+        "sha256": "414505619c2dfb11a0a7b0b016bb3451c97f0791fc3388adcb5fb97bbca2d995",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u01/protein.webp",
+        "sha256": "0633399853f3ecce9d213a70e1f5e3cc73bd5b57a5344d450d028d6544a06cc8",
+        "units": [
+          "c22-s61-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u02/shells-reference.webp",
+        "sha256": "52e06bdba63365ca5a38b8b791ccf84bd8691a12ccd85d8dc2ba6ddb0bc40340",
+        "units": [
+          "c22-s62-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+        "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3",
+        "units": [
+          "c22-s32-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u01-photo-materials.webp",
+        "sha256": "285b5a3c5e9df351a862143ce1c421767f7a45c84b713cbc296795aeb12fcdd9",
+        "units": [
+          "c22-s32-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+        "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511",
+        "units": [
+          "c22-s32-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u01-photo-states.webp",
+        "sha256": "64a58a1d1780b3ebe4f5693653ce98c89509bac9f4b52976868b7fd5743e27ec",
+        "units": [
+          "c22-s32-u01"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-cough-kit.webp",
+        "sha256": "ad708270dd2203a9bf5b754b4ed9a5bc1ef53daac6110ac53934d05aac476b08",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-doorknob.webp",
+        "sha256": "5c29647e92968b11e9c08539f02f9375e43c4f9aca35827905200e5a6696834c",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-ventilation.webp",
+        "sha256": "ea88c7701159a56f293a5141e6decc00f9fe299bc205e44d09e60eaeef5e64eb",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u04-source-arm-bent.png",
+        "sha256": "a1f0afc22d70fd51eb5d332ef9ba7ad66d49d18d3ab68f3424ca4726b56d8295",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s51-u04-source-arm-straight.png",
+        "sha256": "0d947e0ecc2f7e9d84450c6ac9811b85d2ec32b000bfd31b0303d3924d7edea9",
+        "units": [
+          "c22-s51-u04"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/photos/s42-u02-cups.webp",
+        "sha256": "c421e0abca3140a5c9a99fdb3d50e7b6c18229225510a6ce20dd6e630a691413",
+        "units": [
+          "s41-u02"
+        ],
+        "referenceCount": 4,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-cooking.webp",
+        "sha256": "bb1b19e4dad3a9468de16bf7c3d7ea1bd5151bc4521ed1fb46c70063d2151749",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-glitter-left.webp",
+        "sha256": "60eddb04d22aeff82582b10542d294d73d7370a1db2d4479c37fe51176bb79bb",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      },
+      {
+        "path": "science-lab/assets/book/c22-s32-u04-photo-sneeze.webp",
+        "sha256": "eebd7d9f7c3c2a01c619b6d8c351ddd306dbabfbfe6bf587804c493dd82cab40",
+        "units": [
+          "c22-s32-u04"
+        ],
+        "referenceCount": 2,
+        "manualReviewEvidence": {
+          "phase": 284,
+          "basis": "native full-size picture and current caption/gallery/question comparison; material and water captions revised"
+        }
+      }
+    ],
+    "pendingPrioritized": [
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-model-no-wall-v2.webp",
+        "sha256": "8c203770c6fd9fa74cb327a3891722352dadc0c074c2694bbcb6990a125e60ce",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 12
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s52-u03/station.webp",
+        "sha256": "f15dab339a86c6f181f153817572b2315514e3bf3d375398599e6a412e0db776",
+        "units": [
+          "c22-s52-u03"
+        ],
+        "referenceCount": 8
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s62-u01/measurement-materials.webp",
+        "sha256": "022b1bcce9726456576498cbadf586afc8d2fa4cddd19e2a82a44b4b781bce30",
+        "units": [
+          "c22-s62-u01"
+        ],
+        "referenceCount": 8
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s42-u01/sun-PIA17669.jpg",
+        "sha256": "4c6e67c863037bb5dbaac39b068a6f74f007d425e22e59917a327669c45a0061",
+        "units": [
+          "c22-s42-u01"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/model-preparation.webp",
+        "sha256": "185bccbc2b4732a3a69745f0e166272a958919c9ae99ff24980273206878c983",
+        "units": [
+          "c22-s61-u04",
+          "c22-s62-u01"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u01-moltke-apollo10-nasa.jpg",
+        "sha256": "e5fb78d33efb9a64cec032242d2df0f236bcc818e898f146328370de9bd09f76",
+        "units": [
+          "c22-s42-u01"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u01-photo-preparation.webp",
+        "sha256": "faaf55a705d43b950cb339b4af1f0149b24fc1d7dd057b7e79d51f66c48ba75a",
+        "units": [
+          "c22-s42-u01"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-atoll.webp",
+        "sha256": "b30c558be9444e90a97a84277295112791147c834d1281c9a4645ba717913f66",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-downpour.webp",
+        "sha256": "ad7dfbe0f55bfbfd2470694afb7a8d2ef92290bf890b53a6bedf9aa02e2d4b54",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-lightswitch.webp",
+        "sha256": "b55439464265545fd33de43f35dba1ff07a0776ef0beb2579fec9c413298c2b2",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-model-wall-v2.webp",
+        "sha256": "f43ace638df3835b7bd1e752003b780835886e81316ad631fff0869fd5bd9e2b",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 6
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/card-materials.webp",
+        "sha256": "c3e8cf46ca7adb40d40de72623b44d9e18aecc851618f5f95c679c997707a90d",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/night-environment.webp",
+        "sha256": "a0b25f075071fd75f6d84d019adf757f0dd53d9dc1102eeeb4851464628f92cc",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-spring-21-qr.png",
+        "sha256": "ad5561b1c9c2a95d2ac4567dcea15e3406565e0a03bf83f583a8b7e892a960da",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u01-moon-apollo8-nasa.jpg",
+        "sha256": "4484f496b1c18558a534e62465f1a26ac8cbb4eeea0460bfe7147daecdbed1d3",
+        "units": [
+          "c22-s42-u01"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-drought.webp",
+        "sha256": "0fdb8663a7cf598b6a46d50363e276745b11f4ea3d074549296af3b8f48cb17e",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-heatwave.webp",
+        "sha256": "41071ac28231b8e48ad880b3c3a2c3b658834c49513186f111ab74e42f92312c",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-seawall.webp",
+        "sha256": "15603654343bfa12dbd20837d44aa1060194289e2c4de9496ec514d0a6de173b",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/book/c22-s42-u04-photo-smokestack.webp",
+        "sha256": "341c01c7bb4c26505257919165e62cdcbf89542f55ccdbfdf912fabe41e48def",
+        "units": [
+          "c22-s42-u04"
+        ],
+        "referenceCount": 4
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-autumn-21-qr.png",
+        "sha256": "2dd6810847c86fc2499e3e4504c387fde7931a42651a814aa27757ac6ead4409",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-spring-22-qr.png",
+        "sha256": "034b8f8f984ae838548d3c78dd84d18e4e67dc733f6215221fe9d8f7115077d9",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-summer-21-qr.png",
+        "sha256": "7a87c27b143de628473b1a649de3fff4f284fb888ac2836ade65f02ec04806e2",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-09-qr.png",
+        "sha256": "9f00e1c952b3c452b66e4d16253566460c33838a62b97c9ba3ce4acff296e900",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-12-qr.png",
+        "sha256": "86b22d5c477872ab3898bb989629a17e6f0570b318af9c73ec52b5b65ad18d69",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-sun-15-qr.png",
+        "sha256": "11b899c309a4140b20b0731dd1a04ac9d7d9fe87ff469c937ee3bcb564af6f99",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      },
+      {
+        "path": "science-lab/assets/activities/c22-s61-u04/sky-winter-21-qr.png",
+        "sha256": "c220167bfb0ac704c5175365f98811a7a71035c0f0e577265a83bb354706a42d",
+        "units": [
+          "c22-s61-u04"
+        ],
+        "referenceCount": 2
+      }
+    ]
+  },
+  "curriculum": {
+    "officialText": "Ministry of Education 2022-33 annex9 science",
+    "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "standards": [
+      "4과05",
+      "4과08",
+      "4과10",
+      "4과15",
+      "6과04",
+      "6과05",
+      "6과09",
+      "6과14",
+      "6과16"
+    ],
+    "scope": "Matter states and observable water changes; separations by particle size, solubility or nonmixing liquids; acid/base indicator observations exclude neutral/pH/neutralisation requirements; contact models distinct from actual pathogens."
+  },
+  "focusedTermAudit": {
+    "scope": "Selected restricted terms in current questions and student-page blocks of four units only; later-grade rails and old source/similar banks excluded. Not a full semantic or all-vocabulary audit.",
+    "rules": {
+      "c22-s52-u01": "\\ubc00\\ub3c4|\\ubd84\\uc790|\\uc99d\\ub958|\\uc6d0\\uc2ec",
+      "c22-s61-u01": "\\uc911\\uc131|\\uc911\\ud654|\\uc218\\uc18c.?\\uc774\\uc628|\\uc218\\uc0b0\\ud654.?\\uc774\\uc628|pH",
+      "c22-s32-u04": "\\uba74\\uc5ed.?\\ubc18\\uc751|\\ud56d\\uccb4|\\ud56d\\uc6d0",
+      "c22-s62-u02": "\\ud654\\ud559.?\\ubcc0\\ud654|\\ubb3c\\ub9ac.?\\ubcc0\\ud654|\\uadf8\\uc744\\uc74c"
+    },
+    "unitCounts": {
+      "c22-s62-u02": {
+        "questions": 128,
+        "studentPages": 133
+      },
+      "c22-s32-u04": {
+        "questions": 80,
+        "studentPages": 54
+      },
+      "c22-s52-u01": {
+        "questions": 96,
+        "studentPages": 71
+      },
+      "c22-s61-u01": {
+        "questions": 128,
+        "studentPages": 99
+      }
+    },
+    "coreMatches": 0,
+    "diagnosticNoteMatches": 18,
+    "diagnosticInterpretation": "Matches are negative guardrails in diagnostic notes, not required learner terminology."
+  },
+  "preservation": {
+    "changedFigureHtmlStrings": 4,
+    "priorWorkbooksNativeDeepEqual": 2,
+    "oldHelperBytesPreserved": 2,
+    "questionsPreserved": 3080,
+    "otherWorkbooksUnchanged": 30,
+    "unchangedPaperProducts": 124,
+    "changedPaperProducts": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teacher"
+      }
+    ],
+    "unchangedSlideArrays": 60,
+    "changedSlideCards": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "cover"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "recall"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "id": "gas"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "cover"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "recall"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "id": "gas"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "self",
+        "id": "recall"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teach",
+        "id": "recall"
+      }
+    ],
+    "unchangedRuntimeDatasets": 32,
+    "imageFilesUnchanged": 37,
+    "priorAppleVisionHashesMatched": 37,
+    "appleVisionRerun": false,
+    "actualBrowserVerified": false
+  },
+  "nativeTests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2,
+    "exitCode": 0,
+    "syntaxFiles": 10
+  },
+  "runtimeGates": {
+    "actualBrowserVerified": false,
+    "actualThreeDFailureZeroVerified": false,
+    "pcMobileA4VoiceWebGLPending": true
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase284",
+  "goalAchieved": false,
+  "goalAtImpasse": false
+}

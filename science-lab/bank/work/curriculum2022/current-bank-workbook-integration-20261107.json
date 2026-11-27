@@ -1,0 +1,493 @@
+{
+  "date": "2026-11-07",
+  "phase": 318,
+  "scope": "Five independent print banks deliberately use current elementary workbook and online practice presentations. Preserve actual pairs, all old bank models and saved grades.",
+  "priorLocalCommit": "69042564a79dfa7b85cc8ce5f00c395f0f1561c2",
+  "reviewParent": "296f92f807073660dc1c36749c981effbf9297a3",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "unitQuestions": {
+    "c22-s62-u04": 128,
+    "c22-s62-u03": 186,
+    "c22-s62-u02": 198,
+    "c22-s62-u01": 198,
+    "c22-s61-u04": 167
+  },
+  "linkedWorkbookQuestions": 640,
+  "independentPairedQuestionsPreserved": 237,
+  "studentQuestions": 877,
+  "actualPrintPresentationsChanged": 564,
+  "quickAnswerRowsChecked": 877,
+  "priorBankBookExportsPreserved": true,
+  "existingOnlineQuestionsAndSavedStateUnchanged": true,
+  "tests": {
+    "total": 1306,
+    "pass": 1304,
+    "fail": 0,
+    "skip": 2
+  },
+  "validation": {
+    "unitCount": 5,
+    "bankQuestions": 877,
+    "changedPrintPresentations": 564,
+    "beforeMissingCurrentExplanations": 556,
+    "afterMissingCurrentExplanations": 0,
+    "otherCustomPrintAuditsUnchanged": 16,
+    "all32WorkbooksAndRuntimeUnchanged": true,
+    "all64ClassroomArraysUnchanged": true,
+    "all128WorkbookHtmlUnchanged": true,
+    "priorBankBookExportsPreserved": true,
+    "syntaxFiles": 8,
+    "actualBrowserVerified": false,
+    "newOcr": 0,
+    "newBitmaps": 0,
+    "units": [
+      {
+        "unit": "c22-s62-u04",
+        "questions": 128,
+        "priorBookPreserved": true,
+        "changedPresentations": 110,
+        "changedFields": {
+          "given": 33,
+          "givens": 23,
+          "explanation": 109,
+          "prompt": 43,
+          "options": 10,
+          "answer": 29,
+          "responseContract": 28,
+          "parts": 2,
+          "choices": 1
+        },
+        "rendered": [
+          {
+            "mode": "student",
+            "before": "e9b23d0ece35f2947d159b12c03544542b2dc975abf7a0255a1d45058cf78eec",
+            "after": "6a87985a1129109207699524acd4789abf35498cbc33c75f4536ea414cfecd15",
+            "pages": 86
+          },
+          {
+            "mode": "teacher",
+            "before": "ddc16ea60c5f43a18779de329423a8650b4d3f3e2fd74c78a4ca3a6e6e8b960d",
+            "after": "cb89b0e930dee30ff51715df3a981a894824a7f31d9488f625ea77cd7d6a097d",
+            "pages": 140
+          },
+          {
+            "mode": "answers",
+            "before": "6a803455475e7ffb73114fff822f5b1b5ac561381363e387d1cf3b8423ec413d",
+            "after": "2d8a975a124a803a5b71590f65ab6ead9b54564ec229a8aef5bab773c3292d02",
+            "pages": 54
+          },
+          {
+            "mode": "quick",
+            "before": "eb70931b6ecae07a7321322ce6aa17fa5ad5e9c74f6950be872f4807f6abf163",
+            "after": "6f8a9186d050088fed55b1287ffab702182ac44782c6b1206bb3c39273a2f9af",
+            "pages": 6
+          }
+        ]
+      },
+      {
+        "unit": "c22-s62-u03",
+        "questions": 186,
+        "priorBookPreserved": true,
+        "changedPresentations": 118,
+        "changedFields": {
+          "prompt": 37,
+          "given": 13,
+          "givens": 10,
+          "explanation": 116,
+          "choices": 4,
+          "answer": 28,
+          "options": 4,
+          "responseContract": 25,
+          "misconception": 12
+        },
+        "rendered": [
+          {
+            "mode": "student",
+            "before": "601f27c22ff78931060242d1c555a1a757d0072d4473efe597a0decfbb303209",
+            "after": "2d727ea0a1a5234be63a54797b980135e3c575f7bcfacb6ed12418e3294025be",
+            "pages": 137
+          },
+          {
+            "mode": "teacher",
+            "before": "9a13eaef6ef86edc30e1fd5465670a395ab360342a64ca53665a29b8130cdd5a",
+            "after": "44710cdc86c8a7a0eab34b55adc48bba4f2459acd6fa084935abe0a23f084fb4",
+            "pages": 235
+          },
+          {
+            "mode": "answers",
+            "before": "9ddd837654869cf063dec6bf95718394162a14f927fbb5f33fbfba8dfa0b1957",
+            "after": "d2eb329bb698ea52f758a3571e31605d06c00c888cdd51f37527610c35b168be",
+            "pages": 97
+          },
+          {
+            "mode": "quick",
+            "before": "8aee0495c35cf1f64e2387af0de9b362515174544aef7fa5be4c16cbdd485a4f",
+            "after": "f1b1be5ee329e8c7d295de2f817c5b32e44657e1d6fb2c23dd7ad07fef08e114",
+            "pages": 8
+          }
+        ]
+      },
+      {
+        "unit": "c22-s62-u02",
+        "questions": 198,
+        "priorBookPreserved": true,
+        "changedPresentations": 115,
+        "changedFields": {
+          "prompt": 36,
+          "explanation": 114,
+          "choices": 4,
+          "answer": 26,
+          "given": 45,
+          "options": 5,
+          "responseContract": 22,
+          "givens": 41
+        },
+        "rendered": [
+          {
+            "mode": "student",
+            "before": "a837205d8e23ed98b07fe7a142de221cbd6628ce72a4544842916e009ce5bd2b",
+            "after": "9499a9822b13f09420415936ad845a7520d196dc6349cc132c6aa7d870a39ef5",
+            "pages": 158
+          },
+          {
+            "mode": "teacher",
+            "before": "05aa0103466c030d055894f29286066bceddc59e035df408bbac866959cca71d",
+            "after": "4564cd70d45c31e63c2577239e516018b402aba29c76d97a07e3bea492be80b3",
+            "pages": 252
+          },
+          {
+            "mode": "answers",
+            "before": "55e9040e5049f798e640ac7d7b672f69a0c08b5faab4c46069a649e7da227f18",
+            "after": "f427817803d6cb5ed998fb3e9c1119755b3477617353be8ad93f6f161e7c9f28",
+            "pages": 94
+          },
+          {
+            "mode": "quick",
+            "before": "eafdc12f95865ee3ecd1916a5e3051894c05a4886f6ed554828ac72140532009",
+            "after": "96498d895ffba8ae1baff3048af3bd08d266f966152c60cedee3f7e54851aff2",
+            "pages": 9
+          }
+        ]
+      },
+      {
+        "unit": "c22-s62-u01",
+        "questions": 198,
+        "priorBookPreserved": true,
+        "changedPresentations": 115,
+        "changedFields": {
+          "criteria": 2,
+          "explanation": 112,
+          "prompt": 34,
+          "answer": 23,
+          "responseContract": 20,
+          "given": 32,
+          "givens": 28,
+          "options": 6,
+          "choices": 3
+        },
+        "rendered": [
+          {
+            "mode": "student",
+            "before": "c6c2fee719859db0e5d77c8984cc5990571332e2422117aa476f0dc50a929d97",
+            "after": "785609704b3624292edc53a0d3ddda53ffda1734d2caede8fb58c8152ce10899",
+            "pages": 163
+          },
+          {
+            "mode": "teacher",
+            "before": "6fd1cfbbe1179f6b27403361fa98dc8aa1b63d1b7fcaa8ec5b988e964c309b94",
+            "after": "bdb09f30477e27f074b62d030f61587761eeb6114935249bf0afbbf25a09aca5",
+            "pages": 266
+          },
+          {
+            "mode": "answers",
+            "before": "d9cfb36729e09a9aadcbf2d91e6e75cd92c27d3324b070986253cd70c0a743fb",
+            "after": "1182898cd3632d2ba4ceeafdb571d17863de6d3eb2dede1cdedd95d2e814b1e8",
+            "pages": 102
+          },
+          {
+            "mode": "quick",
+            "before": "c18470ee7d5b5ba0e70cc62dbb6d015cc5fff84933f6c128719f52c73a1792c8",
+            "after": "d09457c3db0240c4a152649496b77c794f8a489889ce6cbfb77df94b74eba3b0",
+            "pages": 9
+          }
+        ]
+      },
+      {
+        "unit": "c22-s61-u04",
+        "questions": 167,
+        "priorBookPreserved": true,
+        "changedPresentations": 106,
+        "changedFields": {
+          "prompt": 47,
+          "choices": 6,
+          "answer": 48,
+          "explanation": 105,
+          "responseContract": 45,
+          "requirements": 1,
+          "criteria": 1,
+          "misconception": 1
+        },
+        "rendered": [
+          {
+            "mode": "student",
+            "before": "c815be16528253b3a53ec1a758ef37c59f3efe032f925cc3878b886651f3aa3e",
+            "after": "39f1bed13c0b512ad5f052a824bf38efc76a1a70f269fc958b5f3dc1069c5e80",
+            "pages": 121
+          },
+          {
+            "mode": "teacher",
+            "before": "b3bf19f0ce7f14391f726df8961b80c1e9e63538e99d9151c9a58cad719807c2",
+            "after": "e16244384d19cb2f50515d3dec60359f7b1350704b2bf2a88333b57a22f39541",
+            "pages": 194
+          },
+          {
+            "mode": "answers",
+            "before": "3f02f9e2a99a0a41b2efe70fd35be6144a156beacd03c77db35259b3c23139ac",
+            "after": "2b4b173d8f5743e2b1c44b53600f5dac1607d46b8fd29f86cf860eaa547240d6",
+            "pages": 72
+          },
+          {
+            "mode": "quick",
+            "before": "66c160331886287e4586cd5bf5f0f6d7a11849129c0ec809e27944b73b2c4012",
+            "after": "899f8e7232e382809ae249dc15cf77e07c9fc1def39d763a26834287546f6277",
+            "pages": 7
+          }
+        ]
+      }
+    ]
+  },
+  "workbookReviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      },
+      {
+        "unit": "c22-s52-u04",
+        "phase": 308,
+        "questions": 112,
+        "currentQuestionSha256": "d0bd1ee47e2be29a97968f462cd7e8c33ee1925bfaceabd11facbb1145f6822e"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "phase": 310,
+        "questions": 128,
+        "currentQuestionSha256": "c7e6b3e3ea7f2daf07dae2a9d2cc984f3c74a09ed92fc67d1101ab7c36133291"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "phase": 311,
+        "questions": 128,
+        "currentQuestionSha256": "431ffb2786c5d189eae880e1550acdb6632fcc2ec6d9b40fc2ab78337660428e"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "phase": 312,
+        "questions": 128,
+        "currentQuestionSha256": "bf7ab6b858964739ae659dfc7cec19772a0e80beeaf9050a88865135ec671dba"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "phase": 313,
+        "questions": 128,
+        "currentQuestionSha256": "24d23b9ba2ce412607f287244cce4b8f5ea447bce33e0270d0a306f6adee3b75"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "phase": 314,
+        "questions": 128,
+        "currentQuestionSha256": "15c26b40abf763909080a13910b78b07fe5145918a22a1cb52ce158bb5a56290"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "phase": 315,
+        "questions": 128,
+        "currentQuestionSha256": "a4f28762edb8a23e39c43690d7f58a2acc452ada7793406dc4f6269ca8a82b84"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "phase": 316,
+        "questions": 128,
+        "currentQuestionSha256": "4311e39e867b3ae7cdb909eb50ef14184df47a09b9d0a6d76bee36ec6040915f"
+      },
+      {
+        "unit": "c22-s62-u04",
+        "phase": 317,
+        "questions": 128,
+        "currentQuestionSha256": "7ec2a301597bc9a11f3f579330180c86e156a5477ff703a8cd7bea6243bc5f2f"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 3080,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 110,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideThirtyTwoUnitPass": {
+      "units": 0,
+      "questions": 0,
+      "allBankSemanticsVerified": false,
+      "actualBrowserVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To317": 1902
+  },
+  "goalAchieved": false,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "paidApiCalls": 0,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "cssOrFontChanges": 0
+}

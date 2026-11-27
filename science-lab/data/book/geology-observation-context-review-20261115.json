@@ -1,0 +1,102 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "지층 관찰 교재 두 문항과 대응 문제은행·수업 표시",
+  "cacheVersion": "20261115-geology-observation-context",
+  "standard": "6과01-01",
+  "questions": [
+    "c22-s51-u01-b001",
+    "c22-s51-u01-b010"
+  ],
+  "workbookQuestions": [
+    "c22-s51-u01-w001",
+    "c22-s51-u01-w004"
+  ],
+  "existingPhotosPreserved": [
+    {
+      "asset": "assets/book/c22-s51-u01-source-horizontal.png",
+      "sha256": "133bcab4fdf3bf81681f642327aa92cf6c98f4d69c5584d395e1aceddab960b3",
+      "bytes": 112012
+    },
+    {
+      "asset": "assets/book/c22-s51-u01-source-broken.png",
+      "sha256": "dab0b73fa1eb5fff2b0bd559a3fd5ba9c08ecd4cce35a9e8b1d578fb1f476414",
+      "bytes": 118053
+    }
+  ],
+  "verification": {
+    "imagesDirectlyViewed": 2,
+    "appleVisionSuccessfulFiles": 2,
+    "appleVisionFrames": 2,
+    "appleVisionFailures": 0,
+    "recognizedLines": 0,
+    "nativeTestFiles": 286,
+    "nativeTests": 1498,
+    "nativePassed": 1496,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "preservation": {
+    "actualUnits": 32,
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3177,
+    "changedQuestions": [
+      "c22-s51-u01-b001",
+      "c22-s51-u01-b010"
+    ],
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "allChoiceAndEmptyAnswerComparisons": 12,
+    "oldVersionsPreserved": 6,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3078,
+    "changedWorkbookQuestions": [
+      "c22-s51-u01-w001",
+      "c22-s51-u01-w004"
+    ],
+    "onlyTwoWorkbookPromptsAndImageBlocksChanged": true,
+    "allPageStructuresAnswerKeysChoiceOrdersWritingAreasAndExistingFiguresPreserved": true,
+    "actualWorkbookPrintModesCompared": 4,
+    "answerAndQuickWorkbookPrintsByteIdentical": true,
+    "rawQuestionSourcePairAndEditorialRendererFilesUnchanged": true,
+    "previousContextAnd32WorkbooksExecutedFromGit": "9d5df1e84"
+  },
+  "classroomPreservation": {
+    "decks": 64,
+    "slides": 3048,
+    "unchangedSlides": 3046,
+    "changedSlides": [
+      {
+        "unit": "c22-s51-u01",
+        "mode": "self",
+        "slide": "test13",
+        "item": "c22-s51-u01-b001",
+        "changedFields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "teach",
+        "slide": "test13",
+        "item": "c22-s51-u01-b001",
+        "changedFields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "onlyRequiredFigurePromptAndQuestionVersionChanged": true,
+    "allOtherSlideFieldsAndOldCustomFiguresPreserved": true,
+    "previousDeckAndGeologyDeckExecutedFromGit": "9d5df1e84"
+  },
+  "remaining": [
+    "전체 자료 참조 문항의 의미 검수",
+    "현행 원문 없는 세 단원과 전체 현행 판본 확보",
+    "실제 PC·휴대폰·A4·음성·WebGL·3D 검수",
+    "운영 메인 병합·배포"
+  ]
+}

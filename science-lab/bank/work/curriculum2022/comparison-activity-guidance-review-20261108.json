@@ -1,0 +1,83 @@
+{
+  "phase": 324,
+  "date": "2026-11-08",
+  "scope": "Plain student instructions in 10 mounted comparison activities; all31 exercise/record states compared.",
+  "priorLocalCommit": "10770bd1f7fc6a22f2558d0758645a448872e54e",
+  "reviewParent": "395a38ea0970ed15af6421a463ca0b3cee157e90",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "nativeValidation": {
+    "comparisonWidgetsExercised": 31,
+    "caseSettingsExercised": 203,
+    "uiStatesPerCase": 3,
+    "nativeWidgetStatesCompared": 609,
+    "skippedForceScene": [
+      {
+        "unit": "s31-u01",
+        "kind": null
+      }
+    ],
+    "modifiedWidgets": 10,
+    "modifiedCaseSettings": 50,
+    "changedStateCounts": {
+      "start": 34,
+      "shown": 34,
+      "record": 50
+    },
+    "allOldCurrentCallbacksRowsAndProgressEqual": true,
+    "allSavedRowsRehydratedWithoutCallback": true,
+    "allHtmlTagsControlsImagesAndOptionValuesEqual": true,
+    "other21WidgetsExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "networkCalls": 0,
+    "actualAudioPlays": 0,
+    "futureNoticeGuards": {
+      "exactPriorNoticeGuards": 2,
+      "futureModelNoticesPreserved": true,
+      "rawModelExportsUnchanged": true
+    },
+    "rawModelAndDataFilesUnchanged": 814,
+    "currentWorkbooksUnchanged": 32,
+    "currentWorkbookHtmlUnchanged": 128,
+    "currentRuntimeQuestionPoolsUnchanged": 32,
+    "currentClassroomSlideArraysUnchanged": 64,
+    "allQuestionsAnswersSavedGradesAndHistoryUnchanged": true,
+    "existingWordingFixturesUpdated": 16,
+    "newRegressionTests": 0,
+    "syntaxFiles": 22,
+    "actualBrowserVerified": false,
+    "newOcrRuns": 0,
+    "newBitmaps": 0
+  },
+  "newQuestionContextsReviewed": 0,
+  "currentQuestionContextsPreviouslyReviewed": 3080,
+  "currentQuestionContextsPreviouslyModified": 1902,
+  "tests": {
+    "files": 237,
+    "total": 1323,
+    "pass": 1321,
+    "fail": 0,
+    "skip": 2,
+    "newTests": 0,
+    "existingWordingFixturesUpdated": 16,
+    "followupFocusedTests": {
+      "total": 9,
+      "pass": 9,
+      "fail": 0
+    }
+  },
+  "currentOriginalUnits": 23,
+  "currentOriginalQuestions": 1512,
+  "pendingOriginalUnits": 9,
+  "rawSourceAndPairBanksUnchanged": true,
+  "curriculumConceptsAndScienceClaimsUnchanged": true,
+  "actualActivityAndExampleDataRemainDistinct": true,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "paidApiCalls": 0,
+  "driveWrites": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "goalAchieved": false
+}

@@ -1,0 +1,322 @@
+{
+  "date": "2026-11-02",
+  "base": "591dedf662ad7207d6227f2b0f1e75711104cfbd",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "s31-u03",
+  "status": "local integration candidate, no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)"
+  ],
+  "curriculum": [
+    "4과03-01",
+    "4과03-02",
+    "4과03-03"
+  ],
+  "changes": [
+    "학생27/교사28장·80분·11확인문항 수업과 Daily 연결",
+    "같은 네 잎의 가장자리/실제 길이 기준 비교를 기본 실험으로 연결",
+    "사진만으로 실제 길이를 만들지 않고 네 잎 모두 자료 더 필요 유지",
+    "정식 교재의 같은 원본 큰 사진4장을 비교 활동에도 사용",
+    "잎판·중복 조사·모습를 표현을 관찰 범위 중심의 자연스러운 문장으로 수정",
+    "기존 실제 관찰 일지와 별도 plantCompareRows·두 기준 완료 조건"
+  ],
+  "tests": {
+    "total": 337,
+    "passed": 335,
+    "failed": 0,
+    "skipped": 2,
+    "skipScope": "기존 브라우저 검사2개"
+  },
+  "slides": {
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 36,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 36,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 22,
+            "checks": 2
+          },
+          "teach": {
+            "slides": 23,
+            "checks": 2
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ],
+    "otherModesUnchanged": 18,
+    "sourcePlantMatchesExceptReviewedPhotosCopyAndListLayout": 2
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant comparison event handlers and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u03",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "plantCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "componentChecks": [
+    "판단 전 설명 자료 숨김",
+    "자료 더 필요를 오답 처리하지 않음",
+    "같은 기준 두 번은 완료되지 않음",
+    "가장자리/길이 두 기준 완료 정보 전달",
+    "5 cm 경계는 별도 익명 가상 측정 자료",
+    "위조한 실제 길이 확인 결과 거부",
+    "사본·유효 행 복구·pause/resume/isActive/dispose·고유 이름표"
+  ],
+  "images": [
+    {
+      "file": "science-lab/assets/activities/s31-u03/strawberry-native.webp",
+      "width": 1600,
+      "height": 1200,
+      "sha256": "d374edb0de39dcd6d199c9edf30d83a9ecbf8f49dfa032b86d50c37dc1517b56",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u03/magnolia-native.webp",
+      "width": 640,
+      "height": 480,
+      "sha256": "9d151029739bbab61f2639905a20fd50941798ce15a556a3698c12f879fb481b",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u03/cherry-native.webp",
+      "width": 2555,
+      "height": 1095,
+      "sha256": "9a33a56814066b645a06a68978d90fd14f2cb05fd87c6ec86f1e3b42e7a0d3b4",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/activities/s31-u03/hyacinth-native.webp",
+      "width": 727,
+      "height": 521,
+      "sha256": "7dee6ebf8648c17347c21ab39a15f444171f43f750cdd01718b369ccd18fabc3",
+      "ocrPage": 4
+    }
+  ],
+  "imageSourceEvidence": "기존 s31u03/photo-quality-review-20261023.json 및 scripts/science-plant-workbook-photos.mjs의 같은 HWP 원본 사진4장, 통합 기준 커밋과 바이트 일치",
+  "appleVision": {
+    "actualImages": 4,
+    "failed": 0,
+    "skipped": 0,
+    "detectedWords": [
+      0,
+      3,
+      0,
+      0
+    ],
+    "review": "목련 원본에 있던 작은 워터마크가 감지됨. OCR의 KOE를 확대 원본의 KOBUS와 대조했고 원본 픽셀을 유지. 수업 화면 전체 OCR가 아님."
+  },
+  "preserved": [
+    "원래 식물80similar·lesson·book25쪽·활동·보고서 원본 파일",
+    "11문항의 ID·정답·채점 계약·출처·분류",
+    "힘·동물을 포함한 다른9단원18개 수업 원고",
+    "전체 workbook·해설 및 원래 사진 파일",
+    "기존 labRows·보고서 상태와 문항ID별 Daily 답안 저장 방식"
+  ],
+  "browserScope": "실제 BOOKS/RECORDS_BOOKS와 pageStart/pageLabClass/pageDaily/pageLabBook 함수를 Node VM에서 실행하고 비교 활동 이벤트를 실행함. 화면/인쇄 레이아웃은 브라우저에서 미검증.",
+  "apiCalls": 0,
+  "newImages": 0,
+  "newPdfs": 0,
+  "next": "생물의 한살이·생물과 환경 수업과 선택 기록 연결, 최신 main 재대조·통합 검토. 전체 프로그램 목표 active.",
+  "files": [
+    {
+      "path": "science-lab/v2/deck.js",
+      "sha256": "61f66242a42609afe067e89d7c112f4ce41cd0cbff1baa0158c802e74d228823"
+    },
+    {
+      "path": "science-lab/v2/index.html",
+      "sha256": "f726d00bc36b34d4e866af64dda879ca48acb764d4b0a5c1d701063843e79704"
+    },
+    {
+      "path": "science-lab/v2/revised-force-lesson.test.mjs",
+      "sha256": "a31ba548dfede87a87933e090854aa054648d0048f32bdec2b57524d8d469876"
+    },
+    {
+      "path": "science-lab/v2/revised-lesson.js",
+      "sha256": "0e9b59effe885777eb6fad2d44b75faebbcf6f93b1a0d3740d33ddc1fb960268"
+    },
+    {
+      "path": "science-lab/v2/v2.js",
+      "sha256": "304685090a2df469442869dea1c045af746119971281d4cd2f15e959e0373f6d"
+    },
+    {
+      "path": "science-lab/data/book/s31-u03.thinking-lesson.js",
+      "sha256": "84fa5ecbb16f6a92480e77ef928659990c595e5db58e44a874d1bfb33940ce79"
+    },
+    {
+      "path": "science-lab/v2/deck-plant-thinking.js",
+      "sha256": "b45293649e094dbed64bc39e99cef6345cfdffa8473e04a094abbec0a67f5d02"
+    },
+    {
+      "path": "science-lab/v2/lab-plant-compare.css",
+      "sha256": "749a9ecb7d04c61ff87808b7fb6889b83f7ee1d2b7c6ea3334050c06aa4a8a92"
+    },
+    {
+      "path": "science-lab/v2/lab-plant-compare.js",
+      "sha256": "7a0eaa182d1edcd11e5ee972cc2c92d2a8011f19aca6b948abf92c7f99832635"
+    },
+    {
+      "path": "science-lab/v2/lab-plant-compare.test.mjs",
+      "sha256": "323f7b15c8fea375a99b6430f7406b34d529435fcec320c0e67240e52884b135"
+    },
+    {
+      "path": "science-lab/v2/plant-classify.js",
+      "sha256": "754ec5094aa201c122fd294b7af04dde5b529e880cb8a2766a0b29ceadd44dc2"
+    },
+    {
+      "path": "science-lab/v2/revised-plant-lesson.test.mjs",
+      "sha256": "10b827ac336ea844665f303e7d5d2d5216217ad2368385f74c45c2eb3ecc85f2"
+    }
+  ]
+}

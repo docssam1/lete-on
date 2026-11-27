@@ -1,0 +1,93 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "연소2·10번 및 산과 염기78번의 자료 연결",
+  "cacheVersion": "20261115-material-observation-context",
+  "standards": [
+    "6과14-01",
+    "6과09-04"
+  ],
+  "standardScope": "고시의 물질 변화 관찰·비교 및 산성화 환경 피해 소개 자료 범위. 변화 원리나 물리 변화·화학 변화 용어를 추가하지 않는다.",
+  "questions": [
+    "c22-s61-u01-b078",
+    "c22-s62-u02-b002",
+    "c22-s62-u02-b010"
+  ],
+  "workbookQuestions": [
+    "c22-s62-u02-w002",
+    "c22-s62-u02-w010",
+    "c22-s61-u01-w078"
+  ],
+  "existingImages": [
+    {
+      "path": "assets/activities/c22-s51-u03/mixing-photo-v1.webp",
+      "size": 70680,
+      "sha256": "e41e3022551224c6f764bc80d30914a2c992d2418021b4d42665c2ee016d8195",
+      "width": 1536,
+      "height": 1024,
+      "manualObservation": "흰 가루 옆에 투명한 액체가 든 용기 두 개가 보인다. 사진만으로 가루와 액체의 이름은 확인하지 않는다.",
+      "vision": {
+        "computePolicy": "CPU-only",
+        "frames": 1,
+        "recognizedLines": 0,
+        "status": "ok"
+      },
+      "bytesUnchanged": true
+    },
+    {
+      "path": "assets/activities/c22-s61-u01/environment.webp",
+      "size": 579958,
+      "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680",
+      "width": 1536,
+      "height": 1024,
+      "manualObservation": "바닷속 바위에 조개류가 붙어 있고 주변에 해초가 보인다. 기존 바다 환경 설명 그림을 그대로 쓴다.",
+      "vision": {
+        "computePolicy": "CPU-only",
+        "frames": 1,
+        "recognizedLines": 0,
+        "status": "ok"
+      },
+      "bytesUnchanged": true
+    }
+  ],
+  "preservation": {
+    "previousGit": "fa2f8dc00",
+    "actualUnits": 32,
+    "currentQuestions": 3179,
+    "currentQuestionsUnchanged": 3176,
+    "changedQuestions": [
+      "c22-s61-u01-b078",
+      "c22-s62-u02-b002",
+      "c22-s62-u02-b010"
+    ],
+    "originalQuestionsUnchanged": 1763,
+    "pairedQuestionsUnchanged": 1512,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3077,
+    "allKeysChoicesContractsPageStructuresWritingSpaceAndExistingFiguresPreserved": true,
+    "allChoiceAndEmptyResponseComparisons": 72,
+    "oldVersionsPreserved": 6,
+    "actualWorkbookPrintModesCompared": 8,
+    "actualBankPrintModesCompared": 8,
+    "studentTeacherOnlyReferenceImagesAndPromptsChanged": true,
+    "workbookAnswerQuickAndBankQuickPrintsByteIdentical": true,
+    "acidBankAnswerViewOnlyPromptChanged": true,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "rawSourcesNotModified": true
+  },
+  "nativeSuite": {
+    "testFiles": 287,
+    "tests": 1501,
+    "passed": 1499,
+    "failed": 0,
+    "browserSkipped": 2
+  },
+  "actualBrowserAndA4Reviewed": false,
+  "qa": "science-question-review/phase406/",
+  "newSourceOrImageAdded": false,
+  "upstreamMain": "ea7bc8168ec1d1b78a34e46a3d17bdf542e687ad",
+  "upstreamReviewMerge": "cf48999303d35a796e179a7bae86f223492e01fe",
+  "upstreamExistingBlobsPreserved": 10,
+  "deployed": false
+}

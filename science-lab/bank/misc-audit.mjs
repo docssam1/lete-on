@@ -12,6 +12,8 @@
 import { readdirSync, existsSync } from 'node:fs';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { dirname, join } from 'node:path';
+import{auditRevisionDiagnostics,auditSourceReviewDiagnostics}from'./audit-revision-diagnostics.js';
+import{questionMisconceptions,questionVersion}from'../v2/question-revision.js';
 
 const here = dirname(fileURLToPath(import.meta.url));
 const dir = join(here, '..', 'data', 'units');
@@ -25,7 +27,7 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
   const errs = [];
   const err = (m) => errs.push(m);
   const [misc, main, sim, tax, src] = await Promise.all([load(f), load(`${u}.js`), load(`${u}.similar.js`), load(`${u}.taxonomy.js`), load(`${u}.source.js`)]);
-  const items = [...(main?.items || []), ...(sim?.similar || []), ...(src?.source || [])];   // source = 단원평가 원문
+  const items = [...(main?.items || []), ...(sim?.similar || []), ...(Array.isArray(main?.source)?main.source:(src?.source || []))];   // source = 단원평가 원문
   const byId = new Map(items.map((i) => [i.id, i]));
   const M = misc.misconceptions || {};
   const elements = new Set((tax?.taxonomy?.elements || []).map((e) => e.id));
@@ -43,12 +45,15 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
   for (const tbl of [['distractors', D], ['typed', T], ['cloze', C], ['cells', CE]])
     for (const id of Object.keys(tbl[1])) if (!byId.has(id)) err(`${tbl[0]}: 없는 문항 ${id}`);
 
-  let nSel = 0, nTyped = 0, nCloze = 0, nCells = 0;
+  let nSel = 0, nTyped = 0, nCloze = 0, nCells = 0, nReview = 0;
   for (const it of items) {
     const ac = it.answerContract || {}, t = ac.type;
+    if(it.diagnosticOverride&&it.diagnosticOverride.version!==questionVersion(it)){err(`${it.id}: 문항과 진단의 버전 불일치`);continue;}
+    const effective=questionMisconceptions(it,misc),review=auditSourceReviewDiagnostics(it,effective);
+    if(review){nReview++;for(const message of review.errors)err(message);continue;}
     if (t === 'single-choice' || t === 'multi-choice') {
       nSel++;
-      const d = D[it.id];
+      const d = effective.distractors?.[it.id];
       if (!d) { err(`${it.id} 선택형인데 distractors 없음`); continue; }
       const right = new Set(t === 'single-choice' ? [ac.answer] : ac.answers);
       const n = (it.choices || []).length;
@@ -61,14 +66,14 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
       }
     } else if (t === 'short-text') {
       nTyped++;
-      const ty = T[it.id];
+      const ty = effective.typed?.[it.id];
       if (!ty) { err(`${it.id} 단답형인데 typed 없음`); continue; }
       if (!ty.any && !(ty.pats || []).length) err(`${it.id} typed에 any·pats 둘 다 없음`);
       if (ty.any) use(ty.any, it.id);
       for (const [re, m] of ty.pats || []) { if (!(re instanceof RegExp)) err(`${it.id} pats 정규식 아님`); use(m, it.id); }
     } else if (t === 'cloze') {
       nCloze++;
-      const c = C[it.id];
+      const c = effective.cloze?.[it.id];
       if (!c) { err(`${it.id} 빈칸인데 cloze 없음`); continue; }
       const blanks = ac.blanks || [];
       if (!Array.isArray(c.options) || c.options.length !== blanks.length) err(`${it.id} cloze options ${c.options?.length}줄 ≠ 빈칸 ${blanks.length}개`);
@@ -81,9 +86,12 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
       for (const m of [].concat(c.wrong)) use(m, it.id);   // 빈칸마다 다른 오개념이면 배열(progress.js classify)
     } else if (t === 'table-fill') {
       nCells++;
-      if (!CE[it.id]) err(`${it.id} 표 채우기인데 cells 없음`); else use(CE[it.id], it.id);
+      if (!effective.cells?.[it.id]) err(`${it.id} 표 채우기인데 cells 없음`); else use(effective.cells[it.id], it.id);
     }
   }
+  const revisionAudit=auditRevisionDiagnostics(misc.revisionItems,byId,M);
+  for(const message of revisionAudit.errors)err(message);
+  for(const[code,n]of revisionAudit.used)used.set(code,used.get(code)+n);
   for (const [chip, v] of Object.entries(misc.bookChips || {})) use(v[1], `bookChips ${chip}`);
   for (const [m, n] of used) if (!n) err(`${m} 근거 문항 없음`);
   const R = misc.remedy || {};
@@ -91,7 +99,7 @@ for (const f of readdirSync(dir).filter((x) => /^(?:c22-)?s\d+-(u\d+|mid|fin)\.m
   for (const m of Object.keys(R)) if (!M[m]) err(`remedy에 없는 오개념 ${m}`);
 
   fail += errs.length;
-  console.log(`${u}: 오개념 ${Object.keys(M).length} · 선택형 ${nSel} · 단답형 ${nTyped} · 빈칸 ${nCloze} · 표 ${nCells} → ${errs.length ? `오류 ${errs.length}` : '통과'}`);
+  console.log(`${u}: 오개념 ${Object.keys(M).length} · 선택형 ${nSel} · 단답형 ${nTyped} · 빈칸 ${nCloze} · 표 ${nCells} · 선택·단답 교사 확인 ${nReview} → ${errs.length ? `오류 ${errs.length}` : '통과'}`);
   for (const e of errs) console.log('  ✗ ' + e);
   const counts = [...used].map(([m, n]) => `${m}:${n}`).join(' ');
   console.log('  근거 수 ' + counts);

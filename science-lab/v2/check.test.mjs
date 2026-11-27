@@ -6,6 +6,13 @@ const mem = {};
 globalThis.localStorage = { getItem: (k) => mem[k] ?? null, setItem: (k, v) => { mem[k] = String(v); } };
 const { records, needs, countNeeds } = await import('./check.js');
 
+test('문항 ID의 새 수업과 예전 기록·교사 의견을 함께 보존하고 빈칸별 질문을 찾는다',async()=>{
+ const previous=mem['sciLab.deck'],{lookupRecordQuestion}=await import('./check.js'),q={id:'c22-s32-u01-t01',prompt:'물체와 물질 두 빈칸',answerContract:{type:'cloze',blanks:[{answer:'물체'},{answer:'물질'}]}};
+ const unit='c22-s32-u01',slide='item:'+q.id,key='test:item:'+q.id+':blank:1';
+ mem['sciLab.deck']=JSON.stringify({[unit+':grade:test1']:{at:1,tries:1,item:'old',boxes:[{k:'test1',st:'review',text:'예전 답'}]},[unit+':grade:'+slide]:{at:2,tries:1,item:q.id,boxes:[{k:key,st:'review',text:'내 새 답'}]},[unit+':teacher:'+slide+':'+key]:{v:'ok',note:'두 번째 빈칸을 확인함',at:3}});
+ const rows=records([unit]);assert.equal(rows.length,2);assert.equal(rows[0].teacher.note,'두 번째 빈칸을 확인함');assert.equal(rows[1].text,'예전 답');const found=lookupRecordQuestion(rows[0],{check:[]},[q]);assert.equal(found.q,q.prompt);assert.equal(found.a,'물질');assert.equal(found.where,'교과 확인 문제 · 2번 빈칸');assert.equal(countNeeds([unit]),1);mem['sciLab.deck']=previous;
+});
+
 test('확인 필요 = 기기 판정 review 이고 선생님 판정이 아직 없는 칸', () => {
   mem['sciLab.deck'] = JSON.stringify({
     's41-u01:concl0': '같은 극은 밀어요',

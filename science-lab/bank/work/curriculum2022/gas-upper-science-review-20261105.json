@@ -1,0 +1,238 @@
+{
+  "phase": 265,
+  "date": "2026-11-05",
+  "baseCommit": "4445a0e62cb6e1557981f8c0cbd0c6ba51c3c19e",
+  "unit": "c22-s42-u03",
+  "version": "20261105-gas-upper-science",
+  "scope": "25 right-side extension notes mirrored to teacher pages,50 fields. Replace process-only guidance with actual gas/particle/pressure/temperature concepts. Primary basic learning stays observational; quantitative relationships labelled high-school only, no new formula/number tasks.",
+  "sources": [
+    {
+      "authority": "교육부2022-33 별책9",
+      "curriculumSHA256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "standards": [
+        "4과15-01~04",
+        "9과03-01",
+        "9과04-01~04",
+        "9과06-01~03",
+        "9과08-01~02"
+      ],
+      "supports": "Keep primary observation separate from particle explanations. Middle-school qualitative pressure/volume/temperature with controlled quantity and conditions; high-school quantitative relationships explicitly identified by9과06 teaching considerations."
+    },
+    {
+      "title": "NASA Air Properties Definitions",
+      "url": "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/air-properties-definitions/",
+      "supports": "Air as mixture; molecular movement, gas mass/volume, pressure as force over area, and temperature/state relationships."
+    },
+    {
+      "title": "NASA Charles and Gay-Lussacs Law",
+      "url": "https://www1.grc.nasa.gov/beginners-guide-to-aeronautics/charles-and-gay-lussacs-law/",
+      "supports": "Hold gas quantity and pressure fixed for temperature/volume relation; Kelvin used for quantitative relationship. No formulas or numerical NASA example copied to workbook."
+    }
+  ],
+  "preservation": {
+    "changedUpperNotes": [
+      {
+        "page": 4,
+        "title": "저울의 표시가 같으면 무게도 같을까요?",
+        "before": "상위 과학의 측정에서는 기구가 구별하는 가장 작은 차이를 살펴요. 표시가 같다고 실제 양까지 정확히 같다고 할 수는 없어요.",
+        "after": "중학교에서는 질량과 부피를 구별하고 두 양으로 밀도를 설명해요. 같은 부피의 용기에 담겨 있어도 기체의 종류나 온도·압력에 따라 들어 있는 기체의 질량이 다를 수 있어요."
+      },
+      {
+        "page": 5,
+        "title": "더 넣은 공기의 무게를 알아보아요",
+        "before": "중학교의 질량 비교에서는 처음 양·나중 양·변화량을 나누어요. 변화량만으로 처음 들어 있던 전체 양을 정하지 않아요.",
+        "after": "중학교의 입자 모형에서는 기체를 더 넣으면 용기 안의 입자 수가 늘어난 것으로 나타내요. 같은 용기에 같은 종류의 기체를 더 담으면 기체의 질량도 늘어나요."
+      },
+      {
+        "page": 9,
+        "title": "관찰한 결과를 그대로 기록해요",
+        "before": "상위 자료 분석에서는 모둠별 측정 결과가 다른 까닭을 조건·기구·읽은 시점과 연결해 살펴요.",
+        "after": "중학교에서는 기체의 온도와 압력에 따라 부피가 달라지는 까닭을 입자 모형으로 설명해요. 같은 양의 기체라도 온도나 바깥 압력이 다르면 부피가 달라질 수 있어요."
+      },
+      {
+        "page": 12,
+        "title": "기체의 성질과 이용을 조사해요",
+        "before": "상위 과학에서는 같은 물질도 기체·액체 등 상태에 따라 이용 방법이 달라짐을 살펴요. 질소 기체와 액체 질소의 이용을 구별해요.",
+        "after": "중학교에서는 기화와 액화를 입자 모형으로 설명해요. 같은 질소도 기체일 때와 액체일 때 입자 사이 간격과 운동 모습이 달라, 상태에 따라 이용 방법도 달라질 수 있어요."
+      },
+      {
+        "page": 14,
+        "title": "고친 장치를 다시 작동시켜요",
+        "before": "상위 설계 활동에서는 기능을 확인할 기준을 먼저 정해요. 같은 기준으로 수정 전후를 비교해야 개선을 설명하기 쉬워요.",
+        "after": "중학교에서는 일정한 면적에 작용하는 힘으로 압력을 설명해요. 같은 압력이 작용해도 막의 면적이 넓으면 막 전체가 받는 힘은 더 클 수 있어요."
+      },
+      {
+        "page": 16,
+        "title": "공기 무게의 근거와 적용",
+        "before": "상위 수학에서는 전체와 부분의 차를 식으로 나타내요. 용기 포함 전체 값과 추가한 부분의 값을 구별해요.",
+        "after": "중학교에서는 기체를 압축할 때 입자의 크기가 줄어드는 것이 아니라 입자 사이 간격이 줄어드는 것으로 설명해요. 닫힌 장치에서 같은 기체를 압축해도 입자 수와 질량은 유지돼요."
+      },
+      {
+        "page": 20,
+        "title": "장치 소개와 근거·의견 반영",
+        "before": "상위 설계 검토에서는 다른 사람이 같은 방법으로 사용해 볼 수 있도록 조작 순서와 확인 기준을 밝혀요.",
+        "after": "중학교에서는 기체 입자가 벽이나 막에 충돌하여 힘을 가한다고 배워요. 막을 사이에 둔 안쪽과 바깥쪽 기체가 가하는 힘의 차이는 막이 움직이는 모습과 연결돼요."
+      },
+      {
+        "page": 23,
+        "title": "성질과 공정한 비교",
+        "before": "상위 실험에서는 한 변인만 바꾸는 비교와 여러 변인이 함께 달라진 비교가 설명하는 범위를 구별해요.",
+        "after": "중학교에서 기체의 압력과 부피 관계를 알아볼 때에는 기체의 양과 온도를 일정하게 두어요. 온도와 부피 관계를 알아볼 때에는 기체의 양과 압력을 일정하게 두고 비교해요."
+      },
+      {
+        "page": 25,
+        "title": "근거를 골라 설명하기",
+        "before": "상위 과학의 설명에서는 관찰한 사실과 그 사실을 해석한 모형을 나누고 서로 어떻게 연결되는지 밝혀요.",
+        "after": "중학교에서는 확산 현상을 통해 입자가 계속 운동하고 있음을 추론해요. 기체 입자는 정지해 있지 않고 움직이며 다른 기체와 섞일 수 있어요."
+      },
+      {
+        "page": 26,
+        "title": "조건과 기체의 쓰임",
+        "before": "중학교 이후의 자료 조사에서는 한 물질의 성질과 혼합물의 성질을 구별해요. 공기는 여러 기체가 섞인 혼합물이에요.",
+        "after": "중학교에서는 순물질과 혼합물을 구별해요. 공기는 질소·산소 등 여러 기체가 섞인 혼합물이므로, 공기의 성질을 한 종류 기체의 성질과 모두 같다고 볼 수는 없어요."
+      },
+      {
+        "page": 27,
+        "title": "모형 자료와 실험 순서",
+        "before": "상위 데이터 수집에서는 측정 시점과 순서를 남겨 같은 절차로 다시 확인할 수 있게 해요.",
+        "after": "중학교 입자 모형에서 닫힌 기체를 압축하기 전과 후에는 같은 수의 입자를 그려요. 입자 사이 간격을 달리하여 기체가 차지하는 공간이 줄어든 모습을 나타내요."
+      },
+      {
+        "page": 29,
+        "title": "관찰만으로 말할 수 있을까?",
+        "before": "상위 탐구에서는 반복한 횟수뿐 아니라 반복할 때 유지한 조건도 확인해요.",
+        "after": "중학교에서는 온도가 높아질수록 기체 입자의 운동이 더 활발해지는 것으로 설명해요. 기체의 부피를 압력만 바꾸어 비교하려면 손이나 주변 물체와의 열 교환으로 온도도 달라졌는지 살펴야 해요."
+      },
+      {
+        "page": 30,
+        "title": "실제 측정과 설계를 구별하기",
+        "before": "상위 공학 설계에서는 구상도·제작물·시험 기록이 서로 다른 근거라는 점을 구별해요.",
+        "after": "중학교에서는 기체가 압력을 만드는 까닭을 입자와 벽의 충돌로 설명해요. 공기로 움직이는 장치를 이해할 때에도 보이는 부품의 움직임과 보이지 않는 기체가 가하는 힘을 연결해요."
+      },
+      {
+        "page": 32,
+        "title": "한 곳을 고쳐 같은 기준으로",
+        "before": "상위 자료 표현에서는 수정 전후의 기준을 같게 하고 바뀐 부분을 함께 표시해 차이를 해석해요.",
+        "after": "중학교에서 같은 양의 기체를 같은 온도에서 비교하면 압력이 클수록 부피는 작아져요. 주사기 속 공간이 줄어드는 모습은 입자 사이 간격의 변화로 설명할 수 있어요."
+      },
+      {
+        "page": 34,
+        "title": "표시값과 결론을 나누어요",
+        "before": "상위 측정에서는 같은 표시가 나온 범위 안에도 작은 차이가 있을 수 있음을 기구의 분해능과 연결해요.",
+        "after": "중학교에서는 기체가 차지하는 부피와 입자 수를 구별해요. 부피가 같은 두 용기라도 온도나 압력이 다르면 들어 있는 기체의 양이 다를 수 있어요."
+      },
+      {
+        "page": 35,
+        "title": "변화가 보이지 않으면 무엇을 확인할까요?",
+        "before": "상위 실험에서는 변화가 나타나기에 충분한 시간과 측정 간격을 정해 놓고 비교해요.",
+        "after": "중학교에서는 온도가 다른 물체 사이에 열이 이동하는 과정을 배워요. 기체가 든 용기를 따뜻한 물에 넣은 직후에는 물과 기체의 온도가 아직 같지 않을 수 있어, 열을 주고받는 시간도 생각해요."
+      },
+      {
+        "page": 39,
+        "title": "두 설명의 차이를 말해요",
+        "before": "상위 자료 해석에서는 결과 값이 같다는 사실만으로 과정과 원인까지 같다고 결론 내리지 않아요.",
+        "after": "중학교에서는 기체의 부피가 줄어드는 서로 다른 과정을 입자 모형으로 나타내요. 닫힌 기체를 압축하면 입자 사이 간격이 줄고, 열린 장치에서 기체가 빠져나가면 입자 수가 줄 수 있어요."
+      },
+      {
+        "page": 43,
+        "title": "변화가 분명하지 않을 때",
+        "before": "상위 공동 탐구에서는 다른 모둠의 자료와 조건을 함께 공유해 결과 차이를 설명할 단서를 찾아요.",
+        "after": "중학교에서 기체의 온도와 부피 관계를 비교할 때에는 같은 양의 기체와 일정한 압력이 필요해요. 입자 수가 다른 장치를 그대로 비교하면 온도만의 영향을 알아보기 어려워요."
+      },
+      {
+        "page": 45,
+        "title": "자료로 기체의 성질을 알아봐요",
+        "before": "중학교 이후에는 자료의 작성 기관·작성 시기·다루는 조건을 함께 확인해 이용 사례를 비교해요.",
+        "after": "중학교에서는 물질의 상태가 변해도 그 물질을 이루는 입자의 종류가 달라지는 것은 아니라고 설명해요. 같은 물질의 기체와 액체를 비교하는 일과 서로 다른 기체를 비교하는 일은 달라요."
+      },
+      {
+        "page": 46,
+        "title": "조사·관찰·계획을 나누어요",
+        "before": "상위 과학 의사소통에서는 직접 얻은 자료와 다른 연구에서 가져온 자료를 밝혀 근거를 따라갈 수 있게 해요.",
+        "after": "중학교에서는 밀폐된 용기 안에서 물질의 상태가 변해도 질량이 유지되는 까닭을 입자 모형으로 설명해요. 입자의 배열과 간격은 달라져도 물질이 용기 밖으로 나가지 않는 경우를 생각해요."
+      },
+      {
+        "page": 48,
+        "title": "출처가 있는 비교 카드를 만들어요",
+        "before": "상위 자료 정리에서는 같은 단위와 분류 기준으로 바꿔 놓아야 여러 자료를 직접 비교하기 쉬워요.",
+        "after": "중학교에서 순물질과 혼합물을 구별할 때에는 겉보기 색만 보지 않아요. 공기와 산소는 모두 무색으로 보여도, 공기는 여러 기체가 섞인 것이고 산소는 한 종류의 물질이에요."
+      },
+      {
+        "page": 49,
+        "title": "한 곳만 고친 비교를 찾아요",
+        "before": "상위 설계에서는 바꾼 부품의 효과를 알아보려면 다른 사용 조건이 함께 달라지지 않았는지 확인해요.",
+        "after": "중학교에서는 기체의 압력을 입자가 벽에 가하는 힘과 연결해요. 서로 이어진 두 공간의 압력이 다르면 기체가 높은 압력 쪽에서 낮은 압력 쪽으로 흐를 수 있어요."
+      },
+      {
+        "page": 50,
+        "title": "조건·결과와 재시험을 구별해요",
+        "before": "상위 탐구에서는 처음 시험과 재시험의 기록을 따로 남겨 어떤 수정이 어떤 변화와 관련됐는지 살펴요.",
+        "after": "중학교에서는 기체의 양이 같은지에 따라 서로 다른 입자 모형으로 설명해요. 입구를 막아 공기가 드나들지 않는 경우와 입구를 열어 공기가 빠져나가는 경우를 구별해요."
+      },
+      {
+        "page": 51,
+        "title": "해 본 범위만큼 설명해요",
+        "before": "상위 수학에서는 전체 시험 수와 성공 수를 함께 봐요.3번 중3번과30번 중30번은 근거의 양이 달라요.",
+        "after": "고등학교 물질과 에너지에서는 기체의 압력·부피·온도 관계를 수식으로도 나타내요. 온도의 양적 관계를 나타낼 때에는 섭씨온도와 구별되는 절대온도를 사용해요."
+      },
+      {
+        "page": 53,
+        "title": "확인한 자료와 실제 수행을 나누어요",
+        "before": "상위 과학의 결과 공유에서는 해결한 문제와 새로 생긴 질문을 구별하여 다음 탐구로 이어 가요.",
+        "after": "중학교에서는 기체 입자의 움직임을 이용해 압력과 부피 변화를 설명해요. 같은 장치도 온도·기체의 양·바깥 압력이 달라지면 작동 모습이 달라질 수 있다는 설명으로 넓혀 가요."
+      }
+    ],
+    "changedFields": 50,
+    "all53CurrentUpperNotesUnique": true,
+    "noVagueUpperSubjectPrefixAfterLabel": true,
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "c22-s42-u03",
+        "mode": "student",
+        "sha256": "2c670f0ce161ab4b7745176134b2bbcb3731e232e1fa6f6e84724fb6a7f1c04d"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "mode": "teacher",
+        "sha256": "9fc93bb1a18ceb95ba5604b52171b79b9c83ab192e84f96bbb590a7748147a78"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "coreNotesAndStudentWritingTasksUnchanged": true,
+    "renderedNotes": 50,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s42-u03.editorial.js",
+      "science-lab/data/book/c22-s42-u03.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 4,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "reviewBoundary": "25 selected notes source-checked; distinct53 notes and no vague opening phrases do not prove complete semantics or actual layout. Teacher duplex blank retained.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase265",
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0,
+  "browserVerified": false,
+  "remaining": [
+    "Other units extension notes, explanations and teaching criteria; full curriculum/content review",
+    "Actual PC/phone/A4 font/reflow/clipping/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ]
+}

@@ -1,0 +1,132 @@
+{
+  "phase": 370,
+  "date": "2026-11-08",
+  "purpose": "Explain compressed personal directions in all eight grade-five workbooks and keep the matching mixture print manuscript current.",
+  "units": [
+    {
+      "unit": "c22-s51-u01",
+      "studentDirections": 6,
+      "teacherStudentDirections": 6
+    },
+    {
+      "unit": "c22-s51-u02",
+      "studentDirections": 4,
+      "teacherStudentDirections": 4
+    },
+    {
+      "unit": "c22-s51-u03",
+      "studentDirections": 5,
+      "teacherStudentDirections": 5
+    },
+    {
+      "unit": "c22-s51-u04",
+      "studentDirections": 5,
+      "teacherStudentDirections": 5
+    },
+    {
+      "unit": "c22-s52-u01",
+      "studentDirections": 3,
+      "teacherStudentDirections": 3
+    },
+    {
+      "unit": "c22-s52-u02",
+      "studentDirections": 5,
+      "teacherStudentDirections": 5
+    },
+    {
+      "unit": "c22-s52-u03",
+      "studentDirections": 6,
+      "teacherStudentDirections": 6
+    },
+    {
+      "unit": "c22-s52-u04",
+      "studentDirections": 7,
+      "teacherStudentDirections": 7
+    }
+  ],
+  "intentClarifications": [
+    "Light: identify the ray reflected from the point where the incoming ray touches the mirror.",
+    "Mixture: match the question wording 무게 and distinguish collecting items from actual recycling.",
+    "Heat: identify where heat moves instead of the compressed 전달 구간.",
+    "Weather: distinguish publication time, observation/forecast time and cumulative rainfall."
+  ],
+  "allowedChanges": [
+    "pages[].rail[personal].text",
+    "teacherStudentPages[].rail[personal].text"
+  ],
+  "runtime": {
+    "phase": 370,
+    "allQuestionsUnchanged": 3080,
+    "unchangedDataFiles": 88,
+    "studentNoteChanges": 41,
+    "teacherStudentNoteChanges": 41,
+    "allOtherFieldsPreserved": true,
+    "unchangedCoreNotes": 4780,
+    "unchangedUpperNotes": 4780,
+    "workbookModesGenerated": 128,
+    "other24WorkbookModesIdentical": 96,
+    "allAnswerQuickModesIdentical": 64,
+    "allWorkbookModesRestoredByOnlyNoteText": 128,
+    "bankPrintModesIdentical": 82,
+    "bankModesReflectingOnlyReviewedPersonalText": 2,
+    "priorWholeWorkbookAliasesPreserved": 8,
+    "generatorChecks": [
+      {
+        "unit": "c22-s32-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "exitCode": 0,
+        "currentFileUnchanged": true
+      }
+    ],
+    "actualBrowserUsed": false
+  },
+  "tests": {
+    "phase": 370,
+    "testFiles": 265,
+    "exitCode": 0,
+    "tests": 1434,
+    "pass": 1432,
+    "fail": 0,
+    "skipped": 2,
+    "cancelled": 0,
+    "duration_ms": 8072.728208
+  },
+  "syntaxChecked": [
+    "science-lab/data/book/c22-s51-u01.workbook.js",
+    "science-lab/data/book/c22-s51-u02.workbook.js",
+    "science-lab/data/book/c22-s51-u03.workbook.js",
+    "science-lab/data/book/c22-s51-u04.workbook.js",
+    "science-lab/data/book/c22-s52-u01.workbook.js",
+    "science-lab/data/book/c22-s52-u02.workbook.js",
+    "science-lab/data/book/c22-s52-u03.workbook.js",
+    "science-lab/data/book/c22-s52-u04.workbook.js",
+    "science-lab/v2/body-readability.test.mjs",
+    "science-lab/v2/energy-readability.test.mjs",
+    "science-lab/v2/geology-readability.test.mjs",
+    "science-lab/v2/heat-readability.test.mjs",
+    "science-lab/v2/light-readability.test.mjs",
+    "science-lab/v2/mixture-bank-paper.js",
+    "science-lab/v2/mixture-readability.test.mjs",
+    "science-lab/v2/revised-textbook.js",
+    "science-lab/v2/solution-readability.test.mjs",
+    "science-lab/v2/v2.js",
+    "science-lab/v2/weather-readability.test.mjs",
+    "science-lab/v2/workbook-rail-pages.test.mjs",
+    "science-lab/data/book/grade5-study-notes.js",
+    "science-lab/v2/grade5-study-notes.test.mjs"
+  ],
+  "preservedWholeWorkbookExports": 8,
+  "mixturePrintCache": "The workbook import and the actual v2 bank loader select the new reviewed version. A native VM test supplies an old workbook at the old URL and verifies it is not selected.",
+  "questionAndAnswerChanges": 0,
+  "fontOrCssChanges": false,
+  "newPrivateSourcesPublished": false,
+  "actualBrowserUsed": false,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

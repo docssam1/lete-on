@@ -1,0 +1,1605 @@
+{
+  "phase": 199,
+  "date": "2026-11-04",
+  "unit": "c22-s61-u01",
+  "title": "산과 염기",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "b8db6b4bf7e75aa04eb2925862b25eae87b40add",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 25,
+  "integratedFullClassrooms": 24,
+  "studentPages": 99,
+  "teacherPages": 142,
+  "answerPages": 42,
+  "quickPages": 5,
+  "teacherAnswersStartRecto": 101,
+  "questions": 128,
+  "forms": 8,
+  "workedExamples": 10,
+  "editedWorkedExamples": 10,
+  "uniquePageSpecificRailTexts": 297,
+  "largeDrawingFieldsPerStudentCopy": 8,
+  "largeDrawingFieldsStudentAndTeacher": 16,
+  "sourceWorkbookSha256": "ec0702c5140c234fddf0dbc7380e7214ee39364b5f998dd54c3b1f624a963ecd",
+  "sourceWorkbookUnmodified": true,
+  "curriculumReferences": [
+    {
+      "title": "교육부 2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        [
+          843,
+          859
+        ],
+        [
+          1233,
+          1245
+        ],
+        [
+          1637,
+          1650
+        ],
+        [
+          2298,
+          2308
+        ]
+      ],
+      "use": "6과09-01~04; 지시약 분류, 탄산 칼슘/단백질, 혼합 색 변화, 생활 이용, 산성화 피해 소개/공유. 중성/pH/중화는 초등 핵심에서 제외"
+    },
+    {
+      "title": "ACS Red Cabbage Indicator",
+      "url": "https://www.acs.org/education/activities/red-cabbage-indicator.html",
+      "use": "안토시아닌과 색 변화, 깨끗한 용기와 새 추출액으로 비교; 외국 자료의 중성/pH·폐기 지침을 초등 핵심/국내 실험실 기준으로 옮기지 않음"
+    },
+    {
+      "title": "NOAA Ocean Acidification",
+      "url": "https://oceanservice.noaa.gov/facts/acidification.html",
+      "use": "이산화 탄소 흡수와 껍데기 형성/유지에 미칠 수 있는 영향"
+    },
+    {
+      "title": "EPA What is Acid Rain",
+      "url": "https://www.epa.gov/acidrain/what-acid-rain",
+      "use": "원인 물질과 이동·내림·토양/물 환경 영향"
+    },
+    {
+      "title": "EPA Effects of Acid Rain",
+      "url": "https://www.epa.gov/acidrain/effects-acid-rain",
+      "use": "토양의 영양분과 생물, 지역 토양의 조성/조건에 따른 차이"
+    }
+  ],
+  "protection": {
+    "protectedDataAssetsAndPriorPdfs": 1883,
+    "unchangedOldPdfs": 60,
+    "unchangedOtherWorkbookHtmlProducts": 96,
+    "unchangedOtherClassroomArrays": 48,
+    "newWorkbookHtmlProducts": 4,
+    "newFullClassroomArrays": 0,
+    "sourceQuestionsExactlyUnchanged": 98,
+    "questionLanguageExceptions": [
+      "c22-s61-u01-w045",
+      "c22-s61-u01-w067",
+      "c22-s61-u01-w075",
+      "c22-s61-u01-w090",
+      "c22-s61-u01-w118",
+      "c22-s61-u01-w126",
+      "c22-s61-u01-w035",
+      "c22-s61-u01-w050",
+      "c22-s61-u01-w060",
+      "c22-s61-u01-w062",
+      "c22-s61-u01-w068",
+      "c22-s61-u01-w033",
+      "c22-s61-u01-w039",
+      "c22-s61-u01-w055",
+      "c22-s61-u01-w063",
+      "c22-s61-u01-w072",
+      "c22-s61-u01-w076",
+      "c22-s61-u01-w078",
+      "c22-s61-u01-w079",
+      "c22-s61-u01-w080",
+      "c22-s61-u01-w093",
+      "c22-s61-u01-w094",
+      "c22-s61-u01-w095",
+      "c22-s61-u01-w096",
+      "c22-s61-u01-w107",
+      "c22-s61-u01-w115",
+      "c22-s61-u01-w117",
+      "c22-s61-u01-w122",
+      "c22-s61-u01-w124",
+      "c22-s61-u01-w128"
+    ],
+    "changedAcceptedAnswerQuestions": [
+      39,
+      63,
+      79,
+      90,
+      115,
+      118
+    ],
+    "questionOrderIdsFormsChoiceKeysOrderAcceptedAndContractsPreserved": true,
+    "editedWorkedExamples": 10,
+    "sourceWorkedExamplePagesAndStepCountsPreserved": true,
+    "sourceAnswerPagesAndQuickPageLayoutsPreserved": true,
+    "quickAnswerValuesUpdated": [
+      39,
+      63,
+      79,
+      90,
+      115,
+      118
+    ],
+    "unreviewedAcidClassroomNotRegistered": true,
+    "newBankFiles": 11,
+    "bankQuestions": [
+      69,
+      69,
+      128
+    ],
+    "bankReviewOnly": 3,
+    "reusedOriginalFigures": 15,
+    "newPhotos": 0,
+    "new3D": 0,
+    "newPdfs": 4,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 99,
+        "bytes": 16316962,
+        "sha256": "5194267cd29390832554babe4a48e846341b1a79e57c8c9b3315b69fd0053bc7",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 142,
+        "bytes": 16496386,
+        "sha256": "e067f71bbc1fc10627dae0b47f015c62217378688bbf2b5f4bdbdc019f7a02b6",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 42,
+        "bytes": 348053,
+        "sha256": "ef6efbd8808292b6fc10fce81edc24bbad6a9905e1be932683b53653c3d812b9",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 5,
+        "bytes": 136224,
+        "sha256": "ab4ee79f838b1aacda495f44c755db15fbc70f594b215069d948938b199d6ef5",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 256,
+    "teacherAnswerStartsOnRecto": 101
+  },
+  "pdfDetailsValidation": {
+    "fullRailTexts": 594,
+    "quickAnswerTableCells": 384,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 36,
+        "heightMm": 165.74,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 69,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 72,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 74,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 78,
+        "heightMm": 203.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 88,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 95,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 97,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 36,
+        "heightMm": 165.74,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 69,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 72,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 74,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 78,
+        "heightMm": 203.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 88,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 95,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 97,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "photoLabelValidation": {
+    "uniqueLabelledFigures": 8,
+    "checkedPhotoLabelExpressions": 60,
+    "allPresent": true,
+    "checks": [
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 1,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 5,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 10,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 15,
+        "figure": "litmus",
+        "label": "붉은 시험지와 푸른 시험지"
+      },
+      {
+        "mode": "student",
+        "page": 15,
+        "figure": "litmus",
+        "label": "핀셋과 관찰판"
+      },
+      {
+        "mode": "student",
+        "page": 20,
+        "figure": "phenol",
+        "label": "무색 시료"
+      },
+      {
+        "mode": "student",
+        "page": 20,
+        "figure": "phenol",
+        "label": "분홍빛 시료"
+      },
+      {
+        "mode": "student",
+        "page": 20,
+        "figure": "phenol",
+        "label": "무색 시료"
+      },
+      {
+        "mode": "student",
+        "page": 25,
+        "figure": "cabbage",
+        "label": "붉은 양배추"
+      },
+      {
+        "mode": "student",
+        "page": 25,
+        "figure": "cabbage",
+        "label": "추출액과 거름 도구"
+      },
+      {
+        "mode": "student",
+        "page": 30,
+        "figure": "carbonate",
+        "label": "달걀 껍데기"
+      },
+      {
+        "mode": "student",
+        "page": 30,
+        "figure": "carbonate",
+        "label": "흰색 돌 표본"
+      },
+      {
+        "mode": "student",
+        "page": 35,
+        "figure": "protein",
+        "label": "삶은 달걀 흰자"
+      },
+      {
+        "mode": "student",
+        "page": 35,
+        "figure": "protein",
+        "label": "두부"
+      },
+      {
+        "mode": "student",
+        "page": 40,
+        "figure": "mixing",
+        "label": "붉은색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 40,
+        "figure": "mixing",
+        "label": "보라색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 40,
+        "figure": "mixing",
+        "label": "푸른색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 45,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "student",
+        "page": 45,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 45,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "figure": "environment",
+        "label": "조개류"
+      },
+      {
+        "mode": "student",
+        "page": 50,
+        "figure": "environment",
+        "label": "주변 바다 환경"
+      },
+      {
+        "mode": "student",
+        "page": 56,
+        "figure": "cabbage",
+        "label": "붉은 양배추"
+      },
+      {
+        "mode": "student",
+        "page": 56,
+        "figure": "cabbage",
+        "label": "추출액과 거름 도구"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 1,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 5,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 10,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 15,
+        "figure": "litmus",
+        "label": "붉은 시험지와 푸른 시험지"
+      },
+      {
+        "mode": "teacher",
+        "page": 15,
+        "figure": "litmus",
+        "label": "핀셋과 관찰판"
+      },
+      {
+        "mode": "teacher",
+        "page": 20,
+        "figure": "phenol",
+        "label": "무색 시료"
+      },
+      {
+        "mode": "teacher",
+        "page": 20,
+        "figure": "phenol",
+        "label": "분홍빛 시료"
+      },
+      {
+        "mode": "teacher",
+        "page": 20,
+        "figure": "phenol",
+        "label": "무색 시료"
+      },
+      {
+        "mode": "teacher",
+        "page": 25,
+        "figure": "cabbage",
+        "label": "붉은 양배추"
+      },
+      {
+        "mode": "teacher",
+        "page": 25,
+        "figure": "cabbage",
+        "label": "추출액과 거름 도구"
+      },
+      {
+        "mode": "teacher",
+        "page": 30,
+        "figure": "carbonate",
+        "label": "달걀 껍데기"
+      },
+      {
+        "mode": "teacher",
+        "page": 30,
+        "figure": "carbonate",
+        "label": "흰색 돌 표본"
+      },
+      {
+        "mode": "teacher",
+        "page": 35,
+        "figure": "protein",
+        "label": "삶은 달걀 흰자"
+      },
+      {
+        "mode": "teacher",
+        "page": 35,
+        "figure": "protein",
+        "label": "두부"
+      },
+      {
+        "mode": "teacher",
+        "page": 40,
+        "figure": "mixing",
+        "label": "붉은색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 40,
+        "figure": "mixing",
+        "label": "보라색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 40,
+        "figure": "mixing",
+        "label": "푸른색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 45,
+        "figure": "observe",
+        "label": "맑고 무색인 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 45,
+        "figure": "observe",
+        "label": "옅은 노란색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 45,
+        "figure": "observe",
+        "label": "옅은 푸른색 액체"
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "figure": "environment",
+        "label": "조개류"
+      },
+      {
+        "mode": "teacher",
+        "page": 50,
+        "figure": "environment",
+        "label": "주변 바다 환경"
+      },
+      {
+        "mode": "teacher",
+        "page": 56,
+        "figure": "cabbage",
+        "label": "붉은 양배추"
+      },
+      {
+        "mode": "teacher",
+        "page": 56,
+        "figure": "cabbage",
+        "label": "추출액과 거름 도구"
+      }
+    ]
+  },
+  "vision": {
+    "engine": "Apple Vision on user Mac",
+    "assetRuns": 8,
+    "firstStudentPdfRuns": 99,
+    "finalStudentPdfRuns": 99,
+    "totalRuns": 206,
+    "skip": 0,
+    "failed": 0,
+    "finalPageCoverage": 99,
+    "finalTitleExactRecognition": 99,
+    "ocrIsCharacterRecognitionNotImageMeaningReview": true,
+    "allLowConfidenceWordsIndividuallyCertified": false,
+    "pages": [
+      {
+        "page": 1,
+        "words": 131,
+        "lowConfidence": 42,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 2,
+        "words": 140,
+        "lowConfidence": 44,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 3,
+        "words": 131,
+        "lowConfidence": 50,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 4,
+        "words": 133,
+        "lowConfidence": 23,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 5,
+        "words": 137,
+        "lowConfidence": 38,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 6,
+        "words": 119,
+        "lowConfidence": 30,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 7,
+        "words": 118,
+        "lowConfidence": 54,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 8,
+        "words": 144,
+        "lowConfidence": 78,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 9,
+        "words": 91,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 10,
+        "words": 147,
+        "lowConfidence": 49,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 11,
+        "words": 132,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 12,
+        "words": 122,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 13,
+        "words": 122,
+        "lowConfidence": 58,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 14,
+        "words": 97,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 15,
+        "words": 140,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 16,
+        "words": 121,
+        "lowConfidence": 46,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 17,
+        "words": 126,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 18,
+        "words": 140,
+        "lowConfidence": 58,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 19,
+        "words": 87,
+        "lowConfidence": 30,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 20,
+        "words": 148,
+        "lowConfidence": 40,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 21,
+        "words": 109,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 22,
+        "words": 117,
+        "lowConfidence": 20,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 23,
+        "words": 136,
+        "lowConfidence": 72,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 24,
+        "words": 88,
+        "lowConfidence": 36,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 25,
+        "words": 146,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 26,
+        "words": 127,
+        "lowConfidence": 54,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 27,
+        "words": 128,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 28,
+        "words": 135,
+        "lowConfidence": 53,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 29,
+        "words": 107,
+        "lowConfidence": 47,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 30,
+        "words": 149,
+        "lowConfidence": 50,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 31,
+        "words": 117,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 32,
+        "words": 127,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 33,
+        "words": 154,
+        "lowConfidence": 78,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 34,
+        "words": 109,
+        "lowConfidence": 42,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 35,
+        "words": 138,
+        "lowConfidence": 25,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 36,
+        "words": 132,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 37,
+        "words": 125,
+        "lowConfidence": 52,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 38,
+        "words": 140,
+        "lowConfidence": 47,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 39,
+        "words": 113,
+        "lowConfidence": 39,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 40,
+        "words": 164,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 41,
+        "words": 120,
+        "lowConfidence": 51,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 42,
+        "words": 137,
+        "lowConfidence": 63,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 43,
+        "words": 157,
+        "lowConfidence": 68,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 44,
+        "words": 106,
+        "lowConfidence": 24,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 45,
+        "words": 152,
+        "lowConfidence": 27,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 46,
+        "words": 126,
+        "lowConfidence": 30,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 47,
+        "words": 133,
+        "lowConfidence": 57,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 48,
+        "words": 162,
+        "lowConfidence": 60,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 49,
+        "words": 104,
+        "lowConfidence": 28,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 50,
+        "words": 160,
+        "lowConfidence": 26,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 51,
+        "words": 121,
+        "lowConfidence": 39,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 52,
+        "words": 132,
+        "lowConfidence": 48,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 53,
+        "words": 147,
+        "lowConfidence": 59,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 54,
+        "words": 110,
+        "lowConfidence": 49,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 55,
+        "words": 118,
+        "lowConfidence": 59,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 56,
+        "words": 129,
+        "lowConfidence": 35,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 57,
+        "words": 122,
+        "lowConfidence": 38,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 58,
+        "words": 126,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 59,
+        "words": 143,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 60,
+        "words": 105,
+        "lowConfidence": 45,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 61,
+        "words": 164,
+        "lowConfidence": 53,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 62,
+        "words": 142,
+        "lowConfidence": 69,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 63,
+        "words": 150,
+        "lowConfidence": 52,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 64,
+        "words": 125,
+        "lowConfidence": 53,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 65,
+        "words": 184,
+        "lowConfidence": 46,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 66,
+        "words": 101,
+        "lowConfidence": 33,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 67,
+        "words": 144,
+        "lowConfidence": 54,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 68,
+        "words": 84,
+        "lowConfidence": 39,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 69,
+        "words": 85,
+        "lowConfidence": 12,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 70,
+        "words": 109,
+        "lowConfidence": 38,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 71,
+        "words": 137,
+        "lowConfidence": 35,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 72,
+        "words": 82,
+        "lowConfidence": 37,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 73,
+        "words": 103,
+        "lowConfidence": 42,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 74,
+        "words": 93,
+        "lowConfidence": 29,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 75,
+        "words": 136,
+        "lowConfidence": 46,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 76,
+        "words": 130,
+        "lowConfidence": 59,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 77,
+        "words": 113,
+        "lowConfidence": 57,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 78,
+        "words": 100,
+        "lowConfidence": 58,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 79,
+        "words": 111,
+        "lowConfidence": 58,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 80,
+        "words": 91,
+        "lowConfidence": 39,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 81,
+        "words": 113,
+        "lowConfidence": 56,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 82,
+        "words": 138,
+        "lowConfidence": 53,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 83,
+        "words": 99,
+        "lowConfidence": 57,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 84,
+        "words": 128,
+        "lowConfidence": 36,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 85,
+        "words": 164,
+        "lowConfidence": 46,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 86,
+        "words": 108,
+        "lowConfidence": 52,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 87,
+        "words": 75,
+        "lowConfidence": 27,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 88,
+        "words": 93,
+        "lowConfidence": 26,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 89,
+        "words": 168,
+        "lowConfidence": 54,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 90,
+        "words": 115,
+        "lowConfidence": 75,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 91,
+        "words": 132,
+        "lowConfidence": 45,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 92,
+        "words": 96,
+        "lowConfidence": 34,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 93,
+        "words": 128,
+        "lowConfidence": 49,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 94,
+        "words": 91,
+        "lowConfidence": 35,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 95,
+        "words": 89,
+        "lowConfidence": 46,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 96,
+        "words": 81,
+        "lowConfidence": 35,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 97,
+        "words": 91,
+        "lowConfidence": 19,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 98,
+        "words": 98,
+        "lowConfidence": 29,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      },
+      {
+        "page": 99,
+        "words": 110,
+        "lowConfidence": 43,
+        "titleExactlyRecognizedAfterWhitespaceRemoval": true
+      }
+    ]
+  },
+  "visual": {
+    "finalContactSheetsDirectlyViewed": [
+      "contact-sheets/student-001.jpg",
+      "contact-sheets/student-025.jpg",
+      "contact-sheets/student-049.jpg",
+      "contact-sheets/student-073.jpg",
+      "contact-sheets/student-097.jpg",
+      "contact-sheets/teacher-001.jpg",
+      "contact-sheets/teacher-025.jpg",
+      "contact-sheets/teacher-049.jpg",
+      "contact-sheets/teacher-073.jpg",
+      "contact-sheets/teacher-097.jpg",
+      "contact-sheets/teacher-121.jpg",
+      "contact-sheets/answers-001.jpg",
+      "contact-sheets/answers-025.jpg",
+      "contact-sheets/quick-001.jpg"
+    ],
+    "contactPages": 288,
+    "directZoomFilesViewed": [
+      "pdf-zooms/student-1.png",
+      "pdf-zooms/student-2.png",
+      "pdf-zooms/student-15.png",
+      "pdf-zooms/student-20.png",
+      "pdf-zooms/student-25.png",
+      "pdf-zooms/student-30.png",
+      "pdf-zooms/student-35.png",
+      "pdf-zooms/student-36.png",
+      "pdf-zooms/student-40.png",
+      "pdf-zooms/student-50.png",
+      "pdf-zooms/student-54.png",
+      "pdf-zooms/student-58.png",
+      "pdf-zooms/student-66.png",
+      "pdf-zooms/student-76.png",
+      "pdf-zooms/student-78.png",
+      "pdf-zooms/student-99.png",
+      "pdf-vision-final/p60.png",
+      "pdf-vision-final/p64.png",
+      "pdf-vision-final/p73.png",
+      "pdf-vision-final/p91.png",
+      "pdf-vision-final/p97.png",
+      "pdf-zooms/teacher-101.png",
+      "pdf-zooms/answers-1.png",
+      "pdf-zooms/quick-2.png",
+      "pdf-zooms/quick-5.png"
+    ],
+    "directZoomFileCount": 25,
+    "allGeneratedZoomFilesIndividuallyViewed": false,
+    "allEightSourceIllustrationsViewedAtFullSize": true,
+    "layout": "명조 본문·깊은 초록·손글씨 메모·세로 채움·큰 그림 칸",
+    "browserLayoutVerified": false,
+    "findings": [
+      "용액 배치 사진을 실제 혼합 순서나 첨가량의 증거로 사용하지 않음",
+      "껍데기/흰자는 반응 전 재료의 설명 장면임",
+      "조개 그림만으로 산성화 피해를 판단하지 않음",
+      "교사 100쪽은 양면 인쇄를 위한 빈 면, 해설은 101쪽 시작",
+      "최종 99쪽 제목은 PDF 좌표로 모두 한 줄임"
+    ]
+  },
+  "installedPhotoAssets": [
+    {
+      "name": "observe",
+      "path": "science-lab/assets/activities/c22-s61-u01/observe.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "cee91f76aea5a7cb74b2de6868b42a6d6151c367e013a5f042fff4164b2243d3"
+    },
+    {
+      "name": "litmus",
+      "path": "science-lab/assets/activities/c22-s61-u01/litmus.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "e6fd0410b2229146e244398f4c811bb6197d982fd0ef09997d192d615e5ea107"
+    },
+    {
+      "name": "phenol",
+      "path": "science-lab/assets/activities/c22-s61-u01/phenol.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "414505619c2dfb11a0a7b0b016bb3451c97f0791fc3388adcb5fb97bbca2d995"
+    },
+    {
+      "name": "cabbage",
+      "path": "science-lab/assets/activities/c22-s61-u01/cabbage.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "b45ddf95740c5b75f9a22c0ac77623c1fd60a81b90c55bd57ec5d26e5aa74350"
+    },
+    {
+      "name": "carbonate",
+      "path": "science-lab/assets/activities/c22-s61-u01/carbonate.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "5c531400a16950532d0fb5ef8aeed4de6d6c58219161c5d8014489dc5fb32735"
+    },
+    {
+      "name": "protein",
+      "path": "science-lab/assets/activities/c22-s61-u01/protein.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "0633399853f3ecce9d213a70e1f5e3cc73bd5b57a5344d450d028d6544a06cc8"
+    },
+    {
+      "name": "mixing",
+      "path": "science-lab/assets/activities/c22-s61-u01/mixing.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "187ac63b5a21887532ffdb2f9a47b2b8d2e2ac55f26d0c312ea529041d4b91db"
+    },
+    {
+      "name": "environment",
+      "path": "science-lab/assets/activities/c22-s61-u01/environment.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "11d45398eb46d38c1beff3b1755a4ceb25068232d97ffe519163333ecc4df680"
+    }
+  ],
+  "originalBankFigures": [
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s3-3-chart.webp",
+      "sha256": "41085e9fdf5314fe4bc31cd37489ab9cba12ac7f6188b3467fd1b065c57828b6"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s2-6-cabbage.webp",
+      "sha256": "37e5da4ead34e5c9af2cedf20d430483227e8f1531e142a85d7098e25ced7d36"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s3-12-marble.webp",
+      "sha256": "74437f5ba4a9dc2e5768e75edd67221a544a22ec0729eee9ce9012476427d1ad"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s3-16-flasks.webp",
+      "sha256": "1b70eef85c6a353344ba9c2cb8b74e56d385b946571adf296177d605268db19f"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-8-colors.webp",
+      "sha256": "08c324b3f982fdb58281432229b7d8822e18a6653a4b7bb806e13633c9390e56"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-2-chart.webp",
+      "sha256": "dd26811c39ff23b8ce1d9ab498c3deb98b7334d4315792f6a1c72cab00f9e11f"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-3-chart.webp",
+      "sha256": "15efb66faf5f0cfebc7c264c0385df36354cdc3f2599092f47e0b708794d231c"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-14-pagoda.webp",
+      "sha256": "7b5949aaf9e79aa0df34f0ec4efe1686b77d08cfc398cb012dededce3915d6d3"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-1-bottles.webp",
+      "sha256": "2a5cba0666e700eb5f3400b7be3a9eea6783a49143d0e9022e0cbf4b68afa041"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s1-9-marble.webp",
+      "sha256": "bcf069776a8c7ee58c68e69d7082452432fd01079157d7290bf59d4ba48cf0c2"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-11-materials.webp",
+      "sha256": "1c0ffea9b4e9bb2f445cba4cb0f52114fca93f073534d9dfa86c4c0f134688a9"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s4-15-flasks.webp",
+      "sha256": "95166f6ada676bfd14698c897d421a54dc723adaef21ff47046a350be49081d5"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s1-15-art.webp",
+      "sha256": "57c6b4c9089c3ccaf7a9bc7049e5187c54f4a95b9c55d99393a52e098cc2636c"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s2-11-pagoda.webp",
+      "sha256": "7b5949aaf9e79aa0df34f0ec4efe1686b77d08cfc398cb012dededce3915d6d3"
+    },
+    {
+      "path": "science-lab/assets/bank/c22-s61-u01/s3-8-colors.webp",
+      "sha256": "69f3e0ba945cd21c507519965b28939752bca632d11ba08a9dbf42242916db39"
+    }
+  ],
+  "newBankIntegrationFiles": [
+    {
+      "path": "science-lab/data/units/c22-s61-u01.js",
+      "sourceSha256": "16f1d833e1e63e0d8ac07c86b643a6dd9f0dd6a6dd1cb4e6d605ace675e294cc",
+      "exact": false,
+      "adaptation": "교재/은행 연결과 전체 수업 검수 중인 상태 문장만 수정",
+      "candidateSha256": "84e4b85df6bc782b8cbd26ce16991d1e3b003cec136c127c42a8299063865b21"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.source.js",
+      "sourceSha256": "0980f8c295275b1ce51a829cc913b70e574bddbae638deefdd5e06dd07a3659b",
+      "exact": true,
+      "adaptation": null,
+      "candidateSha256": "0980f8c295275b1ce51a829cc913b70e574bddbae638deefdd5e06dd07a3659b"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.similar.js",
+      "sourceSha256": "d70626d90d60fd7c19b017f3a48f2947bbdac4ae2cf797994e46a1b29ae18947",
+      "exact": true,
+      "adaptation": null,
+      "candidateSha256": "d70626d90d60fd7c19b017f3a48f2947bbdac4ae2cf797994e46a1b29ae18947"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.taxonomy.js",
+      "sourceSha256": "c7fc1b42d4e941eb51bfb413dbd77be9a5415c5520be00d8256465ed26338787",
+      "exact": true,
+      "adaptation": null,
+      "candidateSha256": "c7fc1b42d4e941eb51bfb413dbd77be9a5415c5520be00d8256465ed26338787"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.misc.js",
+      "sourceSha256": "3f659c017bd61a0eea6ce98273c2b7ef62f67781ca089d9811fe78908b9b0c90",
+      "exact": true,
+      "adaptation": null,
+      "candidateSha256": "3f659c017bd61a0eea6ce98273c2b7ef62f67781ca089d9811fe78908b9b0c90"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.judge.js",
+      "sourceSha256": "f0858bc43dc9c7706629d22750af70e30da8609d44c615d87b9acad57fc9aa26",
+      "exact": true,
+      "adaptation": null,
+      "candidateSha256": "f0858bc43dc9c7706629d22750af70e30da8609d44c615d87b9acad57fc9aa26"
+    },
+    {
+      "path": "science-lab/data/units/c22-s61-u01.lesson.js",
+      "sourceSha256": "b8fa0c4662c8655c94f546ee7fd81819b80cecfcacbcc17770cd5871d17667a6",
+      "exact": false,
+      "adaptation": "only book import filename changed",
+      "candidateSha256": "6c32dae41ae8c49dace0d8002128107553e1d4e8fead7891b7a3aa526a02f57d"
+    },
+    {
+      "path": "science-lab/v2/acid-bank-paper.js",
+      "exact": false,
+      "adaptation": "local table and review-choice helpers preserve other units; reused credit helper",
+      "candidateSha256": "da3c533e523ca828facf254b46be9688b7d01774c871b2f714b4f3e8bebe5c80"
+    },
+    {
+      "path": "science-lab/bank/work/c22s61u01/bank-review-20261021.json",
+      "exact": true,
+      "sourceSha256": "06077448934acaac96b660302fbb9b7d54aba32063d3c4f10813fe8abdd1c5d2",
+      "candidateSha256": "06077448934acaac96b660302fbb9b7d54aba32063d3c4f10813fe8abdd1c5d2"
+    },
+    {
+      "path": "science-lab/bank/work/c22s61u01/lesson-review-20261021.json",
+      "exact": true,
+      "sourceSha256": "5fb0f71c365b11fa328ef18dde1c1904fc67c49cc890d37c1798dad52114230e",
+      "candidateSha256": "5fb0f71c365b11fa328ef18dde1c1904fc67c49cc890d37c1798dad52114230e"
+    },
+    {
+      "path": "science-lab/bank/taxonomy/c22-s61-u01.json",
+      "exact": true,
+      "sourceSha256": "712a6be41974471b9ac1fc5f00a44a195bbe374e0b432c0339440ac286166a3c",
+      "candidateSha256": "712a6be41974471b9ac1fc5f00a44a195bbe374e0b432c0339440ac286166a3c"
+    }
+  ],
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "tests": {
+    "v2": {
+      "tests": 647,
+      "pass": 645,
+      "fail": 0,
+      "skipped": 2
+    },
+    "bank": {
+      "tests": 299,
+      "pass": 299,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "routes": {
+    "unit": "c22-s61-u01",
+    "actualStart": true,
+    "unreviewedClassroomNotOffered": true,
+    "defaultAndUnreviewedClassroomRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "productionUnitLoaderExecuted": true,
+    "originalRecordsBookExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "cache": "20261104-acid-book",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "verificationLimit": "Offline A4 export is not browser print verification. Browser/mobile/CSS/audio/WebGL and pre-main 3D checker remain pending. Prior denied browser target was not bypassed.",
+  "studentDataAccess": {
+    "reads": 0,
+    "writes": 0
+  },
+  "next": [
+    "Acid/base full thinking classroom and optional actual activity record integration with versioned changed questions",
+    "Other seventh/eighth semester workbooks and classrooms",
+    "Latest main integration and permitted browser/mobile/3D/audio checks",
+    "Publishing within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

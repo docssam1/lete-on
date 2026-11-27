@@ -1,0 +1,586 @@
+{
+  "phase": 195,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u03",
+  "title": "날씨와 우리 생활",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "84b6093243b16dcafd809b850dd66396159634c5",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 23,
+  "integratedFullClassrooms": 22,
+  "studentPages": 90,
+  "teacherPages": 127,
+  "answerPages": 37,
+  "quickPages": 4,
+  "teacherAnswersStartRecto": 91,
+  "questions": 112,
+  "forms": {
+    "choice": 20,
+    "blank": 13,
+    "match": 12,
+    "written": 27,
+    "short": 17,
+    "multi": 13,
+    "draw": 8,
+    "order": 2
+  },
+  "workedExamples": 13,
+  "editedWorkedExamples": 13,
+  "uniquePageSpecificRailTexts": 270,
+  "largeDrawingFieldsPerStudentCopy": 10,
+  "largeDrawingFieldsStudentAndTeacher": 20,
+  "sourceWorkbookSha256": "1b427a8225ffe4ca65ae0580558e20b4a4dec2a77b00db18391d9c8c4f11824e",
+  "sourceWorkbookUnmodified": true,
+  "curriculumReferences": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        [
+          796,
+          813
+        ],
+        [
+          1252,
+          1270
+        ]
+      ],
+      "use": "6과06-01~03·탐구/해설/고려 사항과 상위9과17; 강수/구름 생성 과정을 기본에서 제외"
+    },
+    {
+      "title": "Met Office High and low pressure",
+      "url": "https://weather.metoffice.gov.uk/learn-about/weather/how-weather-works/high-and-low-pressure",
+      "use": "주변과 비교하는 기압과 상승/하강·계절에 따른 날씨 경향",
+      "readEarlierInPhase": true
+    },
+    {
+      "title": "Met Office Wind flow",
+      "url": "https://weather.metoffice.gov.uk/learn-about/weather/how-weather-works/high-and-low-pressure/wind-flow",
+      "use": "기압 차이와 실제 바람에서 자전/마찰의 영향; 기본 단순 모형과 구별",
+      "readEarlierInPhase": true
+    },
+    {
+      "title": "NOAA Sea Breeze",
+      "url": "https://www.noaa.gov/jetstream/ocean/sea-breeze",
+      "use": "차등 가열·지표 부근과 위쪽의 순환·주변 큰 바람과 해륙풍",
+      "readEarlierInPhase": true
+    },
+    {
+      "title": "기상청 예보업무",
+      "url": "https://www.kma.go.kr/kma/biz/forecast02.jsp",
+      "use": "관측과 예보의 지역/대상 시각 구별; 갱신 시각표를 학생 원고에 복제하지 않음",
+      "readEarlierInPhase": true
+    }
+  ],
+  "protection": {
+    "protectedDataAssetsAndPriorPdfs": 1859,
+    "unchangedOldPdfs": 52,
+    "unchangedOtherWorkbookHtmlProducts": 88,
+    "unchangedOtherClassroomArrays": 44,
+    "newWorkbookHtmlProducts": 4,
+    "sourceQuestionsExactlyUnchanged": 103,
+    "questionLanguageExceptions": [
+      "c22-s52-u03-w049",
+      "c22-s52-u03-w052",
+      "c22-s52-u03-w067",
+      "c22-s52-u03-w078",
+      "c22-s52-u03-w080",
+      "c22-s52-u03-w084",
+      "c22-s52-u03-w106",
+      "c22-s52-u03-w108",
+      "c22-s52-u03-w112"
+    ],
+    "questionOrderIdsFormsKeysAcceptedAndContractsPreserved": true,
+    "editedWorkedExamples": 13,
+    "workedExamplePagesAndStepCountsPreserved": true,
+    "sourceAnswerPagesAndQuickPagesUnchanged": true,
+    "unreviewedWeatherClassroomUnchanged": true,
+    "newPhotos": 0,
+    "new3D": 0,
+    "newPdfs": 4,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0,
+    "browserVerified": false
+  },
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 90,
+        "bytes": 18913433,
+        "sha256": "0a17e46f778bfce91c4f388ddb18ac11fa10ae11017e860213a92b347afb28ef",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 127,
+        "bytes": 19062544,
+        "sha256": "ccf3f9c49c5b3b684812f2013d096063dc825e1ff152e331b6b54de1d7db29e6",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 37,
+        "bytes": 304022,
+        "sha256": "76af47db1b5fc94f51def9ae707935312187bd8c15222a049522bc26629bf468",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 4,
+        "bytes": 121982,
+        "sha256": "87b61fc3e5a262f0a64820076f32fc6d40a857ca5bd1621899ca565acb171303",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 224,
+    "solutionExpressions": 224,
+    "teacherAnswerStartsOnRecto": 91
+  },
+  "pdfDetailsValidation": {
+    "fullRailTexts": 540,
+    "quickAnswerTableCells": 336,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 36,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 40,
+        "heightMm": 149.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 53,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 56,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 61,
+        "heightMm": 133.19,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 63,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 65,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 69,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 79,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 84,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 36,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 40,
+        "heightMm": 149.21,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 53,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 56,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 61,
+        "heightMm": 133.19,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 63,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 65,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 69,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 79,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 84,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Bold",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAB+PretendardVariable-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "photoLabelValidation": {
+    "uniqueLabelledFigures": 9,
+    "checkedPhotoLabelExpressions": 60,
+    "allPresent": true
+  },
+  "vision": {
+    "engine": "Apple Vision via local /usr/bin/swift; PDFKit/AppKit 110dpi",
+    "uniqueStudentPages": 90,
+    "nativeAssetRuns": 7,
+    "nativePdfFullRuns": [
+      90,
+      90
+    ],
+    "nativeFinalLabelChangedPages": [
+      7,
+      22,
+      44
+    ],
+    "otherFinalPageTextsUnchanged": 87,
+    "totalNativeVisionRuns": 190,
+    "failed": 0,
+    "skipped": 0,
+    "finalCoverage": {
+      "pdf-vision-final-labels": [
+        7,
+        22,
+        44
+      ],
+      "pdf-vision-final": "other87 pages with identical extracted text"
+    },
+    "meaningAndLayoutReview": "Direct inspection separately; OCR does not certify every low-confidence token."
+  },
+  "visual": {
+    "finalContactSheetsInspected": [
+      "contact-sheets/student-001.jpg",
+      "contact-sheets/student-025.jpg",
+      "contact-sheets/student-049.jpg",
+      "contact-sheets/student-073.jpg",
+      "contact-sheets/teacher-001.jpg",
+      "contact-sheets/teacher-025.jpg",
+      "contact-sheets/teacher-049.jpg",
+      "contact-sheets/teacher-073.jpg",
+      "contact-sheets/teacher-097.jpg",
+      "contact-sheets/teacher-121.jpg",
+      "contact-sheets/answers-001.jpg",
+      "contact-sheets/answers-025.jpg",
+      "contact-sheets/quick-001.jpg"
+    ],
+    "finalPagesInContactSheets": 258,
+    "selectedUniqueEnlargedPagesInspected": [
+      [
+        "student",
+        2
+      ],
+      [
+        "student",
+        5
+      ],
+      [
+        "student",
+        7
+      ],
+      [
+        "student",
+        11
+      ],
+      [
+        "student",
+        12
+      ],
+      [
+        "student",
+        16
+      ],
+      [
+        "student",
+        17
+      ],
+      [
+        "student",
+        21
+      ],
+      [
+        "student",
+        22
+      ],
+      [
+        "student",
+        26
+      ],
+      [
+        "student",
+        31
+      ],
+      [
+        "student",
+        32
+      ],
+      [
+        "student",
+        37
+      ],
+      [
+        "student",
+        38
+      ],
+      [
+        "student",
+        39
+      ],
+      [
+        "student",
+        40
+      ],
+      [
+        "student",
+        44
+      ],
+      [
+        "student",
+        48
+      ],
+      [
+        "student",
+        50
+      ],
+      [
+        "student",
+        51
+      ],
+      [
+        "student",
+        61
+      ],
+      [
+        "student",
+        69
+      ],
+      [
+        "student",
+        72
+      ],
+      [
+        "student",
+        79
+      ],
+      [
+        "student",
+        84
+      ],
+      [
+        "student",
+        88
+      ],
+      [
+        "student",
+        90
+      ],
+      [
+        "teacher",
+        91
+      ],
+      [
+        "quick",
+        4
+      ]
+    ],
+    "enlargedInspectionCount": 29,
+    "renderedZoomCount": 35,
+    "assetContactImagesInspected": 7,
+    "fullSizeSourceAssetsInspected": [
+      "dew",
+      "fog-model",
+      "wind",
+      "coast-model"
+    ],
+    "layout": "A4; serif main body, handwritten notes, green headings;10 large drawing fields per student/teacher copy",
+    "scientificInspection": "Separate surface droplets from airborne mist; wind direction is where wind comes from; no inferred speed, temperature or coastal airflow from still images.",
+    "browserVerified": false,
+    "rendering": "Offline ReportLab from same fixed workbook page/question objects; not browser print."
+  },
+  "installedPhotoAssets": [
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/dew.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "0b40c5de42b28bd4d6d0638a175804371d4ef91bfb29531af93d8464a4593ef8",
+      "name": "dew"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/fog-model.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "817f3b50d6216507a5915cc82ca95a3220d3d26aeeafa3f6eed64c342880da04",
+      "name": "fog-model"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/station.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "f15dab339a86c6f181f153817572b2315514e3bf3d375398599e6a412e0db776",
+      "name": "station"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/fog.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "02dd682dc08dc894816e1ce9b6a3c7c1e1795099546fb88970dea458aa516b2e",
+      "name": "fog"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/cloud.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "f17693bbfcf7d96023a1826352b6a88eda6963607025d54e9c0ed30ce2a2dd88",
+      "name": "cloud"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/coast-model.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "c8e2c80c2d5f3228d709031ed4ef7021293a917e7040e9b40d214fd9d8b74271",
+      "name": "coast-model"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s52-u03/wind.webp",
+      "size": [
+        1536,
+        1024
+      ],
+      "sha256": "41d517a9021921cd0b080bc3a8a7e09dd3a24a7c8201483586b3fbc0e9cf0156",
+      "name": "wind"
+    }
+  ],
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "tests": {
+    "v2": {
+      "total": 612,
+      "passed": 610,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "bank": {
+      "total": 299,
+      "passed": 299,
+      "failed": 0
+    },
+    "passedTotal": 909
+  },
+  "routes": {
+    "unit": "c22-s52-u03",
+    "actualStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "originalRecordsBookExactlyUnchanged": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "cache": "20261104-weather-book",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "frontend-design",
+    "gfield-textbook-design",
+    "pdf"
+  ],
+  "verificationLimit": "Node VM routes use DOM/book/print-readiness substitutes; offline ReportLab PDF is not browser print. Actual browser/mobile/audio/WebGL checks pending; previous denied browser target was not bypassed.",
+  "studentDataAccess": {
+    "reads": 0,
+    "writes": 0
+  },
+  "next": [
+    "Weather full curriculum-linked thinking classroom",
+    "Remaining resource and energy workbook/classroom",
+    "Latest main integration and permitted browser/mobile/3D/audio checks",
+    "Publishing within confirmed scope"
+  ],
+  "wholeGoal": "active"
+}

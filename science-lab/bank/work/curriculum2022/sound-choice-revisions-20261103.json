@@ -1,0 +1,391 @@
+{
+  "phase": 167,
+  "date": "2026-11-03",
+  "unit": "c22-s32-u03",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "37c5e41b3ee8c486f3bfbfc1e06ea10a47573b04",
+  "bank": {
+    "bankCount": 64,
+    "unchangedQuestions": 62,
+    "revisedQuestions": [
+      {
+        "id": "c22-s32-u03-b25",
+        "version": 2,
+        "previousChoices": [
+          "자 종류와 소리를 내는 방법 모두",
+          "듣는 위치와 자를 고정한 책상 모두",
+          "관찰 결과와 다음 날의 예상 모두",
+          "자의 재료·고정 방법과 튕기는 정도",
+          "자 재료와 밖으로 나온 길이 모두"
+        ],
+        "currentChoices": [
+          "자의 재료와 책상 밖으로 나온 길이를 모두 같게 한다.",
+          "듣는 자리와 책상 밖으로 나온 길이를 모두 같게 한다.",
+          "비교 뒤 관찰한 높낮이와 예상했던 높낮이를 같게 한다.",
+          "자의 재료·고정 방법과 튕기는 정도를 같게 한다.",
+          "책상 밖의 길이와 고정해 놓은 책상을 모두 같게 한다."
+        ],
+        "allNonChoiceFieldsUnchanged": true
+      },
+      {
+        "id": "c22-s32-u03-b41",
+        "version": 2,
+        "previousChoices": [
+          "실의 길이와 컵의 재료 모두",
+          "목소리 크기와 두 사람 거리 모두",
+          "실을 잡는 조건과 관찰 날짜 모두",
+          "같은 전화기·목소리·듣는 위치",
+          "전화기 종류와 말하는 사람 모두"
+        ],
+        "currentChoices": [
+          "실의 길이와 실을 잡는 여부를 모두 같게 한다.",
+          "목소리 크기를 달리하고 두 사람의 거리만 같게 한다.",
+          "실을 잡는 조건과 놓는 조건이 뒤섞이게 시험한다.",
+          "같은 전화기·목소리·듣는 위치를 유지한다.",
+          "전화기는 바꾸고 실을 잡는 여부는 같게 한다."
+        ],
+        "allNonChoiceFieldsUnchanged": true
+      }
+    ],
+    "allIdsAnswerContractsSourceRefsTaxonomyUnchanged": true,
+    "oldQuestionSnapshotsExact": true,
+    "workbookUnchangedExceptTwoResolvedStatuses": true,
+    "daily": {
+      "oldChoicesRestored": true,
+      "restoreWrites": 0,
+      "oldGradeNotRecomputed": true,
+      "archivedAnswerVisible": true,
+      "explicitRetakeArchivesOldAnswer": true,
+      "otherQuestionAndFieldsPreserved": true,
+      "newAnswerVersion": 2,
+      "newProgressRecordCarriesChoiceText": true,
+      "normalRestoreWrites": 0,
+      "assessmentStoreIsolated": true,
+      "writtenReviewAndTeacherCommentsPreserved": true,
+      "browserVerified": false
+    },
+    "diagnose": {
+      "oldUnversionedChoiceTextPreserved": true,
+      "newSnapshotTextDisplayed": true,
+      "inputRecordsUnchanged": true,
+      "browserVerified": false
+    }
+  },
+  "integration": {
+    "sound": [
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "checks": 12,
+        "minutes": 80,
+        "images": [
+          "../assets/book/c22-s32-u03-photo-drum.webp",
+          "../assets/book/c22-s32-u03-photo-ruler.webp",
+          "../assets/book/c22-s32-u03-photo-chair.webp"
+        ],
+        "allOriginalContractsPreserved": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "checks": 12,
+        "minutes": 80,
+        "images": [
+          "../assets/book/c22-s32-u03-photo-drum.webp",
+          "../assets/book/c22-s32-u03-photo-ruler.webp",
+          "../assets/book/c22-s32-u03-photo-chair.webp"
+        ],
+        "allOriginalContractsPreserved": true
+      }
+    ],
+    "allClassroomSlideArraysUnchanged": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 30,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 30,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slides": 29,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slides": 29,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 86,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 87,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "slides": 26,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slides": 37,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slides": 38,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      }
+    ],
+    "workbookProductsUnchanged": 44,
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/c22-s32-u03.similar.js",
+        "sha256": "c295e400210fc50f2dde18ed93cad97664c906aafa6d332ab01c632cfb678ac6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u03.lesson.js",
+        "sha256": "1f8219e90638ff960cb9e823da3dfe6576b56e9f4f4ab43a5bb414d26e3c192e",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u03.records.js",
+        "sha256": "2b6a47bc97532fe36398d7214fd2b80b4192f5f4e306ddd9bc034ad92071b708",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u03.source.js",
+        "sha256": "047d7123bab29d0e5fa1fd3997ae62a178cee57d689dde4ac109afddd69d70bc",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u03.taxonomy.js",
+        "sha256": "6f73bc181a694b67d0b9727576a2f423973817d4136014630a8779696fcc6940",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u03.think.js",
+        "sha256": "7ce261bd29ce990010e039e20da6f7cc0f5e6573f1e9ff61a43777b648cba435",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u03.book.js",
+        "sha256": "fa76d561313da456e4497d6a0b13bfb5b1ae155ea15b434e47ba3bbd141453cc",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u03.records-book.js",
+        "sha256": "891c290da512a4ed6a3c94229aec8138178e90e3c811a08ab3ee038d11a6846d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u03.workbook.js",
+        "sha256": "9ce94f9b9b3554205c589ab9aaaae73b78577052bafb0647180ad6390c0e3d94",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/ruler-model.js",
+        "sha256": "be8d1edbd2d12d2f1b478b4651a54bbae9a29030a0bbbe0776271e8495780508",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-ruler.js",
+        "sha256": "eb8866c30d44cd2e2587e6ed910f0a84c19b4664e9681ff53db7c0a581f4c80c",
+        "unchanged": true
+      }
+    ],
+    "photosUnchangedSinceActualVisionReview": [
+      {
+        "file": "science-lab/assets/book/c22-s32-u03-photo-drum.webp",
+        "added": true,
+        "sha256": "144afc4194db7237b53c67bb0417482e983025b2b4c823b4a13b91095a36475e"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u03-photo-ruler.webp",
+        "added": true,
+        "sha256": "c23f02d895dc0546cf6c35bb36efa74251e8e13e2983c4edfc8968c32fdc0570"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u03-photo-chair.webp",
+        "added": true,
+        "sha256": "f9fac46cf65fdb8a2d457f66fa328e4a990438363375e905866cc77e25127d81"
+      }
+    ],
+    "teacherDeckEvents": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "browserVerified": false
+    },
+    "browserVerified": false,
+    "newPaidApiCalls": 0
+  },
+  "stateProtection": {
+    "automaticSavedAnswerMigration": false,
+    "automaticRegradingOnOpen": false,
+    "oldChoicesPreserved": true,
+    "newLogsCarryPresentationVersionAndPickedText": true,
+    "explicitCurrentRetakeArchivesOldAnswerGradeConfidenceAndTime": true,
+    "archiveVisibleInCurrentQuestion": true,
+    "otherQuestionAndExamStorePreserved": true,
+    "writtenReviewAndTeacherCommentsPreserved": true,
+    "actualStudentStorageAccessedByTools": false
+  },
+  "tests": {
+    "v2": {
+      "total": 401,
+      "passed": 399,
+      "failed": 0,
+      "skipped": 2,
+      "skipReason": "기존 실제 브라우저 검사"
+    },
+    "soundBankAndCommonAudit": {
+      "total": 4,
+      "passed": 4,
+      "failed": 0
+    }
+  },
+  "manualChoiceReview": {
+    "b25": "네 오답은 길이를 같게 하거나 관찰 결과를 강제하여 길이 효과 비교 목적에 맞지 않는다. 정답은 재료/고정/튕김 조건을 유지한다.",
+    "b41": "네 오답은 실을 잡는 여부를 같게 하거나 목소리/전화기를 바꾸거나 비교 조건을 뒤섞는다. 정답은 전화기/목소리/듣는 위치를 유지한다."
+  },
+  "reviewRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase167",
+  "scope": {
+    "newImages": 0,
+    "newPdfs": 0,
+    "new3d": 0,
+    "newPaidApiCalls": 0,
+    "pushed": false,
+    "deployed": false,
+    "browserVerified": false,
+    "goalComplete": false
+  },
+  "previousPdfsUnchanged": [
+    {
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/output/pdf/science-lab/20261102-sound-rails/sound-workbook-answers.pdf",
+      "bytes": 137139,
+      "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a"
+    },
+    {
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/output/pdf/science-lab/20261102-sound-rails/sound-workbook-quick.pdf",
+      "bytes": 58903,
+      "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be"
+    },
+    {
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/output/pdf/science-lab/20261102-sound-rails/sound-workbook-student.pdf",
+      "bytes": 2679016,
+      "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c"
+    },
+    {
+      "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/output/pdf/science-lab/20261102-sound-rails/sound-workbook-teacher.pdf",
+      "bytes": 2756116,
+      "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a"
+    }
+  ],
+  "remaining": [
+    "감염병·기후변화 등 다른 학기 교재/기본 수업 보완",
+    "실제 브라우저 화면·이전 기록 보기·소리·A4 검수",
+    "최신 main 재대조와 전체 통합 검토",
+    "v1/v2 역할·교육과정·원문 요건 점검"
+  ]
+}

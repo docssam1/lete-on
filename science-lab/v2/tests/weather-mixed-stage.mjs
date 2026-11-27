@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{WEATHER_MIXED_VERSION}from'../weather-mixed-response.js';
+const cache=new WeakMap();export function beforeWeatherMixed(q){if(q?.contentVersion!==WEATHER_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4, 10, 16, 22, 34, 52, 56, 63, 67, 72, 75, 77, 78, 79, 84, 88, 92, 100, 107, 110, 111, 112]);
+export function weatherMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==112)throw Error('날씨와 우리 생활 정답표112행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}

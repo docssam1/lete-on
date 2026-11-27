@@ -298,3 +298,668 @@
 .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:120mm;height:auto}
 .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing+.ed-lines{margin-top:3mm}
 @media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing.large{min-height:280px}}
+
+/* 초등 과학 문제집: 화면·인쇄의 본문은 같은 고딕체로 읽고, 개인 메모에만 손글씨를 쓴다.
+   단원별 인쇄 명조/손글씨 규칙보다 구체적으로 지정하되 지면과 필기 줄의 높이는 보존한다. */
+.bk-editorial.revised-workbook[data-unit]{--ed-reading:"Pretendard Variable",Pretendard,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;--ed-hand:Gaegu,Pretendard,sans-serif;font-family:var(--ed-reading)}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-main,.ed-rail){font-family:var(--ed-reading);font-weight:400;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-main h2{font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-main h3{font-family:var(--ed-reading);font-weight:600;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-qhead b,.bk-band-t,.bk-band-u){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.bk-band-no,.bk-pn){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-qhead span,.ed-table th){font-weight:600;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-field h3,.ed-note h3){font-family:var(--ed-reading);font-weight:700;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-note h3{font-size:10.5pt;line-height:1.4}
+.bk-editorial.revised-workbook[data-unit] .ed-field h3{font-size:11.5pt;line-height:1.4}
+.bk-editorial.revised-workbook[data-unit] :is(.ed-opener .ed-field h3,.ed-note:last-child h3){font-family:var(--ed-hand);font-size:13pt;line-height:1.3}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-main{font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) :is(.ed-table,.ed-given,.ed-solution p){font-size:17px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note h3{font-size:18px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-field h3{font-size:20px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) :is(.ed-opener .ed-field h3,.ed-note:last-child h3){font-size:22px}
+}
+
+/* 현행 교재의 교사 메모/추가 칸이 있어도 개인 정리 제목에만 손글씨를 쓴다.
+   역할이 없는 기존 교재의 위치 기반 규칙은 그대로 둔다. */
+.bk-editorial.revised-workbook[data-unit] .ed-note[data-note-role] h3{font-family:var(--ed-reading);font-size:10.5pt;line-height:1.4;letter-spacing:normal}
+.bk-editorial.revised-workbook[data-unit] .ed-note[data-note-role="personal"] h3{font-family:var(--ed-hand);font-size:13pt;line-height:1.3}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role] h3{font-size:18px}
+ .bk-editorial.revised-workbook[data-unit]:not(.a4) .ed-note[data-note-role="personal"] h3{font-size:22px}
+}
+
+/* 화면에서는 초등학생이 읽기 편한 크기로 본문·문제·보기를 함께 키운다.
+   글자가 늘어난 쪽은 내용만큼 길어지며, 인쇄의 A4 지면 규칙은 별도로 유지한다. */
+@media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-hint{color:#414b55}
+ .bk-editorial.revised-workbook[data-unit] .ed-qhead span{font-size:14px;line-height:1.5;font-weight:600}
+ .bk-editorial.revised-workbook[data-unit] .ed-choices li{line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .bk-editorial.revised-workbook[data-unit] .ed-question p{margin:.45em 0 .65em}
+}
+@media screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit] .bk-page{height:auto;min-height:297mm}
+ .bk-editorial.revised-workbook[data-unit] .ed-main{font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-table,.ed-given,.ed-solution p){font-size:17px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] :is(.ed-rail,.ed-hint){font-size:16px;line-height:1.7}
+ .bk-editorial.revised-workbook[data-unit] .ed-main h2{letter-spacing:normal;line-height:1.4}
+ .bk-editorial.revised-workbook[data-unit] .ed-table th{font-weight:600}
+}
+
+/* 두 단원에 남은 작은 보기 글씨도 화면 본문과 같은 크기로 읽는다. */
+@media screen{
+ .bk-editorial.revised-workbook[data-unit] .ed-layout-two .ed-choices li{font-family:var(--ed-reading);font-size:18px;line-height:1.75}
+ .bk-editorial.revised-workbook[data-unit] .ed-kicker{font-family:var(--ed-reading);font-size:15px;font-weight:600;letter-spacing:normal;line-height:1.5}
+}
+
+/* A4의 소수 CSS 픽셀 높이를 WebKit이 올림해 빈 쪽을 만들지 않도록
+   쪽 상자에 1px의 인쇄 여유만 둔다. 실제 용지는 A4, 본문 크기는 그대로다. */
+@media print{
+ .bk-editorial.revised-workbook[data-unit] .bk-page{height:calc(297mm - 1px)}
+}
+
+/* 생물과 환경: 고르기 문제에는 불필요한 서술용 괘선을 채우지 않는다. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-question:not([data-form="written"]):not([data-form="draw"])::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-block-field:not(:has(.ed-drawing)),.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field:not(:has(.ed-drawing)){flex:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field>.ed-lines{flex:none;background:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-field>.ed-lines i{visibility:visible;height:8mm}
+@media(min-width:701px),print{
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-choices{grid-template-columns:repeat(2,minmax(0,1fr));gap:1mm 4mm}
+}
+
+/* 유도 서술은 부분 문항 바로 아래의 짧은 답칸만 사용한다. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-question[data-form="written"]::after{display:none}
+/* Give the quick key's topic and answer columns room without shrinking type. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-quick .ed-table thead th:nth-child(2){width:55%}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-quick .ed-table thead th:nth-child(3){width:35%}
+
+/* The two reviewed multi-scene drawings have their own picture spaces. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+
+/* Guided force responses use only their explicit short answer lines. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-question[data-form="written"]::after{display:none}
+
+/* Concept checks are short tables and oral warm-ups, without filler writing. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-gallery-item img{height:33mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-layout-force-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Animal tasks use their own short response lines and labelled picture panels. */
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-quick .ed-table thead th:nth-child(3){width:45%}
+
+/* Animal concepts share the established page flow with brief checks and whole photos. */
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery-item img{height:36mm;object-fit:contain;background:#f6f7f9}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-gallery-item .ed-photo img{height:43mm}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-field{display:flex;flex-direction:column;flex:1}
+.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-field .ed-drawing{height:auto;min-height:52mm;flex:1}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u02"] .ed-layout-animal-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Plant concepts keep whole source photos and brief checks at the existing type size. */
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-gallery-item img{height:36mm;object-fit:contain;background:#f6f7f9}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-field{display:flex;flex-direction:column;flex:1}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-field .ed-drawing{height:auto;min-height:52mm;flex:1}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
+.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-quick .ed-table thead th:nth-child(3){width:45%}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u03"] .ed-layout-plant-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Life-cycle practice uses its own short answers, picture panels and oral notes. */
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-layout-life-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-layout-life-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-layout-life-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-quick .ed-table thead th:nth-child(1){width:10%}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-quick .ed-table thead th:nth-child(2){width:45%}
+.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-quick .ed-table thead th:nth-child(3){width:45%}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="s31-u04"] .ed-layout-life-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Material learning uses brief checks and named picture parts. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u01"] .ed-layout-material-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Earth-and-sea learning uses brief checks and named picture parts. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u02"] .ed-layout-earth-sea-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+
+/* Sound concept activities keep room for observation and pointing. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-flow{justify-content:space-between;gap:3mm}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-gallery{grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-gallery-item img{height:43mm;object-fit:contain;background:#f6f7f9}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-layout-sound-concepts .ed-flow{justify-content:flex-start;gap:22px}}
+/* Extra filler rules look like required essays even when the answer is one word. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-question::after{background:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+
+/* A choice or short answer needs its own response space, not extra essay rules. */
+.bk-editorial.revised-workbook[data-unit="s31-u01"] .ed-question::after{display:none}
+
+/* Infection tasks keep the explicit short-answer space and paired drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-question::after{display:none}
+ .bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="c22-s32-u04"] .ed-question[data-form="draw"]>.ed-drawing{flex:1;min-height:110mm;height:auto}
+
+/* Magnet practice uses short answers and two comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panels{display:flex;flex-direction:column}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel{flex:1;min-height:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel+.ed-drawing-panel{border-top:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+
+/* Water tasks show only the required short answer and distinct comparison panels. */
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel{flex:1;min-width:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel+.ed-drawing-panel{border-left:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-question:is([data-question="s41-u02-w076"],[data-question="s41-u02-w079"])>.ed-drawing{min-height:80mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panels{flex-direction:column;min-height:320px}
+ .bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel{min-height:150px}
+ .bk-editorial.revised-workbook[data-unit="s41-u02"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
+}
+
+/* Ground tasks keep the required short answers and distinct observation panels. */
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel{flex:1;min-width:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel+.ed-drawing-panel{border-left:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-question[data-question="s41-u03-w060"]>.ed-drawing{min-height:80mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panels{flex-direction:column;min-height:320px}
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel{min-height:150px}
+ .bk-editorial.revised-workbook[data-unit="s41-u03"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
+}
+
+/* Biology keeps short responses and visible comparison panels. */
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panel{flex:1;min-width:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panel+.ed-drawing-panel{border-left:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-question:is([data-question="s41-u04-w028"],[data-question="s41-u04-w054"])>.ed-drawing{min-height:80mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panels{flex-direction:column;min-height:320px}
+ .bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panel{min-height:150px}
+ .bk-editorial.revised-workbook[data-unit="s41-u04"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
+}
+
+/* Quick keys need a narrow number column and room for accepted answers. */
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .mt-quick-grid .ed-table :is(th,td):nth-child(1){width:18%}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .mt-quick-grid .ed-table :is(th,td):nth-child(2){width:27%}
+.bk-editorial.revised-workbook[data-unit="s41-u04"] .mt-quick-grid .ed-table :is(th,td):nth-child(3){width:55%}
+
+/* 밤하늘 관찰: 짧은 답과 그림 이름표에 맞는 실제 공간. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel{flex:1;min-width:0;padding:2mm 3mm;box-sizing:border-box}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel+.ed-drawing-panel{border-left:.25mm solid #8a9bb5}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel>span{font-size:9pt;font-weight:700;color:#526780}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-question:is([data-question="c22-s42-u01-w027"],[data-question="c22-s42-u01-w056"])>.ed-drawing{min-height:80mm}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panels{flex-direction:column;min-height:320px}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel{min-height:150px}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u01"] .ed-drawing-panel+.ed-drawing-panel{border-left:0;border-top:.25mm solid #8a9bb5}
+}
+
+/* Grade-four gases: brief responses and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+/* The first gas answer table has short keys and long topic names. */
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table{table-layout:fixed}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(1){width:8%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(2){width:82%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u03"] [data-page="1"] .ed-table th:nth-child(3){width:10%}
+
+/* Grade-four climate: brief answers and graph scaffolds on the existing A4 paper. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panel:last-child{border-right:0}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .climate-guided-grid{margin:3mm 0 0}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .climate-guided-grid svg{display:block;width:100%;height:auto;max-height:none}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] [data-question="c22-s42-u04-w030"] .ed-drawing,
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] [data-question="c22-s42-u04-w054"] .ed-drawing{display:none}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-layout-climate-guided-concepts .ed-flow{gap:1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-layout-climate-guided-concepts .ed-flow{gap:22px}}
+
+.bk-editorial.revised-workbook[data-unit="c22-s42-u04"] .ed-layout-climate-guided-pair .ed-question[data-form="draw"]>.ed-drawing{height:80mm;min-height:80mm}
+
+/* Number keys need a narrow column; topic and answer share the remaining width. */
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u04"] .ed-table{table-layout:fixed}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u04"] .ed-table th:nth-child(1){width:8%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u04"] .ed-table th:nth-child(2){width:50%}
+.revised-workbook-print[data-workbook-mode="quick"] [data-unit="c22-s42-u04"] .ed-table th:nth-child(3){width:42%}
+
+/* Grade-five geology: short answers and labeled layers, grains and fossil models. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u01"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+/* Grade-five light: explicit short answers without decorative essay lines. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u02"] .ed-question::after{display:none}
+
+/* Grade-five solution: brief responses and labeled comparison sketches. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+/* Grade-five body: short answers and two connected comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panels{flex-direction:column}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:48mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s51-u04"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+/* Grade-five mixtures: labels and short explanations, without decorative writing lines. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-question::after{display:none}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panels{display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel{min-width:0;border-right:1px solid #94a3b8;border-bottom:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel:nth-child(2n){border-right:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel:last-child{border-bottom:0}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel:nth-last-child(2):nth-child(odd){border-bottom:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panels{grid-template-columns:minmax(0,1fr)}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8!important;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u01"] .ed-drawing-panel:last-child{border-bottom:0!important}
+}
+
+/* Grade-five heat: short explanations retain wide original drawing space. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u02"] .ed-question::after{display:none}
+
+/* Grade-five weather: short answers and labeled observations. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+/* Grade-five resources: short replies and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s52-u04"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+/* Grade-six acid/base: short observations and separate comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-layout-acid-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-layout-acid-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-layout-acid-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s61-u01"]:not(.a4) .ed-layout-acid-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Grade-six motion: brief replies and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:4mm;align-items:start}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid .ed-table{margin:0}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-layout-motion-workbook.ed-quick .mt-quick-grid :is(td,th){padding:1.2mm 1mm}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s61-u02"]:not(.a4) .ed-layout-motion-workbook.ed-quick .mt-quick-grid{grid-template-columns:1fr}}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Grade-six plant structure: brief observations and labeled comparison drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Earth motion: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s61-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Season motion: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Keep a short label and its answer line together without repeated paragraph gaps. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-question .ed-part{margin:.25em 0 .1em}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-question .ed-part-response{margin:0 0 .4em}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u01"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+/* Combustion: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Keep a short label and its answer line together without repeated paragraph gaps. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-question .ed-part{margin:.25em 0 .1em}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-question .ed-part-response{margin:0 0 .4em}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u02"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+/* Electricity: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Keep a short label and its answer line together without repeated paragraph gaps. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question .ed-part{margin:.25em 0 .1em}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-question .ed-part-response{margin:0 0 .4em}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+
+@media print, screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4)){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel{border-bottom:1px solid #94a3b8}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-child(2n){border-right:0}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u03"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-last-child(-n+2){border-bottom:0}
+}
+
+/* Career: mixed response forms and labeled observation/model drawings. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-question::after{display:none}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels{display:flex;flex-direction:row}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panel{flex:1;min-width:0;border-right:1px solid #94a3b8}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panel:last-child{border-right:0}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing.ed-drawing-panels{flex-direction:column;height:auto!important;min-height:280px}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panel{border-right:0;border-bottom:1px solid #94a3b8;min-height:38mm}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panel:last-child{border-bottom:0}
+}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick .ed-table tr>:nth-child(1){width:12%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick .ed-table tr>:nth-child(2){width:28%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick .ed-table tr>:nth-child(3){width:60%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:last-child .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:last-child .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:last-child .ed-table tr>:nth-child(3){width:55%}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(1){width:20%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(2){width:25%}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick:nth-last-child(-n+2) .ed-table tr>:nth-child(3){width:55%}
+
+/* Keep a short label and its answer line together without repeated paragraph gaps. */
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-question .ed-part{margin:.25em 0 .1em}
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-question .ed-part-response{margin:0 0 .4em}
+
+.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick .ed-table th,.bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-quick .ed-table td{padding-top:1mm;padding-bottom:1mm}
+
+
+@media print, screen and (min-width:701px){
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4)){display:grid;grid-template-columns:repeat(2,minmax(0,1fr))}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel{border-bottom:1px solid #94a3b8}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-child(2n){border-right:0}
+ .bk-editorial.revised-workbook[data-unit="c22-s62-u04"] .ed-drawing-panels:has(>.ed-drawing-panel:nth-child(4))>.ed-drawing-panel:nth-last-child(-n+2){border-bottom:0}
+}
+
+/* Gas checks share a page; drawing 48 retains its 120 mm minimum working height. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-question{flex:0 0 auto}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-questions{justify-content:space-between}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching .ed-question[data-question="c22-s42-u03-w045"]{display:grid;grid-template-columns:minmax(0,1fr) 25mm;column-gap:2mm;align-content:start}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>:not(.ed-part):not(.ed-part-response){grid-column:1/-1}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part{grid-column:1}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part-response{grid-column:2;align-self:end}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density :is([data-question="c22-s42-u03-w071"],[data-question="c22-s42-u03-w079"])>.ed-given{display:none}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching .ed-question[data-question="c22-s42-u03-w045"]{display:flex}}
+
+@media screen and (max-width:700px){.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density-matching [data-question="c22-s42-u03-w045"]>.ed-part-response{align-self:stretch}}
+
+@media(min-width:701px),print{.bk-editorial.revised-workbook[data-unit="c22-s42-u03"] .ed-layout-gas-density .ed-question[data-form="draw"]{flex:1 0 auto}}
+
+/* Teacher answers to these three checks fit beside the number without shrinking the photo. */
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question{position:relative}
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-qhead{padding-right:22mm}
+.bk-editorial.revised-workbook.bk-t[data-unit="c22-s42-u03"] .ed-layout-gas-density:has([data-question="c22-s42-u03-w036"]) .ed-question>.ed-key{position:absolute;right:0;top:0;margin:0;padding-left:2mm}
+
+/* Related ecology checks share pages; photos and drawing spaces keep their existing pages. */
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question{flex:0 0 auto}
+.bk-editorial.revised-workbook[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-questions{justify-content:space-between}
+/* A single symbol belongs beside each matching statement, with its own answer line. */
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"]){display:grid;grid-template-columns:minmax(0,1fr) 25mm;column-gap:2mm;align-content:start}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>:not(.ed-part):not(.ed-part-response){grid-column:1/-1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part{grid-column:1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part-response{grid-column:2;align-self:center}
+@media screen and (max-width:700px){
+ .bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"]){display:flex}
+ .bk-editorial.revised-workbook:not(.bk-t)[data-unit="c22-s42-u02"] .ed-layout-ecology-density .ed-question:is([data-question="c22-s42-u02-w075"],[data-question="c22-s42-u02-w076"],[data-question="c22-s42-u02-w077"])>.ed-part-response{align-self:stretch}
+}
+
+/* Related checks share pages; drawing pages and base type sizes stay unchanged. */
+.bk-editorial.revised-workbook:is([data-unit="s41-u03"],[data-unit="s41-u04"]) .ed-layout-early-science-density .ed-question{flex:0 0 auto}
+.bk-editorial.revised-workbook:is([data-unit="s41-u03"],[data-unit="s41-u04"]) .ed-layout-early-science-density .ed-questions{justify-content:space-between}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"]){display:grid;grid-template-columns:minmax(0,1fr) 25mm;column-gap:2mm;align-content:start}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"])>:not(.ed-part):not(.ed-part-response){grid-column:1/-1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"])>.ed-part{grid-column:1}
+.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"])>.ed-part-response{grid-column:2;align-self:center}
+@media screen and (max-width:700px){.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"]){display:flex}.bk-editorial.revised-workbook:not(.bk-t)[data-unit="s41-u04"] .ed-layout-early-science-density .ed-question:is([data-question="s41-u04-w024"],[data-question="s41-u04-w025"],[data-question="s41-u04-w049"],[data-question="s41-u04-w050"],[data-question="s41-u04-w076"],[data-question="s41-u04-w077"])>.ed-part-response{align-self:stretch}}

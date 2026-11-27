@@ -1,0 +1,2250 @@
+{
+  "phase": 186,
+  "date": "2026-11-04",
+  "unit": "s41-u04",
+  "title": "생물 교재67쪽 학생 문장·과학 심화·사진 설명 및5학년 학기 목차 대조",
+  "status": "verified-local-candidate-browser-gate-pending",
+  "baselineCommit": "654fa8b763a832716d24b1c9001c747b085bc4d8",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini · Codex desktop · local Node VM/ReportLab/Apple Vision; no API delegation or model override",
+  "skills": [
+    "ux-writing",
+    "instructional-design",
+    "pdf"
+  ],
+  "curriculum": [
+    {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "title": "교육부2022-33 별책9",
+      "localOriginalSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "sourceLines": [
+        [
+          637,
+          652
+        ],
+        [
+          875,
+          891
+        ],
+        [
+          994,
+          1010
+        ],
+        [
+          1170,
+          1180
+        ],
+        [
+          1632,
+          1675
+        ]
+      ],
+      "use": "Basic4과12-01~03; upper6과11,9과02,9과12,10통과2 basic/extensions kept separate.",
+      "checked": "2026-11-04"
+    },
+    {
+      "url": "https://asm.org/articles/2020/june/the-sourdough-microbiome",
+      "use": "Yeast CO2 and dough; yeast vs lactic acid bacteria; authored paraphrase.",
+      "checked": "2026-11-04"
+    },
+    {
+      "url": "https://www.acs.org/education/whatischemistry/landmarks/flemingpenicillin.html",
+      "use": "Penicillin discovery and further separation/testing/production research; authored paraphrase.",
+      "checked": "2026-11-04"
+    },
+    {
+      "url": "https://www.epa.gov/ingredients-used-pesticide-products/what-are-biopesticides",
+      "use": "Microbial pesticides and target specificity; authored paraphrase.",
+      "checked": "2026-11-04"
+    }
+  ],
+  "semesterPlacement": {
+    "basis": "Existing2026 Visang O2 table-of-contents convention; semester position differs from content/storage ID.",
+    "checked": "2026-11-04",
+    "publishers": [
+      {
+        "sem": "5-1",
+        "book": "BM12703",
+        "isbn": "9791173168727",
+        "units": [
+          "지층과 화석",
+          "빛의 성질",
+          "용해와 용액",
+          "우리 몸의 구조와 기능"
+        ],
+        "catalogMatches": true,
+        "url": "https://bookstore.visang.com/BookStore_view_new.asp?CateCode=&b_code=BM12703&gotopage="
+      },
+      {
+        "sem": "5-2",
+        "book": "BM13053",
+        "isbn": "9791175909724",
+        "units": [
+          "혼합물의 분리",
+          "열과 우리 생활",
+          "날씨와 우리 생활",
+          "자원과 에너지"
+        ],
+        "catalogMatches": true,
+        "url": "https://bookstore.visang.com/BookStore_view_new.asp?CateCode=&b_code=BM13053&gotopage="
+      }
+    ],
+    "comparison": {
+      "source": "https://www.goe.go.kr/resource/goe/na/bbs_2675/2026/02/116dc7a4-254a-44fe-9e77-3e908ecc5ff3.pdf",
+      "localSha256": "0a8ad1b80c85fb3cee22d90fa36de1838bef02921ae048837f1a73b6c8297826",
+      "visuallyInspectedPages": [
+        19,
+        20,
+        21,
+        22
+      ],
+      "difference": "Gyeonggi5-2 example places weather second and heat third; Visang places heat second and weather third.",
+      "decision": "Retain current explicitly sourced publisher convention; do not swap IDs or infer stale curriculum from a publisher ordering difference."
+    },
+    "contentOrStorageIdsRenamed": false,
+    "catalogChanged": false
+  },
+  "studentLanguage": {
+    "reviewedPages": 67,
+    "revisedRailTexts": 201,
+    "introductoryPagesRevised": [
+      1,
+      11
+    ],
+    "warmerLabel": "워밍업",
+    "coreNotesMatchActualPageQuestions": true,
+    "upperNotesExplainCellsClassificationPhotosynthesisDecompositionFermentationAndPlantFunctions": true,
+    "threePhotoDescriptionsRevised": true,
+    "onePhotoAltRevised": true,
+    "internalSourceNumbersKeptOutOfActivePhotoDescriptions": true,
+    "original80QuestionsAnswersSourceContractsUnchanged": true,
+    "originalWorkedExamplesUnchanged": 11
+  },
+  "integration": {
+    "workbookUnits": 18,
+    "previousClassroomArrays": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "self",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teach",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "self",
+        "slides": 51,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teach",
+        "slides": 52,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "self",
+        "slides": 34,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teach",
+        "slides": 35,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "self",
+        "slides": 41,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teach",
+        "slides": 42,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "self",
+        "slides": 26,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teach",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "self",
+        "slides": 27,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teach",
+        "slides": 28,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "self",
+        "slides": 37,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teach",
+        "slides": 38,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "self",
+        "slides": 31,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teach",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "self",
+        "slides": 32,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teach",
+        "slides": 33,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "self",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teach",
+        "slides": 55,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "slides": 53,
+        "exactlyUnchanged": false,
+        "changes": "Only three reviewed figure descriptions; all other fields identical."
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "slides": 54,
+        "exactlyUnchanged": false,
+        "changes": "Only three reviewed figure descriptions; all other fields identical."
+      },
+      {
+        "unit": "c22-s42-u03",
+        "mode": "self",
+        "slides": 47,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s42-u03",
+        "mode": "teach",
+        "slides": 48,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "self",
+        "slides": 51,
+        "exactlyUnchanged": true
+      },
+      {
+        "unit": "c22-s51-u01",
+        "mode": "teach",
+        "slides": 52,
+        "exactlyUnchanged": true
+      }
+    ],
+    "exactlyUnchangedClassroomArrays": 34,
+    "biologySlideChanges": [
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "id": "cover",
+        "onlyFigureLanguage": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "id": "protists",
+        "onlyFigureLanguage": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "self",
+        "id": "bacteria",
+        "onlyFigureLanguage": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "id": "cover",
+        "onlyFigureLanguage": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "id": "protists",
+        "onlyFigureLanguage": true
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teach",
+        "id": "bacteria",
+        "onlyFigureLanguage": true
+      }
+    ],
+    "previousWorkbookProductsExactlyUnchanged": 70,
+    "changedWorkbookProducts": [
+      {
+        "unit": "s41-u04",
+        "mode": "student",
+        "sha256": "fd9ebee2355699cf04c8c6e72dded98fd90f77de1c520ab8e942a0154e276ccb",
+        "exactlyUnchanged": false
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "teacher",
+        "sha256": "51cce35841da2cdc2cb5615a50757121279d6d478ff8e171b09271765eb50a93",
+        "exactlyUnchanged": false
+      }
+    ],
+    "studentPages": 67,
+    "questionsUnchanged": 80,
+    "questionForms": 8,
+    "workedExamplesUnchanged": 11,
+    "imagesAndLinksExactlyUnchanged": true,
+    "photoDescriptionChanges": {
+      "biologyOpener": [
+        [
+          "준비 모습을 설명하는 장면이에요. 현미경 사진이나 실제 학생의 관찰·측정 결과가 아니에요.",
+          "식용 버섯과 식빵의 모습이에요. 빵을 만들 때 이용하는 효모도 버섯과 같은 균류에 속해요."
+        ]
+      ],
+      "biologySpirogyra": [
+        [
+          "이론편 원본 사진의 초록색 해캄 덩어리",
+          "초록색 긴 가닥들이 뭉쳐 있는 해캄 덩어리"
+        ],
+        [
+          "지필드 이론521 PDF2쪽 사진. 한 가닥의 세포·마디를 모두 관찰한 사진은 아니에요.",
+          "해캄 덩어리의 모습이에요. 한 가닥의 마디는 현미경으로 더 살펴보아요."
+        ]
+      ],
+      "biologyBacteria": [
+        [
+          "세트3 11번 사진. 색 처리·배율 정보가 없어 자연색과 실제 크기를 사진 크기만으로 정하지 않아요.",
+          "여러 가지 모양의 세균을 확대한 사진이에요. 몸의 모양과 모여 있는 모습을 비교해 보아요."
+        ]
+      ]
+    },
+    "answerAndQuickPagesExactlyUnchanged": true,
+    "railsReviewed": 67,
+    "railChanges": [
+      {
+        "kind": "pages",
+        "page": 1,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 2,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 3,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 4,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 5,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 6,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 7,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 8,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 9,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 10,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 11,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 12,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 13,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 14,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 15,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 16,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 17,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 18,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 19,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 20,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 21,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 22,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 23,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 24,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 25,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 26,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 27,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 28,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 29,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 30,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 31,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 32,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 33,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 34,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 35,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 36,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 37,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 38,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 39,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 40,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 41,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 42,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 43,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 44,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 45,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 46,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 47,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 48,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 49,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 50,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 51,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 52,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 53,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 54,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 55,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 56,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 57,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 58,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 59,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 60,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 61,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 62,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 63,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 64,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 65,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 66,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "pages",
+        "page": 67,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 1,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 2,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 3,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 4,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 5,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 6,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 7,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 8,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 9,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 10,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 11,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 12,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 13,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 14,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 15,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 16,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 17,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 18,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 19,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 20,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 21,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 22,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 23,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 24,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 25,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 26,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 27,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 28,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 29,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 30,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 31,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 32,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 33,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 34,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 35,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 36,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 37,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 38,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 39,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 40,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 41,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 42,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 43,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 44,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 45,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 46,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 47,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 48,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 49,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 50,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 51,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 52,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 53,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 54,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 55,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 56,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 57,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 58,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 59,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 60,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 61,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 62,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 63,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 64,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 65,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 66,
+        "changedRailTexts": 3
+      },
+      {
+        "kind": "teacherStudentPages",
+        "page": 67,
+        "changedRailTexts": 3
+      }
+    ],
+    "changedIntroductoryPages": [
+      1,
+      11
+    ],
+    "previousPdfs": [
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-student.pdf",
+        "sha256": "448550e9f71c625bfa30b22067b2cc4b924d4cbcb6dcc7833a29d26ffe1ba77c",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-teacher.pdf",
+        "sha256": "70f64b4bd56a638f6a5c7ce59738e461584272b8a837074f4628d90a94ad544a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-answers.pdf",
+        "sha256": "49f29e808e7961f3462a76b0234cf822d128a32e59d0b617cf43ade1e8dba65a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261102-sound-rails/sound-workbook-quick.pdf",
+        "sha256": "596bf586110e8d6db3c86db06cdb8fbf75b2aaaa16c2a334a710d04d180cb4be",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-student.pdf",
+        "sha256": "f3c0437d837a77e0bd2cacc06b062e26fd4ecfaf716a9925efa668dd569d1afa",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-teacher.pdf",
+        "sha256": "bb1273765ac102d5ea1da8586184e305873e60d78d1258ba9e1405bdef12a8a5",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-answers.pdf",
+        "sha256": "ef2d178052c3ba43c59440bc9f265a121acf707848f193a5b0770178c7cf1a61",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-infection-rails/infection-workbook-quick.pdf",
+        "sha256": "26764f8fc6eb3eeae959da7887b92c81e9661bedade18ff2cee3c56176bc861f",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-student.pdf",
+        "sha256": "1ad441160cedc580ac5fb1ef12ac02a5fd3fe6ced7980dc91251898f901ae9da",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-teacher.pdf",
+        "sha256": "b7366112a9e6ce803e87afab57178890731c18ce1e670199e44e01dadfb22c74",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-answers.pdf",
+        "sha256": "c0ca4f56ac3db9cbdee1767efbb725e64bc546fcc3c74801cf6e309d5e80cdbc",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-climate-rails/climate-workbook-quick.pdf",
+        "sha256": "5a9f4552312dfe299f5498b96ee046a239413cd1dff077579937d79a9d6e1537",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-student.pdf",
+        "sha256": "7f9cf4e1a4bd91f636f31cbcac2243e58b96d9a1ec5db6460a7d599a97dc7094",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-teacher.pdf",
+        "sha256": "721da084d184397e9d293a79a9569b98a9dde53c6f9220e2eb8c22cd0d7ea2fb",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-answers.pdf",
+        "sha256": "a1c7df1a94f4bae1873b850e4cbd66ee0163fb28504b2254b14a1944c4f351a4",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-water-rails/water-workbook-quick.pdf",
+        "sha256": "5b3cfe0460b5e35a2a393e47a09205abf0d72c1b4f2f39c3c21a4c2adae70910",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-student.pdf",
+        "sha256": "87315bf2c55ecdad16247ea0811349e8bf48e52c84b19641ffd9eeae00dd7432",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-teacher.pdf",
+        "sha256": "74da526fcbcce4166cc11b23f5e98ff8f0aba00180f188c98a818ba37de82270",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-answers.pdf",
+        "sha256": "4a78698a88ed7f6e78fb214cc6b1e6ef59faddb9bd49b281e5b5d9c13296fa81",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261103-land-rails/land-workbook-quick.pdf",
+        "sha256": "67753f2dc719e2e2c690d660d050370a29952e0a8aaeb2d52ab360621fa8ffe9",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-student.pdf",
+        "sha256": "c9ed53acf1e35f0697d7fdfaa9683c86fcad4ca0608bb1cd301deb1d17dfe8e8",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-teacher.pdf",
+        "sha256": "76c9d1e7f9b1caba7fc970fef946921e11dd65b3647d77578ec2d99bd846a652",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-answers.pdf",
+        "sha256": "b62641d0ea663447896e36d80c9a65004c82775d413a6759d25985959dd48358",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-biology-rails/biology-workbook-quick.pdf",
+        "sha256": "52e1b704b44b7a28688be8fff408770c622a39cf51d26b81e05eb423767c5123",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-student.pdf",
+        "sha256": "fdbf6d8df388cc4d9b44245f4a8a5c05e85be5e07371936c357905184085826e",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-teacher.pdf",
+        "sha256": "f5e4c637e3288c795dfd2646e9c4573e00a0e70d8ee862d5e8f5dc0164629c25",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-answers.pdf",
+        "sha256": "7be98052a55f88b8449f4a27c96d1f0b7038de3b245dd0585c68d1d25ce325a9",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-gas-rails/gas-workbook-quick.pdf",
+        "sha256": "4b295a1820490d0e1fdcdb025dce251f073e79c6c4eaa7866ee5df822ed0c63a",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-student.pdf",
+        "sha256": "a29422fa4d18575d3ef539dfc21077a78e81fb2d19f466e4a781afccd768bbb1",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-teacher.pdf",
+        "sha256": "d3f17eef516b6d2fb490c81628ab63dce9b6b4ff1f5249b9fd6e16bb908b1c41",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-answers.pdf",
+        "sha256": "4b7525b7924edcc20373aeab0a9db9751192c9fe149137826a92921255e668db",
+        "unchanged": true
+      },
+      {
+        "file": "output/pdf/science-lab/20261104-geology-rails/geology-workbook-quick.pdf",
+        "sha256": "5eac5f98d04af1d900e767345f56ce16a14ca9aa956d245d1081ab74c7857f48",
+        "unchanged": true
+      }
+    ],
+    "protectedOriginals": [
+      {
+        "file": "science-lab/data/units/c22-s51-u01.js",
+        "sha256": "699e979f63cd838db8a8e812491704401855ba65f104ade874b74bdb8a496322",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.similar.js",
+        "sha256": "75d0c128a90a0f713dce29284c8a984e72ba2b951ba0c7b5ddc2899530fdbd3c",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.lesson.js",
+        "sha256": "6f985fd050c7d00308b64d04d47966f826b2c49f0a689af66e0494a3f1357704",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.taxonomy.js",
+        "sha256": "6a495d7e32de6f324cc3a66067ee18678a8f7aaed72519c85c66c45a7817b232",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.judge.js",
+        "sha256": "63f6020f3f66846fcbfb321260afc638cd62cf34aa93d6b298a6a087047e6e3a",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/c22-s51-u01.misc.js",
+        "sha256": "5277fa1eba07128242a1f2b3d255361542ff93094b8b7f5331fdff7156b882e2",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.book.js",
+        "sha256": "fe9413d65b4a818db9540c353c099f9cf881742c3e6f7e4aac7589e0e11c207b",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.workbook.js",
+        "sha256": "4a66e6f58f84e59f6301ea1ad47feb49f289f537fc81b1ff35e58951c6ed2c0d",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.workbook-art.js",
+        "sha256": "c891ce82f3839297bb3d181a9ac13ec4a97b06fae0f4d4a4cf45eb2a52007850",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/c22-s51-u01.editorial.js",
+        "sha256": "70c862ce3127e864f4426b2a85a98b96ed90e9e60d8ea23d2acd7d5293a25a54",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/activities/c22-s51-u01.inquiry.js",
+        "sha256": "23c3bd0b71ab60253880f592bfd2657a2762248822b3dbb09f4ee3126fdf799b",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-bread.js",
+        "sha256": "16a5d2d269ca8e0492ac20fdbccc6d01d4641a2f8d4e86762fb6c4171123eb73",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/bread-model.js",
+        "sha256": "4241e9ff1f02ca75c52a838bd14e5ae1a52451a8b452b0e3faaa118761a395d4",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/think-merge.js",
+        "sha256": "5951f886cc74d7331c9c47e1c3de8aefbfbaad406c1d2a89569686b9c468ff16",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/inquiry-records.js",
+        "sha256": "54b01c6d91a9c73a1515e9f38a57050732873c2547f46dd6c1496c7caa6c5638",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-inquiry.js",
+        "sha256": "cbc79ffc0f023a4b3b70223102f4e99e87bed9530e7962ed60ca81c668849630",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily.js",
+        "sha256": "125770f6d7e088259a5a3283577f5d4a66a92d29b731efc9879fce5e323a1bf6",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/check.js",
+        "sha256": "b9afbd688c21970b3d6d52777f79c9d8a643496ff5856edc6afc323c53939898",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/daily-paper-state.js",
+        "sha256": "a66f3a5d1c6f81971d90cc44fd5279557f8ca40bca618f13453a3c872da13153",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-ring-tower.js",
+        "sha256": "11ca20224791dcd5942848e294d2b8a838fa437f7b71d3fd99d853443a25a21c",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/scenes/ring-tower.js",
+        "sha256": "be2fbc6096d59c3740ae711f19121aba15e3254c5fc6ec5490ae39ada865eebe",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-freeze.js",
+        "sha256": "4c2b315e24856ba72999ab3be68a31bbaebfddd7314b4d2881fba2d63b9b9c27",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/lab-hill.js",
+        "sha256": "5ccf6da051f525c1433350ffa070736f96e26ee558ac221e99f763cec22c978a",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.js",
+        "sha256": "30901cdaa400b1f572acabbd258dd28c6a45ac6273a30272a2477d7485db5c33",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.similar.js",
+        "sha256": "b9666a96dcbd76dcc5d949592347cdaed42f1a5944bd2c535edb9a3cbfefe727",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.lesson.js",
+        "sha256": "54bd722481f2242dcae67824b8ca339ea51aae9478abb41bfa8746ae9a60aa5f",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.records.js",
+        "sha256": "feaa2956dc038162f5b6df8e333881cc8db4084cc7f99baf100396fbb3a1f235",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.source.js",
+        "sha256": "44e4ba7574d57a99427849a57cb6d23e9b5dad04c47951cb40580e0f083bfdd4",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/units/s41-u04.taxonomy.js",
+        "sha256": "35eb6f82f4bf8fca96afbce59af830c1ead5224dcc8c6205e6e91d40093c64ab",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u04.book.js",
+        "sha256": "e916350fa3988963e0f888bc100f51291b9e8716c9abe15acbc59da1103e2614",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u04.inquiry.book.js",
+        "sha256": "a0c8205ce4b8d4a37fcf32b9b7715470857139d27eeb0ef1398f4e266045877b",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/book/s41-u04.interact.js",
+        "sha256": "1bc06e9a72d11178cad198357025994b3dc29b663a7600ba7663c4f843d36ddb",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/data/activities/s41-u04.inquiry.js",
+        "sha256": "f1245fbce38b77409afb3289c2e1ee75af39988d179b862ddd8aef1927728f91",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/curriculum-2022.js",
+        "sha256": "19e9c591ddcc1a499ab396f8d8aaa1d8dc1ea9c5e5aeb023aa239f1432acabe3",
+        "unchanged": true
+      },
+      {
+        "file": "science-lab/v2/curriculum-place.js",
+        "sha256": "907e7dec8bfaa1ff0a9b48f9e6ddb33c9336d69a470ba137e1e2fec5dd338b9b",
+        "unchanged": true
+      }
+    ],
+    "actualStudentStorageAccessed": false,
+    "browserVerified": false,
+    "newExternalApiConnections": 0
+  },
+  "tests": [
+    {
+      "suite": "v2",
+      "testFiles": 114,
+      "tests": 533,
+      "pass": 531,
+      "fail": 0,
+      "skipped": 2
+    },
+    {
+      "suite": "bank",
+      "testFiles": 27,
+      "tests": 299,
+      "pass": 299,
+      "fail": 0,
+      "skipped": 0
+    }
+  ],
+  "routes": {
+    "unit": "s41-u04",
+    "startLinks": true,
+    "actualPageStartLabClassDailyLabBookAndRecords": true,
+    "defaultThinkingClass": true,
+    "checksSharedWithDaily": 25,
+    "legacyDailyQuestions": 10,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "comparisonKey": "biologyCompareRows",
+    "existingModelKey": "breadRows",
+    "actualInquiryKey": "biologyInquiryRows",
+    "originalRecordsBookExactlyUnchanged": true,
+    "originalReportAndObservationStatePreserved": true,
+    "existing3DReused": true,
+    "modelAnd3DComponentsStubbed": true,
+    "comparisonEventHandlersActuallyExecuted": true,
+    "releaseDisposesMountedActivities": true,
+    "browserVerified": false
+  },
+  "pdf": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 67,
+        "bytes": 4330509,
+        "sha256": "38d2946a87cfcf31225c804ba156de7c8e4442f39f93602b491f4485b001f002",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 91,
+        "bytes": 4415944,
+        "sha256": "016a39620ae1b2c695f1b1b23ba748d7aaa9c1383ab57aed0116197d74581726",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 23,
+        "bytes": 231254,
+        "sha256": "3e25557fa395affc68712538237ae19231eaee5e3128cc1a2ca0b9998bcf7747",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 3,
+        "bytes": 108134,
+        "sha256": "4e9f04c5ab537d575cea1db841a164ed69cc0716625996813e0c177e8ad5a988",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 160,
+    "solutionExpressions": 160,
+    "teacherAnswerStartsOnRecto": 69
+  },
+  "pdfDetails": {
+    "fullRailTexts": 402,
+    "quickAnswerTableCells": 240,
+    "actualLargeDrawingRectangles": [
+      {
+        "mode": "student",
+        "page": 31,
+        "heightMm": 191.9,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 32,
+        "heightMm": 156.69,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 47,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 48,
+        "heightMm": 142.23,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 66,
+        "heightMm": 191.9,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "student",
+        "page": 67,
+        "heightMm": 211.38,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 31,
+        "heightMm": 185.46,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 32,
+        "heightMm": 144.82,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 47,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 48,
+        "heightMm": 130.36,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 66,
+        "heightMm": 180.03,
+        "widthMm": 139.0
+      },
+      {
+        "mode": "teacher",
+        "page": 67,
+        "heightMm": 199.51,
+        "widthMm": 139.0
+      }
+    ],
+    "embeddedFonts": [
+      "AAAAAA+AppleGothic",
+      "AAAAAA+Gaegu-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Bold",
+      "AAAAAA+NotoSerifKRExtraLight-Regular",
+      "AAAAAA+PretendardVariable-Regular",
+      "AAAAAB+NotoSerifKRExtraLight-Regular",
+      "AAAAAC+NotoSerifKRExtraLight-Regular"
+    ],
+    "nullGlyphs": 0
+  },
+  "visualReview": {
+    "allNineContactSheetsInspectedBeforeFinalCaptionPass": true,
+    "finalCaptionPassContactSheetsRechecked": [
+      "student-001.jpg",
+      "teacher-001.jpg"
+    ],
+    "zoomPagesInspectedBeforeFinalCaptionPass": [
+      [
+        "student",
+        1
+      ],
+      [
+        "student",
+        2
+      ],
+      [
+        "student",
+        6
+      ],
+      [
+        "student",
+        7
+      ],
+      [
+        "student",
+        11
+      ],
+      [
+        "student",
+        16
+      ],
+      [
+        "student",
+        17
+      ],
+      [
+        "student",
+        26
+      ],
+      [
+        "student",
+        61
+      ],
+      [
+        "student",
+        63
+      ],
+      [
+        "student",
+        67
+      ],
+      [
+        "teacher",
+        69
+      ],
+      [
+        "quick",
+        3
+      ]
+    ],
+    "finalCaptionPassZoomPagesInspected": [
+      [
+        "student",
+        1
+      ],
+      [
+        "student",
+        5
+      ],
+      [
+        "student",
+        6
+      ],
+      [
+        "student",
+        7
+      ],
+      [
+        "student",
+        22
+      ],
+      [
+        "student",
+        24
+      ]
+    ],
+    "finalCaptionChangedPages": [
+      1,
+      5,
+      6,
+      7,
+      22,
+      24
+    ],
+    "otherFinalStudentPagesTextExactlyUnchanged": true,
+    "minimumFontPt": 8,
+    "outsideGlyphs": 0,
+    "browserVerified": false
+  },
+  "appleVision": {
+    "initialFullStudentPages": 67,
+    "finalChangedPages": [
+      1,
+      5,
+      6,
+      7,
+      22,
+      24
+    ],
+    "allOtherFinalStudentPageTextExactlyUnchanged": true,
+    "uniqueStudentPages": 67,
+    "executions": 73,
+    "failed": 0,
+    "skipped": 0,
+    "runs": [
+      {
+        "folder": "pdf-vision",
+        "executions": 67,
+        "words": 9073,
+        "lowConfidence": 3151,
+        "pages": [
+          {
+            "page": 1,
+            "words": 111,
+            "lowConfidence": 31
+          },
+          {
+            "page": 2,
+            "words": 132,
+            "lowConfidence": 54
+          },
+          {
+            "page": 3,
+            "words": 146,
+            "lowConfidence": 52
+          },
+          {
+            "page": 4,
+            "words": 179,
+            "lowConfidence": 50
+          },
+          {
+            "page": 5,
+            "words": 144,
+            "lowConfidence": 35
+          },
+          {
+            "page": 6,
+            "words": 146,
+            "lowConfidence": 37
+          },
+          {
+            "page": 7,
+            "words": 153,
+            "lowConfidence": 23
+          },
+          {
+            "page": 8,
+            "words": 192,
+            "lowConfidence": 73
+          },
+          {
+            "page": 9,
+            "words": 162,
+            "lowConfidence": 39
+          },
+          {
+            "page": 10,
+            "words": 156,
+            "lowConfidence": 35
+          },
+          {
+            "page": 11,
+            "words": 187,
+            "lowConfidence": 55
+          },
+          {
+            "page": 12,
+            "words": 110,
+            "lowConfidence": 46
+          },
+          {
+            "page": 13,
+            "words": 149,
+            "lowConfidence": 35
+          },
+          {
+            "page": 14,
+            "words": 158,
+            "lowConfidence": 39
+          },
+          {
+            "page": 15,
+            "words": 173,
+            "lowConfidence": 50
+          },
+          {
+            "page": 16,
+            "words": 144,
+            "lowConfidence": 45
+          },
+          {
+            "page": 17,
+            "words": 81,
+            "lowConfidence": 31
+          },
+          {
+            "page": 18,
+            "words": 187,
+            "lowConfidence": 38
+          },
+          {
+            "page": 19,
+            "words": 134,
+            "lowConfidence": 52
+          },
+          {
+            "page": 20,
+            "words": 175,
+            "lowConfidence": 47
+          },
+          {
+            "page": 21,
+            "words": 112,
+            "lowConfidence": 54
+          },
+          {
+            "page": 22,
+            "words": 134,
+            "lowConfidence": 55
+          },
+          {
+            "page": 23,
+            "words": 118,
+            "lowConfidence": 30
+          },
+          {
+            "page": 24,
+            "words": 141,
+            "lowConfidence": 54
+          },
+          {
+            "page": 25,
+            "words": 115,
+            "lowConfidence": 63
+          },
+          {
+            "page": 26,
+            "words": 185,
+            "lowConfidence": 105
+          },
+          {
+            "page": 27,
+            "words": 102,
+            "lowConfidence": 57
+          },
+          {
+            "page": 28,
+            "words": 103,
+            "lowConfidence": 43
+          },
+          {
+            "page": 29,
+            "words": 138,
+            "lowConfidence": 77
+          },
+          {
+            "page": 30,
+            "words": 116,
+            "lowConfidence": 43
+          },
+          {
+            "page": 31,
+            "words": 117,
+            "lowConfidence": 32
+          },
+          {
+            "page": 32,
+            "words": 111,
+            "lowConfidence": 45
+          },
+          {
+            "page": 33,
+            "words": 154,
+            "lowConfidence": 30
+          },
+          {
+            "page": 34,
+            "words": 94,
+            "lowConfidence": 40
+          },
+          {
+            "page": 35,
+            "words": 180,
+            "lowConfidence": 40
+          },
+          {
+            "page": 36,
+            "words": 160,
+            "lowConfidence": 86
+          },
+          {
+            "page": 37,
+            "words": 141,
+            "lowConfidence": 36
+          },
+          {
+            "page": 38,
+            "words": 89,
+            "lowConfidence": 24
+          },
+          {
+            "page": 39,
+            "words": 158,
+            "lowConfidence": 65
+          },
+          {
+            "page": 40,
+            "words": 164,
+            "lowConfidence": 61
+          },
+          {
+            "page": 41,
+            "words": 160,
+            "lowConfidence": 43
+          },
+          {
+            "page": 42,
+            "words": 170,
+            "lowConfidence": 54
+          },
+          {
+            "page": 43,
+            "words": 106,
+            "lowConfidence": 51
+          },
+          {
+            "page": 44,
+            "words": 118,
+            "lowConfidence": 48
+          },
+          {
+            "page": 45,
+            "words": 149,
+            "lowConfidence": 67
+          },
+          {
+            "page": 46,
+            "words": 150,
+            "lowConfidence": 80
+          },
+          {
+            "page": 47,
+            "words": 102,
+            "lowConfidence": 42
+          },
+          {
+            "page": 48,
+            "words": 141,
+            "lowConfidence": 30
+          },
+          {
+            "page": 49,
+            "words": 100,
+            "lowConfidence": 41
+          },
+          {
+            "page": 50,
+            "words": 87,
+            "lowConfidence": 27
+          },
+          {
+            "page": 51,
+            "words": 92,
+            "lowConfidence": 34
+          },
+          {
+            "page": 52,
+            "words": 174,
+            "lowConfidence": 21
+          },
+          {
+            "page": 53,
+            "words": 198,
+            "lowConfidence": 59
+          },
+          {
+            "page": 54,
+            "words": 141,
+            "lowConfidence": 52
+          },
+          {
+            "page": 55,
+            "words": 83,
+            "lowConfidence": 39
+          },
+          {
+            "page": 56,
+            "words": 169,
+            "lowConfidence": 46
+          },
+          {
+            "page": 57,
+            "words": 81,
+            "lowConfidence": 43
+          },
+          {
+            "page": 58,
+            "words": 85,
+            "lowConfidence": 44
+          },
+          {
+            "page": 59,
+            "words": 82,
+            "lowConfidence": 23
+          },
+          {
+            "page": 60,
+            "words": 90,
+            "lowConfidence": 29
+          },
+          {
+            "page": 61,
+            "words": 168,
+            "lowConfidence": 72
+          },
+          {
+            "page": 62,
+            "words": 185,
+            "lowConfidence": 63
+          },
+          {
+            "page": 63,
+            "words": 103,
+            "lowConfidence": 51
+          },
+          {
+            "page": 64,
+            "words": 145,
+            "lowConfidence": 76
+          },
+          {
+            "page": 65,
+            "words": 115,
+            "lowConfidence": 45
+          },
+          {
+            "page": 66,
+            "words": 122,
+            "lowConfidence": 44
+          },
+          {
+            "page": 67,
+            "words": 106,
+            "lowConfidence": 20
+          }
+        ]
+      },
+      {
+        "folder": "pdf-vision-final",
+        "executions": 6,
+        "words": 826,
+        "lowConfidence": 227,
+        "pages": [
+          {
+            "page": 1,
+            "words": 112,
+            "lowConfidence": 38
+          },
+          {
+            "page": 5,
+            "words": 146,
+            "lowConfidence": 35
+          },
+          {
+            "page": 6,
+            "words": 144,
+            "lowConfidence": 37
+          },
+          {
+            "page": 7,
+            "words": 151,
+            "lowConfidence": 22
+          },
+          {
+            "page": 22,
+            "words": 132,
+            "lowConfidence": 49
+          },
+          {
+            "page": 24,
+            "words": 141,
+            "lowConfidence": 46
+          }
+        ]
+      }
+    ],
+    "newPhotos": 0,
+    "photoBytesReuseReviewPhase": 179,
+    "scope": "OCR checks recognition, not scientific correctness. Low-confidence tokens were inspected on selected zooms with source text; not every low-confidence token individually certified."
+  },
+  "files": {
+    "science-lab/data/book/s41-u04.editorial.js": "8099bf5331dbc3c9f302e7535a2618c7679af4d4538219ccf0d0aeef1d8010a1",
+    "science-lab/data/book/s41-u04.workbook.js": "81735f22d7abf871772e3a2ed4d843c47295c0531571be51ff8423166a19beb9",
+    "science-lab/v2/deck-biology-thinking.js": "4a3e144d39e9cec8c9752f7ebac3598d99f815b3dc43765d3c48ebb8baa59870",
+    "science-lab/v2/deck.js": "e29924b4f51fc397361a58cb54f25e6e644f79790e3386b3a7090d43b7628313",
+    "science-lab/v2/revised-textbook.js": "399d87712ab8e8d171054fa7beebae8e44d65d7123a44aa29dc38fbee10be6f6",
+    "science-lab/v2/v2.js": "b74c8b7629c64b4afd415fa6e6eb9573d504cca5c13a02953166000e131e9c3e",
+    "science-lab/v2/index.html": "157985afdfc09f4693ad46482b3ff41cb877a6eca6545d0307150cf87ae4cdc7"
+  },
+  "workbookUnits": 18,
+  "thinkingClassroomUnits": 18,
+  "previousPDFsUnchanged": 32,
+  "newPDFs": 4,
+  "newPhotoAssets": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "actualStudentStorageAccessed": false,
+  "push": false,
+  "deployment": false,
+  "browserVerified": false,
+  "browserLimitation": "Previously denied science-lab/v2 target remains unbypassed. Node VM and offline PDFs do not prove actual browser CSS/mobile/audio/3D.",
+  "previousGoalTurn": "progress: verified active workbook differs from old screenshot, then used evidence to review remaining sidebar wording.",
+  "goalStatus": "active",
+  "remaining": [
+    "다른 단원 안내·오른쪽 문구를 실제 문항과 현행 용어에 대조",
+    "독립 창작w067/w069 등의 자료 제작 관련 어휘 단답이 과학 평가에 적합한지 별도 검토; 이번 문항/계약은 보존",
+    "5-1 빛의 성질 등 나머지 학기 교재·전체 수업 통합",
+    "v1/v2 역할·교육과정/원문 근거 요건 점검",
+    "최신main 통합·실제 브라우저/모바일/3D/소리 검수 및 승인 범위의 배포"
+  ],
+  "followUps": [
+    {
+      "phase": 213,
+      "curriculum": "2022 개정 과학4과12-01~03",
+      "standardsSource": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&statusYN=W",
+      "studentPages": 67,
+      "changedPages": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        6,
+        7,
+        8,
+        9,
+        10,
+        11,
+        12,
+        13,
+        23,
+        24,
+        28,
+        30,
+        32,
+        40,
+        41,
+        42,
+        43,
+        44,
+        45,
+        46,
+        47,
+        48,
+        61,
+        63,
+        64,
+        65,
+        66,
+        67
+      ],
+      "rewrittenExamples": 11,
+      "rewrittenPracticeTitles": 20,
+      "questionsPreserved": 80,
+      "formsPreserved": 8,
+      "solutionsAndQuickHtmlByteIdentical": true,
+      "photosAndUpperNotesPreserved": true,
+      "visionAcceptedPages": 33,
+      "visionTitleMatches": 33,
+      "visionFailed": 0,
+      "visionSkipped": 0,
+      "recognizedWords": 4722,
+      "lowConfidenceWords": 1535,
+      "allLowConfidenceWordsIndividuallyReviewed": false,
+      "renderedPdfPages": 67,
+      "outsideGlyphs": 0,
+      "contactSheetsReviewed": 2,
+      "expandedUniquePagesReviewed": [
+        1,
+        2,
+        3,
+        4,
+        5,
+        10,
+        11,
+        13,
+        23,
+        41,
+        47,
+        66,
+        67
+      ],
+      "browserCssVerified": false,
+      "tests": {
+        "v2": {
+          "total": 763,
+          "pass": 761,
+          "skipped": 2,
+          "fail": 0
+        },
+        "postLayoutBiology": {
+          "total": 4,
+          "pass": 4,
+          "fail": 0
+        }
+      },
+      "questionOrGradingChanges": 0,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "newImages": 0,
+      "new3D": 0,
+      "paidApiCalls": 0,
+      "deployed": false
+    }
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "date": "2026-10-21",
+  "unit": "c22-s61-u02",
+  "phase": "140-item-bank-connection",
+  "status": "bank-verified; thinking-lesson-and-full-workbook-pending",
+  "scope": "옛5-2Ⅳ 관련 원문70·독립짝70; 현행6-1 전체 원문 확보 아님",
+  "sourceCount": 70,
+  "similarCount": 70,
+  "totalItems": 140,
+  "automaticItems": 131,
+  "teacherReviewItems": 9,
+  "originalAutomaticAnswerHolds": 7,
+  "sourcePrintedExplanationsFullVerbatim": false,
+  "sourceAssets": 20,
+  "runtimeSourceImageReferences": 11,
+  "sourceNumericChecks": 21,
+  "pairDataModelsChecked": 23,
+  "pairSingleChoiceAnswerPositions": [
+    6,
+    6,
+    6,
+    6,
+    5
+  ],
+  "browser": {
+    "widths": [
+      1280,
+      390
+    ],
+    "sourceViews": 140,
+    "pairedViews": 140,
+    "finalEditedPairViews": 8,
+    "pairCorrectInteractions": 138,
+    "teacherAnswerTables": 8,
+    "subunitViews": 8,
+    "printModeViews": 8,
+    "wrongToIndependentPairFlows": 2,
+    "unitSpellingChecks": 4,
+    "quickNumberChecks": 2,
+    "imageFailurePrintLock": true,
+    "pageErrors": 0
+  },
+  "a4PreparedPages": {
+    "student": 63,
+    "teacher": 80,
+    "answers": 39,
+    "quick": 3
+  },
+  "a4TotalPages": 185,
+  "allA4TextRangeOverflow": 0,
+  "pdfGenerated": false,
+  "visual": {
+    "pairedCardsDirectlyReviewed": 70,
+    "pairContacts": 18,
+    "updatedContactsRechecked": [
+      3,
+      6,
+      13,
+      17
+    ],
+    "selectedOriginalPrintAndPhoneDetailsDirectlyReviewed": true,
+    "notClaimed": "185쪽 전체 PDF를 만들어 눈으로 검토한 것은 아님"
+  },
+  "tests": {
+    "tests": 811,
+    "pass": 809,
+    "fail": 0,
+    "skipped": 2
+  },
+  "audits": [
+    "bank/audit",
+    "bank/misc-audit",
+    "bank/written-audit",
+    "source-preparation/freeze26",
+    "pair-data23-models"
+  ],
+  "preservation": {
+    "baselineFiles": 43,
+    "unchanged": 38,
+    "intentionalChanged": [
+      "science-lab/v2/v2.js",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/judge.js",
+      "science-lab/v2/curriculum-2022.js"
+    ],
+    "originalSourceFreeze26Unchanged": true
+  },
+  "privacyScan": "no private local paths, raw downloads, bearer URLs or binary payloads in new source/runtime material",
+  "bankConnected": true,
+  "thinkingLessonConnected": false,
+  "workbookConnected": false,
+  "originalCurrentEditionExamAvailable": false,
+  "localOnly": true,
+  "committed": false,
+  "pushed": false,
+  "deployed": false,
+  "paidApiCalls": 0,
+  "newImageGeneration": 0,
+  "newThreeD": 0,
+  "externalWrites": 0,
+  "next": "좌표 표현·실제 거리/시간 측정·안전 조사/설명 공유를 포함한 기본 사고력 수업,8형식 교재와 웹/A4/PDF 검수"
+}

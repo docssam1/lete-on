@@ -1,0 +1,12 @@
+.plant-structure-bank-paper [data-solution-print]:disabled{opacity:.5;cursor:not-allowed}
+.plant-structure-bank-paper .plant-part-answer{display:flex;align-items:end;gap:3mm;margin-top:3mm}
+.plant-structure-bank-paper .plant-part-answer .solution-answer-line{flex:1}
+.plant-structure-bank-paper .energy-quick-row b{flex:0 0 auto;white-space:nowrap}
+@media print{
+ @page plant-structure-bank{
+  size:A4;margin:17mm 16mm;
+  @bottom-left{content:"식물의 구조와 기능 · 지필드";font:8pt Pretendard,sans-serif;color:#4c596c}
+  @bottom-right{content:counter(page);font:9pt Pretendard,sans-serif;color:#2456c4}
+ }
+ .plant-structure-bank-paper,.plant-structure-bank-paper .solution-paper{page:plant-structure-bank}
+}

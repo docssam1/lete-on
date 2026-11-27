@@ -1,0 +1,153 @@
+{
+  "phase": 188,
+  "date": "2026-11-04",
+  "unit": "c22-s51-u02",
+  "title": "빛의 필요·직진/반사/굴절 관찰과 거울·렌즈 장치 제작 전체 수업 연결",
+  "status": "local-candidate-browser-gate-pending",
+  "baselineCommit": "6f74aa9f59df31f8f271d7dd6952a33696d4b1ec",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac local Node VM; no API delegation, model override, image generation or keychain access",
+  "skillsReused": [
+    "instructional-design",
+    "ux-writing",
+    "frontend-design",
+    "gfield-textbook-design"
+  ],
+  "rulesRead": [
+    "COMMON_WORKFLOW.md",
+    "CLAUDE.md",
+    "3D-RULES.md"
+  ],
+  "previousGoalTurn": "no-progress: verified existing biology language edits; resumed unfinished light classroom implementation",
+  "curriculum": {
+    "document": "교육부2022-33 별책9 과학과 교육과정",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "lines": [
+      734,
+      750
+    ],
+    "standards": [
+      "6과02-01",
+      "6과02-02",
+      "6과02-03"
+    ],
+    "scope": [
+      "빛이 있어야 물체를 볼 수 있음",
+      "직진·반사·굴절 관찰하여 말하기",
+      "어둠상자·평면거울 반사·렌즈 굴절 실험",
+      "거울과 렌즈의 쓰임새 조사와 창의적 장치 제작"
+    ],
+    "excludedFromBasic": [
+      "반사/굴절 법칙·각도 계산",
+      "볼록 렌즈와 물체/눈의 거리별 상 비교"
+    ],
+    "semesterPlacementReviewPhase": 186
+  },
+  "classroom": {
+    "selfSlides": 52,
+    "teacherSlides": 53,
+    "phases": 12,
+    "minutes": 260,
+    "originalPhaseIdsAndMinutesUnchanged": true,
+    "studentPhaseNamesRewritten": true,
+    "checks": 16,
+    "manualAdvanceActivityScreens": 19,
+    "comparisonCases": [
+      "seeing",
+      "straight",
+      "reflection",
+      "water",
+      "lens",
+      "periscope",
+      "testing",
+      "sharing"
+    ],
+    "photos": 4,
+    "rasterTextbookDiagrams": 3,
+    "existingNativeSvgDiagrams": 2,
+    "opticalReflectionObservedOnPaper": true,
+    "sameMaterialsAsWorkbook": true,
+    "figureCaptionsRevealedAfterFirstChoiceInComparison": true,
+    "warmupUngraded": true,
+    "sessionBreakRequiresButton": true
+  },
+  "preservation": {
+    "unitItems": 80,
+    "similarOriginalItems": 40,
+    "classAndDailySelectedItemsExactlySameAndSameOrder": 16,
+    "allPreviousDailyFieldsAndHistoryPreserved": true,
+    "originalInquiryActivities": 9,
+    "actualInquiryRowsKey": "lightInquiryRows",
+    "actualInquiryStore": "sciLab.inquiry.c22-s51-u02",
+    "comparisonRowsKey": "lightCompareRows",
+    "originalRawReportEnabled": true,
+    "reportObjectUnchanged": true,
+    "defaultOptionalAdapterReportEnabled": false,
+    "originalRecordsBookUnchanged": true,
+    "protectedOriginalDataAndArtAndPdfs": 779,
+    "unchangedOldPdfs": 40,
+    "unchangedWorkbookHtmlProducts": 76,
+    "unchangedOtherClassroomSlideArrays": 36,
+    "intentionalChanges": [
+      {
+        "unit": "c22-s51-u02",
+        "mode": "self",
+        "before": 77,
+        "after": 52
+      },
+      {
+        "unit": "c22-s51-u02",
+        "mode": "teach",
+        "before": 78,
+        "after": 53
+      }
+    ],
+    "newPhotoOrPdfOr3D": 0,
+    "actualStudentStorageAccess": 0,
+    "browserVerified": false
+  },
+  "imageReview": {
+    "newAssets": 0,
+    "same7SourceImageBytesAsPhase187": true,
+    "priorEvidence": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase187/vision-review.json",
+    "priorAppleVisionImageInputs": 7,
+    "priorDirectImageInspection": true,
+    "freshVisionExecutions": 0,
+    "old40PdfsExactlyUnchanged": true
+  },
+  "tests": {
+    "v2": {
+      "total": 552,
+      "pass": 550,
+      "skip": 2,
+      "fail": 0
+    },
+    "bank": {
+      "total": 299,
+      "pass": 299,
+      "fail": 0
+    },
+    "routes": "tests/light-classroom-routes.mjs",
+    "deckEvents": "tests/light-deck-events.mjs",
+    "manualActivityTimersCreated": 0,
+    "teacherStudentReads": 0,
+    "teacherStudentWrites": 0,
+    "actualStudentStorageAccess": 0
+  },
+  "delivery": {
+    "newWorkbookCount": 19,
+    "fullThinkingClassroomCount": 19,
+    "localCommit": null,
+    "push": false,
+    "deploy": false,
+    "browserOr3DCheckerExecuted": false,
+    "browserDenialBypass": false,
+    "remaining": [
+      "나머지 학기 교재와 수업",
+      "실제 브라우저·모바일·소리·3D 검사기 release gate",
+      "최신 main 대조·통합과 승인 범위 배포"
+    ]
+  }
+}

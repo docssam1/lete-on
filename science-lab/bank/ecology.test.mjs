@@ -56,7 +56,7 @@ test('원문12동결파일과7그림8참조를보존한다',()=>{
  const figs=source.filter(q=>q.figure);assert.equal(figs.length,8);assert.equal(new Set(figs.map(q=>q.figure)).size,7);for(const q of figs)assert(existsSync(new URL('../'+q.figure,import.meta.url)));
 });
 test('인쇄네모드220번호·학생답숨김·교사공식답2와그림을유지한다',()=>{
- for(const mode of ['student','teacher','answers','quick']){const h=ecologyBankPaperHtml({unit,source,similar,items,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,220);assert(h.includes('원문70'));assert(h.includes('GFIELD · 지필드'));assert(!h.includes('[object Object]'));assert(!h.includes('밤하늘'));
+ for(const mode of ['student','teacher','answers','quick']){const h=ecologyBankPaperHtml({unit,source,similar,items,mode});assert.equal((h.match(/data-paper-item=/g)||[]).length,220);assert(h.includes(mode==='student'?'원문 문제 70개':'원문70'));assert(h.includes('GFIELD · 지필드'));assert(!h.includes('[object Object]'));assert(!h.includes('밤하늘'));
   if(mode==='student'){assert(!h.includes('class="eco-key"'));assert.equal((h.match(/<img /g)||[]).length,8);assert(h.includes('eco-answer-line'));}
   if(mode==='teacher'){assert.equal((h.match(/class="eco-key"/g)||[]).length,220);assert.equal((h.match(/인쇄된 공식 답 참고/g)||[]).length,2);}
   if(mode==='answers'||mode==='quick')assert(!h.includes('<img '));

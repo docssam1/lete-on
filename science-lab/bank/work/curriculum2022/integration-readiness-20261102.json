@@ -1,0 +1,378 @@
+{
+  "date": "2026-11-02",
+  "base": "bc4851fcf1a60c0fafba16696e49380c313c21cd",
+  "branch": "codex/science-workbook-integration-20261102",
+  "status": "local integration candidate; no push or deployment",
+  "skills": [
+    "gfield-textbook-design (existing project rules read; no visual redesign)"
+  ],
+  "skillFiles": [
+    "/Users/docssam/Developer/GFIELD/lete-on/.claude/skills/gfield-textbook-design/SKILL.md",
+    "/Users/docssam/Developer/GFIELD/lete-on-voice-fcs/fields-classic/question-bank/design-draft/README.md"
+  ],
+  "changes": [
+    "현재 main c4ad489a의 다른 과목23파일을 merge commit bc4851fc로 보존하고 과학 트리 유지 확인",
+    "검수한10교재의 인쇄 준비를 본문 Pretendard400/700·손글씨 Gaegu700·그림 모두 완료로 묶음",
+    "글꼴 선언 누락/요청 실패·캐시된 깨진 그림/늦은 실패는 인쇄를 막고 안내",
+    "교재 닫기/화면 해제 뒤 대기 그림 이벤트 정리 및 오래된 인쇄 콜백 무효화",
+    "다섯 단원의 실제 네 route 함수·BOOKS/RECORDS_BOOKS·비교 활동 이벤트 검사를 환경 독립 검사로 저장소에 포함"
+  ],
+  "integration": {
+    "base": "bc4851fcf1a60c0fafba16696e49380c313c21cd",
+    "main": "c4ad489a388a7635a15307b50b93a752611417a9",
+    "mergePreservesScienceTree": "b6db6dad55fc3a4674302ee93f50a4fba493c65f",
+    "mainChanges": [
+      "highschool-selection/data/available-mocks.js",
+      "highschool-selection/docs/PRINT-EXAM-EXECUTION.md",
+      "highschool-selection/docs/SERVER-DEPLOYMENT.md",
+      "highschool-selection/promo/index.html",
+      "highschool-selection/public/exam-entry.css",
+      "highschool-selection/public/exam-entry.html",
+      "highschool-selection/public/exam-entry.js",
+      "highschool-selection/scripts/stage-public-intro.cjs",
+      "highschool-selection/tests/launch-exams-core.test.mjs",
+      "hselementary/question-bank/curriculum.js",
+      "hselementary/question-bank/index.html",
+      "hselementary/question-bank/runtime-availability-audit.js",
+      "hselementary/question-bank/source-5-2-congruence-page87-practice.js",
+      "hselementary/question-bank/source-5-2-decimal-page101-practice.js",
+      "hselementary/question-bank/source-5-2-u4-check104-decimal-audit.py",
+      "hselementary/question-bank/source-5-2-u5-page108-practice.css",
+      "hselementary/question-bank/source-5-2-u5-page108-practice.js",
+      "hselementary/question-bank/source-inventory/5-2-u4-readiness-review.json",
+      "hselementary/question-bank/source-inventory/5-2-u5-readiness-review.json",
+      "hselementary/question-bank/source-release-gate-audit.js",
+      "supabase/functions/highselect-exams/assets-entry.ts",
+      "supabase/functions/highselect-exams/core.mjs",
+      "supabase/functions/highselect-exams/index.ts"
+    ],
+    "allNonScienceTreesMatchMain": true,
+    "unchangedWorkbookOutputs": 40,
+    "outputs": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student",
+        "pages": 51,
+        "sha256": "5140f7ea1ebf7db5fa4b4db30607507b3ba8aa380494440c599e680b815c13f3"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher",
+        "pages": 76,
+        "sha256": "9042d7fef3a7d7c55412731ad2dd5fbac36eddbac7eabc4dec634d89e9e225e0"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "answers",
+        "pages": 22,
+        "sha256": "92e26caf2757be0787e46a006d72d9f88904ff8d603b8d1ea083586904d1634c"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "quick",
+        "pages": 5,
+        "sha256": "0223e90f6a22c4710e12a044c2b546f66fdf40ce48225a64c7565230c3250683"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student",
+        "pages": 52,
+        "sha256": "5578c66de6dd557c085b78fc58115d11295a9ccd0e05ad62033d307233ff3a22"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher",
+        "pages": 78,
+        "sha256": "4475212b97a5c548669028bc7d5fad8767f4494a4e092f48cb0e9bff4137fa02"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "answers",
+        "pages": 22,
+        "sha256": "b8ee061ce5cb0f553a0d7aeddc5c2d48e94c7ad9fbf0bf86aaa95271b023782f"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "quick",
+        "pages": 5,
+        "sha256": "2e1d4a08c063e2b873f9524d04d33806c2b7d1a0c394788479a247612fbbca35"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "student",
+        "pages": 57,
+        "sha256": "d780185d2350fea46fe5b2559975caca23788642c25e60e1f2294761cdb3b418"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher",
+        "pages": 80,
+        "sha256": "36e562e748fd871c3d0dfb2d3ebd2ceeb9cce1ca508187b297dd1999a2eca1f8"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "answers",
+        "pages": 22,
+        "sha256": "ca413129a40b3ecc199e97eb5a51a18456276ed30ffccfaea0241bcc391d7e08"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "quick",
+        "pages": 2,
+        "sha256": "ee8ab6d9f18014c2296deca126a94b9008519d194b44059d2519c8fac50f79fd"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student",
+        "pages": 76,
+        "sha256": "5ab8aec598f59a0e2406b51acfd4d813d9074b575bb380a2e86d51a9c944a948"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher",
+        "pages": 103,
+        "sha256": "e307b7874b5d5911bd1ff4ba44f482cda0b794e880af62d9bad4f38f37950be4"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "answers",
+        "pages": 27,
+        "sha256": "24df2baaa644712b403c8bd336d3b33fca3a5031e7a48a980b7941bd79d04919"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "quick",
+        "pages": 5,
+        "sha256": "9f2b27f4b0bbcc8f645ee08867a171e9cc374e14434bf1adea82e84193cb3c99"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student",
+        "pages": 75,
+        "sha256": "63bce8f12d11500d8e9da81b370fa1c0c9a2f5c715f873c1e30a228b207b6825"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher",
+        "pages": 108,
+        "sha256": "a6e15b444626ae5c307f6457c4709efbe411444dc38c7e459631a2a9e13583fd"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "answers",
+        "pages": 32,
+        "sha256": "dd66d2c4230855b83315d4f43a573fc6bd1318fd12705871194175abf6762c83"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "quick",
+        "pages": 4,
+        "sha256": "9192f167ce9083fb8914a0b4b94539a212755a344d84182faa6871a555ac6a9a"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "student",
+        "pages": 53,
+        "sha256": "5200598974763c3c499b108f9e53dcf49b7d3f64b0055ae0101861875844bc59"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teacher",
+        "pages": 81,
+        "sha256": "6df1f40c747bd0dc87e32e1e027fc61fe330c992a9a3f9c55a29bae48f4b757b"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "answers",
+        "pages": 27,
+        "sha256": "5048e825b798355fa305efc76df696d6905dab895054c309ba28da3298620c12"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "quick",
+        "pages": 5,
+        "sha256": "698f4c4917bef4b29af36bae8e351e2e9e576edfd034bde1e1a8c3ed3405602f"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "student",
+        "pages": 56,
+        "sha256": "86a2d35943768157443fbe2f1da028ecaae07e20c8eab317ef50b7d8e3ba0924"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teacher",
+        "pages": 78,
+        "sha256": "5af5b2262a4aaee427af58860cdd8582d8adefd706c7fbd2d530914e6bb08b87"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "answers",
+        "pages": 22,
+        "sha256": "880df599e9b3875858b47d343c7f3bfa5bed9952201f082e5c36f639e4fa4b4d"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "quick",
+        "pages": 2,
+        "sha256": "a93367910b7ccf211eef3986901ea1e0e9ebf3e5012d7bd5b57b8b9e0fd5232b"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "student",
+        "pages": 66,
+        "sha256": "44d4800191d1d81de194bc98f36c417a2f650558fee2b49d589db946a513cdbf"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teacher",
+        "pages": 93,
+        "sha256": "7a7c8797dae1c2e8fd2fbaca55d4740938bc9b9c20fcd62a8481375f159340e7"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "answers",
+        "pages": 27,
+        "sha256": "c271416ecdf1461ccc5dff55ec79ad4154b33c444bf502876f94af9f59fa7fe2"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "quick",
+        "pages": 2,
+        "sha256": "a915eb08f4ad5f2b916cdd60391bc4796931bf10ac41111a11b2a35e22969f86"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "student",
+        "pages": 58,
+        "sha256": "97cfdb89b36d32900b7f2e1470cee6d75a9b5299356bedf486f1cccb0c512a0a"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teacher",
+        "pages": 80,
+        "sha256": "35a7bc1fce5f54dc9fca2b1690ee537ad155302700ffc7eb669e9c6c50167e80"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "answers",
+        "pages": 22,
+        "sha256": "a3962b755d9aa411dc52cb1a331457e759153369be08518271824bbabdea342b"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "quick",
+        "pages": 2,
+        "sha256": "355b8184d8e24844ecad565f1966e192823b5514139a35004f1e277352694485"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "student",
+        "pages": 56,
+        "sha256": "f380904e1e605e3f9c614fac0096052be39c05e6ec6d6caf55c61c355e09f432"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teacher",
+        "pages": 80,
+        "sha256": "21f0b8410bf44d9f6a640a4445468e0df0453a589dfdda5a28ec37f59678ffa8"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "answers",
+        "pages": 24,
+        "sha256": "d177d6723bb193391ad0e060b618c86922ab24934207b068c2ec2e36f9793169"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "quick",
+        "pages": 5,
+        "sha256": "ed917cf6ffcd52ba48b0e2d1b41d93ed4508a0f8c3309b66152cc258f78ce62c"
+      }
+    ]
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant/life/ecology comparison event handlers and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u03",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "plantCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u04",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "lifeCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "ecologyCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "tests": {
+    "total": 362,
+    "passCount": 360,
+    "fail": 0,
+    "existingBrowserSkips": 2
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase162",
+  "verificationScope": [
+    "열 교재의 학생/교사/해설/빠른표 제품 HTML40개가 수정 전과 바이트 동일",
+    "글꼴/그림 비동기 상태와 인쇄 호출을 통제한 실행 검사",
+    "실제 route 함수와 비교 UI 이벤트 실행; deck/view/Daily 그리기 연결부는 수집",
+    "실제 브라우저/레이아웃/프린터 검수는 아님"
+  ],
+  "apis": 0,
+  "newImages": 0,
+  "newPdf": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "next": "현재 main 기반 후보의 통합 검토·실제 브라우저/A4 검수와 다른 학기 교재·수업 개선. 전체 프로그램 목표 active."
+}

@@ -1,0 +1,603 @@
+{
+  "phase": 307,
+  "date": "2026-11-06",
+  "unit": "c22-s52-u03",
+  "scope": "Readable weather wording, three learning pages and nine bank contexts aligned with current workbook; old questions, grading and records preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 112,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 48,
+    "changedQuestionFields": 60,
+    "changedExplanations": 43,
+    "unchangedOtherAnswerLabels": 3074,
+    "currentAnswerChanges": [
+      {
+        "unit": "c22-s52-u03",
+        "no": 16,
+        "before": "습도는 기온의 영향도 받는 습한 정도이다. 기온과 공간의 부피 등 조건이 다를 수 있어 수증기의 실제 질량이 같다고 할 수 없다.",
+        "after": "습도는 기온의 영향도 받는다. 기온과 공기의 부피 등 조건을 함께 살펴야 하므로 습도 숫자만으로 수증기의 양이 같다고 할 수는 없다."
+      },
+      {
+        "unit": "c22-s52-u03",
+        "no": 56,
+        "before": "실제로 재지 않았으므로12시는 미측정으로 둔다.18℃는 추정/예시로 따로 표시할 수 있지만 관측값으로 채우지 않는다.",
+        "after": "12시에는 직접 재지 않았다고 적는다. 18℃는 앞뒤 값 사이에서 예상한 온도라고 따로 쓸 수 있지만 실제 관측값으로 채우지는 않는다."
+      },
+      {
+        "unit": "c22-s52-u03",
+        "no": 72,
+        "before": "향/불꽃·학생 직접 가열을 하지 않는다. 교사가 안전한 온도와 냉각 주머니를 준비하고 벽면 물방울/공기 중 흐림을 나누어 관찰한다. 불분명하면 그대로 기록한다.",
+        "after": "향이나 불을 쓰거나 학생이 직접 가열하지 않는다. 선생님이 안전하게 준비한 시범이나 자료를 보고, 벽면 물방울과 공기 중 흐림을 나누어 살핀다. 분명히 보이지 않으면 그 사실을 적는다."
+      },
+      {
+        "unit": "c22-s52-u03",
+        "no": 75,
+        "before": "온도 변화는 남기고 공기 흐름은 미관찰로 둔다. 바람 발생을 직접 확인했다고 쓰지 않으며 기압/흐름 확인 방법을 교사와 정해 재관찰한다.",
+        "after": "온도를 잰 시각과 값은 그대로 남기고 공기 흐름은 보지 못했다고 적는다. 바람이 생긴 것을 직접 확인했다고 쓰지 않으며, 선생님과 흐름을 관찰할 방법을 정해 다시 살펴본다."
+      },
+      {
+        "unit": "c22-s52-u03",
+        "no": 77,
+        "before": "기관/자료 제목·쪽이나 주소·확인 날짜·대상 지역/시각·본문에서 확인한 영향/조건·내 제안과 미확인을 구별한다.",
+        "after": "자료의 제목과 만든 기관, 읽은 쪽이나 주소와 확인 날짜를 적는다. 자료가 가리키는 지역과 시각, 날씨가 활동에 준 영향도 쓴다. 자료에서 확인한 내용과 내 제안, 아직 모르는 점을 나누어 적는다."
+      },
+      {
+        "unit": "c22-s52-u03",
+        "no": 104,
+        "before": "예시: 같은 쟁반/정한 양, 고정한 두 감지 부분, 같은 빛·처음 값/시점 표. 흐름 관찰 위치/방법을 교사와 정하고 온도와 별도 기록. 불분명/미실행 칸. 학생 직접 가열/향 없음.",
+        "after": "같은 쟁반에 정한 양의 모래와 물을 놓고 감지 부분의 위치를 고정한다. 처음 온도와 빛, 관찰 시각을 맞춰 온도를 비교한다. 선생님과 공기 흐름을 살필 위치와 방법을 정하고 온도와 따로 기록할 칸을 만든다. 아직 보지 못하거나 하지 않은 것도 표시한다."
+      }
+    ],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s52-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s52-u03-b003",
+      "c22-s52-u03-b007",
+      "c22-s52-u03-b009",
+      "c22-s52-u03-b014",
+      "c22-s52-u03-b015",
+      "c22-s52-u03-b016",
+      "c22-s52-u03-b019",
+      "c22-s52-u03-b022",
+      "c22-s52-u03-b024",
+      "c22-s52-u03-b025",
+      "c22-s52-u03-b031",
+      "c22-s52-u03-b033",
+      "c22-s52-u03-b034",
+      "c22-s52-u03-b035",
+      "c22-s52-u03-b037",
+      "c22-s52-u03-b039",
+      "c22-s52-u03-b041",
+      "c22-s52-u03-b043",
+      "c22-s52-u03-b045",
+      "c22-s52-u03-b047",
+      "c22-s52-u03-b049",
+      "c22-s52-u03-b050",
+      "c22-s52-u03-b052",
+      "c22-s52-u03-b055",
+      "c22-s52-u03-b056",
+      "c22-s52-u03-b057",
+      "c22-s52-u03-b060",
+      "c22-s52-u03-b061",
+      "c22-s52-u03-b062",
+      "c22-s52-u03-b064",
+      "c22-s52-u03-b066",
+      "c22-s52-u03-b067",
+      "c22-s52-u03-b069",
+      "c22-s52-u03-b070",
+      "c22-s52-u03-b072",
+      "c22-s52-u03-b073",
+      "c22-s52-u03-b074",
+      "c22-s52-u03-b075",
+      "c22-s52-u03-b076",
+      "c22-s52-u03-b077",
+      "c22-s52-u03-b078",
+      "c22-s52-u03-b080",
+      "c22-s52-u03-b081",
+      "c22-s52-u03-b084",
+      "c22-s52-u03-b090",
+      "c22-s52-u03-b091",
+      "c22-s52-u03-b096",
+      "c22-s52-u03-b100",
+      "c22-s52-u03-b102",
+      "c22-s52-u03-b103",
+      "c22-s52-u03-b104",
+      "c22-s52-u03-b105",
+      "c22-s52-u03-b106",
+      "c22-s52-u03-b107",
+      "c22-s52-u03-b108",
+      "c22-s52-u03-b110",
+      "c22-s52-u03-b112"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s52-u03-b009",
+      "c22-s52-u03-b031",
+      "c22-s52-u03-b047",
+      "c22-s52-u03-b069",
+      "c22-s52-u03-b073",
+      "c22-s52-u03-b003"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [
+      {
+        "mode": "pages",
+        "page": 12,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 33,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 37,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 12,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 33,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 37,
+        "fields": [
+          "blocks"
+        ]
+      }
+    ],
+    "all90PageRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 33,
+    "explanationHtmlOccurrencesVerified": 86,
+    "syntaxFiles": 6,
+    "browserVerified": false
+  },
+  "validation": {
+    "tests": 1266,
+    "passed": 1264,
+    "failed": 0,
+    "skipped": 2,
+    "exitCode": 0,
+    "testFiles": 222,
+    "snapshot": {
+      "workbooks": 32,
+      "html": 128,
+      "slideArrays": 64,
+      "runtimeUnits": 32,
+      "studentStorageReads": 0,
+      "studentStorageWrites": 0,
+      "network": 0
+    },
+    "actualBrowserVerified": false
+  },
+  "currentBankCorrections": {
+    "semanticContexts": [
+      49,
+      52,
+      67,
+      78,
+      80,
+      84,
+      106,
+      108,
+      112
+    ],
+    "writtenCriteriaAndTeacherReview": [
+      52,
+      67,
+      78,
+      80,
+      84,
+      108,
+      112
+    ],
+    "sampleWordingOnly": [
+      16,
+      56,
+      72,
+      75,
+      77,
+      104
+    ],
+    "oldDiagnosisExcludedOnlyForCurrentSemanticVersions": true,
+    "previousVersionsRestoreEveryOldField": true
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "lines": [
+        797,
+        812
+      ],
+      "standards": [
+        "6과06-01",
+        "6과06-02",
+        "6과06-03"
+      ],
+      "scope": "기상 요소와 생활·이슬/안개/구름 관찰·고저기압 분포와 날씨·해륙풍 모형. 강수 생성 과정과 단열 팽창은 다루지 않음."
+    },
+    "sources": [
+      {
+        "title": "NOAA NESDIS What Is Humidity?",
+        "url": "https://www.nesdis.noaa.gov/about/k-12-education/atmosphere/what-humidity",
+        "readRanges": [
+          [
+            20,
+            21
+          ],
+          [
+            35,
+            43
+          ]
+        ],
+        "verified": "차가운 거울 표면의 수증기 응결과 물방울, 상대습도의% 및기온과 관계를 대조함. 뒤의 이슬점/포화량 수치·강수 생성 원리는 학생 원고에 넣지 않음."
+      },
+      {
+        "title": "NOAA Types of Weather Phenomena",
+        "url": "https://www.noaa.gov/jetstream/synoptic/types-of-weather-phenomena",
+        "readRanges": [
+          [
+            107,
+            143
+          ]
+        ],
+        "verified": "지표 가까이 떠 있는 안개 물방울과 연기/먼지의 구별을 대조함. 시정 거리나 강수 생성 설명을 추가하지 않음."
+      },
+      {
+        "title": "NWS Wind Direction",
+        "url": "https://forecast.weather.gov/glossary.php?word=wind%20direction",
+        "readRanges": [
+          [
+            4,
+            5
+          ]
+        ],
+        "verified": "불어오는 쪽으로 풍향을 부르며 북쪽에서 남쪽으로 불면 북풍이라는 정의를 대조함. 방위 없는 그림으로 풍속을 만들지 않음."
+      },
+      {
+        "title": "Met Office High and Low Pressure",
+        "url": "https://weather.metoffice.gov.uk/learn-about/weather/how-weather-works/high-and-low-pressure",
+        "readRanges": [
+          [
+            273,
+            276
+          ],
+          [
+            284,
+            296
+          ]
+        ],
+        "verified": "주변과비교하는 고/저기압과일반적 날씨 경향을 대조함. 온도 하나로 지표 기압을 정하는 설명,전선과회전 원리는 채택하지 않음."
+      },
+      {
+        "title": "NOAA The Sea Breeze",
+        "url": "https://www.noaa.gov/jetstream/ocean/sea-breeze",
+        "readRanges": [
+          [
+            50,
+            53
+          ],
+          [
+            60,
+            75
+          ]
+        ],
+        "verified": "육지/바다의 온도 변화 차이와 해풍,큰 규모 바람과주변 조건의 영향을 대조함. 밀도와상층 흐름·전선·뇌우 세부 사항은 학생 원고에 추가하지 않음."
+      }
+    ],
+    "readOn": "2026-11-06",
+    "new3d": 0,
+    "imagesDownloaded": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1944,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 57,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideTwentyThreeUnitPass": {
+      "units": 9,
+      "questions": 1136,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To307": 1061
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase307",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

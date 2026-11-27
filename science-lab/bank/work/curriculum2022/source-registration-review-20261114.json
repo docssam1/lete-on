@@ -1,0 +1,114 @@
+{
+  "phase": 389,
+  "date": "2026-11-14",
+  "candidateBaseline": "fe4600e92119f991f1e031328d6f7e7a62f5e1f1",
+  "reviewParent": "a287d27068a883e68ba920b838f5f9207040f64e",
+  "sourceRegistration": {
+    "transport": "static-files",
+    "audience": "all-science-app-students",
+    "loginRequired": false,
+    "newUnits": 4,
+    "newOriginals": 214,
+    "teacherReview": 29,
+    "automatic": 185,
+    "originalPairBindings": 214,
+    "originalFiguresCopiedByteForByte": 69,
+    "units": [
+      {
+        "unit": "c22-s61-u04",
+        "items": 39,
+        "teacherReview": 6,
+        "practice": 167,
+        "total": 206,
+        "figures": 13,
+        "setCounts": {
+          "1": 5,
+          "2": 12,
+          "3": 8,
+          "4": 14
+        }
+      },
+      {
+        "unit": "c22-s62-u01",
+        "items": 68,
+        "teacherReview": 8,
+        "practice": 198,
+        "total": 266,
+        "figures": 26,
+        "setCounts": {
+          "1": 14,
+          "2": 14,
+          "3": 20,
+          "4": 20
+        }
+      },
+      {
+        "unit": "c22-s62-u02",
+        "items": 49,
+        "teacherReview": 6,
+        "practice": 198,
+        "total": 247,
+        "figures": 14,
+        "setCounts": {
+          "1": 13,
+          "2": 11,
+          "3": 15,
+          "4": 10
+        }
+      },
+      {
+        "unit": "c22-s62-u03",
+        "items": 58,
+        "teacherReview": 9,
+        "practice": 186,
+        "total": 244,
+        "figures": 16,
+        "setCounts": {
+          "1": 13,
+          "2": 13,
+          "3": 15,
+          "4": 17
+        }
+      }
+    ],
+    "registeredUnits": 27,
+    "registeredOriginals": 1726,
+    "sourcePendingUnits": 5,
+    "pendingPracticeQuestions": 504,
+    "wholeCurrentEditionCompleted": false
+  },
+  "preservation": {
+    "existingRegisteredOriginalsUnchanged": 1512,
+    "existingPracticeInFourUnitsUnchanged": 749,
+    "privateInputsHashVerified": 77,
+    "reviewedItemContentHashPreserved": true,
+    "originalTaxonomyRetainedAlongsideCurrentClassification": true,
+    "existingWorkbookAndSceneFilesUnchanged": true,
+    "originalPdfOrRawOcrIncluded": false
+  },
+  "nativeValidation": {
+    "testFiles": 272,
+    "tests": 1459,
+    "pass": 1457,
+    "fail": 0,
+    "browserSkip": 2,
+    "actualUnitLoaders": 32,
+    "actualSourceRoutes": 64,
+    "originalsInRoutes": 214,
+    "combinedBankModes": 16,
+    "studentStorageReadOrWriteOnOpen": 0,
+    "sourceGradingAndFrozenPaperRestorePreserved": true,
+    "printWaitsForImagesAndFonts": true
+  },
+  "sourceFilesAndReviewedOfficialAnswersIncludedInReview": true,
+  "runtimeRegistered": true,
+  "actualBrowserUsed": false,
+  "actualA4VisualInspection": false,
+  "databaseWrites": 0,
+  "paidApiCalls": 0,
+  "newRasterGeneration": 0,
+  "mainMerged": false,
+  "deployed": false,
+  "releaseReady": false,
+  "goalAchieved": false
+}

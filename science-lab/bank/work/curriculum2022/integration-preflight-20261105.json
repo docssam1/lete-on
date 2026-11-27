@@ -1,0 +1,69 @@
+{
+  "phase": 275,
+  "date": "2026-11-05",
+  "title": "최신 메인 통합 객체의 과학 범위 검증",
+  "status": "native-preflight-passed-actual-browser-and-3d-gates-pending",
+  "candidateCommit": "d2a6d1878471ddd2e3bd03eece878d468860add4",
+  "latestObservedRemoteMain": "d190e534237caadf0543b5047c4a7fe12df074a7",
+  "latestProposedMergeTree": "4626d506baa9d24779a5022c10ef96287dd397e7",
+  "verifiedExtractionTree": "e40d755b719244e45d9aaaffc3ff091356acc481",
+  "verifiedFiles": 6432,
+  "extraDependencies": [
+    {
+      "path": "scripts/bank-science-lib.mjs",
+      "blob": "7c718fe5b9bcd704316eb2028d74881c2b686aa6",
+      "sourceTree": "e40d755b719244e45d9aaaffc3ff091356acc481"
+    },
+    {
+      "path": "world-explorer/vendor/three.module.js",
+      "blob": "b1a0fdda8a14f71dd62d21325f3eb59afc45f1d0",
+      "sourceTree": "e40d755b719244e45d9aaaffc3ff091356acc481"
+    },
+    {
+      "path": "world-explorer/vendor/three.core.js",
+      "blob": "ef6859448e18389b1e478db64be78293d53058e4",
+      "sourceTree": "e40d755b719244e45d9aaaffc3ff091356acc481"
+    }
+  ],
+  "tests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2
+  },
+  "snapshots": {
+    "workbooks": {
+      "equal": true,
+      "count": 32
+    },
+    "products": {
+      "equal": true,
+      "count": 128
+    },
+    "slides": {
+      "equal": true,
+      "count": 64
+    },
+    "runtime": {
+      "equal": true,
+      "count": 32
+    }
+  },
+  "mainWip": {
+    "candidate-equals-remote": 43,
+    "candidate-equals-wip": 1400,
+    "remote-equals-wip": 25,
+    "three-different": 18
+  },
+  "productChanges": 0,
+  "actualMerge": false,
+  "published": false,
+  "browserVerified": false,
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase275",
+  "notes": [
+    "Initial extracted test runs failed because common dependencies were absent; original tests passed after exact-tree dependencies were extracted.",
+    "Latest proposed tree has identical science subtree and dependency blobs to tested extraction.",
+    "Observed external ref changes are recorded; no claim of globally unchanged refs.",
+    "No test bypass or source/answer bank overwrite."
+  ]
+}

@@ -1,0 +1,41 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "전체 옛 문항 사본에 나중에 추가한 보조 필드가 섞이는 복원 문제",
+  "cacheVersion": "20261115-legacy-question-snapshots",
+  "inventory": {
+    "actualUnitLoaders": 32,
+    "currentQuestions": 3179,
+    "pairedQuestions": 1512,
+    "originalQuestions": 1763,
+    "fullSnapshots": 2789,
+    "choiceOnlyDeltas": 2,
+    "fullSnapshotsWithLeakedFieldsBefore": 414,
+    "fullSnapshotsWithLeakedFieldsAfter": 0,
+    "previouslyLeakedFields": {"verificationModel": 121, "workbookRef": 263, "diagnosticOverride": 382, "misconception": 57},
+    "fieldCountsMayOverlap": true,
+    "affectedStudentScoreCountEstablished": false
+  },
+  "restoration": {
+    "explicitFullSnapshotMarkerPreserved": true,
+    "legacyFullSnapshotsRecognizedByOriginalIdAndEightSharedFields": true,
+    "absentOptionalFieldsRestoredAsAbsent": true,
+    "nearestLaterSnapshotInheritanceForChoiceOnlyDeltasPreserved": true,
+    "savedAnswersGradesAndSelfChecksPreserved": true,
+    "explicitRetakesPreservePastAttempt": true,
+    "currentQuestionContentAndContractsChanged": false
+  },
+  "verification": {
+    "allCurrentLoaderResultsByteIdentical": true,
+    "fullSnapshotsExactlyRestored": 2789,
+    "partialDeltasUnchanged": 2,
+    "nativeTestFiles": 279,
+    "nativeTests": 1479,
+    "nativePassed": 1477,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

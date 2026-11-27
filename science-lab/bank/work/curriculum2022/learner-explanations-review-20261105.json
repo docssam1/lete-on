@@ -1,0 +1,439 @@
+{
+  "phase": 251,
+  "date": "2026-11-05",
+  "baseCommit": "9e8a7736693e8a95369bba0c385dfcf8c8f5e913",
+  "version": "20261105-learner-explanations",
+  "scope": "Learner-facing explanation of model/example data in10 current workbooks.12 distinct exact-string edits appear on14 student pages and12 shared teacher pages. Questions and runtime/classroom data remain exactly unchanged.",
+  "curriculumTermReview": {
+    "sourceSHA256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "ruleGroups": 21,
+    "candidateRows": 38,
+    "matchedUnits": [
+      "c22-s32-u03",
+      "c22-s42-u01",
+      "s31-u01",
+      "s31-u02"
+    ],
+    "decision": "Do not treat every matching token as an error. The sound model disclaimer needlessly used 진동수; simplify the learner text to 떨림 and 소리. Incorrect biological-classification and planet-mass choices are kept in context. Support-point labels are not automatically classified as a lever-law requirement by a keyword match.",
+    "limit": "A targeted term/field audit using21 rule groups and manual context review, not proof of full curriculum compliance or every semantic/assessment requirement."
+  },
+  "changes": [
+    "Replace 정밀 역서/실측 and production-oriented phrasing with a direct explanation that the provided numbers are set for practice.",
+    "Retain the distinction between actual observation, illustration and modeled data, without introducing unsupported image-rights commentary.",
+    "Retain 20cm,12:50,100g/200g,10seconds/4mL and stated diagram/photo counts; keep the same pressure/leakage/movable-part/waiting assumptions.",
+    "Keep the heat paragraph already explaining predicted versus measured values; a technical term match alone does not warrant an edit."
+  ],
+  "preservation": {
+    "workbookUnits": 32,
+    "questionsUnchanged": 3080,
+    "changedUnits": 10,
+    "changedSharedPages": [
+      {
+        "unit": "c22-s62-u04",
+        "collection": "pages",
+        "page": 19,
+        "title": "함께 생각해 보아요"
+      },
+      {
+        "unit": "c22-s62-u04",
+        "collection": "teacherStudentPages",
+        "page": 19,
+        "title": "함께 생각해 보아요"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "pages",
+        "page": 46,
+        "title": "같은 조건으로 밝기를 비교해요"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "pages",
+        "page": 106,
+        "title": "전기를 아끼는 계획을 실천하고 돌아봐요"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "teacherStudentPages",
+        "page": 46,
+        "title": "같은 조건으로 밝기를 비교해요"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "teacherStudentPages",
+        "page": 106,
+        "title": "전기를 아끼는 계획을 실천하고 돌아봐요"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "pages",
+        "page": 98,
+        "title": "생태계의 변화를 자료로 읽기"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "pages",
+        "page": 112,
+        "title": "사진보다 조건 있는 자료를 찾아요"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "teacherStudentPages",
+        "page": 98,
+        "title": "생태계의 변화를 자료로 읽기"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "teacherStudentPages",
+        "page": 112,
+        "title": "사진보다 조건 있는 자료를 찾아요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 30,
+        "title": "자료 · 고도와 그림자 그래프를 그려요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 48,
+        "title": "자료 · 고도와 기온 그래프를 그려요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 130,
+        "title": "주장과 두 근거를 한 장에 담아요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 30,
+        "title": "자료 · 고도와 그림자 그래프를 그려요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 48,
+        "title": "자료 · 고도와 기온 그래프를 그려요"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 130,
+        "title": "주장과 두 근거를 한 장에 담아요"
+      },
+      {
+        "unit": "s31-u01",
+        "collection": "pages",
+        "page": 8,
+        "title": "겉모습·거리·결과를 나누어 읽어요"
+      },
+      {
+        "unit": "s31-u01",
+        "collection": "teacherStudentPages",
+        "page": 8,
+        "title": "겉모습·거리·결과를 나누어 읽어요"
+      },
+      {
+        "unit": "s31-u02",
+        "collection": "pages",
+        "page": 16,
+        "title": "사진과 설명의 근거를 다시 찾아요"
+      },
+      {
+        "unit": "s31-u03",
+        "collection": "pages",
+        "page": 19,
+        "title": "관찰·설명·설계의 출처를 남겨요"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "collection": "pages",
+        "page": 5,
+        "title": "높낮이와 세기는 따로 비교해요"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "collection": "teacherStudentPages",
+        "page": 5,
+        "title": "높낮이와 세기는 따로 비교해요"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "collection": "pages",
+        "page": 8,
+        "title": "따뜻할 때와 찰 때 부피를 비교해요"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "collection": "teacherStudentPages",
+        "page": 8,
+        "title": "따뜻할 때와 찰 때 부피를 비교해요"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "collection": "pages",
+        "page": 19,
+        "title": "펌프의 횟수와 옮긴 물의 양을 비교해요"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "collection": "teacherStudentPages",
+        "page": 19,
+        "title": "펌프의 횟수와 옮긴 물의 양을 비교해요"
+      }
+    ],
+    "changedTextFields": [
+      {
+        "unit": "c22-s62-u04",
+        "collection": "pages",
+        "page": 19,
+        "path": "0.steps.1.1",
+        "before": "둘 다 가정 아래 만든 모형값이며 미래 실측이 아니에요.",
+        "after": "두 값은 조건을 정해 만든 모형값이에요. 실제로 관찰하거나 측정한 결과와 구별해요."
+      },
+      {
+        "unit": "c22-s62-u04",
+        "collection": "teacherStudentPages",
+        "page": 19,
+        "path": "0.steps.1.1",
+        "before": "둘 다 가정 아래 만든 모형값이며 미래 실측이 아니에요.",
+        "after": "두 값은 조건을 정해 만든 모형값이에요. 실제로 관찰하거나 측정한 결과와 구별해요."
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "pages",
+        "page": 46,
+        "path": "2.heads.0",
+        "before": "제공 연습 자료·실측 아님",
+        "after": "연습용으로 정한 값"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "pages",
+        "page": 106,
+        "path": "2.heads.0",
+        "before": "제공 연습 자료·실측 아님",
+        "after": "연습용으로 정한 값"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "teacherStudentPages",
+        "page": 46,
+        "path": "2.heads.0",
+        "before": "제공 연습 자료·실측 아님",
+        "after": "연습용으로 정한 값"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "collection": "teacherStudentPages",
+        "page": 106,
+        "path": "2.heads.0",
+        "before": "제공 연습 자료·실측 아님",
+        "after": "연습용으로 정한 값"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "pages",
+        "page": 98,
+        "path": "3.text",
+        "before": "사진 한 장의 생김새는 변화 전후 측정이 아니에요. **대상·조건·기간·측정한 양**이 있는 자료로 설명해요. 가상 연습값은 현재 국내 피해 실측이나 모든 생물의 반응이 아니에요.",
+        "after": "사진 한 장은 변화 전과 후를 실제로 측정한 기록이 아니에요. **무엇을, 어떤 조건에서, 얼마 동안, 얼마나 측정했는지** 알아볼 수 있는 자료로 설명해요. 주어진 가상값은 우리나라의 피해를 실제로 측정한 값이나 모든 생물의 반응을 나타내지는 않아요."
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "pages",
+        "page": 112,
+        "path": "2.hint",
+        "before": "설명 글·역사적 사례·가상 모형·현재 실측을 구별해요.",
+        "after": "설명 글과 과거의 사례, 가상 모형과 현재 직접 측정한 자료를 구별해요."
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "teacherStudentPages",
+        "page": 98,
+        "path": "3.text",
+        "before": "사진 한 장의 생김새는 변화 전후 측정이 아니에요. **대상·조건·기간·측정한 양**이 있는 자료로 설명해요. 가상 연습값은 현재 국내 피해 실측이나 모든 생물의 반응이 아니에요.",
+        "after": "사진 한 장은 변화 전과 후를 실제로 측정한 기록이 아니에요. **무엇을, 어떤 조건에서, 얼마 동안, 얼마나 측정했는지** 알아볼 수 있는 자료로 설명해요. 주어진 가상값은 우리나라의 피해를 실제로 측정한 값이나 모든 생물의 반응을 나타내지는 않아요."
+      },
+      {
+        "unit": "c22-s62-u02",
+        "collection": "teacherStudentPages",
+        "page": 112,
+        "path": "2.hint",
+        "before": "설명 글·역사적 사례·가상 모형·현재 실측을 구별해요.",
+        "after": "설명 글과 과거의 사례, 가상 모형과 현재 직접 측정한 자료를 구별해요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 30,
+        "path": "1.text",
+        "before": "학생 실측이나 정밀 역서가 아닌 연습 자료. 같은 수평면의 수직 막대20cm. 고도는 단순화 모형이며 남중은12:50으로 설정했다. 기온은 별도로 만든 통풍 그늘의 공기 온도 연습값이다.",
+        "after": "조건을 정해 만든 연습용 자료예요. 같은 수평면에 길이 20 cm인 막대를 수직으로 세웠다고 정했어요. 태양 고도는 단순한 모형값이고 남중 시각은 12:50으로 정했어요. 기온은 바람이 잘 통하는 그늘에서 잰 공기의 온도를 가정한 값이에요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 48,
+        "path": "1.text",
+        "before": "학생 실측이나 정밀 역서가 아닌 연습 자료. 같은 수평면의 수직 막대20cm. 고도는 단순화 모형이며 남중은12:50으로 설정했다. 기온은 별도로 만든 통풍 그늘의 공기 온도 연습값이다.",
+        "after": "조건을 정해 만든 연습용 자료예요. 같은 수평면에 길이 20 cm인 막대를 수직으로 세웠다고 정했어요. 태양 고도는 단순한 모형값이고 남중 시각은 12:50으로 정했어요. 기온은 바람이 잘 통하는 그늘에서 잰 공기의 온도를 가정한 값이에요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "pages",
+        "page": 130,
+        "path": "0.items.1",
+        "before": "계산/실측/연습/모형을 구별하고 조건과 출처를 써요.",
+        "after": "계산한 값과 직접 측정한 값, 연습 자료와 모형값을 구별하고 조건과 자료의 출처를 써요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 30,
+        "path": "1.text",
+        "before": "학생 실측이나 정밀 역서가 아닌 연습 자료. 같은 수평면의 수직 막대20cm. 고도는 단순화 모형이며 남중은12:50으로 설정했다. 기온은 별도로 만든 통풍 그늘의 공기 온도 연습값이다.",
+        "after": "조건을 정해 만든 연습용 자료예요. 같은 수평면에 길이 20 cm인 막대를 수직으로 세웠다고 정했어요. 태양 고도는 단순한 모형값이고 남중 시각은 12:50으로 정했어요. 기온은 바람이 잘 통하는 그늘에서 잰 공기의 온도를 가정한 값이에요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 48,
+        "path": "1.text",
+        "before": "학생 실측이나 정밀 역서가 아닌 연습 자료. 같은 수평면의 수직 막대20cm. 고도는 단순화 모형이며 남중은12:50으로 설정했다. 기온은 별도로 만든 통풍 그늘의 공기 온도 연습값이다.",
+        "after": "조건을 정해 만든 연습용 자료예요. 같은 수평면에 길이 20 cm인 막대를 수직으로 세웠다고 정했어요. 태양 고도는 단순한 모형값이고 남중 시각은 12:50으로 정했어요. 기온은 바람이 잘 통하는 그늘에서 잰 공기의 온도를 가정한 값이에요."
+      },
+      {
+        "unit": "c22-s62-u01",
+        "collection": "teacherStudentPages",
+        "page": 130,
+        "path": "0.items.1",
+        "before": "계산/실측/연습/모형을 구별하고 조건과 출처를 써요.",
+        "after": "계산한 값과 직접 측정한 값, 연습 자료와 모형값을 구별하고 조건과 자료의 출처를 써요."
+      },
+      {
+        "unit": "s31-u01",
+        "collection": "pages",
+        "page": 8,
+        "path": "1.text",
+        "before": "위치는 받침점에서의 같은 간격 눈금이에요. 모형 물체 가·다의 설정값은 각각100 g, 나는200 g이며 실제 측정값이 아니에요. 무게 수치 계산보다 같은 거리와 다른 거리의 관찰을 비교해요.",
+        "after": "눈금은 받침점에서 같은 간격으로 표시했어요. 모형에서 ‘가’와 ‘다’의 무게는 각각 100 g, ‘나’의 무게는 200 g으로 정했어요. 직접 잰 무게와 구별해요. 같은 거리에 놓았을 때와 다른 거리에 놓았을 때의 모습을 비교해 보아요."
+      },
+      {
+        "unit": "s31-u01",
+        "collection": "teacherStudentPages",
+        "page": 8,
+        "path": "1.text",
+        "before": "위치는 받침점에서의 같은 간격 눈금이에요. 모형 물체 가·다의 설정값은 각각100 g, 나는200 g이며 실제 측정값이 아니에요. 무게 수치 계산보다 같은 거리와 다른 거리의 관찰을 비교해요.",
+        "after": "눈금은 받침점에서 같은 간격으로 표시했어요. 모형에서 ‘가’와 ‘다’의 무게는 각각 100 g, ‘나’의 무게는 200 g으로 정했어요. 직접 잰 무게와 구별해요. 같은 거리에 놓았을 때와 다른 거리에 놓았을 때의 모습을 비교해 보아요."
+      },
+      {
+        "unit": "s31-u02",
+        "collection": "pages",
+        "page": 16,
+        "path": "2.text",
+        "before": "동물 사진8장은 기존 지필드 교재의 관찰 자료를 그대로 사용했어요. 오리와 물갈퀴 도구의 설명용 그림은 실제 관찰·성능 시험 사진이 아니에요. 자료의 생물학적 분류 이름이나 어려운 적응 원리는 이 단원의 필수 설명이 아니에요.",
+        "after": "동물 사진 8장에서 생김새와 사는 곳을 살펴보아요. 오리와 물갈퀴 도구를 설명하는 그림은 실제 관찰하거나 시험한 기록과 구별해요. 사진과 그림에서 어떤 특징을 찾았는지 설명해 보아요."
+      },
+      {
+        "unit": "s31-u03",
+        "collection": "pages",
+        "page": 19,
+        "path": "2.text",
+        "before": "잎 관찰 사진6장은 기존 지필드 교재 자료예요. 관찰 준비와 연잎 물방울의 설명 그림2장은 실제 학생 관찰·성능 시험 기록이 아니에요. 익명 잎의 가상 길이값도 사진 속 식물의 측정값과 구별해요.",
+        "after": "잎 사진 6장에서 보이는 특징을 살펴보아요. 관찰 준비와 연잎의 물방울을 설명하는 그림 2장은 직접 관찰한 기록과 구별해요. 연습 자료에 나온 잎의 길이는 연습용으로 정한 값이며, 사진 속 식물을 재어 얻은 값과는 달라요."
+      },
+      {
+        "unit": "c22-s32-u03",
+        "collection": "pages",
+        "page": 5,
+        "path": "0.text",
+        "before": "다음은 수업 3D의 모형 결과예요. 재생되는 음과 화면 떨림은 차이를 알아보기 위한 모형이며 실제 자의 진동수·음량을 측정한 값이 아니에요.",
+        "after": "다음은 자의 떨림과 소리의 차이를 비교하도록 만든 모형 자료예요. 화면과 소리는 차이를 알아보기 위한 예이며, 실제 자를 관찰하고 측정한 기록과 구별해요."
+      },
+      {
+        "unit": "c22-s32-u03",
+        "collection": "teacherStudentPages",
+        "page": 5,
+        "path": "0.text",
+        "before": "다음은 수업 3D의 모형 결과예요. 재생되는 음과 화면 떨림은 차이를 알아보기 위한 모형이며 실제 자의 진동수·음량을 측정한 값이 아니에요.",
+        "after": "다음은 자의 떨림과 소리의 차이를 비교하도록 만든 모형 자료예요. 화면과 소리는 차이를 알아보기 위한 예이며, 실제 자를 관찰하고 측정한 기록과 구별해요."
+      },
+      {
+        "unit": "c22-s42-u03",
+        "collection": "pages",
+        "page": 8,
+        "path": "0.text",
+        "before": "공기가 새지 않고 피스톤이나 주머니가 움직일 수 있고 바깥 압력이 거의 같은 장치를 가정한 가상 기록이에요. 각 조건에서 충분히 기다린 뒤 읽었다고 정했어요. 실제 측정값은 아니에요.",
+        "after": "공기가 새지 않고 피스톤이나 주머니가 움직일 수 있는 장치의 연습 자료예요. 장치 바깥의 압력은 거의 같고, 각 조건에서 충분히 기다린 뒤 값을 읽었다고 정했어요. 직접 측정한 기록과는 구별해요."
+      },
+      {
+        "unit": "c22-s42-u03",
+        "collection": "teacherStudentPages",
+        "page": 8,
+        "path": "0.text",
+        "before": "공기가 새지 않고 피스톤이나 주머니가 움직일 수 있고 바깥 압력이 거의 같은 장치를 가정한 가상 기록이에요. 각 조건에서 충분히 기다린 뒤 읽었다고 정했어요. 실제 측정값은 아니에요.",
+        "after": "공기가 새지 않고 피스톤이나 주머니가 움직일 수 있는 장치의 연습 자료예요. 장치 바깥의 압력은 거의 같고, 각 조건에서 충분히 기다린 뒤 값을 읽었다고 정했어요. 직접 측정한 기록과는 구별해요."
+      },
+      {
+        "unit": "c22-s51-u04",
+        "collection": "pages",
+        "page": 19,
+        "path": "0.text",
+        "before": "실제 측정값이 아닌 연습 가정이에요. 각10초, 한 번4mL가 같다고 가정해요.",
+        "after": "실제로 측정한 기록이 아니라 조건을 정해 만든 연습 자료예요. 각각 10초, 한 번에 4 mL라는 조건을 같게 두었어요."
+      },
+      {
+        "unit": "c22-s51-u04",
+        "collection": "teacherStudentPages",
+        "page": 19,
+        "path": "0.text",
+        "before": "실제 측정값이 아닌 연습 가정이에요. 각10초, 한 번4mL가 같다고 가정해요.",
+        "after": "실제로 측정한 기록이 아니라 조건을 정해 만든 연습 자료예요. 각각 10초, 한 번에 4 mL라는 조건을 같게 두었어요."
+      }
+    ],
+    "studentPagesChanged": 14,
+    "teacherSharedPagesChanged": 12,
+    "htmlTextFieldsChecked": 28,
+    "all10PriorWorkbooksExactlyPreserved": true,
+    "allQuestionFieldsAndContractsPreserved": true,
+    "allExperimentalNumericConditionsPreserved": true,
+    "allImagesRailsWritingSpaceAndLayoutDataPreserved": true,
+    "runtimeUnitsExactlyPreserved": 32,
+    "currentItemsPreserved": 3179,
+    "sourceItemsPreserved": 1512,
+    "similarItemsPreserved": 1512,
+    "classroomItemsPreserved": 1635,
+    "selectedChecksPreserved": 490,
+    "slideArraysExactlyPreserved": 64,
+    "paperProductsUnchanged": 108,
+    "unchangedAssetHashes": 1249,
+    "syntaxFiles": 14,
+    "generatedWorkbookBodiesPreserved": 10,
+    "actualStudentStorageAccessed": false,
+    "browserOrA4Verified": false
+  },
+  "priorLayer": "Export learnerPriorWorkbook before applying the new prose layer. All10 prior objects match baseline exactly, including the earlier observation-language layer. The existing observation-language regression reads that prior object where present so its original whole-object assertion remains valid; the current learner layer is checked independently against32 workbook states and rendered HTML.",
+  "tests": {
+    "total": 842,
+    "passed": 840,
+    "failed": 0,
+    "skipped": 2,
+    "newUnitTestsAdded": false,
+    "reason": "This is a reversible wording edit with no new scoring or persistence behavior. Existing full regressions and targeted source/HTML preservation checks are sufficient.",
+    "scope": "Full v2 regression suite;14 changed JS files parse; all10 generated workbook bodies match after removing the outer hook. Current student/teacher HTML contains28 complete edited text fields. This is native HTML validation, not a PC/mobile/A4 rendering result."
+  },
+  "evidence": "science-question-review/phase251: scope-audit with primary-text hash and bounded patterns/manual decisions,32 workbook/128 paper/64 deck/native runtime before-after states,10 exact prior objects, source/asset hashes, complete paragraph checks and final tests.",
+  "status": {
+    "localVerified": true,
+    "actualBrowserOrA4Verified": false,
+    "mandatory3DRuntimeVerified": false,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false
+  },
+  "remaining": "Full semantic and assessment-scope review is not proven by the targeted term scan. Actual PC/mobile/A4/audio/WebGL and mandatory3D gates, v1 consistency and main integration/deployment remain. Prior browser reauthorization has no observed reply; no browser workaround was used."
+}

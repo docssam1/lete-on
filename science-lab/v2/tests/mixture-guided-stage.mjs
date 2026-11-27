@@ -1,0 +1,5 @@
+import{beforeMixtureMixed}from'./mixture-mixed-stage.mjs';
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{MIXTURE_GUIDED_VERSION}from'../mixture-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([4,10,16,22,28,34,40,45,46,49,50,53,54,56,57,58,68,72,76,80,83,84,88,92,95,96]);
+export function beforeMixtureTask(q){q=beforeMixtureMixed(q);if(q.contentVersion!==MIXTURE_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function mixtureUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="mixture-book-(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,96);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,70);return kept;}

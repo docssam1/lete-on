@@ -1,0 +1,323 @@
+{
+  "phase": 194,
+  "date": "2026-11-04",
+  "unit": "c22-s52-u02",
+  "title": "열과 우리 생활",
+  "branch": "codex/science-workbook-integration-20261102",
+  "baseCommit": "fbf6d95e0db82f8434f7308e9995fd9ddfe159e1",
+  "status": "local integration candidate; not pushed or deployed",
+  "integratedWorkbooks": 22,
+  "integratedFullClassrooms": 22,
+  "studentSlides": 60,
+  "teacherSlides": 61,
+  "manualActivities": 23,
+  "totalPlanMinutes": 310,
+  "planPhaseIdsAndMinutesPreserved": true,
+  "originalPlanPhases": 14,
+  "comparisonCases": [
+    "measure",
+    "contact",
+    "conduction",
+    "water",
+    "air",
+    "radiation",
+    "insulation",
+    "retest"
+  ],
+  "comparisonRowsKey": "heatCompareRows",
+  "originalInquiryRowsKey": "heatInquiryRows",
+  "sourceQuestions": 104,
+  "sourceSimilarQuestions": 75,
+  "selectedChecks": 16,
+  "selectedOriginalPresentationsUnchanged": 14,
+  "versionedChecks": [
+    65,
+    67
+  ],
+  "questionVersion": "20261104-heat-class",
+  "oldQuestionPresentationVersion": 1,
+  "editedWrittenQuestionRequiresTeacherReview": 67,
+  "oldSavedDailyPaperIsReadOnlyAndArchivedOnNewAttempt": true,
+  "versionedDeckAnswerAndTeacherMemoKeys": true,
+  "versionedTeacherQueueKeepsQuestionSnapshot": true,
+  "standards": [
+    "6과07-01",
+    "6과07-02",
+    "6과07-03",
+    "6과07-04"
+  ],
+  "curriculumReferences": [
+    {
+      "title": "교육부2022-33 별책9 과학과 교육과정",
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0&search=",
+      "localDocument": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/curriculum-standards/science-curriculum.hwp",
+      "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+      "lines": [
+        [
+          813,
+          827
+        ],
+        [
+          1011,
+          1026
+        ]
+      ],
+      "use": "6과07-01~04·탐구/해설/고려 사항; 기본 본문에서 열평형 용어 제외, 상위9과03과 구별"
+    },
+    {
+      "title": "미국 에너지부 Heat Flow",
+      "url": "https://bsesc.energy.gov/energy-basics/heat-flow",
+      "use": "전도·대류·복사와 단열·틈의 역할",
+      "read": true
+    },
+    {
+      "title": "미국 에너지부 Types of Insulation",
+      "url": "https://bsesc.energy.gov/energy-basics/types-insulation",
+      "use": "전도/대류 감소와 반사면 인접 공기 공간·시공 조건",
+      "read": true
+    },
+    {
+      "title": "NASA Small Spacecraft Thermal Control",
+      "url": "https://www.nasa.gov/smallsat-institute/sst-soa/thermal-control/",
+      "use": "진공의 대류 부재와 구조를 통한 전도·외부 복사, 표면 흡수/방출의 구별",
+      "readLines": [
+        [
+          398,
+          409
+        ],
+        [
+          528,
+          554
+        ]
+      ]
+    },
+    {
+      "title": "NIST SI Units – Temperature",
+      "url": "https://www.nist.gov/pml/owm/si-units-temperature",
+      "use": "켈빈과 섭씨온도의 척도·같은 크기의 온도 간격, 심화9쪽",
+      "readLines": [
+        [
+          200,
+          203
+        ]
+      ]
+    }
+  ],
+  "verification": {
+    "integration": {
+      "protectedDataAndAssetsAndPriorPdfs": 1858,
+      "unchangedOldPdfs": 52,
+      "unchangedWorkbookHtmlProducts": 88,
+      "unchangedOtherClassroomArrays": 42,
+      "intentionalChanges": [
+        {
+          "unit": "c22-s52-u02",
+          "mode": "self",
+          "before": 99,
+          "after": 60
+        },
+        {
+          "unit": "c22-s52-u02",
+          "mode": "teach",
+          "before": 100,
+          "after": 61
+        }
+      ],
+      "sourceItems": 104,
+      "similarItems": 75,
+      "selectedQuestionsExactlyUnchanged": 14,
+      "versionedQuestions": [
+        65,
+        67
+      ],
+      "originalPresentationsAndDailyAnswerHistoryPreserved": true,
+      "originalActivities": [
+        "measure",
+        "contact",
+        "conduction",
+        "water",
+        "air",
+        "radiation",
+        "insulation",
+        "design",
+        "build",
+        "create",
+        "share"
+      ],
+      "originalReportAndInquiryConfigPreserved": true,
+      "otherIntentionalRepairs": [
+        "mixture comparison table tbody markup and dk-body link CSS selector"
+      ],
+      "newImages": 0,
+      "newPdfs": 0,
+      "new3D": 0,
+      "newOcr": 0,
+      "actualStudentStorageAccess": 0,
+      "browserVerified": false
+    },
+    "routes": {
+      "unit": "c22-s52-u02",
+      "startLinks": true,
+      "actualPageStartLabClassDailyLabBookAndRecords": true,
+      "defaultThinkingClass": true,
+      "checksSharedWithDaily": 16,
+      "legacyDailyQuestions": 16,
+      "teacherStudentReads": 0,
+      "teacherStudentWrites": 0,
+      "comparisonKey": "heatCompareRows",
+      "actualInquiryKey": "heatInquiryRows",
+      "originalRecordsBookExactlyUnchanged": true,
+      "originalReportAndObservationStatePreserved": true,
+      "noNew3D": true,
+      "comparisonEventHandlersActuallyExecuted": true,
+      "releaseDisposesMountedActivities": true,
+      "lateReleasedCallbackCannotWrite": true,
+      "browserVerified": false
+    },
+    "events": {
+      "teacherMounts": 1,
+      "teacherPersonal": false,
+      "staleLegacyBattleIgnored": true,
+      "comparisonClickDoesNotAdvance": true,
+      "outsideClickAdvances": true,
+      "manualActivities": 23,
+      "noTimerOnActivity": true,
+      "explicitNextWorks": true,
+      "browserVerified": false
+    },
+    "tests": {
+      "v2": {
+        "tests": 605,
+        "pass": 603,
+        "fail": 0,
+        "skipped": 2
+      },
+      "bank": {
+        "tests": 299,
+        "pass": 299,
+        "fail": 0,
+        "skipped": 0
+      }
+    },
+    "htmlStructure": {
+      "renderedComparisonCases": 16,
+      "validComparisonTables": 32,
+      "scopedTableHeaders": 195,
+      "invalidTags": 0,
+      "browserVerified": false
+    },
+    "assetsAndPreviousVision": {
+      "assets": [
+        {
+          "name": "measure",
+          "path": "science-lab/assets/activities/c22-s52-u02/measure-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "2d4df8a1f4b77c7c40e5f6ee439a4e0e4775638f592d92dee9048ae329d1f885",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "contact",
+          "path": "science-lab/assets/activities/c22-s52-u02/contact-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "74717360c112c8d7b1a32f6dc4cc4bf533257c33cafb7a27f3353239969907cf",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "conduction",
+          "path": "science-lab/assets/activities/c22-s52-u02/conduction-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "950805d708fd4393d2fd534514b4fbc90b6811f08271843c7572a4c3319735af",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "water",
+          "path": "science-lab/assets/activities/c22-s52-u02/water-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "c04c5a3cc9627ae95997496feffaf8e3cbec4a1fde2bdc658d228a9acc0b9999",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "air",
+          "path": "science-lab/assets/activities/c22-s52-u02/air-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "2d4df34be70c7f93075bb37ebed3717ccde5dbb230c0a5651de2fa59a04f46b2",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "light",
+          "path": "science-lab/assets/activities/c22-s52-u02/light-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "2899c641cc08679aa41c273e6219dbc8d251137c36d67d91c8a17d8900afe80a",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "insulation",
+          "path": "science-lab/assets/activities/c22-s52-u02/insulation-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "77941c95b3cf851df685952601ec7f9f764f819d42ba59fa3e72fb919aa829bf",
+          "candidatePresent": true,
+          "sameBytes": true
+        },
+        {
+          "name": "prototype",
+          "path": "science-lab/assets/activities/c22-s52-u02/prototype-photo-v1.webp",
+          "size": [
+            1536,
+            1024
+          ],
+          "sha256": "952fe95e40777778d3f4e5a36f3e687f16d2d507ffe9a074ce1578021dbf4d82",
+          "candidatePresent": true,
+          "sameBytes": true
+        }
+      ],
+      "newImages": 0,
+      "newOcr": 0,
+      "newPdfs": 0,
+      "priorVisualAndVisionReview": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase193",
+      "priorNativeVisionRuns": 91,
+      "currentAssetBytesExactlyMatchPriorReview": true,
+      "classroomRenderedInBrowser": false
+    }
+  },
+  "cacheVersion": "20261104-heat-class",
+  "additionalRepairs": [
+    "mixture-compare tbody markup",
+    "mixture-thinking dk-body link CSS selector; cache table-fix"
+  ],
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase194",
+  "newImageOr3DOrPaidApiCalls": 0,
+  "newPdfOrOcrRuns": 0,
+  "gatesRemaining": [
+    "Actual browser PC/mobile/CSS/print/audio/WebGL review; existing target denial not bypassed",
+    "check-science-3d.mjs must pass before main; not run through a denied local browser target",
+    "Weather and energy classroom/workbook integration; latest main integration; authorized publishing"
+  ],
+  "goalStatus": "active"
+}

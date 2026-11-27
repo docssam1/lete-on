@@ -1,0 +1,5 @@
+import{beforeMagnetMixed}from'./magnet-mixed-stage.mjs';
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{MAGNET_GUIDED_VERSION}from'../magnet-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([35,36,37,38,39,40,53,54,75,76,77,78,79,80]);
+export function beforeMagnetTask(q){q=beforeMagnetMixed(q);if(q.contentVersion!==MAGNET_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function magnetUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="s41-u01-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,80);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,66);return kept;}

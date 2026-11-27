@@ -1,0 +1,109 @@
+{
+  "date": "2026-10-21",
+  "unit": "c22-s61-u01",
+  "title": "산과 염기",
+  "environment": {
+    "provider": "OpenAI",
+    "agent": "Codex",
+    "host": "Mac",
+    "branch": "codex/science-gas-thinking-20261020",
+    "head": "1b0b9cbf90f69e5592346f75b5fd2d5841cb6ead"
+  },
+  "scope": "기본 사고력 수업 연결·교재의 긴 기록/보고서14쪽 분리. 128문항 교재의 상업 지면 보강과 최종 A4/PDF 검수는 다음 단계.",
+  "basicThinkingLessonVerified": true,
+  "unitSoftwareComplete": false,
+  "classSlides": {
+    "self": 59,
+    "teach": 60
+  },
+  "standards": [
+    "6과09-01",
+    "6과09-02",
+    "6과09-03",
+    "6과09-04"
+  ],
+  "courseMinutesExample": 205,
+  "extraTime": "교사 준비·반응 대기·반복·본문 조사·실제 의견 수신 시간은 별도 확보",
+  "thinkingSequence": [
+    "겉보기 분류와 새 기준",
+    "지시약의 실제 전후 변화 비교",
+    "탄산 칼슘/단백질의 성질과 교사 반응 시범",
+    "교사 혼합 시범·추가량/누적량·색만으로 단정하지 않기",
+    "생활 본문 사례",
+    "산성비·토양/해양 산성화의 원인/현황/전망/대책",
+    "소개 자료 실제 제작·설명·질문으로 보완",
+    "16문항 확인"
+  ],
+  "defaultRecordForm": false,
+  "defaultReport": false,
+  "originalOnlineLessonPresentBeforeThisChange": false,
+  "existingBookQuestionsPreserved": 128,
+  "questionBankQuestionsPreserved": 266,
+  "sourceReviewOnly": 3,
+  "currentFullSourceExamsMissing": true,
+  "mainCompanionPages": {
+    "student": 63,
+    "teacher": 106
+  },
+  "preservedStandaloneBook": {
+    "module": "data/book/c22-s61-u01.acid-book.js",
+    "student": 77,
+    "teacher": 120,
+    "answers": 43,
+    "quick": 6,
+    "recordPages": 12,
+    "reportPages": 2,
+    "byteExact": true
+  },
+  "questionChecks": {
+    "total": 16,
+    "responseForms": 8,
+    "closed": 13,
+    "teacherReview": 3
+  },
+  "reusedPhotos": 8,
+  "newPhotos": 0,
+  "new3D": 0,
+  "apiCalls": 0,
+  "primarySources": [
+    "https://www.epa.gov/acidrain/what-acid-rain",
+    "https://www.epa.gov/acidrain/effects-acid-rain",
+    "https://oceanacidification.noaa.gov/what-is-ocean-acidification/"
+  ],
+  "sourceLimits": [
+    "중성/pH/중화/이온 이론을 학생 필수 내용으로 넣지 않음",
+    "미국/다른 지역 자료를 우리 지역 현재 피해로 전용하지 않음",
+    "가상0/2/4mL를 실제 배합이나 학생 관찰값으로 쓰지 않음",
+    "설명 사진으로 실제 실험/측정·첨가량·피해 원인을 확정하지 않음"
+  ],
+  "verification": {
+    "classViews": 238,
+    "studentExplanationOpenedViews": 24,
+    "teacherExplanationOpenedViews": 56,
+    "answerAttempts": 32,
+    "answerAttemptsClosed": 26,
+    "answerAttemptsReview": 6,
+    "companionWebViews": 254,
+    "sourcePdfPagesDirectlyReviewed": 11,
+    "studentScreensDirectlyReviewed": 118,
+    "studentContactSheets": 8,
+    "tests": 804,
+    "passed": 802,
+    "existingSkipped": 2,
+    "failed": 0,
+    "browserErrors": 0,
+    "overflowOrBrokenImages": 0,
+    "initialAnswersHidden": true,
+    "firstWrongAnswerHidden": true,
+    "explicitReveal": true,
+    "oldStorageSentinelsPreserved": true,
+    "phoneTallyMinimumPx": 44,
+    "keyboardFocusPx": 3
+  },
+  "pdfCreatedThisPhase": false,
+  "formalWorkbookUpgradePending": true,
+  "committed": false,
+  "pushed": false,
+  "deployed": false,
+  "overallGoalComplete": false
+}

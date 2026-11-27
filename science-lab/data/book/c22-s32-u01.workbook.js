@@ -1,5 +1,14 @@
+import{withMaterialReadingWorkbook}from'./material-reading-criteria.js?v=20261115-material-reading-criteria';
+import {withGrade3StudyNotes} from './grade3-study-notes.js?v=20261108-grade3-term2-study-notes';
+import{withGrade3PracticeWorkbook}from'./c22-s32-practice-language.js?v=20261108-grade3-material-language';
+import{withMaterialPhotoLanguage,withMaterialLearnerReasoning}from'./c22-s32-u01.rail-notes.js?v=20261105-material-learner-reasoning';
+import {withWorkbookAnswerLanguage} from './workbook-answer-language.js';
+import {withMaterialEarthStudentLanguage} from './material-earth-student-language.js';
+import {withMaterialsBodyLanguage} from './material-earth-body-language.js';
+import {withMaterialsRails} from './c22-s32-u01.rail-notes.js';
+import {withStudentOpeningLanguage} from './student-opening-language.js';
 // 물체와 물질 A4 교재. scripts/gen-science-workbook-c22s32u01.mjs가 생성.
-export const workbook = {
+const baseWorkbook = {
  "unit": "c22-s32-u01",
  "title": "물체와 물질",
  "semester": "3-2",
@@ -636,7 +645,7 @@ export const workbook = {
    "topic": "물질별 분류",
    "prompt": "물체 모양이 같으면 재료도 같다는 생각을 점검할 자료는 무엇인가요?",
    "answer": "④ 같은 모양의 유리컵과 플라스틱 컵",
-   "explanation": "같은 모양의 유리컵과 플라스틱 컵을 비교하면 모양이 같아도 재료는 다를 수 있음을 보여 줘요. 철 못끼리 길이만 비교하거나 같은 물체의 앞뒤를 보는 것은 서로 다른 재료의 반례가 아니에요.",
+   "explanation": "두 컵은 모양이 같지만 하나는 유리, 다른 하나는 플라스틱으로 만들었어요. 따라서 모양이 같아도 재료는 다를 수 있어요. 철 못 두 개나 같은 물체의 앞뒤는 재료가 다른 두 물체를 비교한 것이 아니에요.",
    "misconception": "물체·물질·성질을 구별하고 자료에서 확인한 시료의 범위 안에서 설명해요.",
    "criteria": "관찰한 특징과 비교 조건을 쓰임에 연결한 같은 뜻의 답을 인정해요.",
    "sourceId": "c22-s32-u01-b20",
@@ -7981,3 +7990,11 @@ export const workbook = {
   }
  ]
 };
+
+export const materialPhotoPriorWorkbook=withWorkbookAnswerLanguage(withMaterialEarthStudentLanguage(withMaterialsBodyLanguage(withStudentOpeningLanguage(withMaterialsRails(baseWorkbook)))));
+export const materialReasoningPriorWorkbook=withMaterialPhotoLanguage(materialPhotoPriorWorkbook);
+export const materialElementaryPriorWorkbook=withMaterialLearnerReasoning(materialReasoningPriorWorkbook);
+export const materialStudyNotesPriorWorkbook=withGrade3PracticeWorkbook(materialElementaryPriorWorkbook);
+export const materialReadingPriorWorkbook=withGrade3StudyNotes(materialStudyNotesPriorWorkbook);
+
+export const workbook=withMaterialReadingWorkbook(materialReadingPriorWorkbook);

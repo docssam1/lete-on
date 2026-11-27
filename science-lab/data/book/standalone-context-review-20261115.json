@@ -1,0 +1,53 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "사진·표 없이 따로 제시되던 생물 2문항과 진로 1문항의 자료 연결",
+  "contentVersion": "20261115-standalone-question-context",
+  "questions": ["s41-u04-b09", "s41-u04-b16", "c22-s62-u04-b032"],
+  "discovery": {"unitLoaders": 32, "currentItemsAndSimilarRowsScreened": 4691, "referenceCandidates": 276, "confirmedMissingContexts": 3, "allCandidateMeaningsReviewed": false},
+  "bacteriaPhoto": {
+    "path": "assets/bank/s41-u04/s3-q11.webp",
+    "sha256": "0e25085d414a29f9a5fc462fcc863a4177787fb409b2e09e895e47b32aa304f0",
+    "bytes": 24402,
+    "width": 354,
+    "height": 213,
+    "existingBytesPreserved": true,
+    "newImageGenerated": false,
+    "questionPanel": "오른쪽 위",
+    "colorProcessingIsExplicitQuestionAssumption": true,
+    "directlyInspected": true,
+    "appleVision": {"computePolicy": "CPU-only", "frames": 1, "recognizedLines": 0, "status": "ok"}
+  },
+  "careerWaterData": {
+    "reusedFromQuestion": "c22-s62-u04-w018",
+    "attachedToQuestion": "c22-s62-u04-w032",
+    "rows": [["ㄱ", "60 L", "50 L"], ["ㄴ", "60 L", "70 L"], ["ㄷ", "60 L", "55 L"]],
+    "fictionalPracticeNoticePreserved": true,
+    "workbookAndBankPaperUseSameTable": true,
+    "drawingSpaceMinimumMmPreserved": 120,
+    "drawingExplanationLinesPreserved": 3
+  },
+  "history": {
+    "fullSnapshotKind": "full-question",
+    "newlyAddedFieldsDoNotLeakIntoPriorQuestions": true,
+    "legacyChoiceOnlyDeltasPreserved": true,
+    "savedAnswersAndGradingPreserved": true
+  },
+  "verification": {
+    "actualUnitLoaders": 32,
+    "currentItemsCompared": 3179,
+    "unchangedCurrentItems": 3176,
+    "originalQuestionsPreserved": 1763,
+    "pairedRowsPreserved": true,
+    "answerContractsExplanationsAndTaxonomyPreserved": true,
+    "onlineDailyClassroomAndCombinedPaperDataChecked": true,
+    "nativeTestFiles": 278,
+    "nativeTests": 1477,
+    "nativePassed": 1475,
+    "nativeFailed": 0,
+    "browserTestsSkipped": 2,
+    "bankAuditPassed": true,
+    "taxonomyCheckPassed": true,
+    "actualBrowserOrPrintLayoutVerified": false
+  },
+  "remaining": ["현행 원문 없는 세 단원과 전체 현행 판본 확보", "실제 PC·휴대폰·A4·음성·WebGL·3D 검수", "운영 메인 병합·배포"]
+}

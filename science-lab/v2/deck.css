@@ -348,3 +348,13 @@
 .dk-mc.learned.done { grid-template-columns: 1fr 1fr; gap: .4cqw; margin: .6cqw 0; } .dk-mc.learned.done button { font-size: 1.4cqw; padding: .4cqw .9cqw; }
 .dk-lsum .dk-points.big li { font-size: 1.9cqw; margin: .3cqw 0; } .dk-lsum .dk-sub { margin-top: .4cqw; }
 @media (max-width: 760px) { .dk-mc.learned.done { grid-template-columns: 1fr; } .dk-mc.learned.done button { font-size: 14px; } .dk-lsum .dk-points.big li { font-size: 16px; } }
+
+/* 휴대폰 스스로 공부하기도 교재와 같은 고딕 본문 크기로 읽는다. */
+@media screen and (max-width:760px){
+ .dk-self .dk-stage,.dk-self .dk-stage .dk-body,.dk-self .dk-stage.intro .dk-body p{font-size:18px;line-height:1.75}
+ .dk-self .dk-stage :is(.dk-q,.dk-big,.dk-goal,.dk-ans,.dk-in,.dk-given,.dk-tbl,.dk-chk,.dk-choices button,.dk-dq,.dk-dpick .dk-choices button){font-size:18px;line-height:1.7}
+ .dk-self .dk-stage .dk-tbl :is(th,td){white-space:normal;overflow-wrap:anywhere}
+ .dk-self .dk-stage :is(.dk-sub,.dk-tip,.dk-fb){font-size:16px;line-height:1.7}
+ .dk-self .dk-stage .dk-h{font-family:var(--body);font-size:26px;font-weight:700;letter-spacing:normal;line-height:1.4}
+ .dk-self .dk-foot,.dk-self .dk-stage .dk-art .bk-photo figcaption{font-size:14px;line-height:1.5;color:#5b6577}
+}

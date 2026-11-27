@@ -1,0 +1,497 @@
+{
+  "date": "2026-11-06",
+  "unit": "c22-s62-u03",
+  "scope": "Elementary question wording, conditions and equivalent labels; preserve every scoring rule and prior version.",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "branch": "codex/science-workbook-integration-20261102",
+  "priorLocalCommit": "7acdf686757c1c8192e2926097b66f2992223930",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "reviewParent": "bc5380142d45188d281be561d866fd8346510186",
+  "workbookQuestionsRead": 128,
+  "workbookQuestionsEdited": 118,
+  "fieldsEdited": 237,
+  "explanationsEdited": 116,
+  "promptsEdited": 37,
+  "sampleOnlyContracts": 25,
+  "choiceAnswerLabelsUpdated": [
+    2,
+    18,
+    49
+  ],
+  "quickAnswerFiguresChanged": 2,
+  "quickAnswerRowsChanged": 3,
+  "practicePresentationsEdited": 118,
+  "classroomChecksEdited": 14,
+  "independentPairedQuestionsPreserved": 58,
+  "sourceQuestions": 0,
+  "similarQuestions": 0,
+  "pages": 125,
+  "studentTeacherPagesEdited": [
+    2,
+    46,
+    77,
+    106,
+    120,
+    124,
+    125
+  ],
+  "priorVersionRestorationVerified": true,
+  "allScoringRulesPreserved": true,
+  "legacyBookReferenceRetained": true,
+  "legacyAndStudentLanguageWrapperProtectFutureVersions": true,
+  "independentBankPaperRetainsPriorEditorialStage": true,
+  "scienceEvidence": {
+    "curriculum": {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "document": "교육부2022-33 별책9",
+      "codes": [
+        "6과15-01",
+        "6과15-02",
+        "6과15-03",
+        "6과15-04"
+      ],
+      "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "checkedLines": [
+        946,
+        965
+      ],
+      "scope": "한전구회로와도체/부도체,전지직렬만비교,전지이용전자석/전지수와세기/방향과극/영구자석비교,안전·효율적사용.학생본문에전구직병렬·전류에의한자기장·옴/오른손법칙추가없음."
+    },
+    "sources": [
+      {
+        "url": "https://www.nsta.org/lesson-plan/batteries-bulbs-and-wires",
+        "read": "Purpose37 and explanation47~52",
+        "supports": "전구옆/바닥금속의두접점과전구를거치는완전한회로",
+        "notImported": "전류/전자흐름방향·새직접접촉조작·원본probe문항/답"
+      },
+      {
+        "url": "https://stem-tools.jlab.org/qa/electromagnet",
+        "read": "Insulatedwire/iron/battery11,polarity37,heat41",
+        "supports": "절연선·철심·전지와전자석,연결방향을바꾸면극이바뀜,전류가흐를때발열",
+        "notImported": "새길이/굵기/전지규격·학생피복제거·전지추가·자기장/오른손법칙·열수식;분리뒤항상자성0이라는단정은쓰지않음"
+      },
+      {
+        "url": "https://www.pa.uky.edu/sciworks/physicspettingzoo/Electromagnet.htm",
+        "read": "Advice6~7 and questions11~13",
+        "supports": "사용뒤철심에자성이남을수있음,스위치계속켜두지않음,나침반과전지방향비교",
+        "notImported": "장치별정격/시간·자기장개념·새제작절차"
+      },
+      {
+        "url": "https://oem.energizer.com/english/dos-donts/",
+        "read": "Batterycare112~114,119,126~132",
+        "supports": "지정크기/종류/+−방향·새것헌것혼용금지·금속으로양극직접잇지않음·가열/훼손금지",
+        "notImported": "의료/섭취처치·새충전/분해/수리절차·특정제품추천"
+      },
+      {
+        "url": "https://www.energystar.gov/products/learn-about-brightness",
+        "read": "Brightness11~12",
+        "supports": "필요한밝기를유지하면서전기를덜쓰는조명선택",
+        "notImported": "루멘표/새와트수·요금/배출환산·제품추천/구매"
+      }
+    ],
+    "supplementaryPageOpenedNotClaimedFullyReviewed": "https://www.teachengineering.org/activities/cub_mag_lesson2_activity1",
+    "newMeasurements": false,
+    "newConstructionProcedures": false
+  },
+  "nativeValidation": {
+    "priorNativeWorkbookPreserved": true,
+    "editorialBytePrefixPreserved": true,
+    "responseKeysChecked": 32,
+    "explanationsRendered": 232,
+    "syntaxFiles": 9,
+    "actualBrowserVerified": false
+  },
+  "preservation": {
+    "workbooks": 32,
+    "otherWorkbooksUnchanged": 31,
+    "questions": 3080,
+    "questionPatches": 118,
+    "bankPatches": 118,
+    "sampleOnlyContracts": 25,
+    "independentPairedQuestionsPreserved": 58,
+    "changedClassroomChecks": [
+      "c22-s62-u03-b001",
+      "c22-s62-u03-b019",
+      "c22-s62-u03-b025",
+      "c22-s62-u03-b029",
+      "c22-s62-u03-b033",
+      "c22-s62-u03-b035",
+      "c22-s62-u03-b058",
+      "c22-s62-u03-b061",
+      "c22-s62-u03-b085",
+      "c22-s62-u03-b087",
+      "c22-s62-u03-b092",
+      "c22-s62-u03-b095",
+      "c22-s62-u03-b124",
+      "c22-s62-u03-b128"
+    ],
+    "changedSlides": [
+      [
+        "self",
+        "test1"
+      ],
+      [
+        "self",
+        "test2"
+      ],
+      [
+        "self",
+        "test3"
+      ],
+      [
+        "self",
+        "test4"
+      ],
+      [
+        "self",
+        "test5"
+      ],
+      [
+        "self",
+        "test6"
+      ],
+      [
+        "self",
+        "test7"
+      ],
+      [
+        "self",
+        "test8"
+      ],
+      [
+        "self",
+        "test9"
+      ],
+      [
+        "self",
+        "test10"
+      ],
+      [
+        "self",
+        "test11"
+      ],
+      [
+        "self",
+        "test12"
+      ],
+      [
+        "self",
+        "test15"
+      ],
+      [
+        "self",
+        "test16"
+      ],
+      [
+        "teach",
+        "test1"
+      ],
+      [
+        "teach",
+        "test2"
+      ],
+      [
+        "teach",
+        "test3"
+      ],
+      [
+        "teach",
+        "test4"
+      ],
+      [
+        "teach",
+        "test5"
+      ],
+      [
+        "teach",
+        "test6"
+      ],
+      [
+        "teach",
+        "test7"
+      ],
+      [
+        "teach",
+        "test8"
+      ],
+      [
+        "teach",
+        "test9"
+      ],
+      [
+        "teach",
+        "test10"
+      ],
+      [
+        "teach",
+        "test11"
+      ],
+      [
+        "teach",
+        "test12"
+      ],
+      [
+        "teach",
+        "test15"
+      ],
+      [
+        "teach",
+        "test16"
+      ]
+    ],
+    "changedHtml": [
+      {
+        "unit": "c22-s62-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "mode": "quick"
+      }
+    ],
+    "otherRuntimeUnitsPreserved": 31,
+    "mainScienceFilesPreserved": 2958,
+    "browserVerified": false
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      },
+      {
+        "unit": "c22-s52-u04",
+        "phase": 308,
+        "questions": 112,
+        "currentQuestionSha256": "d0bd1ee47e2be29a97968f462cd7e8c33ee1925bfaceabd11facbb1145f6822e"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "phase": 310,
+        "questions": 128,
+        "currentQuestionSha256": "c7e6b3e3ea7f2daf07dae2a9d2cc984f3c74a09ed92fc67d1101ab7c36133291"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "phase": 311,
+        "questions": 128,
+        "currentQuestionSha256": "431ffb2786c5d189eae880e1550acdb6632fcc2ec6d9b40fc2ab78337660428e"
+      },
+      {
+        "unit": "c22-s61-u03",
+        "phase": 312,
+        "questions": 128,
+        "currentQuestionSha256": "bf7ab6b858964739ae659dfc7cec19772a0e80beeaf9050a88865135ec671dba"
+      },
+      {
+        "unit": "c22-s61-u04",
+        "phase": 313,
+        "questions": 128,
+        "currentQuestionSha256": "24d23b9ba2ce412607f287244cce4b8f5ea447bce33e0270d0a306f6adee3b75"
+      },
+      {
+        "unit": "c22-s62-u01",
+        "phase": 314,
+        "questions": 128,
+        "currentQuestionSha256": "15c26b40abf763909080a13910b78b07fe5145918a22a1cb52ce158bb5a56290"
+      },
+      {
+        "unit": "c22-s62-u02",
+        "phase": 315,
+        "questions": 128,
+        "currentQuestionSha256": "a4f28762edb8a23e39c43690d7f58a2acc452ada7793406dc4f6269ca8a82b84"
+      },
+      {
+        "unit": "c22-s62-u03",
+        "phase": 316,
+        "questions": 128,
+        "currentQuestionSha256": "4311e39e867b3ae7cdb909eb50ef14184df47a09b9d0a6d76bee36ec6040915f"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 2952,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 118,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideThirtyOneUnitPass": {
+      "units": 1,
+      "questions": 128,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To316": 1792
+  },
+  "tests": {
+    "total": 1298,
+    "pass": 1296,
+    "fail": 0,
+    "skip": 2
+  },
+  "goalAchieved": false,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "paidApiCalls": 0,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "nextUnit": "c22-s62-u04"
+}

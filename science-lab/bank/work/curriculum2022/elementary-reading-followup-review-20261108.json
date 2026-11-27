@@ -1,0 +1,198 @@
+{
+  "phase": 377,
+  "date": "2026-11-08",
+  "scope": "Five lower-grade learning books: exact student directions and worked examples; screen-only choice and section-label sizes.",
+  "units": 5,
+  "workbooksChecked": 32,
+  "questionCount": 3080,
+  "questionsUnchanged": true,
+  "newStudentFields": 20,
+  "newPreparedTeacherStudentFields": 11,
+  "teacherFallbackFields": 9,
+  "newVisibleTeacherStudentFields": 20,
+  "changedPrintModes": [
+    {
+      "unit": "s31-u01",
+      "mode": "student"
+    },
+    {
+      "unit": "s31-u01",
+      "mode": "teacher"
+    },
+    {
+      "unit": "s31-u02",
+      "mode": "student"
+    },
+    {
+      "unit": "s31-u02",
+      "mode": "teacher"
+    },
+    {
+      "unit": "s31-u03",
+      "mode": "student"
+    },
+    {
+      "unit": "s31-u03",
+      "mode": "teacher"
+    },
+    {
+      "unit": "s41-u03",
+      "mode": "student"
+    },
+    {
+      "unit": "s41-u03",
+      "mode": "teacher"
+    },
+    {
+      "unit": "c22-s42-u03",
+      "mode": "student"
+    },
+    {
+      "unit": "c22-s42-u03",
+      "mode": "teacher"
+    }
+  ],
+  "unchangedPrintModes": 118,
+  "sourceWorkbooksUnchanged": true,
+  "teacherAnswerPagesQuickFiguresRailsAndWritingSpaceUnchanged": true,
+  "nativeTests": {
+    "files": 6,
+    "passed": 26,
+    "failed": 0,
+    "skipped": 0
+  },
+  "screenTypography": {
+    "twoColumnChoicePx": 18,
+    "sectionLabelPx": 15,
+    "bodyFont": "locally supplied Pretendard Gothic",
+    "printMetricsUnchanged": true,
+    "actualBrowserOrPrintVisualVerification": false
+  },
+  "fields": [
+    {
+      "unit": "s31-u01",
+      "path": "pages/4/blocks/1/text",
+      "before": "짐을 더 실었을 때 출발에 드는 힘을 비교할 계획이에요. 다음 세 계획은 아직 실행한 결과가 아니며, 같은 수레에 같은 블록을 한 개와 두 개 싣는 방법을 생각해요.",
+      "after": "같은 수레에 같은 종류의 블록을 한 개, 두 개 실어 보려고 해요. 짐이 무거워지면 출발할 때 드는 힘은 어떻게 달라질까요? 아래 표는 아직 실험하지 않은 세 가지 계획이에요."
+    },
+    {
+      "unit": "s31-u01",
+      "path": "pages/13/blocks/2/steps/1/0",
+      "before": "조건 대조",
+      "after": "같게 할 것 살피기"
+    },
+    {
+      "unit": "s31-u01",
+      "path": "pages/13/blocks/2/steps/2/0",
+      "before": "실행과 구별",
+      "after": "실험한 뒤 결과 적기"
+    },
+    {
+      "unit": "s31-u02",
+      "path": "pages/0/blocks/2/items/3",
+      "before": "특징·기능·확인 방법을 연결해 설계 나누기",
+      "after": "동물의 특징을 물건의 어느 부분에 쓸지 그려 보고, 잘 작동하는지 확인할 방법 나누기"
+    },
+    {
+      "unit": "s31-u02",
+      "path": "pages/3/blocks/2/question",
+      "before": "친구가 「비둘기 사진에서 날개 끝이 안 보이니 날개가 없다」고 했어요. 어떻게 보완할까요?",
+      "after": "친구가 「비둘기 사진에서 날개 끝이 안 보이니 날개가 없다」고 했어요. 친구에게 어떻게 설명하면 좋을까요?"
+    },
+    {
+      "unit": "s31-u02",
+      "path": "pages/3/blocks/2/steps/0/0",
+      "before": "관찰 범위",
+      "after": "사진에 보이는 부분"
+    },
+    {
+      "unit": "s31-u02",
+      "path": "pages/3/blocks/2/steps/1/0",
+      "before": "추가 자료",
+      "after": "더 찾아볼 자료"
+    },
+    {
+      "unit": "s31-u03",
+      "path": "pages/0/blocks/2/items/2",
+      "before": "환경·생김새·생활을 식물별 근거로 설명하기",
+      "after": "식물의 생김새가 사는 곳에서 어떻게 도움이 되는지 자료를 보고 설명하기"
+    },
+    {
+      "unit": "s31-u03",
+      "path": "pages/0/blocks/2/items/3",
+      "before": "특징·기능·확인 방법을 설계하고 질문 나누기",
+      "after": "식물의 특징을 이용할 물건을 그려 보고, 잘 작동하는지 확인할 방법 나누기"
+    },
+    {
+      "unit": "s31-u03",
+      "path": "pages/1/blocks/3/text",
+      "before": "사진에서 직접 확인했나요,설명 글로 알았나요? 지금 기준에 필요한 자료가 있나요? 설계의 예상인가요,실제로 시험한 결과인가요?",
+      "after": "사진에서 직접 본 것인가요, 설명 글에서 읽은 것인가요? 식물을 나누는 데 필요한 특징이 보이나요? 물건이 잘 작동할 것이라는 생각인가요, 직접 시험해 본 결과인가요?"
+    },
+    {
+      "unit": "s31-u03",
+      "path": "pages/15/blocks/2/steps/0/0",
+      "before": "장식과 부분",
+      "after": "그림만 붙이면 될까요?"
+    },
+    {
+      "unit": "s31-u03",
+      "path": "pages/15/blocks/2/steps/1/0",
+      "before": "기능 연결",
+      "after": "어떻게 도움이 될까요?"
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/2/blocks/1/steps/0/1",
+      "before": "차이 전체를 한 조건의 영향으로 정하기 어렵다.",
+      "after": "경사와 물의 양이 함께 달라졌어요. 어느 것 때문에 결과가 달라졌는지 알기 어려워요."
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/2/blocks/1/steps/1/0",
+      "before": "계획 보완",
+      "after": "비교 방법 고치기"
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/2/blocks/1/steps/1/1",
+      "before": "같은 경사의 두 기록 또는 같은 물 양의 두 기록을 비교한다.",
+      "after": "경사가 같은 두 기록이나 물의 양이 같은 두 기록을 비교해요."
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/13/blocks/0/steps/1/1",
+      "before": "교사와 순서·도움을 보완하고 안전하게 다시 확인",
+      "after": "선생님과 이동 순서와 도움이 필요한 곳을 다시 정해요. 안전하게 다시 연습해요."
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/13/blocks/0/answer",
+      "before": "재연습 전에는 개선 효과를 확인했다고 하지 않아요.",
+      "after": "다시 연습해 보기 전에는 문제가 해결되었다고 말할 수 없어요."
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/13/blocks/1/title",
+      "before": "보완과 확인 계획",
+      "after": "고칠 점과 다시 확인할 것"
+    },
+    {
+      "unit": "s41-u03",
+      "path": "pages/13/blocks/1/hint",
+      "before": "문제와 연결한 수정, 다시 살필 조건과 근거를 적어요.",
+      "after": "어려웠던 점을 어떻게 고칠지 적어요. 다시 연습할 때 무엇을 살펴볼지도 써요."
+    },
+    {
+      "unit": "c22-s42-u03",
+      "path": "pages/12/blocks/3/steps/1/0",
+      "before": "한 곳씩 보완",
+      "after": "한 곳씩 고쳐 보기"
+    }
+  ],
+  "priorLocalCommit": "4c71ecd2e60e16bc6b59480c41fc5f0d4c806701",
+  "reviewParent": "db928fcd1d2977da33542ba1efdfd300e520f04a",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "mainMerged": false,
+  "deployed": false
+}

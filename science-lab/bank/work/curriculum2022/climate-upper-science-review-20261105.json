@@ -1,0 +1,236 @@
+{
+  "phase": 268,
+  "date": "2026-11-05",
+  "baseCommit": "33b5391c4d93f9e0d1a81ee25a9e8505fbcfb6e8",
+  "unit": "c22-s42-u04",
+  "version": "20261105-climate-upper-science",
+  "scope": "23 extension notes mirrored to teacher pages,46 fields. Actual later-grade climate/ocean/heat/resources/energy concepts replace generic process guidance. Primary cases/impacts/action and all underlying data/assessment remain unchanged.",
+  "sources": [
+    {
+      "authority": "교육부2022-33 별책9",
+      "curriculumSHA256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "standards": [
+        "4과16-01~03",
+        "6과06-01",
+        "6과08-01~03",
+        "9과03-01~03",
+        "9과17-01",
+        "9과18-01~03",
+        "9과22-01~02",
+        "10통과2-02-01~06",
+        "12지구01-05~06",
+        "12지시 해수의 운동"
+      ],
+      "supports": "Primary examples/impacts/action remain without scientific climate mechanisms. Actual later-grade weather/resources/heat expansion/radiative balance/ocean currents/energy conversion and higher climate causes."
+    },
+    {
+      "title": "NOAA Climate vs Weather",
+      "url": "https://www.noaa.gov/jetstream/global/climate-vs-weather",
+      "supports": "Daily weather versus long-term climate and patterns; no new normals/date series copied."
+    },
+    {
+      "title": "NASA Climate and Earths Energy Budget",
+      "url": "https://science.nasa.gov/earth/earth-observatory/climate-and-earths-energy-budget/",
+      "supports": "Radiative balance and absorption/emission of thermal infrared by greenhouse gases; only physical relationships used, no dated flux/temperature/rate values copied."
+    },
+    {
+      "title": "NASA Why Is Sea Level Rising?",
+      "url": "https://www.nasa.gov/general/why-is-sea-level-rising-we-asked-a-nasa-scientist-episode-33/",
+      "supports": "Ocean thermal expansion, added land-ice meltwater and regional sea-level variation linked to circulation; no numeric rates copied."
+    }
+  ],
+  "preservation": {
+    "changedUpperNotes": [
+      {
+        "page": 5,
+        "title": "어느 지역의 어떤 기간인가요?",
+        "before": "상위 학습 · 상위 기상 자료 해석에서는 관측 장소와 측정 방법을 살펴요. 한 곳의 관측소를 옮겼다면 실제 변화와 관측 환경 변화가 자료에 어떻게 섞였는지 점검할 필요가 있어요.",
+        "after": "상위 학습 · 5~6학년에서는 기온·바람·습도·구름의 양·강수량을 조사해요. 기후변화 사례도 기온 하나만 보는 데서 나아가 여러 기상 요소가 어느 곳에서 달라졌는지 살펴볼 수 있어요."
+      },
+      {
+        "page": 6,
+        "title": "날씨와 기후를 구별해요",
+        "before": "상위 학습 · 상위 수학·기상 학습에서는 평균과 자료의 흩어진 정도를 함께 살펴요. 평균이 비슷해도 매우 덥거나 비가 많이 오는 날의 모습까지 모두 같은 것은 아니에요.",
+        "after": "상위 학습 · 5~6학년에서는 기상 자료에서 규칙성을 찾아요. 여러 해의 평균적인 날씨와 특정한 하루의 날씨는 다를 수 있어, 평균이 비슷해도 매일 같은 날씨가 나타나는 것은 아니에요."
+      },
+      {
+        "page": 9,
+        "title": "생물의 변화를 볼 때 무엇을 같게 살필까요?",
+        "before": "상위 학습 · 상위 생태 학습에서는 생물과 환경의 관계를 여러 요인으로 설명해요. 기온뿐 아니라 물·빛·서식 공간도 달라질 수 있어 한 종류가 줄었다는 사실만으로 원인 하나를 정하지 않아요.",
+        "after": "상위 학습 · 고등학교 통합과학에서는 생물과 환경이 서로 영향을 주고받는 관계를 배워요. 생물의 변화는 기온뿐 아니라 물·빛·먹이 등 여러 환경 요인과 함께 살펴요."
+      },
+      {
+        "page": 14,
+        "title": "한 조건만 달리해 비교해요",
+        "before": "상위 학습 · 상위 탐구에서는 같은 조건으로 반복했을 때 결과가 얼마나 비슷한지 살펴요. 조건을 맞추는 일과 반복하여 차이를 확인하는 일은 둘 다 비교의 근거를 튼튼하게 해요.",
+        "after": "상위 학습 · 중학교에서는 물질의 열팽창을 배워요. 실제 바닷물도 따뜻해지면 부피가 커질 수 있어요. 모형에 물을 붓는 활동과 달리 바닷물이 더해지지 않아도 해수면이 높아질 수 있어요."
+      },
+      {
+        "page": 15,
+        "title": "어느 집이 먼저 물에 닿았나요?",
+        "before": "상위 학습 · 상위 지형 자료에서는 높이를 잰 기준면을 확인해요. 서로 다른 기준에서 잰 두 높이를 그대로 빼면 관계를 잘못 설명할 수 있으므로 기준과 단위부터 맞추어요.",
+        "after": "상위 학습 · 중학교에서는 해수의 수온·염분 분포와 해류를 배워요. 실제 바다는 큰 욕조처럼 모든 곳의 해수면이 똑같이 변하지 않으며, 해류에 따른 물의 이동도 지역별 차이에 영향을 주어요."
+      },
+      {
+        "page": 20,
+        "title": "상황에 맞는 실천을 골라요",
+        "before": "상위 학습 · 상위 환경 학습에서는 배출을 줄이는 대응과 변화한 환경의 피해를 줄이는 대응을 목적에 따라 살펴요. 두 방향은 함께 필요하며, 초등에서는 용어 분류보다 생활에서 가능한 행동을 먼저 찾아요.",
+        "after": "상위 학습 · 중학교에서는 온실효과와 지구온난화의 관계를 배워요. 온실 기체의 배출을 줄이는 일은 원인에 대응하고, 달라진 환경의 피해를 줄이는 일은 그 영향에 대비하는 방향으로 연결돼요."
+      },
+      {
+        "page": 23,
+        "title": "모형의 생각을 새 바닷가에 써 봐요",
+        "before": "상위 학습 · 상위 모형 학습에서는 적용할 조건과 경계가 어디까지인지 정해요. 모형 하나에서 찾은 관계를 다른 지형에 사용할 때는 물이 드나드는 길과 막힌 부분부터 다시 점검해요.",
+        "after": "상위 학습 · 중학교에서는 해수·담수·빙하의 분포를 배워요. 육지의 빙하가 녹은 물이 바다로 흘러들면 바닷물의 양이 늘어나 해수면 상승에 영향을 줄 수 있어요."
+      },
+      {
+        "page": 24,
+        "title": "높이를 비교한 그래프로 나타내요",
+        "before": "상위 학습 · 상위 수학에서는 축척을 사용해 실제 길이와 도면 길이를 연결해요. 이 모형의1 cm를 실제 해안의1 m라고 임의로 바꾸지 말고 정해진 축척이 있는지 먼저 확인해요.",
+        "after": "상위 학습 · 중학교에서는 질량과 부피를 구별하고 열팽창을 배워요. 같은 질량의 바닷물이 따뜻해져 부피가 커지는 경우와 물을 더 부어 양이 늘어나는 경우는 서로 다른 과정이에요."
+      },
+      {
+        "page": 29,
+        "title": "상황에 도움이 되는 안내문을 그려요",
+        "before": "상위 학습 · 상위 재난 의사소통에서는 글을 읽는 사람의 이동·시각·언어 등 다양한 조건을 살펴요. 그림의 크기나 색만 바꾸기보다 필요한 행동과 도움을 분명하게 전하는 일이 중요해요.",
+        "after": "상위 학습 · 중학교에서는 기상재해의 발생 원인과 피해를 과학적으로 살펴요. 같은 비가 내려도 땅의 높이와 물이 빠지는 길 등 지역의 조건에 따라 피해가 달라질 수 있어요."
+      },
+      {
+        "page": 31,
+        "title": "출처·모형·가상 기록을 구별해요",
+        "before": "상위 학습 · 상위 과학에서는 같은 주제라도 관측·실험·모의 결과의 생성 방법을 함께 읽어요. 발표 날짜와 관측한 기간도 다를 수 있으므로 어떤 시점의 사실을 말하는지 확인해요.",
+        "after": "상위 학습 · 중학교에서는 지구가 태양에서 받는 에너지와 우주로 내보내는 에너지를 복사 평형으로 설명해요. 온실 기체가 지표에서 나오는 적외선을 흡수하고 다시 내보내는 과정도 함께 배워요."
+      },
+      {
+        "page": 32,
+        "title": "기간과 지역이 같은가요?",
+        "before": "상위 학습 · 상위 자료 해석에서는 평균에 들어간 기간과 자료 수를 확인해요. 평균이 같더라도 기간별 오르내림은 다를 수 있으므로 값 하나와 변화의 모습을 함께 살펴요.",
+        "after": "상위 학습 · 중학교에서는 해류가 열을 다른 지역으로 옮기며 기후에 영향을 주는 역할을 배워요. 같은 위도라도 해류와 주변 조건에 따라 나타나는 기후가 다를 수 있어요."
+      },
+      {
+        "page": 33,
+        "title": "모형의 결과를 실제에 쓸 때",
+        "before": "상위 학습 · 상위 모형에서는 물이 흐르는 경로와 경계를 어떻게 단순화했는지 살펴요. 이 모형에서 다루지 않은 파도·바람·땅속 스며듦은 실제 적용 때 추가로 조사할 조건이에요.",
+        "after": "상위 학습 · 고등학교 지구과학에서는 대기와 해양의 상호작용을 배워요. 바람과 해류의 변화가 서로 연결되므로, 한 해안의 자료를 더 넓은 대기·해양의 변화와 함께 살펴보게 돼요."
+      },
+      {
+        "page": 34,
+        "title": "계획·기회·실천을 나누어요",
+        "before": "상위 학습 · 상위 자료 해석에서는 비교의 기준이 되는 전체 기회 수를 함께 봐요. 기회가 적었던 날과 같은 기회에서 실천이 적었던 날은 원인과 개선 방법이 다를 수 있어요.",
+        "after": "상위 학습 · 고등학교 통합과학에서는 에너지가 다른 형태로 전환되어도 총량은 보존됨을 배워요. 전등에서 전기 에너지는 빛과 열 등으로 바뀌며, 사용한 에너지가 없어지는 것은 아니에요."
+      },
+      {
+        "page": 38,
+        "title": "세 값과 기간을 함께 보여 줘요",
+        "before": "상위 학습 · 상위 그래프 해석에서는 그림의 인상이 아니라 눈금과 값으로 비교해요. 막대의 길이를 비교할 때 축의 시작값이 다르면 차이가 과장되어 보일 수 있어요.",
+        "after": "상위 학습 · 중학교에서는 자연적인 온실효과와 지구온난화를 연결해 배워요. 온실효과는 지표를 따뜻하게 유지하는 데 관여하지만, 온실 기체가 늘어 그 효과가 강화되면 지구의 에너지 균형이 달라질 수 있어요."
+      },
+      {
+        "page": 39,
+        "title": "벽의 효과만 비교한 것은?",
+        "before": "상위 학습 · 상위 실험 설계에서는 결과가 달라질 수 있는 조건을 미리 나열해요. 벽 높이와 물높이를 함께 바꾸었다면 벽 하나의 효과인지 구별할 비교가 더 필요해요.",
+        "after": "상위 학습 · 중학교에서 배우는 열팽창은 바닷물이 따뜻해져 부피가 커지는 현상과 연결돼요. 육지 빙하가 녹아 물이 더해지는 과정과 구별하면 해수면 상승의 두 원인을 나누어 설명할 수 있어요."
+      },
+      {
+        "page": 40,
+        "title": "조건·결과·미관찰을 나누어요",
+        "before": "상위 학습 · 상위 측정에서는 기기의 가장 작은 눈금과 읽는 방법을 확인해요. 기록되지 않은 값을 눈금의 최소값이나0으로 대신하면 측정의 한계를 다른 결과로 바꾸게 돼요.",
+        "after": "상위 학습 · 중학교에서는 온도를 입자의 운동과 연결해요. 기온 0℃는 온도 눈금의 한 값이며, 입자의 운동이 없거나 온도를 측정하지 않았다는 뜻은 아니에요."
+      },
+      {
+        "page": 41,
+        "title": "조건이 달라지면 결과도 달라요",
+        "before": "상위 학습 · 상위 재난 분석에서는 시설이 작동하는 조건의 한계를 살펴요. 실제 해안에는 반복되는 파도와 시설의 변화도 있으므로 한 번의 모형 결과만으로 언제나 같은 효과를 기대하지 않아요.",
+        "after": "상위 학습 · 고등학교 지구시스템과학에서는 해파와 조석 등 바닷물의 운동을 배워요. 평균적인 해수면의 높이와 파도나 조석으로 달라지는 순간의 수면 높이는 구별해야 해요."
+      },
+      {
+        "page": 42,
+        "title": "같게 둔 것과 바꾼 것을 보여 줘요",
+        "before": "상위 학습 · 상위 모형 표현에서는 대상의 이름표와 조건을 그림에 함께 써요. 겉모습이 비슷한 두 장면도 바꾼 조건이 빠지면 무엇을 비교한 것인지 분명하지 않을 수 있어요.",
+        "after": "상위 학습 · 중학교에서는 물질의 열팽창과 수권의 물 분포를 배워요. 바닷물의 부피가 커진 모습과 육지에서 물이 더 들어온 모습을 서로 다르게 그리면 해수면 변화의 과정을 비교할 수 있어요."
+      },
+      {
+        "page": 45,
+        "title": "서로 다른 필요를 고려해요",
+        "before": "상위 학습 · 상위 환경 의사결정에서는 효과뿐 아니라 누가 이용할 수 있고 어떤 부담이 생기는지도 비교해요. 한 가지 필요를 지우기보다 같은 기능을 유지할 다른 방법을 찾아요.",
+        "after": "상위 학습 · 5~6학년에서는 물·산림·광물 등 여러 자원의 소중함과 효율적인 이용을 배워요. 한 자원을 적게 쓰는 방법을 찾을 때 다른 자원이 얼마나 필요한지도 함께 생각해요."
+      },
+      {
+        "page": 47,
+        "title": "기회가 없는 날과 미기록",
+        "before": "상위 학습 · 상위 수학에서는 비율을 비교할 때 기준이 되는 전체 수를 확인해요. 기회가0인 날을 기회가 있었지만 하지 않은 날과 같은 비율로 처리할 수는 없어요.",
+        "after": "상위 학습 · 5~6학년에서는 태양 에너지·풍력·수력 등 재생에너지의 종류를 조사해요. 생활에서 전기를 아끼는 실천과 전기를 어떤 에너지로 만드는지 알아보는 공부가 함께 이어져요."
+      },
+      {
+        "page": 48,
+        "title": "확인된 만큼만 합하고 설명해요",
+        "before": "상위 학습 · 상위 자료 분석에서는 빠진 값 때문에 전체를 어디까지 말할 수 있는지 살펴요. 확인된 값의 합은 구할 수 있어도 미기록 칸의 실제 값을 알아낸 것은 아니에요.",
+        "after": "상위 학습 · 고등학교 통합과학에서는 발전기에서 운동 에너지가 전기 에너지로 바뀌는 과정을 배워요. 전기를 만든 과정과 전등을 사용한 과정은 에너지의 서로 다른 전환 단계예요."
+      },
+      {
+        "page": 50,
+        "title": "0·미기록·기회 없음을 나타내요",
+        "before": "상위 학습 · 상위 통계 그래프에서는 관측값과 자료가 없는 지점을 다른 기호로 나타내요. 없는 자료를0의 막대로 그리면 실제로 관측한 값처럼 보일 수 있어요.",
+        "after": "상위 학습 · 고등학교 통합과학에서는 에너지 효율을 배워요. 조명에서 빛을 내는 데 이용된 에너지와 주위에 열로 퍼진 에너지를 구별하며, 같은 기능을 더 효율적으로 얻는 방법을 생각해요."
+      },
+      {
+        "page": 51,
+        "title": "근거의 범위를 지키며 의견을 고쳐요",
+        "before": "상위 학습 · 상위 과학 토의에서는 반대 자료가 나왔을 때 설명의 조건을 다시 살펴요. 처음 생각을 지키는 일보다 어떤 근거 때문에 무엇을 바꿨는지 밝히는 일이 중요해요.",
+        "after": "상위 학습 · 고등학교 지구과학에서는 기후변화의 원인을 자연적 요인과 인위적 요인으로 나누어 살펴요. 원인을 설명할 때에는 한 날의 날씨뿐 아니라 오랜 기간의 자료와 관련 과정을 함께 비교해요."
+      }
+    ],
+    "changedFields": 46,
+    "all52CurrentUpperNotesUnique": true,
+    "noVagueUpperSubjectPrefixAfterLabel": true,
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "c22-s42-u04",
+        "mode": "student",
+        "sha256": "cfdb4d2a0adee233d53dca7a7c13503b55012bcc0acc7ec8dd974c431cd0f318"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teacher",
+        "sha256": "2f14f3eb1ebd437173ac071d6fd13ab2b55d8836d24d965f2f051a0d38083528"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "coreNotesAndStudentWritingTasksUnchanged": true,
+    "renderedNotes": 46,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s42-u04.rail-notes.js",
+      "science-lab/data/book/c22-s42-u04.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 4,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "reviewBoundary": "52 distinct notes,165-character ceiling and no vague opening phrases are structural evidence, not all-semantics or actual layout proof. Scientific climate causes remain in labelled extensions only; no observed data, rates or efficacy quantities invented.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase268",
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0,
+  "browserVerified": false,
+  "remaining": [
+    "Other units extension notes, explanations and teaching criteria; full curriculum/content review",
+    "Actual PC/phone/A4 font/reflow/clipping/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ]
+}

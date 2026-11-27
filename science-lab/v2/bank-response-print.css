@@ -1,0 +1,12 @@
+.bank-blank-label{font-weight:600}
+.bank-print-blank{display:inline-block;min-width:4em;min-height:1.25em;border-bottom:1px solid currentColor;line-height:1.2;text-align:center;vertical-align:baseline}
+.bank-print-answer,.bank-response-answer{font-weight:600}
+.bank-response-table,.biology-bank-paper .source-table{width:100%;border-collapse:collapse;font-size:inherit;margin:10px 0}
+.bank-response-table :is(th,td),.biology-bank-paper .source-table :is(th,td){border:1px solid #737373;padding:5px;overflow-wrap:anywhere}
+.bank-response-table td{height:9mm}
+.bank-response-table th{font-weight:600;text-align:left}
+.bank-empty-cell{display:block;min-height:1.2em}
+.bank-quick{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 16px}
+.bank-quick>div{border-bottom:1px solid #aaa;padding:5px;break-inside:avoid;overflow-wrap:anywhere}
+@media(max-width:600px){.bank-quick{grid-template-columns:1fr}}
+@media print{.bank-quick{grid-template-columns:repeat(3,minmax(0,1fr));font-size:10pt;gap:6px 12px}}

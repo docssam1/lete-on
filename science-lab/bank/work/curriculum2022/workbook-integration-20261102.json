@@ -1,0 +1,462 @@
+{
+  "date": "2026-11-02",
+  "base": "d69413ae2ad095531b810bd31d908266682aad0b",
+  "branch": "codex/science-workbook-integration-20261102",
+  "sourceBranch": "codex/science-gas-thinking-20261020",
+  "status": "local integration candidate prepared for local commit; no push or deployment",
+  "units": [
+    {
+      "unit": "s31-u01",
+      "title": "힘과 우리 생활",
+      "pages": 53,
+      "teacherPages": 81,
+      "questions": 80,
+      "sourceWorkbookSha256": "b1d07f2a35b5935c841ab596bc82b793c2db6bbdd4cf69fcd6463d0abf76f498",
+      "artKeys": [
+        "opener",
+        "model-results",
+        "model-change",
+        "scale",
+        "scale-results",
+        "ramp",
+        "given-s31-u01-v005",
+        "given-s31-u01-v038",
+        "given-s31-u01-v041",
+        "given-s31-u01-v045",
+        "given-s31-u01-v075",
+        "given-s31-u01-v004",
+        "given-s31-u01-v006",
+        "given-s31-u01-v010",
+        "given-s31-u01-v015",
+        "given-s31-u01-v068",
+        "given-s31-u01-v050"
+      ]
+    },
+    {
+      "unit": "s31-u02",
+      "title": "동물의 생활",
+      "pages": 56,
+      "teacherPages": 78,
+      "questions": 80,
+      "sourceWorkbookSha256": "bb426d052ec646e9c820048fd1c41f809df6f278beb02bb2e1e43dc422ff9af9",
+      "artKeys": [
+        "opener",
+        "two-criteria",
+        "water-life",
+        "fins",
+        "animal-concept-sources",
+        "quick-1",
+        "quick-41",
+        "given-s31-u02-v001",
+        "given-s31-u02-v003",
+        "given-s31-u02-v005",
+        "given-s31-u02-v007",
+        "given-s31-u02-v008",
+        "given-s31-u02-v010",
+        "given-s31-u02-v011",
+        "given-s31-u02-v012",
+        "given-s31-u02-v014",
+        "given-s31-u02-v016",
+        "given-s31-u02-v019",
+        "given-s31-u02-v022",
+        "given-s31-u02-v025",
+        "given-s31-u02-v031",
+        "given-s31-u02-v032",
+        "given-s31-u02-v038",
+        "given-s31-u02-v040",
+        "given-s31-u02-v002",
+        "given-s31-u02-v015",
+        "given-s31-u02-v021",
+        "given-s31-u02-v023",
+        "given-s31-u02-v024",
+        "given-s31-u02-v026",
+        "given-s31-u02-v028",
+        "given-s31-u02-v046",
+        "given-s31-u02-v036",
+        "given-s31-u02-v063",
+        "given-s31-u02-v074"
+      ]
+    },
+    {
+      "unit": "s31-u03",
+      "title": "식물의 생활",
+      "pages": 66,
+      "teacherPages": 93,
+      "questions": 80,
+      "sourceWorkbookSha256": "50c000d3b27410139be8d41965be02bf5525ad55d86d1f09411013e520899728",
+      "artKeys": [
+        "opener",
+        "two-criteria",
+        "length-data",
+        "water-life",
+        "plant-habitat-sources",
+        "lotus",
+        "plant-concept-sources",
+        "quick-1",
+        "quick-41",
+        "given-s31-u03-v001",
+        "given-s31-u03-v004",
+        "given-s31-u03-v005",
+        "given-s31-u03-v007",
+        "given-s31-u03-v010",
+        "given-s31-u03-v011",
+        "given-s31-u03-v015",
+        "given-s31-u03-v020",
+        "given-s31-u03-v027",
+        "given-s31-u03-v030",
+        "given-s31-u03-v031",
+        "given-s31-u03-v035",
+        "given-s31-u03-v044",
+        "given-s31-u03-v052",
+        "given-s31-u03-v056",
+        "given-s31-u03-v063",
+        "given-s31-u03-v018",
+        "given-s31-u03-v022",
+        "given-s31-u03-v023",
+        "given-s31-u03-v025",
+        "given-s31-u03-v029",
+        "given-s31-u03-v036",
+        "given-s31-u03-v058",
+        "given-s31-u03-v062",
+        "given-s31-u03-v009",
+        "given-s31-u03-v013",
+        "given-s31-u03-v033",
+        "given-s31-u03-v055",
+        "given-s31-u03-v080"
+      ]
+    },
+    {
+      "unit": "s31-u04",
+      "title": "생물의 한살이",
+      "pages": 58,
+      "teacherPages": 80,
+      "questions": 80,
+      "sourceWorkbookSha256": "66ff7371e9367a55e5d7c0ce1fc7303f52ae7acf5a18558e3da09019023d60e8",
+      "artKeys": [
+        "opener",
+        "insect-types",
+        "s4-q4",
+        "beans",
+        "case-germ-water-fair",
+        "case-germ-water-mixed",
+        "case-germ-temp-fair",
+        "missing-data",
+        "case-grow-light-fair",
+        "s2-q8",
+        "quick-1",
+        "quick-41",
+        "given-s31-u04-v001",
+        "given-s31-u04-v017",
+        "given-s31-u04-v018",
+        "given-s31-u04-v030",
+        "given-s31-u04-b01",
+        "given-s31-u04-b02",
+        "given-s31-u04-b13",
+        "given-s31-u04-b18",
+        "given-s31-u04-b19",
+        "given-s31-u04-b37",
+        "given-s31-u04-b41",
+        "given-s31-u04-b52",
+        "given-s31-u04-b57",
+        "given-s31-u04-b60",
+        "given-s31-u04-v021",
+        "given-s31-u04-v024",
+        "given-s31-u04-b06",
+        "given-s31-u04-b39",
+        "given-s31-u04-b55",
+        "given-s31-u04-b63",
+        "given-s31-u04-v005",
+        "given-s31-u04-v034",
+        "given-s31-u04-v035",
+        "given-s31-u04-v039",
+        "case-grow-water-fair",
+        "s2-q13",
+        "light-drawing"
+      ]
+    },
+    {
+      "unit": "c22-s42-u02",
+      "title": "생물과 환경",
+      "pages": 56,
+      "teacherPages": 80,
+      "questions": 80,
+      "sourceWorkbookSha256": "35fbbce50dadb4ea15d78358fdb57d85f6a649e400d832bc48e9ea99b37764f2",
+      "artKeys": [
+        "ecoHabitat",
+        "ecoRoles",
+        "ecoRoleCards",
+        "ecoAnimals",
+        "ecoMeadow",
+        "ecoChains",
+        "ecoWeb",
+        "ecoWaste",
+        "ecoPollution",
+        "ecoPracticeCards",
+        "ecoSources",
+        "ecoSurveyCards",
+        "ecoWrongArrows",
+        "given-c22-s42-u02-v054",
+        "given-c22-s42-u02-v002",
+        "given-c22-s42-u02-v018",
+        "given-c22-s42-u02-b12",
+        "given-c22-s42-u02-b20",
+        "given-c22-s42-u02-v021",
+        "given-c22-s42-u02-v037",
+        "given-c22-s42-u02-v038",
+        "given-c22-s42-u02-v058",
+        "given-c22-s42-u02-b26",
+        "given-c22-s42-u02-b31",
+        "given-c22-s42-u02-b29",
+        "given-c22-s42-u02-b25",
+        "given-c22-s42-u02-b35"
+      ]
+    }
+  ],
+  "newQuestions": 400,
+  "newStudentPages": 289,
+  "renderedHtmlOutputs": 40,
+  "newHtmlExactMatches": 20,
+  "existingHtmlPreservedExceptAnswerGuideTitles": 20,
+  "missingImageReferences": [],
+  "addedImages": 19,
+  "restoredExistingImages": [
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+      "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3",
+      "reason": "existing released workbook reference absent from pinned main tree"
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+      "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511",
+      "reason": "existing released workbook reference absent from pinned main tree"
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+      "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54",
+      "reason": "existing released workbook reference absent from pinned main tree"
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+      "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e",
+      "reason": "existing released workbook reference absent from pinned main tree"
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+      "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27",
+      "reason": "existing released workbook reference absent from pinned main tree"
+    }
+  ],
+  "appleVision": {
+    "actualImages": 5,
+    "failed": 0,
+    "skipped": 0,
+    "result": [
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+        "detectedWords": 0
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+        "detectedWords": 0
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+        "detectedWords": 0
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+        "detectedWords": 0
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+        "detectedWords": 0
+      }
+    ]
+  },
+  "tests": {
+    "total": 318,
+    "passed": 316,
+    "failed": 0,
+    "skipped": 2,
+    "skipScope": "기존 브라우저 검사 2개"
+  },
+  "protected": {
+    "existingV1Unchanged": true,
+    "lessonReportBankSourceFilesUnchanged": true,
+    "v2MainLogicUnchangedExceptImportVersions": true,
+    "cssUnchanged": true,
+    "existingFiveQuestionObjectsUnchanged": true
+  },
+  "browserScope": "실제 브라우저 실행/인쇄는 미검증. 기존 거절된 file 교재를 다른 경로로 열지 않았음.",
+  "sourceGenerators": "원래 작업본에 보존. 이 통합 후보는 검수한 생성 결과와 독립 그림 사본이며 생성기·은행 전체를 옮긴 것이 아님.",
+  "files": [
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-beach-reference.webp",
+      "sha256": "678198a4cd6874a9c22451ecf5d7e45711df0a07da52245b4e733d74c7488c54"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-cave-reference.webp",
+      "sha256": "a9878a12ddc451c4ff523d3efca573bf1734bd57979226f5c99b8b1a31d63f27"
+    },
+    {
+      "path": "science-lab/assets/activities/c22-s32-u02/coast-cliff-reference.webp",
+      "sha256": "390708325116c969fdd327ccb42c2b606645811e24342f409d9fdd43689f371e"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/cherry-native.webp",
+      "sha256": "9a33a56814066b645a06a68978d90fd14f2cb05fd87c6ec86f1e3b42e7a0d3b4"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/clover-native.webp",
+      "sha256": "15436415f61eb4f197d94c19dd45993d2e20c0e27b611fb2c7396f1458207069"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/hyacinth-native.webp",
+      "sha256": "7dee6ebf8648c17347c21ab39a15f444171f43f750cdd01718b369ccd18fabc3"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/magnolia-native.webp",
+      "sha256": "9d151029739bbab61f2639905a20fd50941798ce15a556a3698c12f879fb481b"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/rose-native.webp",
+      "sha256": "e994a9af85432ba438536a5fba1667285f11ae6a94e10e06ec62439bb69164d1"
+    },
+    {
+      "path": "science-lab/assets/activities/s31-u03/strawberry-native.webp",
+      "sha256": "d374edb0de39dcd6d199c9edf30d83a9ecbf8f49dfa032b86d50c37dc1517b56"
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+      "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3"
+    },
+    {
+      "path": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+      "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511"
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/habitat.jpg",
+      "sha256": "9063f3555089a4b8a3d4051412ac911638ed4aa239def7e51efd9bd7cd75079e"
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/meadow.jpg",
+      "sha256": "5ddcdac89de29aea5988f7ea86eb75934309bdf77f41e525f5b8cca100339114"
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/rice.jpg",
+      "sha256": "76c41da5b969ced651e24994d51ac55e40800c0c428f9741286407421b6a5638"
+    },
+    {
+      "path": "science-lab/assets/book/ecology-20261028/water-waste.jpg",
+      "sha256": "f673838420a0ab8058707502c7b3b7571d7f77d8d5a4f8b5ddc9e8b6bc76c3b7"
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/beans.jpg",
+      "sha256": "959a76d4da8fb7379b640f173a5d4a443bf35526d6111f9d7cdd2f6243dc2e57"
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/duck.jpg",
+      "sha256": "9684089d110167b88e11609634fd4488717d59ada9b23818b97d43dfed7497bb"
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/fins.jpg",
+      "sha256": "657f6420be63918ad9cf5a2a00b91cbe612eb54cd70100182cfba91da5d9479b"
+    },
+    {
+      "path": "science-lab/assets/book/observation-20261102/seedling.jpg",
+      "sha256": "5e9bf12fbdc6ea12d09e5cf60e89a02b99542898212cfd6eeb93fff5f41456e8"
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-cart.webp",
+      "sha256": "d4f7a65d2e963552a9d1ee8f12e8e67a643e7e254f6d7f0e74ef096621ab2ad6"
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-ramp.webp",
+      "sha256": "c565917e9a2675f4f982dddb9a2091bd461e1745ea30471a932efbd36f92fa49"
+    },
+    {
+      "path": "science-lab/assets/book/s31-u01-photo-scale.webp",
+      "sha256": "d4cf426cce517975aaa0294841f61e56dcad40a83297704887d58dd7bcb240de"
+    },
+    {
+      "path": "science-lab/assets/book/s31-u03-photo-lotus.webp",
+      "sha256": "e9be247ef3bc544e3d2d684312e6857700399cdd54f12aca1bb806adc418bce2"
+    },
+    {
+      "path": "science-lab/assets/book/s31-u03-photo-observe.webp",
+      "sha256": "73fa65302eb90877a71cebaf08963bacc8d7c65233b719f44b0bd6085865ef63"
+    },
+    {
+      "path": "science-lab/data/book/c22-s42-u02.workbook-art.js",
+      "sha256": "3e3d5fffc803850d8e38395081decc0ebd82c1b62393822defb85dbaf66f39ea"
+    },
+    {
+      "path": "science-lab/data/book/c22-s42-u02.workbook.js",
+      "sha256": "35fbbce50dadb4ea15d78358fdb57d85f6a649e400d832bc48e9ea99b37764f2"
+    },
+    {
+      "path": "science-lab/data/book/s31-u01.workbook-art.js",
+      "sha256": "81708052027e3e8ce89ca3fa0d7b1ed675ed7361cfade8e7de3daa57aeb0f9b0"
+    },
+    {
+      "path": "science-lab/data/book/s31-u01.workbook.js",
+      "sha256": "b1d07f2a35b5935c841ab596bc82b793c2db6bbdd4cf69fcd6463d0abf76f498"
+    },
+    {
+      "path": "science-lab/data/book/s31-u02.workbook-art.js",
+      "sha256": "013f190cab97128ad05e3a92b65fbd0639aee5105fe85051b37a75a148a8fe47"
+    },
+    {
+      "path": "science-lab/data/book/s31-u02.workbook.js",
+      "sha256": "bb426d052ec646e9c820048fd1c41f809df6f278beb02bb2e1e43dc422ff9af9"
+    },
+    {
+      "path": "science-lab/data/book/s31-u03.workbook-art.js",
+      "sha256": "84ad913476169967f94d8b13a457237c543405d12729584098d8983b81934d3e"
+    },
+    {
+      "path": "science-lab/data/book/s31-u03.workbook.js",
+      "sha256": "50c000d3b27410139be8d41965be02bf5525ad55d86d1f09411013e520899728"
+    },
+    {
+      "path": "science-lab/data/book/s31-u04.workbook-art.js",
+      "sha256": "464e2e98d087ede84496d8e8b5331a695be0d54689d9d9fde1d371cefe276760"
+    },
+    {
+      "path": "science-lab/data/book/s31-u04.workbook.js",
+      "sha256": "66ff7371e9367a55e5d7c0ce1fc7303f52ae7acf5a18558e3da09019023d60e8"
+    },
+    {
+      "path": "science-lab/v2/book.js",
+      "sha256": "d9dbf5e7eef66b3eb77e5ea12558eb32b69b16c92a7c5df653718845afa7f170"
+    },
+    {
+      "path": "science-lab/v2/index.html",
+      "sha256": "1d054b87be3a7279a67b441ad01792e8994786b7a6e6a52b754cefdb0d5e1a96"
+    },
+    {
+      "path": "science-lab/v2/revised-book-editorial.js",
+      "sha256": "6217e9ac7e25feb0146c7fac344825d8f84019d3c1d66c4e233c1c94a6149897"
+    },
+    {
+      "path": "science-lab/v2/revised-learning-book.js",
+      "sha256": "9f5e3bfa1cfed5e3599a73075a08d69242f42cf856284846899d55891fdaa39a"
+    },
+    {
+      "path": "science-lab/v2/revised-textbook.js",
+      "sha256": "e41e292103e44ecdc10a9cb470a875c99e0d4712ecf010323316b761f7eb76bd"
+    },
+    {
+      "path": "science-lab/v2/revised-textbook.test.mjs",
+      "sha256": "a47b2547ed65129f81ac11074f2ee68b7a6725c3d1c8316f585f6443170d0ef3"
+    },
+    {
+      "path": "science-lab/v2/revised-workbook-paper.js",
+      "sha256": "3c4eaec088195102333bcf5ab742ba428d92d8787dc719ba3f8a8bafbc6eb808"
+    },
+    {
+      "path": "science-lab/v2/v2.js",
+      "sha256": "b7f11a27c737ead787f827b50fdd56f87f46910d15735f490ed8778bcd041447"
+    }
+  ]
+}

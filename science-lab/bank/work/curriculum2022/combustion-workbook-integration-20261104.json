@@ -1,0 +1,166 @@
+{
+  "unit": "c22-s62-u02",
+  "phase": 210,
+  "date": "2026-11-04",
+  "status": "reviewed-local-workbook",
+  "curriculum": "2022 개정",
+  "standards": [
+    "6과14-01",
+    "6과14-02",
+    "6과14-03",
+    "6과14-04"
+  ],
+  "curriculumSourceSha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+  "workbookPages": 133,
+  "teacherPages": 186,
+  "answerPages": 52,
+  "quickPages": 6,
+  "questions": 128,
+  "forms": 8,
+  "questionsPerForm": 16,
+  "studentDrawingBoxes": 22,
+  "addedConceptChecks": 8,
+  "directActivities": 11,
+  "rightUpperConcepts": 64,
+  "rightUpperUnique": 64,
+  "upperCorrectionsForActualProgression": 12,
+  "semanticQuestionEdits": [
+    83,
+    99,
+    100,
+    106,
+    114,
+    115,
+    116,
+    118,
+    120,
+    122,
+    124,
+    126,
+    127
+  ],
+  "runtimeItems": 198,
+  "autoGraded": 158,
+  "teacherReview": 40,
+  "versionedItems": 38,
+  "questionVersion": "20261104-combustion-book",
+  "priorVersionsPreserved": true,
+  "originalSourceIncluded": false,
+  "fullClassroomPending": true,
+  "localWorkbookCount": 30,
+  "localClassroomCount": 29,
+  "browserVerified": false,
+  "studentStorageReads": 0,
+  "studentStorageWrites": 0,
+  "newImages": 0,
+  "new3D": 0,
+  "paidApiCalls": 0,
+  "published": false,
+  "pdfReview": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 133,
+        "bytes": 2419334,
+        "sha256": "6630c5e5abfe272d3a88ce1e20ed934355d47b5041f41d8ccb11a1e2e6b93498",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 186,
+        "bytes": 2608473,
+        "sha256": "6e27db9a7e27d3508a7c4e1e9226a1af0fea48cf26a3bbbcfaeb92a24d38d792",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "answers",
+        "pages": 52,
+        "bytes": 353912,
+        "sha256": "82a858b2ba45bdade02109513e72ee3df53358427285c952446285ddc762f8cf",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "quick",
+        "pages": 6,
+        "bytes": 138632,
+        "sha256": "2001fb9b36c265e01a78abd48b2b5a99b3df7cf13b50c90930192f2c227053c7",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 256,
+    "teacherAnswerStartsOnRecto": 135
+  },
+  "vision": {
+    "finalStudentPages": 133,
+    "exactNormalizedTitles": 133,
+    "changedPagesReOcr": 26,
+    "teacherInitialInputs": 24,
+    "teacherChangedInputs": 26,
+    "photoInputs": 3,
+    "firstRunFailureCount": 125,
+    "recovery": "autoreleasepool per PDF page; fresh process page9 success and consecutive13 success; final successful runs logged",
+    "allLowConfidenceWordsCertified": false
+  },
+  "validation": {
+    "v2-tests-complete.log": {
+      "tests": 747,
+      "pass": 745,
+      "fail": 0,
+      "skipped": 2
+    },
+    "bank-tests.log": {
+      "tests": 299,
+      "pass": 299,
+      "fail": 0,
+      "skipped": 0
+    }
+  },
+  "preservation": {
+    "protectedBaselineFiles": 6272,
+    "unchangedFiles": 6261,
+    "reviewedSharedChanges": [
+      "science-lab/v2/curriculum-2022.js",
+      "science-lab/v2/curriculum-place.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/units-index.js",
+      "science-lab/v2/home.js",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/v2.js",
+      "science-lab/v2/revised-textbook.test.mjs",
+      "science-lab/v2/curriculum-2022.test.mjs",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/bank-catalog.js"
+    ],
+    "oldWorkbookHtmlPreserved": 116,
+    "newWorkbookHtml": 4,
+    "oldClassroomArraysPreserved": 58,
+    "oldPdfsBytesPreserved": 82,
+    "authoringSourceHashesPreserved": 14,
+    "questionIdsAndFormsPreserved": 128,
+    "browserVerified": false,
+    "fullClassroomPending": true
+  },
+  "qa": "science-question-review/phase210",
+  "remaining": [
+    "물질의 연소 전체 사고력 수업 연결",
+    "전기의 이용·과학과 나의 진로 교재와 전체 수업",
+    "최신 main 통합",
+    "허용된 실제 PC·모바일·소리·WebGL 검수",
+    "main 전 3D 검사",
+    "승인 범위 배포",
+    "v1 서류철·평가·소리 범위"
+  ]
+}

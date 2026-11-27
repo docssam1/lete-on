@@ -1,0 +1,304 @@
+{
+  "phase": 293,
+  "date": "2026-11-05",
+  "previousGoalTurn": "progress: infection review published a127e61b",
+  "sourceCandidateBefore": "47dff14984b88b69fbc00bab0420a61f4a5228c7",
+  "reviewHeadBefore": "a127e61b9586401bbb7fbd09f14ed03eaae722cb",
+  "questionChanges": {
+    "unit": "s41-u01",
+    "version": "20261105-magnet-learner-reasoning",
+    "patches": {
+      "28": {
+        "explanation": "자석 덮개가 붙으려면 서로 끌어당길 두 부분이 있어야 해요. 양쪽 부품이 자석인지 철판인지 적고, 두 부분이 마주 볼 위치를 표시해요. 그래서 첫째와 넷째 보기가 알맞아요."
+      },
+      "35": {
+        "explanation": "고무 손잡이와 집게 끝에 같은 자석을 같은 방법으로 가까이하고, 어느 부분이 붙는지 따로 기록해요. 집게 끝이 금속처럼 보여도 정확한 재료는 아직 모르므로, 보이는 모습과 자석에 붙는 결과를 나누어 적어요. 고무 안쪽의 재료는 더 확인할 내용이에요."
+      },
+      "36": {
+        "explanation": "자료에서는 종이가 없을 때와 얇은 종이 한 장이 있을 때 모두 클립이 움직였어요. 이 조건에서는 종이를 사이에 두어도 자석이 클립을 끌어당겼다고 설명할 수 있어요. 종이 장수의 영향을 더 알아보려면 같은 자석·클립·전체 간격을 유지하며 비교할 계획을 세워요."
+      },
+      "37": {
+        "explanation": "같은 고리와 가운데 막대를 준비하고, 고리 하나를 뒤집기 전후에 마주 보는 면의 극을 기록해요. 같은 극끼리 마주 보면 밀어 내고 다른 극끼리 마주 보면 끌어당기므로, 틈과 탑 높이가 어떻게 달라지는지 비교해요. 높이는 같은 위치를 기준으로 재어요."
+      },
+      "38": {
+        "explanation": "흩어진 철 클립을 모으는 불편과 철을 끌어당기는 자석의 성질을 연결할 수 있어요. 손잡이 끝에 자석을 단 수거 도구를 그린 뒤 자석을 고정할 곳과 모은 클립을 떼는 방법을 설명해요."
+      },
+      "39": {
+        "explanation": "자석을 상자의 어느 부분에 고정할지, 철 클립이 어디에 붙을지 표시해요. 클립을 꺼내는 방법과 작은 자석이 빠지지 않게 할 방법도 덧붙이면 다른 사람이 구조와 쓰임을 이해할 수 있어요."
+      },
+      "40": {
+        "explanation": "가상 기록에서 확인한 것은 설계 그림을 완성했고 고정 방법을 질문받았다는 점이에요. 아직 만들거나 시험하지 않았으므로, 다음에는 고정할 부품을 그림에 덧붙이고 실제로 확인할 방법을 제안해요."
+      },
+      "43": {
+        "explanation": "얇은 종이가 있는 경우와 없는 경우를 비교하려면 같은 자석과 철 물체를 쓰고 두 물체 사이의 전체 간격도 같게 해요. 자석의 세기나 전체 간격까지 달라지면 무엇 때문에 결과가 달라졌는지 알아보기 어려워요."
+      },
+      "53": {
+        "explanation": "실제로 본 바늘 방향을 그대로 기록해요. 설명 그림과 다르면 나침반이 수평인지, N극과 S극을 바르게 읽었는지, 주변 자석이나 쇠붙이가 있는지 확인해요. 자석의 위치와 거리도 맞추어 다시 관찰해요."
+      },
+      "54": {
+        "explanation": "자료의 가와 나는 모두 종이가 잡혔지만, 나에서는 작은 자석이 빠졌어요. 나는 먼저 자석이 빠지지 않게 고정하는 구조를 고친 뒤 같은 종이와 방법으로 확인하도록 제안해요. 가에서도 종이를 꺼내는 방법과 손이 끼지 않는지 등을 더 살펴볼 수 있어요."
+      },
+      "56": {
+        "explanation": "막대자석에서 철 클립이 가장 많이 붙는 양쪽 끝부분을 자석의 극이라고 해요. 같은 철 클립으로 가운데와 양쪽 끝을 비교하면 극의 위치를 찾을 수 있어요."
+      },
+      "57": {
+        "explanation": "N극과 N극, S극과 S극은 각각 같은 극끼리 마주 보는 경우예요. 같은 극끼리는 서로 밀어 내는 힘이 작용해요."
+      },
+      "58": {
+        "explanation": "N극과 S극은 서로 다른 극이에요. 다른 극끼리 마주 보게 가까이하면 서로 끌어당기는 힘이 작용해요."
+      },
+      "59": {
+        "explanation": "이 문제의 고리 자석은 넓은 두 면에 N극과 S극이 하나씩 있어요. 윗면이 N극이면 반대쪽 아랫면은 S극이므로 빈칸에는 S를 써요."
+      },
+      "60": {
+        "explanation": "모형의 칸은 화면에서 탑의 높이를 비교하기 위해 정한 단위예요. 자로 잰 실제 높이인 cm와 같지 않으므로, 6.4칸을 그대로 6.4cm로 바꾸어 읽지 않아요."
+      },
+      "61": {
+        "explanation": "나침반 바늘도 자석이어서 N극과 S극이 있어요. 막대자석을 가까이하면 두 자석 사이에 끌어당기거나 밀어 내는 힘이 작용해 바늘 방향이 달라질 수 있어요."
+      },
+      "62": {
+        "explanation": "주변의 다른 자석과 쇠붙이를 멀리하고 바늘이 자유롭게 돌아 멈추도록 해요. 이때 바늘의 N극이 가리키는 쪽은 북쪽이고 S극이 가리키는 쪽은 남쪽이에요."
+      },
+      "63": {
+        "explanation": "자석 장치를 설계하기 전에 누가 어떤 불편을 겪는지 정해요. 예를 들어 철 클립이 흩어지는 불편을 골랐다면, 철을 끌어당기는 자석으로 모으는 장치를 생각할 수 있어요."
+      },
+      "64": {
+        "explanation": "설계 그림을 그린 단계와 실제로 만들어 시험한 단계는 달라요. 아직 만들지 않았다면 설계한 구조를 설명하고, 부품이 잘 고정되는지와 원하는 기능을 하는지 알아볼 확인 계획을 적어요."
+      },
+      "65": {
+        "explanation": "어떤 물체가 붙는지 알려면 재료와 자석의 반응을 살펴요(ㄴ). 두 자석이 밀어 내는지는 마주 보는 극을 확인해요(ㄷ). 극의 위치는 같은 철 물체로 자석의 여러 부분을 비교해 찾아요(ㄱ)."
+      },
+      "66": {
+        "explanation": "두 고리의 윗면이 N·N이면 아래 고리의 윗면 N과 위 고리의 아랫면 S가 마주 봐요(ㄷ). 윗면이 N·S이면 마주 보는 면은 N·N이에요(ㄱ). 6.4칸은 설명 모형의 높이예요(ㄴ)."
+      },
+      "67": {
+        "explanation": "거리의 영향을 알아볼 때는 같은 자석과 철 물체 사이의 처음 간격을 바꾸어요(ㄴ). 판의 영향을 알아볼 때는 전체 간격을 같게 하고 판이 있는지만 바꾸어요(ㄱ). 극의 영향을 알아볼 때는 두 자석의 마주 보는 극을 바꾸어요(ㄷ)."
+      },
+      "68": {
+        "explanation": "다음에 시험하겠다는 말은 앞으로 할 계획(ㄷ)이에요. 제시된 표에서 읽은 것은 수업용 가상 자료 읽기(ㄱ), 오늘 직접 본 방향을 적은 것은 실제 관찰 기록(ㄴ)이에요."
+      },
+      "69": {
+        "explanation": "철판 위 메모를 잡는 자석은 철을 끌어당기는 성질을 이용해요(ㄱ). 나침반은 주변 자석 등을 멀리하면 일정한 방향을 가리켜요(ㄷ). 같은 극끼리 마주 본 고리는 서로 밀어 내요(ㄴ)."
+      },
+      "70": {
+        "explanation": "종이가 흩어지는 불편을 줄이는 것은 해결할 목적(ㄷ)이에요. 자석과 철판의 위치는 부품 배치(ㄴ), 같은 종이로 잡힘과 고정을 살피는 것은 확인 방법(ㄱ)이에요."
+      },
+      "71": {
+        "explanation": "물체의 재료와 예상한 반응을 정리하고(ㄴ), 같은 자석을 같은 방법으로 가까이해요(ㄱ). 붙는지와 움직이는지를 기록한 뒤(ㄹ), 관찰 결과와 더 확인할 점을 설명해요(ㄷ). 작은 자석과 물체는 선생님이 준비해요."
+      },
+      "72": {
+        "explanation": "극 표식과 고리 수, 가운데 막대의 고정을 확인하고(ㄴ), 뒤집을 고리와 같게 둘 조건을 정해요(ㄹ). 고리 하나의 방향만 뒤집은 뒤(ㄷ), 떠 있는 틈과 높이를 같은 기준으로 비교해요(ㄱ). 가운데 막대는 그대로 두어요."
+      },
+      "73": {
+        "explanation": "N극·S극 표식과 주변 자석·쇠붙이를 확인해요(ㄴ). 나침반을 수평에 놓고 기다린 뒤(ㄱ), 멈춘 바늘의 N극이 가리키는 방향을 읽어요(ㄹ). 읽은 방향과 관찰 조건을 기록해요(ㄷ)."
+      },
+      "74": {
+        "explanation": "해결할 불편과 사용 장면을 정하고(ㄴ), 부품의 배치와 고정 방법을 그려요(ㄷ). 기능과 안전을 확인할 방법을 제안한 뒤(ㄹ), 친구에게 설명하고 받은 질문을 바탕으로 고칠 점을 찾아요(ㄱ)."
+      },
+      "75": {
+        "explanation": "여러 재료로 만든 물체 옆에 재료 이름을 적고, 자석을 가까이할 부분을 표시해요. 같은 자석과 같은 가까이하는 방법 등 두 조건을 그림에 적어요. 물체의 부분마다 재료가 다르면 살펴볼 곳도 나누어 표시해요."
+      },
+      "76": {
+        "explanation": "아래 고리는 윗면 N·아랫면 S, 위 고리는 윗면 S·아랫면 N으로 그려요. 두 고리 사이에는 N극과 N극이 마주 보므로 서로 밀어 내는 모습을 표시해요. 고리의 옆 움직임을 잡아 주는 가운데 막대도 그려요."
+      },
+      "77": {
+        "explanation": "같은 자석과 철 물체를 두 배치에 그리고, 전체 간격을 같게 표시해요. 한 배치에만 얇은 판을 넣고, 바닥과 자석을 가까이하는 방법도 같게 할 조건으로 적어요."
+      },
+      "78": {
+        "explanation": "주변 자석을 멀리한 배치와 막대자석을 가까이한 배치를 나누어 그려요. 바늘의 N극·S극과 자석의 위치·극·거리를 표시하고, 수평에서 바늘이 멈춘 뒤 방향을 기록할 것이라고 적어요. 아직 관찰하기 전이면 예상 방향과 실제 관찰을 구별해요."
+      },
+      "79": {
+        "explanation": "자석과 철판을 마주 보게 하거나 서로 다른 극의 두 자석을 마주 보게 하여 종이를 잡는 구조를 그릴 수 있어요. 부품의 재료·극·고정 위치와 종이를 꺼내는 방법을 표시해요. 작은 자석의 고정은 선생님과 확인해요."
+      },
+      "80": {
+        "explanation": "자료의 나에서는 작은 자석이 빠졌으므로, 자석이 본체에서 빠지지 않도록 고정하는 구조를 그림에 보완해요. 다음에는 같은 종이와 사용 방법으로 종이가 잡히는지와 부품이 빠지지 않는지를 함께 확인할 계획을 적어요."
+      }
+    },
+    "runtimePatches": {
+      "s41-u01-b46": {
+        "explanation": "자석 덮개가 붙으려면 서로 끌어당길 두 부분이 있어야 해요. 양쪽 부품이 자석인지 철판인지 적고, 두 부분이 마주 볼 위치를 표시해요. 그래서 첫째와 넷째 보기가 알맞아요."
+      },
+      "s41-u01-b08": {
+        "explanation": "고무 손잡이와 집게 끝에 같은 자석을 같은 방법으로 가까이하고, 어느 부분이 붙는지 따로 기록해요. 집게 끝이 금속처럼 보여도 정확한 재료는 아직 모르므로, 보이는 모습과 자석에 붙는 결과를 나누어 적어요. 고무 안쪽의 재료는 더 확인할 내용이에요."
+      },
+      "s41-u01-b16": {
+        "explanation": "자료에서는 종이가 없을 때와 얇은 종이 한 장이 있을 때 모두 클립이 움직였어요. 이 조건에서는 종이를 사이에 두어도 자석이 클립을 끌어당겼다고 설명할 수 있어요. 종이 장수의 영향을 더 알아보려면 같은 자석·클립·전체 간격을 유지하며 비교할 계획을 세워요."
+      },
+      "s41-u01-b24": {
+        "explanation": "같은 고리와 가운데 막대를 준비하고, 고리 하나를 뒤집기 전후에 마주 보는 면의 극을 기록해요. 같은 극끼리 마주 보면 밀어 내고 다른 극끼리 마주 보면 끌어당기므로, 틈과 탑 높이가 어떻게 달라지는지 비교해요. 높이는 같은 위치를 기준으로 재어요."
+      },
+      "s41-u01-b40": {
+        "explanation": "흩어진 철 클립을 모으는 불편과 철을 끌어당기는 자석의 성질을 연결할 수 있어요. 손잡이 끝에 자석을 단 수거 도구를 그린 뒤 자석을 고정할 곳과 모은 클립을 떼는 방법을 설명해요."
+      },
+      "s41-u01-b56": {
+        "explanation": "자석을 상자의 어느 부분에 고정할지, 철 클립이 어디에 붙을지 표시해요. 클립을 꺼내는 방법과 작은 자석이 빠지지 않게 할 방법도 덧붙이면 다른 사람이 구조와 쓰임을 이해할 수 있어요."
+      },
+      "s41-u01-b64": {
+        "explanation": "가상 기록에서 확인한 것은 설계 그림을 완성했고 고정 방법을 질문받았다는 점이에요. 아직 만들거나 시험하지 않았으므로, 다음에는 고정할 부품을 그림에 덧붙이고 실제로 확인할 방법을 제안해요."
+      }
+    }
+  },
+  "curriculum": {
+    "primaryTitle": "교육부 고시 제2022-33호 별책9 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "standards": [
+      "4과09-01",
+      "4과09-02",
+      "4과09-03"
+    ],
+    "elementaryTerms": [
+      "자석의 극",
+      "끌어당기는 힘",
+      "밀어 내는 힘",
+      "나침반",
+      "자석에 붙는 물체"
+    ],
+    "boundary": "자석과 물체 및 두 자석의 상호작용과 생활 장치 설계. 자기장은 기본 문항의 필수 개념으로 도입하지 않고 기존 상위 학습 안내에서 구별한다. 설계가 반드시 만들기로 이어져야 함을 뜻하지 않는다."
+  },
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 80,
+    "changedWorkbookQuestions": 35,
+    "changedExplanations": 35,
+    "unchangedWorkbookAnswersContractsKeysAndSourceFields": 3080,
+    "priorNativeWorkbookPreserved": true,
+    "priorHelperBytePrefixPreserved": true,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 126,
+    "changedHtml": 2,
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": 7,
+    "classroomPresentationsChanged": 4,
+    "changedSlides": 8,
+    "unchangedSlideArrays": 62,
+    "workbookChoiceCombinationsGraded": 32,
+    "explanationHtmlOccurrencesVerified": 70,
+    "syntaxFiles": 7,
+    "browserVerified": false
+  },
+  "reviewCoverage": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 720,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 7,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "outsideNineUnitPass": 2360,
+    "changedWorkbookQuestionsAcrossPhases286To293": 198
+  },
+  "nativeTests": {
+    "total": 1212,
+    "pass": 1210,
+    "fail": 0,
+    "skip": 2,
+    "testFiles": 209
+  },
+  "runtimeCoherence": {
+    "authoredPracticeIds": [
+      "s41-u01-b46",
+      "s41-u01-b08",
+      "s41-u01-b16",
+      "s41-u01-b24",
+      "s41-u01-b40",
+      "s41-u01-b56",
+      "s41-u01-b64"
+    ],
+    "classroomIds": [
+      "s41-u01-b46",
+      "s41-u01-b08",
+      "s41-u01-b24",
+      "s41-u01-b64"
+    ],
+    "priorVersion": 1,
+    "currentVersion": "20261105-magnet-learner-reasoning",
+    "previousFullSnapshotsRetained": true,
+    "gradingAndSavedWrittenAnswersVerified": true,
+    "repeatedClassroomDailyQuestionIdentityVerified": true,
+    "rawOriginalSimilarFutureAndOtherUnitExcluded": true,
+    "rawSourcesUnchanged": true,
+    "allPracticeBankSemanticsVerified": false
+  },
+  "testMaintenance": {
+    "firstRunFailures": 2,
+    "finalRunFailures": 0,
+    "originalPreservationAssertions": "Compare every original field through questionAtVersion while retaining original item order, original first ten checks, daily identity and records invariants.",
+    "archiveContract": "Restart stores prior prompt/choices and answer/grade state; full older explanations are restored from question history.",
+    "failedRunPreserved": "phase293/first-tests.log"
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase293",
+  "mainMerged": false,
+  "siteDeployed": false,
+  "goalAchieved": false,
+  "goalAtImpasse": false
+}

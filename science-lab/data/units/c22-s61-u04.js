@@ -1,0 +1,11 @@
+import {reviewedSourceDiagnostics} from '../../bank/source-diagnostics/c22-s61-u04.js?v=20261116-source-diagnostics-per-unit';
+import {source as registeredSource} from './c22-s61-u04.source.js';
+import {unit as pairedUnit,items as pairedItems} from './c22-s61-u04.paired.js';
+import {taxonomy} from './c22-s61-u04.taxonomy.js?v=20261114-source-integration';
+import {earthMotionAuthoredItems} from '../book/c22-s61-u04.earth-motion-items.js';
+export const unit={...pairedUnit,elements:taxonomy.elements.map(e=>e.name),sources:{...pairedUnit.sources,scope:'옛단원 연계 원문39·독립 연습167=206문항. 현행 판본 전체 원문은 준비 중이다.',originalExamAvailable:true,sourceExcerptOnly:true}};
+const pairs=pairedItems.map(q=>q.answerContract.type==='written-explanation'?{...q,answerContract:{...q.answerContract,rubric:{required:q.responseContract.required,pass:'방향과 근거를 선생님이 확인해요.'}}}:q);
+export const items=[...pairs,...earthMotionAuthoredItems(taxonomy)];
+export {sourceRegistration} from './c22-s61-u04.source.js';
+export const source=reviewedSourceDiagnostics('c22-s61-u04',registeredSource);
+export const similar=[];

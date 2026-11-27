@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{HEAT_MIXED_VERSION}from'../heat-mixed-response.js';
+const cache=new WeakMap();export function beforeHeatMixed(q){if(q?.contentVersion!==HEAT_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([4, 8, 14, 20, 32, 44, 50, 54, 59, 62, 67, 80, 84, 89, 93, 102]);
+export function heatMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==104)throw Error('열과 우리 생활 정답표104행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}

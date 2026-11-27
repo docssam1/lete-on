@@ -1,0 +1,273 @@
+{
+  "phase": 262,
+  "date": "2026-11-05",
+  "baseCommit": "d54579618bc15fcfe619694afcf645d1d2db795e",
+  "unit": "s41-u04",
+  "version": "20261105-biology-criteria",
+  "scope": "Replace42 repeated open-response teaching instructions in closed-response workbook items with task-specific printed checking guidance. No new scoring policy or grading-contract changes.",
+  "preservation": {
+    "changedCriteria": [
+      {
+        "no": 1,
+        "form": "short",
+        "criteria": "버섯과 곰팡이의 공통 특징인 균사와 포자를 나타낸 카드 두 개의 기호를 모두 썼는지 확인해요. 기호를 쓰는 순서는 바뀌어도 같게 보아요."
+      },
+      {
+        "no": 6,
+        "form": "short",
+        "criteria": "버섯과 곰팡이가 속한 무리의 이름인 균류를 썼는지 확인해요."
+      },
+      {
+        "no": 11,
+        "form": "short",
+        "criteria": "세균의 대표적인 모양이 아닌 뿌리·줄기·잎 모양 카드의 기호를 썼는지 확인해요."
+      },
+      {
+        "no": 15,
+        "form": "choice",
+        "criteria": "해캄 한 가닥의 마디가 보이는 확대 관찰 자료를 고른 경우 인정해요."
+      },
+      {
+        "no": 16,
+        "form": "choice",
+        "criteria": "효모가 속한 무리의 이름과 빵 만들기에 이용되는 사례를 구별한 보기를 고른 경우 인정해요."
+      },
+      {
+        "no": 17,
+        "form": "multi",
+        "criteria": "여러 모양을 비교할 수 있다는 보기와 색 처리 여부를 확인해야 한다는 보기를 모두 고르고, 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 18,
+        "form": "multi",
+        "criteria": "해캄과 짚신벌레의 생김새를 비교한 보기와 같은 무리여도 생김새가 다를 수 있다는 보기를 모두 고르고, 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 19,
+        "form": "multi",
+        "criteria": "표에 제시된 세균의 다양한 사는 곳과 해캄·짚신벌레의 물속 사는 곳을 나타낸 보기를 모두 고르고, 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 20,
+        "form": "blank",
+        "criteria": "㉠에는 구조의 이름인 균사, ㉡에는 생물 무리의 이름인 균류를 썼는지 확인해요."
+      },
+      {
+        "no": 21,
+        "form": "blank",
+        "criteria": "긴 가닥과 마디에는 해캄을, 짚신 같은 몸과 가는 털에는 짚신벌레를 연결해 각 빈칸에 썼는지 확인해요."
+      },
+      {
+        "no": 22,
+        "form": "blank",
+        "criteria": "막대와 나선을 하나씩 썼는지 확인해요. 두 빈칸에 넣은 낱말의 순서는 바뀌어도 인정해요."
+      },
+      {
+        "no": 23,
+        "form": "blank",
+        "criteria": "㉠에는 균류, ㉡에는 한 또는 1을 썼는지 확인해요."
+      },
+      {
+        "no": 24,
+        "form": "match",
+        "criteria": "가닥·마디는 해캄, 몸 바깥의 가는 털은 짚신벌레, 갓 안쪽의 주름은 버섯으로 세 항목을 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 25,
+        "form": "match",
+        "criteria": "움직임은 영상, 세균 한 개의 모양은 전자 현미경 사진, 버섯 갓 안쪽은 표본과 돋보기로 세 항목을 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 26,
+        "form": "order",
+        "criteria": "생김새 관찰→직접 본 특징 기록→생물 정보와 대조→더 살펴보기의 순서로 네 기호를 빠짐없이 썼는지 확인해요."
+      },
+      {
+        "no": 29,
+        "form": "short",
+        "criteria": "유산균을 이용한 요구르트 생산을 나타낸 기호를 썼는지 확인해요."
+      },
+      {
+        "no": 37,
+        "form": "short",
+        "criteria": "다른 사람이 조사에 사용한 자료를 찾을 수 있도록 밝히는 정보의 이름인 출처를 썼는지 확인해요."
+      },
+      {
+        "no": 39,
+        "form": "choice",
+        "criteria": "분해 작용이 줄면 죽은 생물의 물질이 더 남을 수 있다는 보기를 고른 경우 인정해요."
+      },
+      {
+        "no": 40,
+        "form": "choice",
+        "criteria": "숲에서는 분해된 물질이 다시 이용되는 데 관여한다는 보기를 고른 경우 인정해요."
+      },
+      {
+        "no": 41,
+        "form": "choice",
+        "criteria": "분해자의 역할과 직접 관련된 죽은 생물의 물질 분해 설명 자료를 고른 경우 인정해요."
+      },
+      {
+        "no": 42,
+        "form": "multi",
+        "criteria": "죽은 나무의 분해와 물질의 재이용을 연결한 보기, 유산균의 작용과 식품 생산을 연결한 보기를 모두 고르고 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 43,
+        "form": "multi",
+        "criteria": "두 자료의 생물·재료·관리 조건을 비교한다는 보기와 미생물이 서로 다른 생활 영향을 낼 수 있다는 보기를 모두 고르고 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 44,
+        "form": "multi",
+        "criteria": "생물과 그 작용, 확인한 영향과 근거 자료를 나타낸 보기를 모두 고르고 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 45,
+        "form": "blank",
+        "criteria": "㉠에는 죽은 생물의 물질에 일어나는 작용인 분해, ㉡에는 그 물질이 다시 쓰이는 것을 뜻하는 이용을 썼는지 확인해요."
+      },
+      {
+        "no": 46,
+        "form": "blank",
+        "criteria": "요구르트 생산에는 이로운, 음식을 먹을 수 없게 되는 변화에는 부패를 넣었는지 확인해요."
+      },
+      {
+        "no": 47,
+        "form": "blank",
+        "criteria": "㉠에는 생물이 하는 일인 작용, ㉡에는 우리 생활에 미치는 결과인 영향을 썼는지 확인해요."
+      },
+      {
+        "no": 48,
+        "form": "blank",
+        "criteria": "㉠에는 대상 또는 상황, ㉡에는 모든을 넣어 문장의 뜻에 맞게 채웠는지 확인해요."
+      },
+      {
+        "no": 49,
+        "form": "match",
+        "criteria": "요구르트 생산은 이로운 이용, 음식 부패는 해로운 영향, 죽은 생물의 물질 분해는 물질의 재이용으로 세 항목을 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 50,
+        "form": "match",
+        "criteria": "음식이 상한다는 주장에는 부패 관찰 자료, 식품 생산에 이용한다는 주장에는 요구르트 생산 자료, 물질 순환에 관여한다는 주장에는 죽은 나무 분해 자료를 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 51,
+        "form": "order",
+        "criteria": "생물과 작용의 근거 찾기→출처·대상·조건 정리→다른 조건과 비교→작용과 영향을 연결해 발표하기의 순서로 네 기호를 빠짐없이 썼는지 확인해요."
+      },
+      {
+        "no": 52,
+        "form": "order",
+        "criteria": "두 자료의 대상·조건 확인→각각의 작용·영향 정리→차이가 생긴 까닭 비교→비교한 범위에서 설명하기의 순서로 네 기호를 빠짐없이 썼는지 확인해요."
+      },
+      {
+        "no": 63,
+        "form": "short",
+        "criteria": "미생물을 이용해 해충을 없애거나 줄이는 농약의 이름인 생물 농약을 썼는지 확인해요."
+      },
+      {
+        "no": 67,
+        "form": "short",
+        "criteria": "소개 자료를 듣거나 읽을 사람을 가리키도록 전달 뒤의 빈칸에 대상을 썼는지 확인해요."
+      },
+      {
+        "no": 69,
+        "form": "short",
+        "criteria": "자료를 고치기 위해 받은 의견이나 질문을 가리키는 말인 피드백을 썼는지 확인해요."
+      },
+      {
+        "no": 71,
+        "form": "choice",
+        "criteria": "모형 표의 세 조건 중 따뜻한 물 쪽 반죽의 부피가 가장 크다는 보기를 고른 경우 인정해요."
+      },
+      {
+        "no": 72,
+        "form": "multi",
+        "criteria": "효모의 기체 생성과 반죽 부풀기, 일부 곰팡이 물질과 항생제 개발 연구를 연결한 보기를 모두 고르고 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 73,
+        "form": "multi",
+        "criteria": "기체 생성과 반죽의 부풀기를 연결해 설명하기, 확인한 자료의 출처를 붙이기를 모두 고르고 다른 보기를 더하지 않았는지 확인해요."
+      },
+      {
+        "no": 74,
+        "form": "blank",
+        "criteria": "㉠에는 이산화 탄소, ㉡에는 부풀기 또는 반죽의 부풀기를 넣었는지 확인해요."
+      },
+      {
+        "no": 75,
+        "form": "blank",
+        "criteria": "㉠에는 억제, ㉡에는 항생제를 넣어 곰팡이가 만드는 물질의 성질과 이용을 연결했는지 확인해요."
+      },
+      {
+        "no": 76,
+        "form": "match",
+        "criteria": "기체 생성은 반죽 부풀리기, 물질 분해는 하수 처리의 일부 과정, 세균 자람 억제는 항생제 개발 연구로 세 항목을 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 77,
+        "form": "match",
+        "criteria": "생물 무리 질문에는 균류 설명, 부풀기 질문에는 기체 생성 설명, 출처 질문에는 기관·제목·자료 위치를 모두 연결했는지 확인해요."
+      },
+      {
+        "no": 78,
+        "form": "order",
+        "criteria": "근거 확인→자료 만들기→보여 주고 설명하기→질문을 듣고 고치기의 순서로 네 기호를 빠짐없이 썼는지 확인해요."
+      }
+    ],
+    "closedResponseCount": 42,
+    "openResponseRubricsUnchanged": 14,
+    "unchangedWorkbooks": 31,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "s41-u04",
+        "mode": "teacher",
+        "sha256": "73076e4dd98832516b0c6e3af56b106802fa976980d115ff933aead847685209"
+      },
+      {
+        "unit": "s41-u04",
+        "mode": "answers",
+        "sha256": "75abea9adb26ae56b151437acf51be90eee841ed4862bd1ce3c1ea70d4d38452"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorHelperBytesUnchanged": true,
+    "allFieldsExcept42CriteriaStringsUnchanged": true,
+    "renderedGuidanceNodes": 84,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/biology-student-language.js",
+      "science-lab/data/book/s41-u04.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 4,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "review": "Read all80 criteria and the42 matching prompts, answers, options and givens. Retained original acceptance of swapped symbols/words and documented variants; written/drawing rubrics unchanged.",
+  "implementation": "Separate criteria function appended without changing older helper bytes. Guard on both question number and exact previous repeated instruction. Prior full workbook retained.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase262",
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0,
+  "browserVerified": false,
+  "remaining": [
+    "Remaining explanations and other units teaching criteria; full curriculum/content review",
+    "Actual PC/phone/A4 font and clipping/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ]
+}

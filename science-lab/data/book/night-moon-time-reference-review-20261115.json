@@ -1,0 +1,112 @@
+{
+  "reviewDate": "2026-11-15",
+  "scope": "자료 참조 후보 1차 분류와 밤하늘24번의 날짜·시각을 문제 안에 함께 제시",
+  "skill": "instructional-design: 제시 조건만으로 답할 수 있는지와 관찰/추측의 구별을 검토",
+  "standard": "4과13-01",
+  "curriculumBasis": "2022 개정 초등 과학은 여러 날 달의 모양을 관찰하여 주기적인 변화를 확인하는 데 초점을 둔다. 위상변화 원인을 추가하지 않는다.",
+  "cacheVersion": "20261115-night-moon-time-reference",
+  "change": {
+    "question": "c22-s42-u01-w024",
+    "before": "저녁 표와 새벽 자료를 가리켰지만 어느 자료를 보아야 하는지 문제에서 명확하지 않았다. 관련 표는5·7쪽에 이미 있었다.",
+    "after": "해당 날짜와 시각을 수업용 모형 자료로 문제 안에 함께 제시한다.",
+    "given": [
+      "수업용 모형 자료",
+      "음력 3일·7일·15일: 저녁 7시쯤",
+      "음력 22일·26일: 새벽 6시쯤"
+    ],
+    "sourceKeys": [
+      "skyEvening",
+      "skyDawn"
+    ],
+    "sourceStudentPages": [
+      5,
+      7
+    ],
+    "fieldsChanged": [
+      "prompt",
+      "given"
+    ],
+    "newObservationsOrScientificValues": false,
+    "answerPreserved": "㉠ 시각 · ㉡ 새벽",
+    "bankCounterpartChanged": false
+  },
+  "candidateTriage": {
+    "status": "first-pass",
+    "originalCandidates": 255,
+    "additionalCandidates": 100,
+    "total": 355,
+    "categories": {
+      "response-parts-contain-conditions": 16,
+      "text-or-choice-reasoning": 207,
+      "create-or-plan-a-representation": 85,
+      "own-question-material": 19,
+      "same-page-material": 28
+    },
+    "allQuestionScienceAndReferenceSemanticsReviewed": false,
+    "linkedQuestionsChecked": 1484,
+    "matchingKeys": [
+      "sourceId",
+      "bookQuestionId"
+    ],
+    "linkedPhotoFieldMismatches": 0,
+    "scopeNote": "사진 필드 교차 대조는 양쪽에 처음부터 자료가 없는 문제를 잡지 못한다.355개는 발문·예시 답 중심의 1차 분류이며 전부 의미 검수 완료라는 뜻이 아니다."
+  },
+  "crossReferenceExamples": {
+    "c22-s42-u01-w028": "3·4쪽의 달 전체/표면 사진이 실제로 있다.",
+    "s31-u03-w075-w076": "3쪽의 딸기·목련·벚나무·부레옥잠 사진 및9쪽 장미·토끼풀 사진이 있다.",
+    "s31-u02-w075": "3·7쪽에 동물 관찰 사진 모음이 있다."
+  },
+  "resourceGraphAudit": {
+    "books": 32,
+    "figureUses": 1196,
+    "galleryImages": 72,
+    "uniqueLocalImages": 192,
+    "external": [],
+    "missing": [],
+    "actualBrowserAndA4Reviewed": false
+  },
+  "preservation": {
+    "previousGit": "a0ef57de6d12e97f16baef2661b03bc7ca92eee1",
+    "priorManuscriptsExecutedInMemory": true,
+    "actualUnits": 32,
+    "unitLoaderExpressionByteIdentical": true,
+    "currentQuestions": 3179,
+    "originalQuestions": 1763,
+    "pairedQuestions": 1512,
+    "allCurrentBankQuestionCodeAndRenderingUnchanged": true,
+    "workbookQuestions": 3080,
+    "workbookQuestionsUnchanged": 3079,
+    "changedWorkbookQuestion": "c22-s42-u01-w024",
+    "changedFields": [
+      "prompt",
+      "given"
+    ],
+    "answersCriteriaPagesWritingSpacesSidebarsAndFiguresPreserved": true,
+    "actualWorkbookPrintModesCompared": 8,
+    "answerAndQuickPrintModesByteIdentical": true,
+    "oldRevisionLoadersAndDecksExecutedFromGit": true,
+    "decks": 64,
+    "slides": 3048,
+    "allSlidesByteIdentical": true,
+    "actualBrowserAndA4Reviewed": false
+  },
+  "verification": {
+    "testFiles": 293,
+    "tests": 1523,
+    "passed": 1521,
+    "failed": 0,
+    "browserSkipped": 2,
+    "newRegressionTests": 3,
+    "syntaxFiles": 7,
+    "bankAudit": true,
+    "taxonomyCheck": true,
+    "diffCheck": true,
+    "fullHistoricSnapshotsUnchanged": 2814,
+    "choiceOnlyDeltasUnchanged": 2
+  },
+  "cachePolicy": "문항/사진 표시 캐시는 유지하고 앱 진입에 book 쿼리를 더해 교재 변경을 독립적으로 새로 읽는다.공용 교재와 수업의 실제 import도 같은 교재 버전으로 맞춘다.",
+  "newImages": 0,
+  "newOriginalQuestions": 0,
+  "actualBrowserAndA4Reviewed": false,
+  "deployed": false
+}

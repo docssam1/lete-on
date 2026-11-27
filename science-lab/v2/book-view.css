@@ -108,3 +108,5 @@
   .bk.viewer { display: block !important; width: auto !important; }
   .bk.viewer .bk-page, .bk.viewer .bk-page:not(.on) { position: static !important; left: auto !important; visibility: visible !important; display: flex !important; box-shadow: none !important; border-radius: 0 !important; pointer-events: auto; }
 }
+
+@media screen { .bv-space.bv-choice-scroll { overflow:auto; } .bv[data-layout="phone"] .bv-space.bv-choice-scroll { overflow:visible; } }

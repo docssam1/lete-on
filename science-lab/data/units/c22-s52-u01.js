@@ -1,3 +1,5 @@
+import {reviewedSourceDiagnostics} from '../../bank/source-diagnostics/c22-s52-u01.js?v=20261116-source-diagnostics-per-unit';
+import {source as registeredSource} from './c22-s52-u01.source.js';
 export const unit = {
   "id": "c22-s52-u01",
   "course": "5-2",
@@ -5,10 +7,13 @@ export const unit = {
   "title": "혼합물의 분리",
   "domain": "물질",
   "sources": {
-    "bank": [],
+    "bank": [
+      "이론322 개념·응용·워크북 현행 연계 발췌20문항"
+    ],
     "originalExamAvailable": false,
     "basis": "bank/work/c22s52u01/curriculum.json",
-    "scope": "정본 위치에서 혼합물 단원평가 원문을 확인하지 못함. 창작96과 구별."
+    "scope": "옛 교사용 교재 원문20개. 현행 단원평가 전체 원문과 구별한다.",
+    "originalBookAvailable": true
   }
 };
 export const items = [
@@ -16,9 +21,15 @@ export const items = [
     "id": "c22-s52-u01-b001",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 4,
+        "no": 1
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -252,9 +263,15 @@ export const items = [
     "id": "c22-s52-u01-b005",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 1,
+        "no": 1
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -306,9 +323,15 @@ export const items = [
     "id": "c22-s52-u01-b006",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 1,
+        "no": 2
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -366,9 +389,15 @@ export const items = [
     "id": "c22-s52-u01-b007",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 1,
+        "no": 4
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -607,9 +636,15 @@ export const items = [
     "id": "c22-s52-u01-b011",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 1,
+        "no": 5
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -663,9 +698,15 @@ export const items = [
     "id": "c22-s52-u01-b012",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 4,
+        "no": 4
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -723,9 +764,15 @@ export const items = [
     "id": "c22-s52-u01-b013",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 2,
+        "no": "1(2)"
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -786,9 +833,15 @@ export const items = [
     "id": "c22-s52-u01-b014",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 6
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -844,9 +897,15 @@ export const items = [
     "id": "c22-s52-u01-b015",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 2,
+        "no": 3
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -906,9 +965,15 @@ export const items = [
     "id": "c22-s52-u01-b016",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 2,
+        "no": "1(1)"
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -964,9 +1029,15 @@ export const items = [
     "id": "c22-s52-u01-b017",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 3,
+        "no": 4
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1018,9 +1089,15 @@ export const items = [
     "id": "c22-s52-u01-b018",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 2
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1616,9 +1693,15 @@ export const items = [
     "id": "c22-s52-u01-b028",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 8
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -1789,9 +1872,15 @@ export const items = [
     "id": "c22-s52-u01-b031",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 1,
+        "no": 8
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -2085,9 +2174,15 @@ export const items = [
     "id": "c22-s52-u01-b036",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 3,
+        "no": 3
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -2200,9 +2295,15 @@ export const items = [
     "id": "c22-s52-u01-b038",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 3,
+        "no": 1
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -3656,9 +3757,15 @@ export const items = [
     "id": "c22-s52-u01-b063",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 1
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -3767,9 +3874,15 @@ export const items = [
     "id": "c22-s52-u01-b065",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 5
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -3947,9 +4060,15 @@ export const items = [
     "id": "c22-s52-u01-b068",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 4,
+        "no": 8
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -5135,9 +5254,15 @@ export const items = [
     "id": "c22-s52-u01-b088",
     "status": "authored",
     "sourceRef": {
-      "type": "authored-supplement",
+      "type": "authored-pair",
       "edition": "GFIELD 혼합물 독립 창작 교재",
-      "course": "초등 5-2"
+      "course": "초등 5-2",
+      "of": {
+        "sourceId": "1UnZss7H2K_mLObS_lCSUD1yeQqNVVakl",
+        "set": 5,
+        "no": 7
+      },
+      "originalAuthoredType": "authored-supplement"
     },
     "taxonomy": {
       "curriculum": "2022 개정",
@@ -5662,3 +5787,5 @@ export const items = [
   }
 ];
 export {mixtureBankPaperHtml as bankPaper,wireMixtureBankPaper as wireBankPaper} from '../../v2/mixture-bank-paper.js';
+export {sourceRegistration} from './c22-s52-u01.source.js';
+export const source=reviewedSourceDiagnostics('c22-s52-u01',registeredSource);

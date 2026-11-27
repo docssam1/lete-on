@@ -1,2 +1,19 @@
 .bank-photo-figure{width:100%;max-width:630px;margin:16px auto;break-inside:avoid}.bank-photo-figure img{display:block;width:100%;height:auto}.bank-photo-labels{display:grid;grid-template-columns:repeat(var(--bank-photo-cols),minmax(0,1fr));gap:6px;margin-top:8px;text-align:center;font-weight:700}.bank-photo-figure small{display:block;color:#4c596c;font-size:13px;line-height:1.5;margin-top:6px}
 @media print{.bank-photo-figure{max-width:145mm;margin:3mm auto}.bank-photo-labels{font-size:10pt;margin-top:1mm}.bank-photo-figure small{font-size:8pt;margin-top:1mm}}
+/* Keep each original photograph intact, with its own label and attribution. */
+.observation-photos{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;width:100%;max-width:760px;margin:16px auto}
+.observation-photos[data-photo-count="3"]{grid-template-columns:repeat(3,minmax(0,1fr))}
+.observation-photos[data-photo-count="1"]{grid-template-columns:minmax(0,1fr);max-width:500px}
+.observation-photo{margin:0;min-width:0;break-inside:avoid}
+.observation-photo img{display:block;width:100%;height:auto;max-height:320px;object-fit:contain;background:#fff}
+.observation-photo figcaption{margin-top:8px;font-size:16px;line-height:1.5}
+.observation-photo small{display:block;font-size:14px;font-weight:400;overflow-wrap:anywhere}
+@media screen and (max-width:520px){.observation-photos,.observation-photos[data-photo-count="3"]{grid-template-columns:minmax(0,1fr)}}
+@media print{.observation-photos{gap:3mm;margin:3mm auto;max-width:145mm}.observation-photo img{max-height:45mm}.observation-photo figcaption{font-size:10pt;margin-top:1mm}.observation-photo small{font-size:8pt}}
+
+/* Keep the two land reference images readable beside the existing printed exercises. */
+@media print{.bank-photo-figure img[src="../assets/book/s41-u03-runoff-before-after-v1.png"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q04.webp"],.bank-photo-figure img[src="../assets/bank/s41-u03/s3-q06.webp"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}
+
+@media print{.ed-question .ed-photo img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"],.bank-photo-figure img[src="../assets/activities/c22-s32-u02/earth-apollo17-nasa.jpg"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}
+
+@media print{.ed-question .motion-book-photo img[src="../assets/bank/c22-s61-u02/s4-q05.webp"],.bank-photo-figure img[src="../assets/bank/c22-s61-u02/s4-q05.webp"],.observation-photo img[src="../assets/book/c22-s62-u03-damaged-cord-dmahalko.jpg"]{max-height:38mm;width:auto;max-width:100%;margin-inline:auto}}

@@ -1,0 +1,58 @@
+/* 기존 지필드 수업의 종이색·초록·Pretendard 기준을 이 단원에 적용한다. */
+.season-thinking{--disp:Pretendard,sans-serif;--t:#2f6b4a;--o:#2f6b4a;--n:#2a241c;font-family:Pretendard,sans-serif;background:#f1ece1;color:#2a241c}
+.season-thinking :is(.dk-top,.dk-top a,.dk-top b,.dk-h){color:#2a241c}
+.season-thinking :is(.dk-h,.dk-kick,h1,h2,h3,strong,b,button){font-weight:700}
+.season-thinking .dk-h{border-color:#c9bda2}
+.season-thinking .dk-phases span{background:#e2d9c6;color:#2a241c}
+.season-thinking .dk-phases span.on{background:#2f6b4a;color:#fff}
+.season-thinking .dk-stage{background:#fdfbf5}
+.season-thinking .dk-stage::before{background:#2f6b4a}
+.season-thinking .dk-body a{color:#1e4631}
+.season-thinking :is(.dk-tbl,.ed-table){table-layout:fixed;width:100%;border-collapse:collapse}
+.season-thinking :is(.dk-tbl,.ed-table) :is(td,th){border:1px solid #c9bda2;padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+.season-thinking .ps-figure{margin:0 auto 16px;text-align:center}
+.season-thinking .ps-figure img{max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain}
+.season-thinking .ps-figure :is(figcaption,.ps-figure-note,small),.season-thinking .ed-given{font-size:13px;color:#7a6f5c}
+.season-thinking .ps-figure-credit{display:block;margin-top:8px}
+.season-thinking .dk-inrow label{display:grid;grid-template-columns:auto minmax(0,1fr);gap:8px;align-items:start;width:100%}
+.season-thinking .dk-inrow textarea{min-height:44px}
+.season-thinking .dk-given-list{list-style:none;margin:.5em 0 0;padding:0;display:grid;gap:.4em}
+.season-compare{--mc-ink:#2a241c;--mc-accent:#2f6b4a;--mc-line:#c9bda2;font-family:Pretendard,sans-serif;color:var(--mc-ink);padding:12px;line-height:1.65;min-width:0}
+.season-compare label{display:grid;gap:6px;font-weight:700}
+.season-compare select{width:100%;min-width:0;min-height:44px;padding:8px;border:1px solid var(--mc-line);border-radius:6px;background:#fdfbf5;color:var(--mc-ink);font:inherit}
+.season-compare :is(select,button):focus-visible{outline:2px solid var(--mc-accent);outline-offset:3px}
+.season-compare-notice{padding:12px;background:#e9f0e7;border-left:4px solid var(--mc-accent)}
+.season-compare-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.season-compare-actions button{min-height:44px;padding:8px 12px;border:1px solid var(--mc-line);border-radius:6px;font:inherit;background:#fdfbf5;color:var(--mc-ink);cursor:pointer}
+.season-compare-actions button:disabled{opacity:.5;cursor:default}
+.season-compare-result{padding:12px;margin-top:12px;background:#e9f0e7;border:1px solid var(--mc-line)}
+.season-compare [hidden]{display:none!important}
+.season-compare-table{width:100%;overflow-x:auto}
+.season-compare table{table-layout:fixed;width:100%;border-collapse:collapse}
+.season-compare :is(td,th){border:1px solid var(--mc-line);padding:8px;text-align:left;vertical-align:top;white-space:normal;overflow-wrap:anywhere}
+@media(max-width:700px){.season-compare{padding:8px}.season-compare-result{padding:8px}.season-thinking .ps-figure img{max-height:210px}}
+
+.season-thinking .ed-fig{margin:0 auto 16px;text-align:center}
+.season-thinking .ed-fig svg,.season-compare svg{display:block;width:100%;height:auto;max-height:260px;margin:auto}
+.season-compare .ps-figure img{display:block;max-width:100%;width:auto;max-height:240px;height:auto;object-fit:contain;margin:auto}
+.season-compare .ps-figure{margin:16px auto;text-align:center}
+.season-compare .ps-figure-credit{font-size:13px}
+
+.season-thinking .season-plot,.season-compare .season-plot{max-width:340px;max-height:300px;margin:12px auto}
+.season-thinking .season-draw-space{min-height:140px;border:1px solid #c9bda2;background:#fdfbf5}
+.season-compare .ps-figure img{max-width:100%;max-height:220px;object-fit:contain}
+
+.season-thinking .season-book-photo img,.season-compare .season-book-photo img{display:block;max-width:100%;width:auto;height:auto;max-height:240px;object-fit:contain;margin:auto}
+.season-thinking .season-book-photo-caption,.season-compare .season-book-photo-caption{font-size:13px;color:#7a6f5c}
+.season-thinking .season-book-photo-caption small{display:block}
+.season-thinking .season-sky-links{display:flex;flex-wrap:wrap;gap:8px;list-style:none;padding:0}
+.season-thinking .season-sky-links a{display:flex;align-items:center;min-height:44px;padding:8px 12px;border:1px solid #c9bda2;background:#e9f0e7;border-radius:6px;line-height:1.4}
+.season-thinking .season-sky-links a:focus-visible{outline:2px solid #2f6b4a;outline-offset:3px}
+.season-thinking .season-program-note{font-size:13px;color:#7a6f5c}
+
+.season-thinking .season-answer-hint{font-size:14px;color:#7a6f5c}
+.season-thinking .season-source-links{display:grid;gap:10px;list-style:none;padding:0}
+.season-thinking .season-source-links li{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.season-thinking .season-source-links a{display:inline-flex;align-items:center;min-height:44px;padding:8px;border:1px solid #c9bda2;background:#e9f0e7}
+.season-thinking .season-source-links a:focus-visible{outline:2px solid #2f6b4a;outline-offset:3px}
+.season-thinking .dk-body .season-book-photo{max-width:480px;margin:0 auto 16px}

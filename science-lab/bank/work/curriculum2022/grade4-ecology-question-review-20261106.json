@@ -1,0 +1,777 @@
+{
+  "phase": 298,
+  "date": "2026-11-06",
+  "previousGoalTurn": "progress: night-sky review published ebfb1ec7",
+  "sourceCandidateBefore": "db3001b7acd81c129833c2ea514d0fb76e190ccd",
+  "reviewHeadBefore": "ebfb1ec79b23f176b99adc51a3f2775ab9c38845",
+  "questionChanges": {
+    "unit": "c22-s42-u02",
+    "version": "20261106-ecology-readable-workbook",
+    "patches": {
+      "1": {
+        "explanation": "버섯과 분해 세균은 죽은 나무의 물질을 분해하여 양분을 얻는 분해자예요. 두 생물을 함께 묶은 넷째 보기가 알맞아요. 같은 곳에 산다고 모두 같은 역할을 하는 것은 아니에요."
+      },
+      "2": {
+        "explanation": "게는 살아 있는 생물이므로 생물 요소예요. 모래·햇빛·바닷물·수온은 생물이 살아가는 데 영향을 주는 비생물 요소예요. 따라서 둘째 보기를 골라요."
+      },
+      "3": {
+        "explanation": "연못의 생태계를 조사할 때에는 물속 생물뿐 아니라 물·빛·온도 등 주변 환경도 함께 살펴야 해요. 물과 빛을 빼겠다는 다섯째 보기가 알맞지 않아요."
+      },
+      "4": {
+        "explanation": "수온은 물의 온도를 뜻해요. 물의 온도는 비생물 요소이므로 첫째 보기를 골라요. 물풀·우렁이·붕어·잠자리는 살아 있는 생물이에요."
+      },
+      "5": {
+        "explanation": "공기는 살아 있는 생물이 아니므로 비생물 요소예요. 버섯·노루·고사리·딱정벌레는 생물 요소이므로 셋째 보기를 골라요."
+      },
+      "6": {
+        "explanation": "물풀은 살아 있는 생물이므로 생물 요소이고, 물은 비생물 요소예요. 둘을 거꾸로 나눈 셋째 보기가 알맞지 않아요."
+      },
+      "7": {
+        "explanation": "잔디는 빛을 이용해 양분을 스스로 만드는 생산자예요. 토끼는 풀을 먹는 소비자이고, 자료의 곰팡이 A는 죽은 물질을 분해하는 분해자예요. 따라서 다섯째 보기가 알맞아요."
+      },
+      "8": {
+        "explanation": "갈대는 빛을 이용하여 필요한 양분을 스스로 만들어요. 이렇게 양분을 얻는 생물을 생산자라고 하므로, 갈대가 양분을 만드는 방법과 생산자의 뜻을 연결해 설명해요."
+      },
+      "9": {
+        "explanation": "하천의 물과 돌, 물속 생물은 서로 영향을 주고받아요. 이처럼 생물과 주변의 비생물 환경을 함께 이르는 말은 생태계예요."
+      },
+      "10": {
+        "explanation": "소나무는 식물, 다람쥐는 동물, 버섯은 균류로 모두 살아 있는 생물이에요. 카드에서 이 세 가지 이름을 찾아 써요. 물·빛·온도는 비생물 요소예요."
+      },
+      "11": {
+        "explanation": "자료의 세균은 죽은 물질을 분해하여 양분을 얻으므로 분해자예요. 이 설명에 맞게 나눈 ㄷ을 골라요. 세균은 종류에 따라 하는 일이 다를 수 있어요."
+      },
+      "12": {
+        "explanation": "빛을 얼마나 받는지와 풀의 상태를 함께 비교한 둘째 보기가 알맞아요. 풀의 상태가 달라진 까닭을 알아보려면 물의 양 등 다른 조건도 함께 살펴봐야 해요."
+      },
+      "13": {
+        "explanation": "흙은 비생물 요소이지만 그 안에는 지렁이 같은 생물이 살 수 있어요. 흙과 흙에 사는 생물은 나누어 분류하므로 넷째 보기가 알맞아요."
+      },
+      "14": {
+        "explanation": "자료에서 물풀 A는 빛을 이용해 양분을 스스로 만든다고 했어요. 이렇게 양분을 얻는 생물은 생산자이므로 첫째 보기를 골라요."
+      },
+      "15": {
+        "explanation": "흙에 산다는 것만으로 생산자·소비자·분해자를 나눌 수는 없어요. 무엇을 먹거나 분해하며 양분을 얻는지를 알아보자는 다섯째 보기가 알맞아요."
+      },
+      "16": {
+        "explanation": "곰팡이 A는 죽은 나뭇잎의 물질을 분해하며 양분을 얻어요. 이런 역할을 하는 생물을 분해자라고 해요."
+      },
+      "17": {
+        "explanation": "예를 들어 빛이 얼마나 드는지, 흙이 얼마나 젖어 있는지를 함께 살펴볼 수 있어요. 식물은 빛과 물 등 주변 환경의 영향을 받으며 살아가기 때문이에요. 조사할 두 가지와 그것을 살펴보려는 까닭을 연결해 써요."
+      },
+      "18": {
+        "explanation": "버섯은 살아 있는 생물이므로 생물 요소이고 바위는 비생물 요소예요. 버섯이 스스로 걸어 다니지 않는다고 바위와 같은 비생물로 나누지는 않아요."
+      },
+      "19": {
+        "explanation": "토끼는 풀을 먹어서 양분을 얻는 소비자예요. 자료의 곰팡이 A는 죽은 나무의 물질을 분해하여 양분을 얻는 분해자예요. 두 생물이 양분을 얻는 방법을 나누어 설명해요."
+      },
+      "20": {
+        "explanation": "사진에서 나무와 물이 보이는 것은 직접 확인할 수 있어요. 하지만 사진에 없는 동물이나 물속의 오염 물질까지 알 수는 없으므로 첫째 보기를 골라요."
+      },
+      "21": {
+        "prompt": "조사 카드의 생산자·소비자·분해자 분류가 맞는지 살펴보려면 무엇을 알아봐야 할까요?",
+        "explanation": "빛을 이용해 양분을 만드는지, 다른 생물을 먹는지, 죽은 물질을 분해하는지를 살펴요. 이처럼 양분을 얻는 방법으로 역할을 나누므로 넷째 보기가 알맞아요."
+      },
+      "22": {
+        "prompt": "생물 요소와 비생물 요소를 알맞게 나눈 설명을 모두 고르세요.",
+        "explanation": "흙이라는 환경 안에도 지렁이 같은 생물이 살 수 있어요(②). 버섯도 살아 있는 생물 요소예요(④). 움직이는지, 어떤 곳에 사는지만으로 생물과 비생물을 나누지는 않아요."
+      },
+      "23": {
+        "explanation": "나무·동물·버섯은 살아 있으므로 생물 요소예요. 물·공기·햇빛은 비생물 요소이므로 ㉠은 생물, ㉡은 비생물이에요."
+      },
+      "24": {
+        "explanation": "생물이 양분을 어떻게 얻는지 살펴 역할을 나누어요. 벼처럼 빛을 이용해 양분을 스스로 만들면 생산자예요. 따라서 ㉠은 양분, ㉡은 생산자예요."
+      },
+      "25": {
+        "explanation": "곰팡이 A가 하는 일은 죽은 나뭇잎의 물질을 분해하는 것이에요. 이렇게 양분을 얻는 생물을 분해자라고 하므로 ㉠은 분해, ㉡은 분해자예요."
+      },
+      "26": {
+        "explanation": "벼는 양분을 스스로 만드는 생산자이므로 ㉠–③이에요. 메뚜기는 식물을 먹는 소비자이므로 ㉡–①, 곰팡이 A는 죽은 물질을 분해하는 분해자이므로 ㉢–②로 연결해요."
+      },
+      "27": {
+        "explanation": "정한 구역에서 생물과 주변 환경을 함께 관찰해요(㉡). 날짜와 대상, 위치를 기록하고(㉣), 그 기록을 보고 생물과 비생물로 나누어요(㉠). 마지막으로 나눈 까닭과 아직 모르는 대상을 설명해요(㉢)."
+      },
+      "28": {
+        "explanation": "나무·개미·버섯은 생물 요소, 물·햇빛·흙은 비생물 요소로 나누어요. 예를 들어 “나무는 빛과 물을 이용해 살아간다”는 말풍선을 넣어 관계를 나타낼 수 있어요. 주어진 목록으로 만든 지도라고 적어요."
+      },
+      "29": {
+        "explanation": "풀 → 토끼 → 여우와 풀 → 들쥐 → 여우처럼 여러 먹이 사슬이 연결되면 그물 같은 모양이 돼요. 이런 먹이 관계를 먹이그물이라고 하므로 셋째 보기를 골라요."
+      },
+      "30": {
+        "explanation": "달팽이는 상추를 먹고 새 A는 달팽이를 먹어요. 먹히는 쪽에서 먹는 쪽으로 화살표를 이으면 상추 → 달팽이 → 새 A이므로 둘째 보기가 알맞아요."
+      },
+      "31": {
+        "explanation": "자료에서 작은 물고기 A는 물풀을 먹고 큰 물고기 B는 A를 먹어요. 먹히는 쪽에서 먹는 쪽으로 이으면 물풀 → A → B이므로 둘째 보기를 골라요."
+      },
+      "32": {
+        "choices": [
+          "뱀이 먹는 생물",
+          "개구리가 먹는 생물",
+          "여러 사슬의 연결",
+          "뱀이 실제로 몇 마리인지",
+          "풀이 먹히는 연결"
+        ],
+        "answer": "④ 뱀이 실제로 몇 마리인지",
+        "explanation": "먹이그물의 화살표를 보면 누가 누구를 먹는지는 알 수 있어요. 하지만 실제 뱀을 몇 마리 조사했는지는 그림에 없으므로 넷째 보기를 골라요."
+      },
+      "33": {
+        "explanation": "애벌레는 참나무 잎을 먹고, 박새는 애벌레를 먹으며, 매는 박새를 먹어요. 먹히는 쪽부터 이으면 참나무 잎 → 애벌레 → 박새 → 매가 돼요."
+      },
+      "34": {
+        "explanation": "먹이그물에서 뱀을 향하는 화살표를 찾아요. 개구리 → 뱀과 들쥐 → 뱀이 있으므로 뱀이 먹는 생물은 개구리와 들쥐예요. 따라서 첫째 보기를 골라요."
+      },
+      "35": {
+        "explanation": "자료에는 파리 → 개구리의 연결이 있어요. 따라서 메뚜기가 줄어도 개구리가 먹을 수 있는 다른 먹이는 파리예요. 실제로 파리가 충분한지는 더 알아봐야 해요."
+      },
+      "36": {
+        "explanation": "카드와 화살표로는 먹고 먹히는 관계를 나타낼 수 있어요. 하지만 생물이 실제로 몇 마리 있는지와 생태계의 모든 관계까지 보여 주지는 않으므로 셋째 보기가 알맞아요."
+      },
+      "37": {
+        "explanation": "풀 → 토끼 → 여우와 풀 → 들쥐 → 여우의 두 사슬에 모두 여우가 있어요. 풀도 두 사슬에 있지만 생산자이므로, 소비자를 묻는 이 문제의 답은 여우예요."
+      },
+      "38": {
+        "explanation": "자료에서는 개구리가 메뚜기를 먹어요. 먹이 관계의 화살표는 먹히는 쪽에서 먹는 쪽으로 향하므로 메뚜기 → 개구리로 고쳐요."
+      },
+      "39": {
+        "prompt": "친구는 “먹이가 하나 줄어도 먹이그물의 모든 생물이 반드시 살아남는다”고 말했어요. 이 말을 어떻게 고치면 좋을까요? 자료의 먹이 관계를 보고 까닭과 함께 설명해 보세요.",
+        "explanation": "여러 먹이 관계가 연결되어 있으면 다른 먹이를 먹을 수 있어 도움이 돼요. 하지만 남은 먹이가 충분한지, 주변 환경은 어떤지도 살펴야 해요. 다른 먹이가 있다는 이유만으로 모든 생물이 반드시 살아남는다고 말할 수는 없어요."
+      },
+      "40": {
+        "prompt": "모형 표의 두 조건을 비교한 설명 중 알맞은 것을 고르세요.",
+        "explanation": "표에서 토끼의 수는 그대로 둔 조건의 12보다 여우가 없는 조건의 28이 더 커요. 풀의 수는 60보다 28이 더 작아요. 따라서 첫째 보기가 알맞아요. 이 숫자는 모형의 연습 값이며 실제 생물의 수를 알아낸 결과는 아니에요."
+      },
+      "43": {
+        "prompt": "두 먹이 사슬을 한 먹이그물로 연결하는 알맞은 방법을 모두 고르세요.",
+        "explanation": "두 사슬에 함께 나오는 풀은 카드 한 장을 연결점으로 사용해요(①). 뱀 카드 한 장에도 두 먹이 관계를 이어요(④). 자료에 나온 여섯 관계는 빠뜨리지 않고 모두 남겨요(②)."
+      },
+      "44": {
+        "explanation": "개구리가 줄어도 자료에는 작은 새 → 뱀의 연결이 남아 있어요(①). 하지만 작은 새가 먹이로 충분한지와 주변 환경도 더 알아봐야 해요(⑤). 연결이 하나 남았다고 뱀이 반드시 살아남는 것은 아니에요."
+      },
+      "45": {
+        "prompt": "모형에서 토끼가 없어진 조건에도 “3년 뒤 여우 1”이라고 표시됐어요. 이 숫자를 어떻게 이해해야 할까요? 알맞은 것을 모두 고르세요.",
+        "choices": [
+          "실제로 먹이 없이 3년 동안 살아남은 여우를 센 수이다",
+          "이 수는 변화를 비교하려고 미리 정한 연습 값이다",
+          "실제로 살아남는지 알려면 먹이와 환경 자료가 더 필요하다",
+          "모든 생태계는 변화 뒤 반드시 처음 수로 돌아온다",
+          "이 모형만으로 실제로 얼마나 오래 살아남을지 정할 수 없다"
+        ],
+        "explanation": "화면의 수는 변화를 비교하려고 미리 정한 연습 값이에요(②). 실제로 얼마나 살아남는지 알려면 먹이와 환경을 더 알아봐야 해요(③). 이 모형의 숫자만으로 실제 생존 기간을 정할 수는 없어요(⑤)."
+      },
+      "46": {
+        "explanation": "메뚜기가 풀을 먹으면 풀 → 메뚜기로 나타내요. 화살표는 먹히는 쪽에서 먹는 쪽을 향하므로 ㉠은 먹히는, ㉡은 먹는이에요."
+      },
+      "47": {
+        "explanation": "먹고 먹히는 관계를 한 줄로 이으면 먹이 사슬이에요. 여러 먹이 사슬이 서로 연결되면 먹이그물이에요. 따라서 ㉠은 먹이 사슬, ㉡은 먹이그물이에요."
+      },
+      "48": {
+        "prompt": "이 먹이그물 모형에서는 여러 사슬에 같은 생물이 나오면 그 생물의 이름 카드는 ㉠[ ]장만 사용해요. 카드의 장수만으로 실제 생물의 ㉡[ ]를 알 수는 없어요.",
+        "answer": "㉠ 한/1 · ㉡ 수",
+        "explanation": "여러 먹이 사슬에 같은 뱀이 나오면 뱀 이름 카드는 한 장만 사용해요. 뱀 카드 한 장이 실제 뱀 한 마리만을 뜻하지는 않아요. 따라서 ㉠은 한 또는 1, ㉡은 수예요.",
+        "criteria": "같은 생물의 이름 카드는 한 장으로 연결하며, 카드 장수와 실제 생물의 수를 구별해요."
+      },
+      "49": {
+        "explanation": "자료에는 작은 새 → 뱀의 연결도 있으므로 ㉠은 작은 새예요. 다른 먹이를 먹을 수 있어도 충분한지는 먹이의 양과 환경을 더 살펴야 하므로 ㉡은 양이에요."
+      },
+      "50": {
+        "explanation": "메뚜기가 풀을 먹으면 풀 → 메뚜기이므로 ㉠–②예요. 개구리가 메뚜기를 먹으면 메뚜기 → 개구리이므로 ㉡–③, 뱀이 개구리를 먹으면 개구리 → 뱀이므로 ㉢–①이에요."
+      },
+      "51": {
+        "explanation": "이름표 한 장은 나타내려는 생물의 이름이므로 ㉠–③이에요. 화살표는 먹이 관계를 뜻하므로 ㉡–①, 풀과 뱀을 함께 쓰는 두 사슬은 먹이그물을 이루므로 ㉢–②예요. 카드의 장수로 실제 생물의 수를 세지는 않아요."
+      },
+      "52": {
+        "prompt": "먹이 관계 자료를 준비했어요. 자료를 보고 먹이그물을 만드는 순서를 쓰세요.",
+        "explanation": "먼저 누가 누구를 먹는지 자료에서 확인해요(㉣). 이름 카드와 화살표를 준비하고(㉡), 같은 생물 카드를 함께 써서 연결해요(㉢). 마지막으로 자료와 비교하며 빠지거나 뒤집힌 화살표를 고쳐요(㉠)."
+      },
+      "53": {
+        "prompt": "새로 찾은 먹이 관계 자료가 이전 모형과 달라요. 다음 계획에 맞게 확인하고 고치는 순서를 쓰세요.",
+        "explanation": "새 자료가 어떤 생물을 언제 조사한 것인지, 먹이 관계를 무엇으로 확인했는지 살펴요(㉢). 이전 모형과 다른 연결을 찾고(㉠), 확인된 관계를 고쳐요(㉣). 고친 관계와 아직 모르는 관계를 나누어 설명해요(㉡)."
+      },
+      "54": {
+        "prompt": "주어진 두 사슬을 하나의 먹이그물로 그리세요. 같은 생물의 이름표는 한 번씩 쓰고, 자료의 여섯 먹이 관계를 모두 나타내세요. 화살표 방향도 확인하세요.",
+        "explanation": "풀 → 메뚜기 → 개구리 → 뱀과 풀 → 애벌레 → 작은 새 → 뱀을 그려요. 두 사슬의 풀과 뱀은 각각 이름표 하나를 함께 사용해요. 여섯 화살표가 모두 먹히는 쪽에서 먹는 쪽을 향하는지 확인해요."
+      },
+      "55": {
+        "explanation": "메뚜기는 풀을 먹으므로 풀 → 메뚜기로 고쳐요. 개구리는 메뚜기를 먹고 뱀은 개구리를 먹으므로 이어 그리면 풀 → 메뚜기 → 개구리 → 뱀이 돼요. 먹히는 쪽에서 먹는 쪽으로 고쳤다고 설명해요."
+      },
+      "56": {
+        "explanation": "개구리가 줄어도 자료에는 작은 새 → 뱀의 연결이 남아 있어요. 이 화살표를 표시하고, 작은 새가 충분한지나 사는 곳의 환경은 어떤지 등 더 알아볼 내용을 적어요. 자료에 없는 먹이 관계를 새로 그리지는 않아요."
+      },
+      "57": {
+        "explanation": "쓰레기를 태울 때 나온 연기는 공기를 더럽힐 수 있어요. 공기의 오염을 대기 오염이라고 하므로 둘째 보기가 알맞아요. 다른 보기들은 땅이나 물이 오염되는 사례예요."
+      },
+      "58": {
+        "explanation": "도로가 생기면 동물이 사는 숲이 나뉠 수 있어요. 생태 통로는 동물이 도로 양쪽을 오갈 수 있도록 돕는 시설이므로 다섯째 보기가 알맞아요."
+      },
+      "59": {
+        "explanation": "공장에서 나온 물질 때문에 공기와 물이 더러워졌으므로 환경 오염이에요. 환경을 보호하거나 다시 가꾸는 활동과는 다르므로 넷째 보기를 골라요."
+      },
+      "60": {
+        "prompt": "사람이 버린 쓰레기 등으로 땅과 물이 더러워지는 현상을 나타내는 말을 쓰세요.",
+        "explanation": "사람이 버린 쓰레기나 처리하지 않은 물질 때문에 공기·물·땅 등이 더러워질 수 있어요. 이런 현상을 환경 오염이라고 해요."
+      },
+      "61": {
+        "explanation": "생물이 줄었다는 사실만으로 그 까닭을 하나로 정할 수는 없어요. 오염 물질이 늘었는지, 먹이가 줄었는지, 날씨가 달랐는지 등 여러 자료를 함께 살피는 셋째 보기가 알맞아요.",
+        "prompt": "생물이 줄어든 까닭을 알아보려면 어떻게 해야 할까요? 알맞은 것을 고르세요."
+      },
+      "62": {
+        "explanation": "물이 맑아 보이는 것은 사진에서 알 수 있어요. 하지만 물에 어떤 물질이 섞여 있는지나 생물이 다시 돌아왔는지는 사진만으로 알 수 없어요. 물속의 성분을 더 확인하자는 첫째 보기가 알맞아요."
+      },
+      "63": {
+        "explanation": "서로 왜 그렇게 생각하는지 먼저 들어요. 우리 반이 실천할 수 있는지, 생물과 환경을 보호하는 데 도움이 되는지를 비교하며 함께 방법을 정하는 다섯째 보기가 알맞아요.",
+        "choices": [
+          "다른 의견은 받은 적 없다고 삭제한다.",
+          "의견을 듣는 대신 정답 문장만 복사한다.",
+          "목소리가 큰 사람의 의견만 기록한다.",
+          "확인 없이 모두 같은 결과를 냈다고 쓴다.",
+          "서로의 까닭을 듣고 함께 실천할 방법을 정한다."
+        ],
+        "answer": "⑤ 서로의 까닭을 듣고 함께 실천할 방법을 정한다."
+      },
+      "64": {
+        "prompt": "야생동물이 도로 양쪽의 사는 곳을 오갈 수 있도록 돕는 시설의 이름을 쓰세요.",
+        "explanation": "동물이 도로 양쪽을 오가도록 돕는 시설은 생태 통로예요. 통로를 만든 뒤에는 동물이 실제로 이용하는지도 조사할 수 있어요."
+      },
+      "65": {
+        "explanation": "풀밭이 줄면 풀이나 곤충이 살 곳이 줄어들 수 있어요. 땅을 포장하면 물이 스며드는 모습도 달라질 수 있어요. 이런 가능한 변화 두 가지를 설명하고, 실제로 어떻게 달라졌는지는 조사해 확인해요."
+      },
+      "66": {
+        "prompt": "한 주 동안 일회용 컵 대신 물병을 쓰려고 해요. 언제 무엇을 준비할지 계획을 세워 보세요. 실제로 사용한 날과 확인한 효과를 나누어 적는 방법도 설명하세요.",
+        "explanation": "물병을 언제 챙길지 계획하고, 실제로 쓴 날과 쓰지 못한 날을 적어요. 일회용 컵을 몇 개 덜 썼는지도 확인해요. 이 기록만으로 하천 전체가 깨끗해졌다고 말할 수는 없어요."
+      },
+      "68": {
+        "explanation": "물병을 챙겼어도 실제로 쓰지 못했다면 사용한 날로 세지 않아요. 실제로 쓴 날과 쓰지 못한 날을 나누는 넷째 보기가 알맞아요. 못 쓴 까닭은 다음 준비를 고치는 데 참고해요."
+      },
+      "69": {
+        "prompt": "물과 흙의 오염을 줄이는 알맞은 행동을 모두 고르세요.",
+        "choices": [
+          "폐식용유는 지역에서 정한 수거 방법을 확인한다",
+          "남은 페인트는 물에 섞어 빗물 배수구에 붓는다",
+          "폐건전지는 정해진 수거함에 배출한다",
+          "세제는 제품 안내에 맞는 필요한 양만 쓴다",
+          "날카로운 폐기물은 만지지 않고 교사에게 알린다"
+        ],
+        "explanation": "기름과 건전지는 정해진 수거 방법을 확인해요(①, ③). 세제는 안내에 맞는 필요한 양만 쓰고(④), 날카로운 폐기물은 만지지 말고 선생님께 알려요(⑤). 페인트에 물을 섞어도 빗물 배수구에 버리면 안 돼요."
+      },
+      "70": {
+        "explanation": "공사 전후에 되도록 같은 구역과 방법으로 생물과 환경을 살펴요(②). 날짜·시간·날씨도 적어 비교해요(③). 한 번 보이지 않았다고 그 생물이 그곳에서 모두 사라졌다고 말할 수는 없어요."
+      },
+      "71": {
+        "prompt": "생태계를 지키려고 한 행동을 친구에게 소개할 때 알맞은 설명을 모두 고르세요.",
+        "choices": [
+          "실제로 사용한 날과 확인한 효과를 나눈다",
+          "사용하지 못한 이유를 다음 준비에 참고한다",
+          "계획을 적은 날도 실제 사용 횟수로 센다",
+          "짝의 다른 의견과 그 근거를 듣는다",
+          "준비물과 시간 등을 살펴 다음 실천 방법을 고친다"
+        ],
+        "explanation": "실제로 한 일과 확인한 효과를 나누어 소개해요(①). 못 한 까닭은 다음 준비에 참고하고(②), 친구의 의견과 까닭도 들어요(④). 준비물과 시간 등을 살펴 다음 방법을 고쳐요(⑤). 계획만 세운 날을 사용한 날로 세지는 않아요."
+      },
+      "72": {
+        "explanation": "공기가 더러워지는 것은 대기 오염, 물이 더러워지는 것은 수질 오염이에요. 따라서 ㉠에는 대기, ㉡에는 수질을 써요."
+      },
+      "73": {
+        "explanation": "물병을 실제로 사용했다면 실천하거나 실행한 행동이에요. 다음 주에 어떻게 쓸지만 정했다면 아직 계획이에요. 따라서 ㉠은 실천 또는 실행, ㉡은 계획이에요."
+      },
+      "74": {
+        "explanation": "물의 성분을 검사하면 어떤 물질이 섞여 있는지 알아볼 수 있어요. 사진에서 맑아 보이는 것과 성분을 검사한 결과는 달라요. 생물이 다시 살아가는지도 따로 조사하거나 관찰해야 하므로 ㉠은 성분, ㉡은 조사 또는 관찰이에요."
+      },
+      "75": {
+        "explanation": "불필요한 공회전에는 공회전 줄이기 안내를 연결해요(㉠–②). 처리하지 않은 폐수에는 알맞은 처리와 배출 관리를(㉡–③), 화단에 버린 건전지에는 정해진 수거 방법을 연결해요(㉢–①)."
+      },
+      "76": {
+        "explanation": "물병을 실제로 써서 컵 한 개 대신 사용한 ㉠은 실제로 한 일인 ③이에요. 집에 두고 와 못 쓴 ㉡은 하지 못한 일과 까닭인 ①, 다음 주 방법만 정한 ㉢은 앞으로의 계획인 ②예요."
+      },
+      "77": {
+        "explanation": "내 물병을 챙기는 일은 내가 맡아요(㉠–②). 학급의 공용 준비와 안내는 학급이 함께 정해요(㉡–③). 지역의 안전한 폐기물 수거는 지역과 기관의 역할이에요(㉢–①)."
+      },
+      "78": {
+        "explanation": "먼저 두 방법의 까닭과 안전, 준비할 것을 토의해요(㉢). 할 행동과 시기·역할·확인 방법을 정하고(㉣), 실제로 해 봐요(㉠). 잘된 점과 못 한 까닭을 살펴 다음 방법을 고쳐요(㉡)."
+      },
+      "79": {
+        "prompt": "학교 숲에 사람이 다닐 길을 내려 해요. 조사할 생물과 주변 환경을 적고, 길을 내는 방법 두 가지를 그려 비교하세요. 사람이 안전하게 다니고 생물의 사는 곳도 보호할 수 있는지 생각해 보세요.",
+        "explanation": "어떤 생물이 어디에 사는지, 이동하는 길과 물·흙의 상태는 어떤지 조사할 내용을 표시해요. 숲을 덜 지나는 곳으로 길을 내거나 길의 폭을 줄이는 등 두 방법을 그려 비교해요. 사람의 안전과 이용, 생물이 살 곳의 보호를 함께 생각해요."
+      },
+      "80": {
+        "explanation": "월요일은 물병을 쓰지 못한 까닭, 화요일은 실제로 써서 컵 한 개를 대신한 일, 수요일은 다음 주의 계획으로 나누어요. 확인한 효과는 내 컵 사용이 줄었다는 것이에요. 이 기록으로 강 전체의 물이 깨끗해졌는지까지 알 수는 없어요."
+      }
+    }
+  },
+  "curriculum": {
+    "source": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "document": "2022 revised Science, Ministry of Education notice 2022-33, annex 9",
+    "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "standards": [
+      "4과14-01",
+      "4과14-02",
+      "4과14-03"
+    ],
+    "readLines": [
+      670,
+      685
+    ],
+    "application": "Classify biological and non-biological elements, compare nutrient acquisition, investigate feeding relations and build a food web, discuss and practice ecosystem conservation. Keep observational evidence and model assumptions distinct."
+  },
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 80,
+    "changedWorkbookQuestions": 77,
+    "changedQuestionFields": 103,
+    "changedExplanations": 77,
+    "unchangedOtherAnswerLabels": 3077,
+    "currentAnswerChanges": [
+      {
+        "unit": "c22-s42-u02",
+        "no": 32,
+        "before": "④ 뱀의 실제 개체 수",
+        "after": "④ 뱀이 실제로 몇 마리인지"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "no": 48,
+        "before": "㉠ 연결점 · ㉡ 개체",
+        "after": "㉠ 한/1 · ㉡ 수"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "no": 63,
+        "before": "⑤ 근거로 실천할 대안을 함께 정한다.",
+        "after": "⑤ 서로의 까닭을 듣고 함께 실천할 방법을 정한다."
+      }
+    ],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 124,
+    "changedHtml": [
+      {
+        "unit": "c22-s42-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "answers"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "quick"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s42-u02-b03",
+      "c22-s42-u02-b05",
+      "c22-s42-u02-b07",
+      "c22-s42-u02-b10",
+      "c22-s42-u02-b12",
+      "c22-s42-u02-b18",
+      "c22-s42-u02-b19",
+      "c22-s42-u02-b20",
+      "c22-s42-u02-b25",
+      "c22-s42-u02-b26",
+      "c22-s42-u02-b29",
+      "c22-s42-u02-b31",
+      "c22-s42-u02-b35",
+      "c22-s42-u02-b37",
+      "c22-s42-u02-b43",
+      "c22-s42-u02-b45",
+      "c22-s42-u02-b53",
+      "c22-s42-u02-b59",
+      "c22-s42-u02-b65",
+      "c22-s42-u02-b78"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s42-u02-b10",
+      "c22-s42-u02-b25",
+      "c22-s42-u02-b35",
+      "c22-s42-u02-b45",
+      "c22-s42-u02-b65",
+      "c22-s42-u02-b78"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [
+      {
+        "mode": "pages",
+        "page": 6,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 7,
+        "fields": [
+          "blocks",
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 11,
+        "fields": [
+          "blocks",
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 13,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 14,
+        "fields": [
+          "section",
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 16,
+        "fields": [
+          "section",
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 39,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "pages",
+        "page": 41,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 6,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 7,
+        "fields": [
+          "blocks",
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 11,
+        "fields": [
+          "blocks",
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 13,
+        "fields": [
+          "blocks"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 14,
+        "fields": [
+          "section",
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 16,
+        "fields": [
+          "section",
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 39,
+        "fields": [
+          "title"
+        ]
+      },
+      {
+        "mode": "teacherStudentPages",
+        "page": 41,
+        "fields": [
+          "title"
+        ]
+      }
+    ],
+    "all56UpperRailsUnchanged": true,
+    "twoFigureCaptionsOnlySvgGeometryUnchanged": true,
+    "quickAnswerRow48UpdatedOnly": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorNativeArtPreserved": true,
+    "priorArtLiteralAndPhotoHelperPreserved": true,
+    "choiceResponsesChecked": 38,
+    "explanationHtmlOccurrencesVerified": 154,
+    "syntaxFiles": 10,
+    "browserVerified": false
+  },
+  "reviewCoverage": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1120,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 20,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideFourteenUnitPass": {
+      "units": 18,
+      "questions": 1960,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To298": 432
+  },
+  "nativeTests": {
+    "total": 1230,
+    "pass": 1228,
+    "fail": 0,
+    "skip": 2,
+    "testFiles": 213,
+    "log": "phase298/final-tests.log",
+    "browserEnvironmentRemoved": true
+  },
+  "runtimeCoherence": {
+    "units": 32,
+    "htmlModes": 128,
+    "slideArrays": 64,
+    "studentReads": 0,
+    "studentWrites": 0,
+    "network": 0,
+    "actualCurrentEcologyItemHtmlAndPrintRenders": 40,
+    "sourceChecksNotVisualProof": true
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase298",
+  "mainMerged": false,
+  "siteDeployed": false,
+  "goalAchieved": false,
+  "goalAtImpasse": false,
+  "instructionalAdaptation": {
+    "approach": "Replace administrative and assessment language with concrete observation, explanation and student actions. Explain every revised answer rather than stating a marking rule.",
+    "currentQuestion48Retargeted": true,
+    "priorFullWorkbookAndArtRetained": true,
+    "all56UpperRailsRetained": true,
+    "rawOriginalsAndSimilarUnmodified": true,
+    "modelCountsAndAssumptionsUnchanged": true,
+    "modelNumbersNotAValidatedScientificPrediction": true
+  }
+}

@@ -1,0 +1,5 @@
+import{beforeBiologyMixed}from'./biology-mixed-stage.mjs';
+import assert from'node:assert/strict';import{questionAtVersion}from'../question-revision.js';import{BIOLOGY_GUIDED_VERSION}from'../biology-guided-review.js';
+const previous=new WeakMap(),reviewed=new Set([27,28,38,53,54,64,68,70,79,80]);
+export function beforeBiologyTask(q){q=beforeBiologyMixed(q);if(q.contentVersion!==BIOLOGY_GUIDED_VERSION)return q;if(previous.has(q))return previous.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;previous.set(q,old);return old;}
+export function biologyUnchangedSolutions(html){const rows=[...html.matchAll(/<section class="ed-solution" data-solution="s41-u04-w(\d+)">[\s\S]*?<\/section>/g)];assert.equal(rows.length,80);const kept=rows.filter(m=>!reviewed.has(Number(m[1]))).map(m=>m[0]);assert.equal(kept.length,70);return kept;}

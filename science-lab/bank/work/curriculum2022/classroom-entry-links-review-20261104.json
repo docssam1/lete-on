@@ -1,0 +1,47 @@
+{
+  "date": "2026-11-04",
+  "baseCommit": "2c0d65689ce80536d5814ac1521dc134b25807fe",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "scope": "Current classroom entry links and common guidance",
+  "currentUnits": 32,
+  "subPagesExecuted": 207,
+  "catalogUnits": 32,
+  "currentClassroomRoute": "lab-class/self/1",
+  "legacyEntryPreserved": true,
+  "unsupportedLessonsHidden": true,
+  "studentStorageCalls": 0,
+  "v2": {
+    "tests": 805,
+    "passed": 803,
+    "skipped": 2,
+    "failed": 0
+  },
+  "bank": {
+    "tests": 299,
+    "passed": 299,
+    "failed": 0
+  },
+  "totalPassedThisPhase": 1102,
+  "priorAssertionsUpdated": [
+    "plant-records.test.mjs: catalog link now current classroom instead of optional record",
+    "body.test.mjs: catalog link now current classroom instead of old five-stage route"
+  ],
+  "initialBankFailureLog": "bank-tests-before-route-expectation-update.log",
+  "unchangedWorkbookHtml": 128,
+  "unchangedSlideArrays": 64,
+  "unchangedCareerItems": 128,
+  "unchangedPdfs": 102,
+  "protectedFiles": 6317,
+  "unchangedProtectedFilesBeforeHandoffs": 6312,
+  "changedProtectedFiles": [
+    "science-lab/bank/body.test.mjs",
+    "science-lab/v2/bank-catalog.js",
+    "science-lab/v2/index.html",
+    "science-lab/v2/plant-records.test.mjs",
+    "science-lab/v2/v2.js"
+  ],
+  "browserVerified": false,
+  "mainMerged": false,
+  "pushed": false,
+  "deployed": false
+}

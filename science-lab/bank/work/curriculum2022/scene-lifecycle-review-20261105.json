@@ -1,0 +1,123 @@
+{
+  "phase": 258,
+  "date": "2026-11-05",
+  "baseCommit": "5093c1e491388942ea0bc915daf4a79c2700c26c",
+  "version": "20261105-scene-lifecycle",
+  "problem": "A delayed v1 scene import used the mutable global player from the next page. Shared Player.load could build after stop/disposal during its kit import. v2 registered detach cleanup only after loading, and stale imports/errors could replace a newer view on the same host.",
+  "reproduction": {
+    "newRouteTestsFailedBeforeFix": 2,
+    "newPlayerTestsFailedBeforeFix": 2,
+    "evidence": [
+      "repro-before-fix.log",
+      "player-before-fix.log"
+    ],
+    "boundary": "Native controlled import/load promises and DOM/resource mocks; no real browser or WebGL."
+  },
+  "implementation": {
+    "v1": "Increment a scene request epoch on teardown/new mount; use the owned Stage/Player and guard all async continuations, captions, progress, keys and controls. Only current errors display fallback and release resources.",
+    "sharedEngine": "Player.stop invalidates pending load epochs; Player.load checks epoch/disposed/detached-canvas state before creation and after kit import, returns false when abandoned and true on success. Stage.dispose marks its disposed state.",
+    "v2": "Bind to the actual .stage3d view/canvas identity. Install detach cleanup before awaiting Player.load; clean up current failures and suppress stale errors/callbacks/buttons/onDone. Old cleanup retains another live fullscreen lock owner.",
+    "scope": "No geometry, scene content, lighting, camera fitting, captions, speech timing, assessment contract or report changes. Shared engine import URL remains canonical for Stage.live identity; entry and mounts cache tags were bumped. Actual release must verify fresh engine/module responses.",
+    "cacheFix": "The first mounts import replacement missed its pre-existing versioned URL; the exact import was corrected and final tests use that source."
+  },
+  "tests": {
+    "newDefinitions": 4,
+    "routeScenarios": {
+      "v1": {
+        "mode": "v1",
+        "cases": [
+          "late import after navigation",
+          "leave during player load",
+          "stale import rejection",
+          "stale callbacks and controls",
+          "current import error",
+          "stale player-load rejection",
+          "current player-load error cleanup"
+        ],
+        "browserVerified": false
+      },
+      "v2": {
+        "mode": "v2",
+        "cases": [
+          "late import after navigation",
+          "leave during player load",
+          "stale import rejection",
+          "stale callbacks and controls",
+          "current import error",
+          "stale player-load rejection",
+          "current player-load error cleanup",
+          "same host remount while importing",
+          "fullscreen ownership during stale cleanup"
+        ],
+        "browserVerified": false
+      }
+    },
+    "playerScenarios": [
+      "stop before kit resolves",
+      "new load supersedes old load",
+      "disposed stage before kit resolves",
+      "detached canvas before kit resolves"
+    ],
+    "fullCommand": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs",
+    "fullResult": {
+      "total": 1193,
+      "passed": 1191,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "rootBinderAndPlayerFocusedResult": {
+      "total": 25,
+      "passed": 25,
+      "failed": 0
+    },
+    "syntaxFiles": 7
+  },
+  "preservation": {
+    "exactCurrentProducts": {
+      "workbooks": true,
+      "products": true,
+      "slides": true,
+      "runtime": true
+    },
+    "unchangedAssetHashes": 1249,
+    "changedTrackedFilesBeforeDocumentation": [
+      "science-lab/app.js",
+      "science-lab/engine.js",
+      "science-lab/index.html",
+      "science-lab/player.test.mjs",
+      "science-lab/v2/index.html",
+      "science-lab/v2/mounts.js",
+      "science-lab/v2/v2.js"
+    ],
+    "actualStudentReads": 0,
+    "actualStudentWrites": 0,
+    "network": 0,
+    "browserVerified": false,
+    "newLifecycleTestDefinitions": 4,
+    "routeScenarios": 16,
+    "syntaxFiles": 7,
+    "fullNativeTests": {
+      "total": 1193,
+      "passed": 1191,
+      "failed": 0,
+      "existingBrowserSkips": 2
+    },
+    "browserExecutionOptOut": "SCIENCE_PLAYWRIGHT explicitly removed for the final full native run."
+  },
+  "counts": {
+    "workbooks": 32,
+    "questions": 3080,
+    "paperModes": 128,
+    "slideArrays": 64,
+    "runtimeUnits": 32,
+    "currentQuestions": 3179,
+    "source": 1512,
+    "similar": 1512,
+    "classroom": 1635,
+    "selectedChecks": 490,
+    "v1Units": 15,
+    "v1QuizQuestions": 45
+  },
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase258",
+  "limits": "Native lifecycle correctness and exact data/HTML comparisons are not actual PC/phone/A4/WebGL/voice proof. Final mandatory node scripts/check-science-3d.mjs failure0, real delayed-navigation scenarios, v1/v2 visual consistency, preserved mainWIP reconciliation, main integration and deployment remain. Existing browser authorization restriction respected: no browser/server, API, merge, push, deploy or cleanup."
+}

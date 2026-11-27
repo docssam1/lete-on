@@ -1,0 +1,12 @@
+import {reviewedSourceDiagnostics} from '../../bank/source-diagnostics/c22-s62-u03.js?v=20261116-source-diagnostics-per-unit';
+import {source as registeredSource} from './c22-s62-u03.source.js';
+import {unit as pairedUnit,items as pairedItems} from './c22-s62-u03.paired.js';
+import {taxonomy} from './c22-s62-u03.taxonomy.js?v=20261114-source-integration';
+import {electricityAuthoredItems} from '../book/c22-s62-u03.electricity-items.js';
+export const unit={...pairedUnit,sources:{...pairedUnit.sources,scope:'옛단원 연계 원문58·독립 연습186=244문항. 현행 판본 전체 원문은 준비 중이다.',originalExamAvailable:true,sourceExcerptOnly:true}};
+const overrides={"4-6":"E4","4-7":"E4","2-6":"E4","4-8":"E4","1-5":"E4"};
+const element=q=>overrides[q.key]||({E4:'E5',E5:'E6',E6:'E6',E7:'E6',E8:q.type==='T13'?'E7':'E8'}[q.taxonomy.element]||q.taxonomy.element);
+export const items=[...pairedItems.map(q=>({...q,taxonomy:{...q.taxonomy,element:element(q)}})),...electricityAuthoredItems(taxonomy)];
+export {sourceRegistration} from './c22-s62-u03.source.js';
+export const source=reviewedSourceDiagnostics('c22-s62-u03',registeredSource);
+export const similar=[];

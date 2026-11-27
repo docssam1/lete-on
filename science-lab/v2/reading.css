@@ -114,3 +114,19 @@
 }
 /* 도표처럼 잘리면 안 되는 머리 그림(hero.fit: 'contain'): 화면 비율이 달라도 그림 전체를 보인다 */
 .sl-reading-hero.contain > img, .bk-magazine .sl-reading-hero.contain > img { object-fit: contain; background: transparent; }
+
+/* 수업·독립 읽기·교재 화면에서 같은 크기로 읽는다. A4 쪽과 인쇄는 기존 조판을 쓴다. */
+@media screen {
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) { font-family:var(--body, sans-serif);font-size:18px;line-height:1.8;letter-spacing:normal; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) h2 { font-family:var(--body, sans-serif);font-size:clamp(28px, 3.2vw, 36px);font-weight:700;line-height:1.4;letter-spacing:normal; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) :is(.sl-reading-section h3, .sl-reading-think h3) { font-family:var(--body, sans-serif);font-size:20px;font-weight:700;line-height:1.5;letter-spacing:normal; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) .sl-reading-think p { font-size:18px;line-height:1.8; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) :is(.sl-reading-lead, .sl-reading-look, .sl-reading-connect > div > b, .sl-reading-actions a) { font-size:16px;line-height:1.7; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) :is(.sl-reading-kicker, .sl-reading-topic, .sl-reading-section h3 span) { font-size:15px;line-height:1.6;letter-spacing:normal; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) :is(.sl-reading-kicker span:last-child, .sl-reading-hero figcaption, .sl-reading-hero figcaption a, .sl-reading-qr span, .sl-reading-sources, [data-video-status], .sl-reading-think .sl-reading-teacher) { font-size:14px;line-height:1.6; }
+  :is(.reading-page > .sl-reading, .wrap > .sl-reading, .bk:not(.a4) .bk-magazine .sl-reading) .sl-reading-player [data-reading-play] { font-size:16px;line-height:1.5; }
+  .reading-tools p { font-size:16px;line-height:1.6; }
+  .bk:not(.a4) .bk-magazine { height:auto;min-height:0;aspect-ratio:auto;overflow:visible; }
+  .bk:not(.a4) .bk-magazine .bk-grid { flex:none;min-height:0; }
+  .bk:not(.a4) .bk-magazine .bk-main { height:auto; }
+}

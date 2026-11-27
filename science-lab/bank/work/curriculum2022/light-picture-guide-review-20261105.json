@@ -1,0 +1,143 @@
+{
+  "phase": 278,
+  "date": "2026-11-05",
+  "title": "빛의 성질 사진/설명 그림7개 검수와 잠망경 추가 설명 정리",
+  "status": "verified-local-candidate-actual-render-gates-pending",
+  "baselineCommit": "8781e73090533fce18ff4460096cba9cff605f9e",
+  "branch": "codex/science-workbook-integration-20261102",
+  "candidateRoot": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "authoringRoot": "/Users/docssam/.codex/worktrees/science-workbook-main-20261019/lete-on",
+  "runtime": "Mac mini / Codex desktop / native image viewing, Apple Vision OCR, Node/VM; no AI API delegation",
+  "skills": [
+    "ux-writing",
+    "instructional-design"
+  ],
+  "curriculum": {
+    "title": "교육부2022-33 별책9",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "extractSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+    "codes": [
+      "6과02-01",
+      "6과02-02",
+      "6과02-03"
+    ],
+    "use": "Seeing needs light; observe straight travel/reflection/refraction and uses of mirrors/lenses. No reflection/refraction law or quantitative lens-distance task."
+  },
+  "captionChange": {
+    "unit": "c22-s51-u02",
+    "page": 25,
+    "pageTitle": "거울의 쓰임새와 빛의 경로를 알아보아요",
+    "figure": "sourcePeriscope",
+    "before": "눈을 아래쪽에 대고 높은 곳의 물체를 보는 배치에서는 위 거울을 먼저 만나요. 어느 거울을 먼저 만나는지는 물체와 눈의 위치에 따라 달라져요.",
+    "after": "그림에서는 빛이 아래 거울 → 위 거울 → 눈으로 이어져요. 눈을 아래쪽에 대고 높은 곳을 보는 배치에서는 위 거울 → 아래 거울 → 눈으로 이어져요.",
+    "oldLength": 79,
+    "newLength": 84
+  },
+  "visualReview": {
+    "images": [
+      {
+        "id": "light-pencil",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-pencil.png",
+        "sha256": "5a6db3fd5ee76c855312aa18d238d42dd4b480317f881d531e8750ff4477fe61",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Actual pencil appearance at the water surface matches the refraction observation caption; no claim that the pencil physically bends."
+      },
+      {
+        "id": "light-coin",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-coin.png",
+        "sha256": "b9cb42a4672d86e994a8dee3cbb6d78a4be3904c89829ae170447ddb9b2a13e6",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Paired bowl/coin photos show visibility differences; current caption does not claim a fully invisible coin in the first photo. Eye-position controls belong to the separately described experiment."
+      },
+      {
+        "id": "light-lens",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-lens.png",
+        "sha256": "14e85cc2711a3d52df5fc9222c3a4fb51dea56eb47bd5867f3a6b40777792ede",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Visible multiple light traces around the convex lens; current caption asks for source-position confirmation rather than assigning a direction from the still image alone."
+      },
+      {
+        "id": "light-mirror",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-mirror.png",
+        "sha256": "311e4e17e6b83f1267e61e3f2d37d419ef8085326498714960b4936966367989",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Folded mirrors reflect surrounding objects as described; no precise angle or reflection-law calculation added."
+      },
+      {
+        "id": "light-seeing-object",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-seeing-object.png",
+        "sha256": "fb27b31ae4f01f5094c55593443861c017c9e98bfdff9089d03321382d0daa85",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Arrow runs from lamp to cup to eye. Visible Korean label 빛 was checked manually as well as by OCR."
+      },
+      {
+        "id": "light-seeing-source",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-seeing-source.png",
+        "sha256": "43d92b86fd733c0a3c4a60139ad5b97e0356d60be398719dcf76a9d5af12f1dc",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Arrow runs from lamp directly to eye. Visible 빛 was confirmed manually; this one-character label was not detected by the OCR request."
+      },
+      {
+        "id": "light-periscope",
+        "path": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on/science-lab/assets/book/c22-s51-u02-source-periscope.png",
+        "sha256": "591f55f1dba5288acb2e1aa79c7fb431e64f1ef22fee3d60a05e44268ed2945f",
+        "viewedAtNativeImage": true,
+        "reviewScope": "Eye is at upper left, entrance at lower right; lower mirror then upper mirror reflects light toward eye. Figure caption and lesson case already matched; only the workbook block caption introduces this pictured arrangement first."
+      }
+    ],
+    "recognizer": "Apple Vision VNRecognizeTextRequest / accurate / ko-KR + en-US / no language correction",
+    "processed": 7,
+    "failed": 0,
+    "detectedRegions": 3,
+    "manualInstructionalLabels": [
+      "빛",
+      "빛",
+      "거울",
+      "거울"
+    ],
+    "scope": "Source images, labels and current captions; not actual browser/paper rendering or a complete semantic review of every workbook illustration."
+  },
+  "verification": {
+    "mirroredCaptionChanges": 2,
+    "otherWorkbooksUnchanged": 31,
+    "questionsPreserved": 3080,
+    "paperProductsChanged": [
+      {
+        "unit": "c22-s51-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "mode": "teacher"
+      }
+    ],
+    "paperProductsUnchanged": 126,
+    "slideArraysUnchanged": 64,
+    "runtimeUnitsUnchanged": 32,
+    "priorWorkbookNativeDeepEqual": true,
+    "oldEditorialBytesPreserved": true,
+    "imageFilesUnchanged": 7,
+    "appleVisionProcessed": 7,
+    "appleVisionFailures": 0,
+    "ocrDetectedTextRegions": 3,
+    "actualBrowserVerified": false
+  },
+  "tests": {
+    "total": 1207,
+    "pass": 1205,
+    "fail": 0,
+    "skip": 2,
+    "syntaxFiles": 5
+  },
+  "workspace": {
+    "mainHeadUnchanged": true,
+    "mainStatusUnchanged": true,
+    "syntaxFiles": 5,
+    "otherTrackedScienceFilesUnchanged": 6426
+  },
+  "qaRoot": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase278",
+  "actualBrowserVerified": false,
+  "actual3dVerified": false,
+  "mergedToMain": false,
+  "deployed": false
+}

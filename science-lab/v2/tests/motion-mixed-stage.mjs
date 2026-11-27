@@ -1,0 +1,4 @@
+import{questionAtVersion}from'../question-revision.js';import{MOTION_MIXED_VERSION}from'../motion-mixed-response.js';
+const cache=new WeakMap();export function beforeMotionMixed(q){if(q?.contentVersion!==MOTION_MIXED_VERSION)return q;if(cache.has(q))return cache.get(q);const snapshot=q.previousVersions.at(-1),old=questionAtVersion(q,snapshot.version);if(!Object.hasOwn(snapshot,'contentVersion'))delete old.contentVersion;cache.set(q,old);return old;}
+const changed=new Set([12, 22, 28, 31, 44, 47, 60, 70, 75, 79, 86, 91, 92, 95, 107, 108, 118, 123, 124, 127]);
+export function motionMixedUnchangedQuickRows(html){const rows=[...html.matchAll(/<tr><th scope="row">(\d+)<\/th><td>[\s\S]*?<\/tr>/g)];if(rows.length!==128)throw Error('산과 염기 정답표128행이 필요해요.');return rows.filter(m=>!changed.has(Number(m[1]))&&!/<td>객관식<\/td>/.test(m[0])).map(m=>m[0]);}

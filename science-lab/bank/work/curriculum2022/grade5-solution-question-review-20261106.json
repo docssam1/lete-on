@@ -1,0 +1,640 @@
+{
+  "phase": 303,
+  "date": "2026-11-06",
+  "unit": "c22-s51-u03",
+  "scope": "Elementary solution vocabulary and explanations; prior editor guards all later presentations; all grading/history preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 96,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 95,
+    "changedQuestionFields": 104,
+    "changedExplanations": 95,
+    "unchangedOtherAnswerLabels": 3080,
+    "currentAnswerChanges": [],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s51-u03-b001",
+      "c22-s51-u03-b002",
+      "c22-s51-u03-b003",
+      "c22-s51-u03-b004",
+      "c22-s51-u03-b005",
+      "c22-s51-u03-b006",
+      "c22-s51-u03-b007",
+      "c22-s51-u03-b008",
+      "c22-s51-u03-b009",
+      "c22-s51-u03-b010",
+      "c22-s51-u03-b011",
+      "c22-s51-u03-b012",
+      "c22-s51-u03-b013",
+      "c22-s51-u03-b014",
+      "c22-s51-u03-b015",
+      "c22-s51-u03-b016",
+      "c22-s51-u03-b017",
+      "c22-s51-u03-b018",
+      "c22-s51-u03-b019",
+      "c22-s51-u03-b020",
+      "c22-s51-u03-b021",
+      "c22-s51-u03-b022",
+      "c22-s51-u03-b023",
+      "c22-s51-u03-b024",
+      "c22-s51-u03-b025",
+      "c22-s51-u03-b026",
+      "c22-s51-u03-b027",
+      "c22-s51-u03-b028",
+      "c22-s51-u03-b029",
+      "c22-s51-u03-b030",
+      "c22-s51-u03-b031",
+      "c22-s51-u03-b032",
+      "c22-s51-u03-b033",
+      "c22-s51-u03-b034",
+      "c22-s51-u03-b035",
+      "c22-s51-u03-b036",
+      "c22-s51-u03-b037",
+      "c22-s51-u03-b038",
+      "c22-s51-u03-b039",
+      "c22-s51-u03-b040",
+      "c22-s51-u03-b041",
+      "c22-s51-u03-b042",
+      "c22-s51-u03-b043",
+      "c22-s51-u03-b044",
+      "c22-s51-u03-b045",
+      "c22-s51-u03-b046",
+      "c22-s51-u03-b047",
+      "c22-s51-u03-b048",
+      "c22-s51-u03-b049",
+      "c22-s51-u03-b050",
+      "c22-s51-u03-b051",
+      "c22-s51-u03-b052",
+      "c22-s51-u03-b053",
+      "c22-s51-u03-b054",
+      "c22-s51-u03-b055",
+      "c22-s51-u03-b056",
+      "c22-s51-u03-b057",
+      "c22-s51-u03-b058",
+      "c22-s51-u03-b059",
+      "c22-s51-u03-b060",
+      "c22-s51-u03-b061",
+      "c22-s51-u03-b062",
+      "c22-s51-u03-b063",
+      "c22-s51-u03-b064",
+      "c22-s51-u03-b065",
+      "c22-s51-u03-b066",
+      "c22-s51-u03-b067",
+      "c22-s51-u03-b068",
+      "c22-s51-u03-b069",
+      "c22-s51-u03-b070",
+      "c22-s51-u03-b071",
+      "c22-s51-u03-b072",
+      "c22-s51-u03-b073",
+      "c22-s51-u03-b074",
+      "c22-s51-u03-b075",
+      "c22-s51-u03-b076",
+      "c22-s51-u03-b077",
+      "c22-s51-u03-b078",
+      "c22-s51-u03-b079",
+      "c22-s51-u03-b080",
+      "c22-s51-u03-b081",
+      "c22-s51-u03-b082",
+      "c22-s51-u03-b083",
+      "c22-s51-u03-b084",
+      "c22-s51-u03-b085",
+      "c22-s51-u03-b086",
+      "c22-s51-u03-b087",
+      "c22-s51-u03-b088",
+      "c22-s51-u03-b089",
+      "c22-s51-u03-b090",
+      "c22-s51-u03-b091",
+      "c22-s51-u03-b092",
+      "c22-s51-u03-b093",
+      "c22-s51-u03-b094",
+      "c22-s51-u03-b095",
+      "c22-s51-u03-b096"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s51-u03-b030",
+      "c22-s51-u03-b036",
+      "c22-s51-u03-b047",
+      "c22-s51-u03-b085",
+      "c22-s51-u03-b010",
+      "c22-s51-u03-b016",
+      "c22-s51-u03-b022",
+      "c22-s51-u03-b034",
+      "c22-s51-u03-b037",
+      "c22-s51-u03-b046",
+      "c22-s51-u03-b056",
+      "c22-s51-u03-b088",
+      "c22-s51-u03-b001",
+      "c22-s51-u03-b012",
+      "c22-s51-u03-b018",
+      "c22-s51-u03-b024"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [],
+    "all75PagesRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 31,
+    "explanationHtmlOccurrencesVerified": 190,
+    "syntaxFiles": 9,
+    "browserVerified": false
+  },
+  "tests": {
+    "exitCode": 0,
+    "testFiles": 218,
+    "seconds": 6.8
+  },
+  "testCounts": {
+    "total": 1250,
+    "passed": 1248,
+    "failed": 0,
+    "skipped": 2
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase303/../curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "lines": [
+        750,
+        766
+      ],
+      "standards": [
+        "6과03-01",
+        "6과03-02",
+        "6과03-03"
+      ],
+      "scope": "용해의 뜻과 무게 보존, 종류·온도별 녹는 양, 상대 진하기·같은 물체의 뜨는 정도, 생활 쓰임 조사·자료 제작/공유. 입자 모형이나 용해의 과학적 이유/원리를 다루지 않음."
+    },
+    "sources": [
+      {
+        "title": "ACS Using Dissolving to Identify Substances",
+        "url": "https://www.acs.org/education/resources/k-8/inquiryinaction/fifth-grade/substances-have-characteristic-properties/lesson-2-1--using-dissolving-to-identify-substances.html",
+        "readRanges": [
+          [
+            346,
+            399
+          ]
+        ],
+        "verified": "물질 종류를 비교할 때 넣는 양·물 양·온도를 맞추는 절차를 대조함.",
+        "excluded": "이어지는 원자/분자 모형 설명은 국내6과03 학생 원고에 적용하지 않음."
+      },
+      {
+        "title": "AACT What's the Solution?",
+        "url": "https://teachchemistry.org/classroom-resources/what-s-the-solution",
+        "readRanges": [
+          [
+            68,
+            84
+          ],
+          [
+            121,
+            132
+          ]
+        ],
+        "verified": "126줄의 젓기에 따른 빠르기와 용해도 구별,132줄의 같은 양 각설탕/작은 조각의 빠르기를 대조함.",
+        "limit": "그 밖의 일반화나 입자·반응속도 설명을 학생 원고 근거로 채택하지 않음."
+      },
+      {
+        "title": "Winsor & Newton What is watercolour",
+        "url": "https://uk.winsornewton.com/blogs/guides/what-is-watercolour",
+        "readRanges": [
+          [
+            197,
+            199
+          ]
+        ],
+        "verified": "수채물감의 안료가 Gum Arabic 결합제에 분산되어 있다는 제조사 설명을 확인함. 모든 성분이 녹은 용액이라고 하지 않는 기존 구별을 유지함.",
+        "imagesDownloaded": 0
+      }
+    ],
+    "readOn": "2026-11-06",
+    "new3d": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1536,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 96,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideNineteenUnitPass": {
+      "units": 13,
+      "questions": 1544,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To303": 793
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase303",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

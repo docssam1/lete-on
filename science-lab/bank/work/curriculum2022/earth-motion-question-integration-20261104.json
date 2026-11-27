@@ -1,0 +1,218 @@
+{
+  "phase": 206,
+  "baseCommit": "042ca288ae59228c1076c2699d053deb28657322",
+  "unit": "c22-s61-u04",
+  "scope": "현재 교재 문항과 온라인 판정·진단·문항집 일치",
+  "questionVersion": "20261104-earth-motion-questions",
+  "editedQuestionNumbers": [
+    115,
+    118,
+    119,
+    120,
+    124,
+    126,
+    128
+  ],
+  "unchangedRuntimeObjects": 160,
+  "runtimeQuestions": 167,
+  "autoGraded": 116,
+  "teacherReview": 51,
+  "sourceQuestionAndBankBookFilesUnchanged": true,
+  "staleWorkbookFieldsFixed": {
+    "118": "slots를 공전 인정 답과 일치",
+    "119": "보기와 새 발문 일치·장소 조건 명시",
+    "120": "관찰·모형실험 결과를 학생이 읽는 문장으로 수정"
+  },
+  "previousQuestionVersionsAndSavedAttemptsPreserved": true,
+  "responseModulesCopiedFromAuthoring": [
+    {
+      "file": "science-lab/bank/earth-motion-authored-response.mjs",
+      "sha256": "9b20a1c528a8b560dbd72523b080e3f28958ca21f045b2723c9e9b562af44c4a"
+    },
+    {
+      "file": "science-lab/bank/earth-motion-response.mjs",
+      "sha256": "7386a5a628ec8bec6ea9fb12d3d4200950ac019b614d3edc09b4726227bd64ef"
+    }
+  ],
+  "routes": {
+    "unit": "c22-s61-u04",
+    "actualStart": true,
+    "currentClassroomOffered": false,
+    "defaultRedirectToStart": true,
+    "actualTeacherWebBook": true,
+    "actualWorkbookRouterBranch": 4,
+    "actualBankPrintRouterBranch": 4,
+    "productionUnitLoaderExecuted": true,
+    "currentQuestionRevisions": 7,
+    "currentGradingContractLoaded": true,
+    "fullClassroomPending": true,
+    "studentStorageReads": 0,
+    "studentStorageWrites": 0,
+    "browserVerified": false,
+    "printReadinessComponentStubbedInRouter": true
+  },
+  "diagnostics": {
+    "onlineStates": 6,
+    "deckStates": 5,
+    "oldDiagnosticPreserved": true,
+    "syntheticProgressEvents": 5,
+    "actualStudentStorageReads": 0,
+    "actualStudentStorageWrites": 0
+  },
+  "preservation": {
+    "baselineFiles": 6209,
+    "sameBytes": 6195,
+    "reviewedChangedFiles": [
+      "science-lab/data/book/c22-s61-u04.editorial.js",
+      "science-lab/data/book/c22-s61-u04.workbook.js",
+      "science-lab/v2/daily-grade.js",
+      "science-lab/v2/daily.js",
+      "science-lab/v2/deck.js",
+      "science-lab/v2/earth-motion-bank-paper.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/judge.js",
+      "science-lab/v2/revised-earth-motion-workbook.test.mjs",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/tests/earth-motion-workbook-routes.mjs",
+      "science-lab/v2/v2.js",
+      "science-lab/v2/written-practice.js"
+    ],
+    "workbookHTMLs": 112,
+    "unchangedWorkbookHTMLs": 110,
+    "changedWorkbookHTMLs": [
+      [
+        "c22-s61-u04",
+        "student"
+      ],
+      [
+        "c22-s61-u04",
+        "teacher"
+      ]
+    ],
+    "unchangedFullClassroomSlideArrays": 54,
+    "oldPDFsPreserved": 76
+  },
+  "pdfValidation": {
+    "modes": [
+      {
+        "mode": "student",
+        "pages": 121,
+        "bytes": 1447917,
+        "sha256": "1f0dc5a1d6707c0000d57c34a1ecd7e131256bf651feb56cdfa9bf30b58862ee",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      },
+      {
+        "mode": "teacher",
+        "pages": 174,
+        "bytes": 1638809,
+        "sha256": "ba3ea0a258410faadc0ef9ee79f16cd849af8fc349c0d1ce253e2993b2ee138f",
+        "A4": true,
+        "outsideGlyphs": 0,
+        "observedMinTextSize": 8.0,
+        "minimumAllowedTextSize": 7.8
+      }
+    ],
+    "questionPromptExpressions": 256,
+    "solutionExpressions": 128,
+    "teacherAnswerStartsOnRecto": 123
+  },
+  "pdfComparison": [
+    {
+      "mode": "student",
+      "otherPagesPixelIdentical": 120,
+      "pages": 121,
+      "pixelChangedPages": [
+        108
+      ],
+      "renderer": "Apple PDFKit at 72dpi",
+      "textChangedPages": [
+        108
+      ]
+    },
+    {
+      "mode": "teacher",
+      "otherPagesPixelIdentical": 173,
+      "pages": 174,
+      "pixelChangedPages": [
+        108
+      ],
+      "renderer": "Apple PDFKit at 72dpi",
+      "textChangedPages": [
+        108
+      ]
+    }
+  ],
+  "vision": [
+    {
+      "run": "vision-student",
+      "pages": [
+        107,
+        108
+      ],
+      "failure": 0,
+      "skip": 0
+    },
+    {
+      "run": "vision-teacher",
+      "pages": [
+        107,
+        108
+      ],
+      "failure": 0,
+      "skip": 0
+    },
+    {
+      "run": "vision-final-student",
+      "pages": [
+        108
+      ],
+      "failure": 0,
+      "skip": 0
+    },
+    {
+      "run": "vision-final-teacher",
+      "pages": [
+        108
+      ],
+      "failure": 0,
+      "skip": 0
+    }
+  ],
+  "directVisualReview": [
+    "student107",
+    "teacher107",
+    "student108-initial",
+    "teacher108-initial",
+    "student108-final",
+    "teacher108-final"
+  ],
+  "visionLowConfidenceWordsIndividuallyCertified": false,
+  "tests": {
+    "v2": {
+      "total": 711,
+      "pass": 709,
+      "skip": 2,
+      "fail": 0
+    },
+    "bank": {
+      "pass": 299,
+      "fail": 0
+    },
+    "bankAudit": "pass",
+    "earthMotionMiscAudit": "pass"
+  },
+  "realBrowserVerified": false,
+  "newImages": 0,
+  "new3D": 0,
+  "paidAPI": 0,
+  "published": false,
+  "fullClassroomPending": true,
+  "remainingWorkbooks": 4,
+  "remainingFullClassrooms": 5,
+  "goalStatus": "active",
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase206"
+}

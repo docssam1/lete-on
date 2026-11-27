@@ -1,0 +1,389 @@
+{
+  "date": "2026-11-06",
+  "unit": "c22-s61-u02",
+  "scope": "Elementary language, explicit comparison/calculation and unchanged scoring semantics.",
+  "worktree": "/Users/docssam/.codex/worktrees/science-workbook-integration-20261102/lete-on",
+  "branch": "codex/science-workbook-integration-20261102",
+  "priorLocalCommit": "992d02248243e04245105e28157c63a7e60a32b0",
+  "reviewPr": "https://github.com/docssam1/lete-on/pull/1337",
+  "reviewParent": "fb34472c65d5b6cc175c945ba3e4dc500751958a",
+  "workbookQuestionsRead": 128,
+  "workbookQuestionsEdited": 69,
+  "fieldsEdited": 123,
+  "explanationsEdited": 68,
+  "promptsEdited": 21,
+  "sampleOnlyAnswersEdited": 11,
+  "choiceAnswerLabelsUpdated": [
+    7,
+    109,
+    113
+  ],
+  "quickAnswerFiguresChanged": 0,
+  "practicePresentationsEdited": 69,
+  "classroomChecksEdited": 8,
+  "sourceQuestionsPreserved": 70,
+  "similarQuestionsPreserved": 70,
+  "pages": 97,
+  "studentTeacherPagesEdited": [
+    2,
+    24,
+    34,
+    57,
+    68,
+    69,
+    93,
+    94
+  ],
+  "priorVersionRestorationVerified": true,
+  "activeDiagnosticMappingsPreserved": true,
+  "legacyEditorProtectsFutureVersions": true,
+  "scienceEvidence": {
+    "curriculum": {
+      "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+      "document": "교육부2022-33 별책9",
+      "codes": [
+        "6과10-01",
+        "6과10-02",
+        "6과10-03"
+      ],
+      "cachedTextSha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "checkedLines": [
+        860,
+        876
+      ],
+      "scope": "위치 변화를 좌표로 표현하되 두 점 거리 계산은 요구하지 않음. 한 길·한 방향의 속력, 같은 거리/시간 비교, 단위 변환보다 뜻과 의사소통, 교통안전 조사/공유/실천."
+    },
+    "sources": [
+      {
+        "url": "https://www.safekorea.go.kr/safekorea-kor/acts/nacts/action-guide.do?actsHeaderTitle=%EA%B5%90%ED%86%B5%EC%82%AC%EA%B3%A0&category=trafficAccident&menuSn=4",
+        "read": "국민안전24 본문 중 안전한 도로횡단을 위해서는, lines195~209",
+        "supports": "멈추어 좌우와 차량 진행 확인, 신호가 바뀌어도 차량 진행 확인, 안전한 장소에서 활동",
+        "notImported": "사고 현장 대응·침수차 탈출·새 정지 거리 수치"
+      },
+      {
+        "url": "https://www.nhtsa.gov/vehicle-safety/air-bags",
+        "read": "Overview and Protection body",
+        "supports": "안전띠와 에어백이 함께 몸을 보호하며 에어백이 안전띠를 대신하지 않음",
+        "notImported": "미국 연령/좌석 규정·충돌 수치·통계"
+      },
+      {
+        "url": "https://www.nhtsa.gov/risky-driving/speeding",
+        "read": "Dangers and Consequences body, lines101~118",
+        "supports": "도로 조건과 속력, 위험 인지 후 멈추기까지 가는 거리 증가",
+        "notImported": "미국 사고율과 임의의 m 수치·실제 도로 실험·법률 지침"
+      }
+    ]
+  },
+  "nativeValidation": {
+    "priorNativeWorkbookPreserved": true,
+    "editorialBytePrefixPreserved": true,
+    "responseKeysChecked": 38,
+    "explanationsRendered": 136,
+    "syntaxFiles": 9,
+    "actualBrowserVerified": false
+  },
+  "preservation": {
+    "workbooks": 32,
+    "otherWorkbooksUnchanged": 31,
+    "questions": 3080,
+    "questionPatches": 69,
+    "bankPatches": 69,
+    "sampleOnlyContracts": 11,
+    "changedClassroomChecks": [
+      "c22-s61-u02-b052",
+      "c22-s61-u02-b069",
+      "c22-s61-u02-b079",
+      "c22-s61-u02-b096",
+      "c22-s61-u02-b098",
+      "c22-s61-u02-b107",
+      "c22-s61-u02-b113",
+      "c22-s61-u02-b128"
+    ],
+    "changedSlides": [
+      [
+        "self",
+        "test5"
+      ],
+      [
+        "self",
+        "test7"
+      ],
+      [
+        "self",
+        "test8"
+      ],
+      [
+        "self",
+        "test10"
+      ],
+      [
+        "self",
+        "test11"
+      ],
+      [
+        "self",
+        "test13"
+      ],
+      [
+        "self",
+        "test14"
+      ],
+      [
+        "self",
+        "test16"
+      ],
+      [
+        "teach",
+        "test5"
+      ],
+      [
+        "teach",
+        "test7"
+      ],
+      [
+        "teach",
+        "test8"
+      ],
+      [
+        "teach",
+        "test10"
+      ],
+      [
+        "teach",
+        "test11"
+      ],
+      [
+        "teach",
+        "test13"
+      ],
+      [
+        "teach",
+        "test14"
+      ],
+      [
+        "teach",
+        "test16"
+      ]
+    ],
+    "changedHtml": [
+      {
+        "unit": "c22-s61-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "mode": "answers"
+      }
+    ],
+    "otherRuntimeUnitsPreserved": 31,
+    "mainScienceFilesPreserved": 2958,
+    "browserVerified": false
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "phase": 303,
+        "questions": 96,
+        "currentQuestionSha256": "23e77f3c92fc8bef42f32435f1b5bb1f069253e180d6140834f59b89f10f500f"
+      },
+      {
+        "unit": "c22-s51-u04",
+        "phase": 304,
+        "questions": 96,
+        "currentQuestionSha256": "d238628a2de9ab9d3dfe3ab6e73ac563fc3d130a2a025d9b420ba7d1b1004b56"
+      },
+      {
+        "unit": "c22-s52-u01",
+        "phase": 305,
+        "questions": 96,
+        "currentQuestionSha256": "34761681a0bb79de7752834f0cabb12fc1e67aaf611ede9970a7188d36d245e2"
+      },
+      {
+        "unit": "c22-s52-u02",
+        "phase": 306,
+        "questions": 104,
+        "currentQuestionSha256": "fdd2a62e25e3d0044600bc110cac6e6939b3917125c86744cbd3e8720de8f9cf"
+      },
+      {
+        "unit": "c22-s52-u03",
+        "phase": 307,
+        "questions": 112,
+        "currentQuestionSha256": "97645c2bb87f7962b93ee66fd5179d612e6c8b04a152447855493187958508ef"
+      },
+      {
+        "unit": "c22-s52-u04",
+        "phase": 308,
+        "questions": 112,
+        "currentQuestionSha256": "d0bd1ee47e2be29a97968f462cd7e8c33ee1925bfaceabd11facbb1145f6822e"
+      },
+      {
+        "unit": "c22-s61-u01",
+        "phase": 310,
+        "questions": 128,
+        "currentQuestionSha256": "c7e6b3e3ea7f2daf07dae2a9d2cc984f3c74a09ed92fc67d1101ab7c36133291"
+      },
+      {
+        "unit": "c22-s61-u02",
+        "phase": 311,
+        "questions": 128,
+        "currentQuestionSha256": "431ffb2786c5d189eae880e1550acdb6632fcc2ec6d9b40fc2ab78337660428e"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 2312,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 69,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideTwentySixUnitPass": {
+      "units": 6,
+      "questions": 768,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To311": 1262
+  },
+  "tests": {
+    "total": 1278,
+    "pass": 1276,
+    "fail": 0,
+    "skip": 2
+  },
+  "goalAchieved": false,
+  "mainMerged": false,
+  "deployed": false,
+  "browserVerified": false,
+  "paidApiCalls": 0,
+  "newOcrRuns": 0,
+  "newImageFiles": 0,
+  "nextUnit": "c22-s61-u03"
+}

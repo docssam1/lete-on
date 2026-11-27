@@ -1,3 +1,4 @@
+import{reviewLabel}from'../science-lab/bank/review-label.mjs';
 // 밤하늘 관찰: 출처가 다른 네 원문 세트+네 달 관찰 발췌 묶음. 기존 식물/성운 수업을 덮어쓰지 않는다.
 import {readFileSync,writeFileSync} from 'node:fs';
 import {resolve,join} from 'node:path';
@@ -20,7 +21,7 @@ const hold=new Map(review.reviewDispositions.filter(x=>x.disposition==='hold-aut
 assert.equal(hold.size,5);
 const required=Object.fromEntries(original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,[q.rubric[0].criterion]]));
 const judge=Object.fromEntries([...original.filter(q=>q.format==='서술형').map(q=>[`src:${q.key}`,{open:true,need:[],ex:{ok:[q.answer],part:[],no:[]}}]),...pairs.filter(q=>q.kind==='wr').map(q=>[`sim:${q.key}`,{open:true,need:[],ex:{ok:[q.sample],part:[],no:[]}}])]);
-const newMis=Object.fromEntries(Object.entries(types).map(([t,v])=>[`M${t.slice(1)}`,{label:`${v.name}를 다시 살펴봐요`,element:v.element,terms:[v.name],fix:v.desc,step:3}]));
+const newMis=Object.fromEntries(Object.entries(types).map(([t,v])=>[`M${t.slice(1)}`,{label:reviewLabel(v.name),element:v.element,terms:[v.name],fix:v.desc,step:3}]));
 const sourceNotes=Object.fromEntries(original.map(q=>[q.key,extension.has(map[q.key])?'옛교재의 연계 자료입니다. 제시한 표·배치·비교 기준으로 읽으며 현행 필수 수치 암기나 실제 관측 완료를 뜻하지 않습니다.':'옛교재 원문을 현행 밤하늘 관찰과 연결한 자료입니다. 날짜·시각·장소·관찰 가능 조건과 자료 출처를 구별합니다.']));
 for(const [k,n] of Object.entries({
  '1-3':'지구 같은 고체 지표가 없다는 뜻과 내부 전체가 기체로만 되어 있다는 주장을 구별합니다.',

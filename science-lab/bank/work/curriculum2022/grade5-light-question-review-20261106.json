@@ -1,0 +1,618 @@
+{
+  "phase": 302,
+  "date": "2026-11-06",
+  "unit": "c22-s51-u02",
+  "scope": "Elementary light explanations and explicit periscope arrangement; all prior grading, versions and saved work preserved",
+  "preservation": {
+    "reviewedWorkbookQuestionContexts": 80,
+    "reviewedCurrentClassroomContexts": 16,
+    "changedWorkbookQuestions": 80,
+    "changedQuestionFields": 90,
+    "changedExplanations": 80,
+    "unchangedOtherAnswerLabels": 3080,
+    "currentAnswerChanges": [],
+    "unchangedWorkbookStandardsContractsKeysAndSourceFields": 3080,
+    "unchangedOtherWorkbooks": 31,
+    "unchangedHtml": 125,
+    "changedHtml": [
+      {
+        "unit": "c22-s51-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "mode": "answers"
+      }
+    ],
+    "unchangedOtherRuntimeUnits": 31,
+    "practicePresentationsChanged": [
+      "c22-s51-u02-b001",
+      "c22-s51-u02-b002",
+      "c22-s51-u02-b003",
+      "c22-s51-u02-b004",
+      "c22-s51-u02-b005",
+      "c22-s51-u02-b006",
+      "c22-s51-u02-b007",
+      "c22-s51-u02-b008",
+      "c22-s51-u02-b009",
+      "c22-s51-u02-b010",
+      "c22-s51-u02-b011",
+      "c22-s51-u02-b012",
+      "c22-s51-u02-b013",
+      "c22-s51-u02-b014",
+      "c22-s51-u02-b015",
+      "c22-s51-u02-b016",
+      "c22-s51-u02-b017",
+      "c22-s51-u02-b018",
+      "c22-s51-u02-b019",
+      "c22-s51-u02-b020",
+      "c22-s51-u02-b021",
+      "c22-s51-u02-b022",
+      "c22-s51-u02-b023",
+      "c22-s51-u02-b024",
+      "c22-s51-u02-b025",
+      "c22-s51-u02-b026",
+      "c22-s51-u02-b027",
+      "c22-s51-u02-b028",
+      "c22-s51-u02-b029",
+      "c22-s51-u02-b030",
+      "c22-s51-u02-b031",
+      "c22-s51-u02-b032",
+      "c22-s51-u02-b033",
+      "c22-s51-u02-b034",
+      "c22-s51-u02-b035",
+      "c22-s51-u02-b036",
+      "c22-s51-u02-b037",
+      "c22-s51-u02-b038",
+      "c22-s51-u02-b039",
+      "c22-s51-u02-b040",
+      "c22-s51-u02-b041",
+      "c22-s51-u02-b042",
+      "c22-s51-u02-b043",
+      "c22-s51-u02-b044",
+      "c22-s51-u02-b045",
+      "c22-s51-u02-b046",
+      "c22-s51-u02-b047",
+      "c22-s51-u02-b048",
+      "c22-s51-u02-b049",
+      "c22-s51-u02-b050",
+      "c22-s51-u02-b051",
+      "c22-s51-u02-b052",
+      "c22-s51-u02-b053",
+      "c22-s51-u02-b054",
+      "c22-s51-u02-b055",
+      "c22-s51-u02-b056",
+      "c22-s51-u02-b057",
+      "c22-s51-u02-b058",
+      "c22-s51-u02-b059",
+      "c22-s51-u02-b060",
+      "c22-s51-u02-b061",
+      "c22-s51-u02-b062",
+      "c22-s51-u02-b063",
+      "c22-s51-u02-b064",
+      "c22-s51-u02-b065",
+      "c22-s51-u02-b066",
+      "c22-s51-u02-b067",
+      "c22-s51-u02-b068",
+      "c22-s51-u02-b069",
+      "c22-s51-u02-b070",
+      "c22-s51-u02-b071",
+      "c22-s51-u02-b072",
+      "c22-s51-u02-b073",
+      "c22-s51-u02-b074",
+      "c22-s51-u02-b075",
+      "c22-s51-u02-b076",
+      "c22-s51-u02-b077",
+      "c22-s51-u02-b078",
+      "c22-s51-u02-b079",
+      "c22-s51-u02-b080"
+    ],
+    "classroomPresentationsChanged": [
+      "c22-s51-u02-b024",
+      "c22-s51-u02-b025",
+      "c22-s51-u02-b036",
+      "c22-s51-u02-b070",
+      "c22-s51-u02-b010",
+      "c22-s51-u02-b016",
+      "c22-s51-u02-b022",
+      "c22-s51-u02-b028",
+      "c22-s51-u02-b034",
+      "c22-s51-u02-b038",
+      "c22-s51-u02-b071",
+      "c22-s51-u02-b076",
+      "c22-s51-u02-b001",
+      "c22-s51-u02-b007",
+      "c22-s51-u02-b012",
+      "c22-s51-u02-b018"
+    ],
+    "changedSlides": [
+      {
+        "mode": "self",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "self",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test1",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test2",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test3",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test4",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test5",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test6",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test7",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test8",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test9",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test10",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test11",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test12",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test13",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test14",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test15",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      },
+      {
+        "mode": "teach",
+        "id": "test16",
+        "fields": [
+          "body",
+          "questionVersion"
+        ]
+      }
+    ],
+    "unchangedSlideArrays": 62,
+    "changedStudentAndTeacherPages": [],
+    "all58PagesRailsFiguresAndQuickTablesUnchanged": true,
+    "unchangedBitmaps": true,
+    "newOcr": 0,
+    "priorNativeWorkbookPreserved": true,
+    "priorEditorialBytePrefixPreserved": true,
+    "choiceResponsesChecked": 25,
+    "explanationHtmlOccurrencesVerified": 160,
+    "syntaxFiles": 6,
+    "browserVerified": false
+  },
+  "tests": {
+    "exitCode": 0,
+    "testFiles": 217,
+    "seconds": 7.21
+  },
+  "testCounts": {
+    "total": 1246,
+    "passed": 1244,
+    "failed": 0,
+    "skipped": 2
+  },
+  "evidence": {
+    "curriculum": {
+      "path": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase302/../curriculum-standards/science-curriculum.txt",
+      "sha256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "lines": [
+        734,
+        749
+      ],
+      "standards": [
+        "6과02-01",
+        "6과02-02",
+        "6과02-03"
+      ],
+      "scope": "빛의 필요, 직진/반사/굴절 관찰, 거울·렌즈 쓰임 조사·장치 제작. 정량 반사/굴절 법칙 및 볼록렌즈 거리별 물체 모습 차이는 지도하지 않음."
+    },
+    "sources": [
+      {
+        "title": "NASA Moonlight",
+        "url": "https://science.nasa.gov/moon/moonlight/",
+        "readRanges": [
+          [
+            296,
+            308
+          ]
+        ],
+        "verified": "달은 스스로 빛을 내지 않으며 달빛은 반사된 햇빛이라는 본문을 6/49해설과 대조함."
+      },
+      {
+        "title": "OpenStax College Physics 2e, 25.3 The Law of Refraction",
+        "url": "https://openstax.org/books/college-physics-2e/pages/25-3-the-law-of-refraction",
+        "readRanges": [
+          [
+            27,
+            38
+          ],
+          [
+            121,
+            143
+          ]
+        ],
+        "verified": "서로 다른 물질을 지날 때 빛의 경로가 바뀌는 굴절, 물속 물체에서 눈으로 오는 경로와 들어가는 방향에 따른 차이를 대조함.",
+        "inference": "수직 통과 시 방향 변화가 없다는 기존28해설은 스넬 법칙의 입사각0도 조건으로 검증했다. 이는 편집자의 수식 해석이며 해당 페이지에 동일 문장으로 직접 적혀 있다는 주장이 아님.",
+        "excludedFromStudentCopy": [
+          "굴절률",
+          "빛의 속력 수치",
+          "스넬 법칙",
+          "정량 각도 계산"
+        ]
+      }
+    ],
+    "localGeometryRead": {
+      "path": "science-lab/assets/bank/c22-s51-u02/book-mirrorTask.svg",
+      "incoming": "M70 60H260",
+      "mirror": "M220 100L300 20",
+      "role": "45번은 거울의 접점에서 위쪽으로 이어지는 경로라는 기존 설정을 확인함. 그림 파일은 변경하지 않음."
+    },
+    "readOn": "2026-11-06",
+    "imagesDownloaded": 0,
+    "new3d": 0
+  },
+  "reviewLedger": {
+    "scope": "Workbook question language and supplied evidence; not all scientific source facts or all practice-bank presentations.",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "949046eba28f1f6bf63057e836d99f0243a6127e03bef8fb966ea9838f159746"
+      },
+      {
+        "unit": "s31-u02",
+        "phase": 287,
+        "questions": 80,
+        "currentQuestionSha256": "75be44906f0665c8a9a0f98b3414a443a8f2e0b2f16fdbf4179bebd600dcf2de"
+      },
+      {
+        "unit": "s31-u03",
+        "phase": 288,
+        "questions": 80,
+        "currentQuestionSha256": "9f38bbe95bf37984a60dd8746901882862d0f864a3d1fee7cd46977ec0bfd96a"
+      },
+      {
+        "unit": "s31-u04",
+        "phase": 286,
+        "questions": 80,
+        "currentQuestionSha256": "e68dbd1d46035d0decee985f52becf61212c45956c6b3e80b6c5df3f3c15060b"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "phase": 289,
+        "questions": 80,
+        "currentQuestionSha256": "815798134189689bfcb4e60d7ea7941fa8dbd1b0124dab36eaffb23a12209a72"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "phase": 290,
+        "questions": 80,
+        "currentQuestionSha256": "50cd7b3343a2777be7f9ae66657f34d226599019fcbe79fe95b51a8e6d030770"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "phase": 291,
+        "questions": 80,
+        "currentQuestionSha256": "2ce0ff3e71b588d9b967ed2536e1f615ae90cfd6da1f8290979b522a0d9c5927"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "phase": 292,
+        "questions": 80,
+        "currentQuestionSha256": "53bb473fccd31404ef7fbd1f001e87642d73332ec3438c7b26d262040781f138"
+      },
+      {
+        "unit": "s41-u01",
+        "phase": 293,
+        "questions": 80,
+        "currentQuestionSha256": "c94fd4cf52f4fb4359f3caa0b0c011ec4064bb20da60164a3fe9a891380147e6"
+      },
+      {
+        "unit": "s41-u02",
+        "phase": 294,
+        "questions": 80,
+        "currentQuestionSha256": "7e8299796bc6df078ee7681da306901d52e043309a9661742e333e159696d6cf"
+      },
+      {
+        "unit": "s41-u03",
+        "phase": 295,
+        "questions": 80,
+        "currentQuestionSha256": "9da12c511cbda10f18aae8e109b41cc6dd135bfb2353fffb709c09a7b90cbdde"
+      },
+      {
+        "unit": "s41-u04",
+        "phase": 296,
+        "questions": 80,
+        "currentQuestionSha256": "6d06a3b7fc14a51640ded2ad95c2d7ee49f35c01b42a69a3b6b4dcac8b98fd47"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "phase": 297,
+        "questions": 80,
+        "currentQuestionSha256": "a4c82d71d27ab37dc2d80e505c4a8799626790cf46f9626dc4060786dfc0c32f"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "phase": 298,
+        "questions": 80,
+        "currentQuestionSha256": "1206569d734e9f219044e3307350ce51f4d3e9c38ce4d9fa7735e00f8691fb28"
+      },
+      {
+        "unit": "c22-s42-u03",
+        "phase": 299,
+        "questions": 80,
+        "currentQuestionSha256": "be3c5d2560065393672cc95ae7a88728d28c9165ee420ff7b914c345daf771f5"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "phase": 300,
+        "questions": 80,
+        "currentQuestionSha256": "267bf4071e4b08bf6b2457325ae19b02045049b71831beaa92a7a79daf60530e"
+      },
+      {
+        "unit": "c22-s51-u01",
+        "phase": 301,
+        "questions": 80,
+        "currentQuestionSha256": "729c6987a499ac936ad75a9951e2558751a58fb4af110d639b905117d3c06b36"
+      },
+      {
+        "unit": "c22-s51-u02",
+        "phase": 302,
+        "questions": 80,
+        "currentQuestionSha256": "6252d9395a9d6b8112733c30be36664c73c1b3b3cee9de63a99dfbd7ee4b2fc5"
+      }
+    ],
+    "currentWorkbookQuestionContextsReviewed": 1440,
+    "totalWorkbookQuestions": 3080,
+    "authoredPracticePresentationsRevisedThisPhase": 80,
+    "allPracticeBankSemanticsVerified": false,
+    "currentBitmapHashesMatched": 185,
+    "unmappedOriginalBankUnits": [
+      "c22-s62-u04",
+      "c22-s62-u03",
+      "c22-s62-u02",
+      "c22-s62-u01",
+      "c22-s32-u02",
+      "c22-s32-u04",
+      "c22-s51-u01",
+      "c22-s52-u01",
+      "c22-s61-u04"
+    ],
+    "actualBrowserPrintAudioWebGlVerified": false,
+    "mandatory3dZeroFailuresProven": false,
+    "goalAchieved": false,
+    "goalAtImpasse": false,
+    "currentTypographyUnits": 32,
+    "actualTypographyRenderVerified": false,
+    "outsideEighteenUnitPass": {
+      "units": 14,
+      "questions": 1640,
+      "semanticsVerified": false
+    },
+    "changedWorkbookQuestionsAcrossPhases286To302": 698
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase302",
+  "releaseGatesUnchanged": true,
+  "mainMerged": false,
+  "deployed": false
+}

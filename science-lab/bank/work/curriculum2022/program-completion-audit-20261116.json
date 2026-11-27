@@ -1,0 +1,679 @@
+{
+  "date": "2026-11-16",
+  "candidateBaseline": "d00885962dae3b4844e221049f96dc9122fc8846",
+  "goal": "이 프로그램을 만들기 위한 목표를 계속 진행해",
+  "status": "primary-thinking-configurations-checked-teacher-tables-separated-program-incomplete",
+  "checks": [
+    {
+      "requirement": "2022 curriculum placement and clear separation from2015",
+      "status": "native-proven",
+      "evidence": "32 canonical placements through curriculum-2022.js and placeOf; friendly lesson titles are separate from canonical unit titles.",
+      "actualNavigationVerified": false
+    },
+    {
+      "requirement": "Substantial student workbooks with varied response formats and right-hand learning sections",
+      "status": "native-proven",
+      "units": 32,
+      "semesters": 8,
+      "questions": 3080,
+      "studentPages": 2476,
+      "displayFormatsPerUnit": 8,
+      "allThreeRailRolesPerPage": true,
+      "limit": "Structure and generated HTML only; raw form codes alone do not identify display formats.",
+      "latestDirectionCorrection": "483: infection w033 asks for a word from its word-only options; all answer contracts, pages and other workbook fields unchanged."
+    },
+    {
+      "requirement": "Elementary language, scientific correctness, and meaningful advanced notes",
+      "status": "partially-reviewed",
+      "evidence": "Unit review history through472; all pages have the three rail roles. This is not independent proof of every scientific statement.",
+      "latestSpecificReview484": {
+        "unit": "c22-s32-u04",
+        "questionRanges": [
+          "17-21",
+          "37-64",
+          "73-80"
+        ],
+        "questions": 41,
+        "finding": "q38 now explicitly compares final marked state after round3; answer and contract retained",
+        "wholeUnitComplete": false
+      },
+      "latestSpecificReview485": {
+        "unit": "c22-s32-u02",
+        "questionRanges": [
+          "49-80"
+        ],
+        "questions": 32,
+        "specificTeacherFeedbackFields": 58,
+        "wholeUnitComplete": false
+      },
+      "latestSpecificReview486": {
+        "unit": "c22-s62-u04",
+        "questionRanges": [
+          "97-128"
+        ],
+        "questions": 32,
+        "finding": "q123 now says same type of thermometer as its provided condition; quantities and contracts unchanged",
+        "wholeUnitComplete": false
+      }
+    },
+    {
+      "requirement": "Primary v2 lessons teach connected thinking rather than report entry",
+      "status": "native-route-and-configuration-proven-runtime-unverified",
+      "explicitComparisonPrimaryLessons": 31,
+      "defaultPathRequiresSeparateReview": [],
+      "actualLessonFlowVerified": false,
+      "defaultForceModelPrimaryLessons": 1,
+      "totalPrimaryThinkingConfigurations": 32,
+      "defaultPathNativeRouteReviewed": [
+        "s31-u01"
+      ],
+      "studentAndTeacherDecks": 64,
+      "slides": 3048,
+      "actualDefaultForceModelVerified": false,
+      "evidence": "All32actual revised classroom objects and64buildSlides outputs are thinking configurations with no mandatory report/record mount or report links. The real first-unit start/class functions select forceThinking before legacy forcework, preserve optional records-book access, use the existing force fallback and support second-session/resume navigation. Native route calls and model-mount arguments were checked without starting a browser/WebGL."
+    },
+    {
+      "requirement": "Student-accessible original questions and current-edition coverage",
+      "status": "incomplete",
+      "transport": "existing static files accessible without login",
+      "currentPractice": 3179,
+      "relatedOriginals": 1763,
+      "similar": 1512,
+      "sourcePending": [
+        {
+          "unit": "c22-s32-u02",
+          "title": "지구와 바다",
+          "practice": 92
+        },
+        {
+          "unit": "c22-s32-u04",
+          "title": "감염병과 건강한 생활",
+          "practice": 92
+        },
+        {
+          "unit": "c22-s62-u04",
+          "title": "과학과 나의 진로",
+          "practice": 128
+        }
+      ],
+      "pendingPractice": 312,
+      "wholeCurrentOriginalEditionsComplete": false,
+      "newOriginalsRegisteredThisAudit": 0,
+      "additionalDriveSearchWasNotExhaustive": true,
+      "additionalDriveCoverage483": {
+        "scienceNamedFolderPages": 2,
+        "scienceNamedFolders": 104,
+        "scienceQueryHasNextPage": false,
+        "revisionNamedFolderPages": 4,
+        "revisionNamedFolders": 400,
+        "revisionQueryHasNextPage": true,
+        "semesterFolderCandidates": 26,
+        "additionalScienceSemesterFoldersRead": 6,
+        "additionalScienceChapterFoldersRead": 42,
+        "wholeDriveOrAllPdfBodiesExhausted": false,
+        "newOriginalSourcesRegistered": 0
+      }
+    },
+    {
+      "requirement": "Original-question misconception diagnosis",
+      "status": "native-covered-runtime-unverified",
+      "cliExitCode": 0,
+      "missingInActualRuntime": 0,
+      "units": [],
+      "evidence": "All201automatic originals initially missing diagnosis rules retain versioned review mappings:492wrong-choice links and74typed concept rules.20of the initial221rows require explicit teacher review. The unmodified whole required CLI exits0 with no errors. Registered raw originals and keys remain unchanged; one current electricity presentation has a labelled comparison condition and a distinct version. Coverage does not prove all scientific statements or actual student/browser behavior.",
+      "initialAbsentRules": 221,
+      "explicitTeacherReviewCasesAmongInitialRows": 20,
+      "automaticQuestionsOriginallyNeedingDiagnosis": 201,
+      "automaticQuestionsConnected": 201,
+      "wrongChoiceLinksAdded": 492,
+      "typedConceptRulesAdded": 74
+    },
+    {
+      "requirement": "Referenced images exist and current source images are reviewed",
+      "status": "native-proven-for-stated-scope",
+      "scope": "128 workbook outputs and64 lesson slide arrays/3048 slides",
+      "currentBitmapFiles": 192,
+      "references": 1052,
+      "missing": 0,
+      "unchangedFromPriorImageReviewHashes": 184,
+      "additionalOrChangedImagesViewedThisAudit": 8,
+      "newSourceImageOcrRuns": 4,
+      "reusedMatchingCpuOcrRecords": 4,
+      "limit": "Does not prove rendered crops, print legibility, all source-exam figures, or every scientific inference."
+    },
+    {
+      "requirement": "Local fonts and font/image readiness for print",
+      "status": "native-proven-for-stated-scope",
+      "evidence": "471 local stylesheet/font audit;472 1018 Hangul in both local faces; existing font/image readiness tests",
+      "actualFontRenderingAndA4Verified": false
+    },
+    {
+      "requirement": "Saved records, old questions and grading preserved",
+      "status": "native-tested-runtime-unverified",
+      "evidence": "486 native352files/1714tests/1712pass/2browser skip. All201source revisions, raw/item/misc hashes and24source papers are preserved. All3742full snapshots restore exact fields, including the one added career q123 correction snapshot;2legacy deltas retain context. Old bank presentation matches a pre-edit capture, grading/units/M17 diagnoses and old/no-version saved answers and frozen papers are preserved. Only one current bank explanation and2workbook explanation fields change;126paper modes match."
+    },
+    {
+      "requirement": "v1 folder navigation and full experiment flow",
+      "status": "not-verified-in-actual-browser",
+      "evidence": "Existing folder source and prior checks do not replace required actual navigation with saved progress."
+    },
+    {
+      "requirement": "PC/mobile, keyboard, student/teacher answer visibility and actual A4/PDF",
+      "status": "not-verified",
+      "evidence": "Browser access remains restricted with prior permission question pending. No workaround or alternative HTML rendering used."
+    },
+    {
+      "requirement": "Audio/WebGL/3D runtime checks",
+      "status": "not-verified",
+      "planUnits": 44,
+      "runtimeChecks": 0,
+      "runtimeVerified": false,
+      "limit": "check-science-3d --plan started no browser/server and is not a successful3D runtime check."
+    },
+    {
+      "requirement": "Operational integration and deployment",
+      "status": "not-complete",
+      "draftPr": 1337,
+      "mainMerged": false,
+      "deployed": false,
+      "releaseReady": false
+    },
+    {
+      "requirement": "Selected-unit loading of reviewed source diagnostic data",
+      "status": "native-module-graph-proven",
+      "units": 6,
+      "previousDiagnosticScriptBytesPerUnit": 871733,
+      "afterDiagnosticScriptBytesPerUnit": [
+        {
+          "unit": "c22-s51-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 19433,
+          "reductionPercent": 97.8,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s52-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 37554,
+          "reductionPercent": 95.7,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s61-u04",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 155963,
+          "reductionPercent": 82.1,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u01",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 257619,
+          "reductionPercent": 70.4,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u02",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 176163,
+          "reductionPercent": 79.8,
+          "otherStaticDependenciesUnchanged": true
+        },
+        {
+          "unit": "c22-s62-u03",
+          "beforeDiagnosticScriptBytes": 871733,
+          "afterDiagnosticScriptBytes": 206356,
+          "reductionPercent": 76.3,
+          "otherStaticDependenciesUnchanged": true
+        }
+      ],
+      "initialStaticRootLoadsNoReviewData": true,
+      "synchronousReviewToolApiPreserved": true,
+      "uncompressedJavaScriptBytes": true,
+      "actualNetworkTimingMeasured": false,
+      "actualBrowserVerified": false
+    },
+    {
+      "requirement": "Teacher classroom result tables do not read student model records",
+      "status": "native-function-proven",
+      "scope": "pageLabClass myLab result-table callback only; intentional teacher assessment/review paths are unchanged",
+      "units": 32,
+      "teacherStoreReadsInCheckedCallback": 0,
+      "teacherStoreWritesInCheckedCallback": 0,
+      "studentForceRecordsAndReportStatePreserved": true,
+      "actualBrowserVerified": false
+    }
+  ],
+  "requiredCliChecks": {
+    "bankAudit": 0,
+    "taxonomyCheck": 0,
+    "writtenAudit": 0,
+    "misconceptionAudit": 0,
+    "threeDPlan": 0
+  },
+  "nextLocalWork": {
+    "firstIssue": "Audit response instructions against actual choices, per-part answers and blanks across all32workbooks, then manually inspect flagged items with materials",
+    "units": 32,
+    "requirements": [
+      "Use current exported questions, displayed options/givens, linked figures and response contracts.",
+      "Treat missing labels detected by text as a candidate only; image labels may require native viewing or Apple Vision OCR.",
+      "Preserve original/authored distinction, keys and old versions,201source diagnostic revisions,3742full snapshots and2legacy deltas, teacher/student records.",
+      "Current-edition originals and actual PC/mobile/keyboard/A4/audio/WebGL/v1 checks remain incomplete."
+    ]
+  },
+  "privateEvidence": "science-question-review/phase473/structure-audit.json;diagnostic-gap-verification.json;current-image-manifest.json;ocr-reused.json;apple-vision/;drive-source-followup.json; phase476: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, apple-vision/; phase477: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase478: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase479: reviewed-mappings.json, preservation-result.json, diagnostic-policy-before.json, condition-followup.json, native-suite-result.json, required-cli-checks.json, apple-vision/; phase480: condition-change.json, condition-tests.log, preservation-result.json, diagnostic-policy-before.json, native-suite-result.json, required-cli-checks.json; phase481: baseline.json, split-modules.json, loading-tests.log, preservation-result.json, native-suite-result.json, required-cli-checks.json; phase482: force-classroom-before.json, route-tests-before.log, route-tests.log, combined-route-tests.log, primary-classroom-audit.json, preservation-result.json, native-suite-result.json, required-cli-checks.json",
+  "productFilesChanged": true,
+  "paidApiCalls": 0,
+  "cloudWrites": 0,
+  "browserStarted": false,
+  "goalAchieved": false,
+  "goalAtImpasse": false,
+  "latestFollowupBaseline": "0b832812c95ac643310b121d0d76a3d0f5109c55",
+  "latestPhase": 486,
+  "followup474": {
+    "automaticSourceRevisions": 5,
+    "wrongChoiceLinks": 19,
+    "legacySnapshotsAdded": 10,
+    "all128WorkbookOutputsUnchanged": true,
+    "geologySourcePaperModesUnchanged": 4,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegisteredCommit": "0bbdeee44",
+    "nativeFiles": 343,
+    "nativeTests": 1678,
+    "nativePass": 1676,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourcePicturesViewed": 2,
+    "sourcePicturesCpuOcr": 2,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup475": {
+    "automaticMixtureSourceRevisions": 11,
+    "wrongChoiceLinks": 43,
+    "newReviewConcept": "M08 magnetic separation and remaining materials",
+    "grammarLabelCorrections": 2,
+    "fullSnapshotsAdded": 22,
+    "allFullSnapshotsNow": 3370,
+    "all128WorkbookOutputsUnchanged": true,
+    "mixtureSourcePaperModesUnchanged": 4,
+    "earlierGeologyRevisionsUnchanged": 5,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstNonemptyRegistration": "68318a1c6",
+    "nativeFiles": 344,
+    "nativeTests": 1682,
+    "nativePass": 1680,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 2,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup476": {
+    "automaticEarthSourceRevisions": 33,
+    "choiceQuestions": 21,
+    "wrongChoiceLinks": 81,
+    "typedConceptRules": 12,
+    "typedRulePolicy": "Revisit the question concept for a wrong nonempty answer; no specific false belief inferred from generic wrong text. Correct and blank responses receive no automatic diagnosis.",
+    "fullSnapshotsAdded": 66,
+    "allFullSnapshotsNow": 3436,
+    "all128WorkbookOutputsUnchanged": true,
+    "earthSourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 16,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 345,
+    "nativeTests": 1687,
+    "nativePass": 1685,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 11,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup477": {
+    "automaticSeasonSourceRevisions": 60,
+    "choiceQuestions": 31,
+    "wrongChoiceLinks": 121,
+    "typedConceptRules": 29,
+    "newReviewConcepts": [
+      "M14 experiment parts and natural counterparts",
+      "M15 seasonal day length in Korea",
+      "M16 solar culmination and shadows in Korea",
+      "M17 orbital direction and viewing direction"
+    ],
+    "fullSnapshotsAdded": 120,
+    "allFullSnapshotsNow": 3556,
+    "all128WorkbookOutputsUnchanged": true,
+    "seasonSourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 49,
+    "priorThirteenMiscDefinitionsAndTablesPreserved": true,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 346,
+    "nativeTests": 1692,
+    "nativePass": 1690,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 24,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup478": {
+    "automaticCombustionSourceRevisions": 43,
+    "choiceQuestions": 28,
+    "wrongChoiceLinks": 106,
+    "typedConceptRules": 15,
+    "fullSnapshotsAdded": 86,
+    "allFullSnapshotsNow": 3642,
+    "all128WorkbookOutputsUnchanged": true,
+    "combustionSourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 109,
+    "allMiscDefinitionFilesUnchanged": true,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 347,
+    "nativeTests": 1697,
+    "nativePass": 1695,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 12,
+    "sourceOriginalTextOrAnswerChanges": 0
+  },
+  "followup479": {
+    "automaticElectricitySourceRevisions": 49,
+    "choiceQuestions": 31,
+    "wrongChoiceLinks": 122,
+    "typedConceptRules": 18,
+    "newReviewConcepts": [
+      "M19 battery orientation and electromagnet poles",
+      "M20 powered appliances versus hand tools",
+      "M21 battery count and connection method"
+    ],
+    "fullSnapshotsAdded": 98,
+    "allFullSnapshotsNow": 3740,
+    "all128WorkbookOutputsUnchanged": true,
+    "electricitySourcePaperModesUnchanged": 4,
+    "earlierSourceRevisionsUnchanged": 152,
+    "priorSeventeenRuntimeAndRawMiscDefinitionsPreserved": true,
+    "registeredSourceContentHashUnchanged": true,
+    "sourceBlobUnchangedSinceFirstRegistration": "6aff5892d",
+    "nativeFiles": 348,
+    "nativeTests": 1702,
+    "nativePass": 1700,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "sourceFiguresViewedAndCpuOcr": 11,
+    "sourceOriginalTextOrAnswerChanges": 0,
+    "readableRemediationQuestionCoverage": 96,
+    "newSourceQuestionsInReadableRemediation": [
+      "c22-s62-u03-o1-09",
+      "c22-s62-u03-o2-10",
+      "c22-s62-u03-o4-12"
+    ]
+  },
+  "followup480": {
+    "currentQuestion": "c22-s62-u03-o1-05",
+    "conditionVersion": "20261116-electricity-source-condition",
+    "addedCondition": "보충 조건: 두 스위치를 모두 닫았을 때 전구의 밝기를 비교해요.",
+    "rawOriginalPromptFigureAndKeyChanged": false,
+    "currentPromptUnchanged": true,
+    "addedContextBlocks": 1,
+    "fullSnapshotsAdded": 1,
+    "allFullSnapshotsNow": 3741,
+    "priorDiagnosticPresentationsPreserved": 201,
+    "otherCurrentSourceRevisionsUnchanged": 200,
+    "all128WorkbookOutputsUnchanged": true,
+    "sourcePaperChanges": {
+      "student": 1,
+      "teacher": 1,
+      "answers": 0,
+      "quick": 0
+    },
+    "allOtherSourcePaperMarkupUnchanged": true,
+    "nativeFiles": 349,
+    "nativeTests": 1706,
+    "nativePass": 1704,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "registeredSourceContentHashUnchanged": true
+  },
+  "followup481": {
+    "unitDataModules": 6,
+    "sharedReviserModules": 1,
+    "synchronousCompatibilityApiPreserved": true,
+    "revisionDataObjectsUnchanged": 6,
+    "currentSourceRevisionsUnchanged": 201,
+    "all3741FullSnapshotsPreserved": true,
+    "currentComparisonConditionUnchanged": true,
+    "all128WorkbookOutputsUnchanged": true,
+    "all24SourcePaperModesUnchanged": true,
+    "rawSourcesItemsAndRuntimeMiscHashesUnchanged": true,
+    "perUnitDiagnosticScriptBytes": [
+      {
+        "unit": "c22-s51-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 19433,
+        "reductionPercent": 97.8,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s52-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 37554,
+        "reductionPercent": 95.7,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s61-u04",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 155963,
+        "reductionPercent": 82.1,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u01",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 257619,
+        "reductionPercent": 70.4,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u02",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 176163,
+        "reductionPercent": 79.8,
+        "otherStaticDependenciesUnchanged": true
+      },
+      {
+        "unit": "c22-s62-u03",
+        "beforeDiagnosticScriptBytes": 871733,
+        "afterDiagnosticScriptBytes": 206356,
+        "reductionPercent": 76.3,
+        "otherStaticDependenciesUnchanged": true
+      }
+    ],
+    "nativeFiles": 350,
+    "nativeTests": 1708,
+    "nativePass": 1706,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "actualNetworkTimingMeasured": false
+  },
+  "followup482": {
+    "primaryThinkingConfigurations": 32,
+    "dedicatedComparisonMounts": 31,
+    "existingDefaultForceMounts": 1,
+    "studentAndTeacherDecks": 64,
+    "slides": 3048,
+    "defaultStartClassSessionResumeRoutesChecked": true,
+    "teacherSavedResultTableReadReproducedBeforeFix": true,
+    "teacherClassroomResultTableEmptyWithoutStudentStoreRead": true,
+    "studentForceRowsAndOldReportStatePreserved": true,
+    "forceClassroomDataUnchanged": true,
+    "all201SourceRevisionsUnchanged": true,
+    "all3741FullSnapshotsPreserved": true,
+    "all128WorkbookOutputsUnchanged": true,
+    "all24SourcePaperModesUnchanged": true,
+    "perUnitSourceLoadingPreserved": true,
+    "nativeFiles": 351,
+    "nativeTests": 1711,
+    "nativePass": 1709,
+    "nativeFail": 0,
+    "browserSkip": 2,
+    "allRequiredCliExitCodes": 0,
+    "newImagesOrOcrRuns": 0,
+    "actualWebGLStarted": false
+  },
+  "followup483": {
+    "scope": "Read-only source discovery and one authored workbook direction",
+    "sourceCoverage": {
+      "scienceNamedFolderPages": 2,
+      "scienceNamedFolders": 104,
+      "scienceQueryHasNextPage": false,
+      "revisionNamedFolderPages": 4,
+      "revisionNamedFolders": 400,
+      "revisionQueryHasNextPage": true,
+      "semesterFolderCandidates": 26,
+      "additionalScienceSemesterFoldersRead": 6,
+      "additionalScienceChapterFoldersRead": 42,
+      "wholeDriveOrAllPdfBodiesExhausted": false,
+      "newOriginalSourcesRegistered": 0
+    },
+    "question": "c22-s32-u04-w033",
+    "before": "기호를 골라 쓰세요",
+    "after": "알맞은 말을 골라 쓰세요",
+    "workbookOnlyPromptChanged": true,
+    "bankQuestionsAndVersionsUnchanged": true,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "paperModesOnlyPromptChanged": 2,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "newImagesOrOcr": 0,
+    "deployed": false,
+    "privateEvidence": "phase483/"
+  },
+  "followup484": {
+    "scope": "41 named infection workbook questions reviewed with displayed contexts; clarify final marked state in question38",
+    "unit": "c22-s32-u04",
+    "reviewedQuestionRanges": [
+      "17-21",
+      "37-64",
+      "73-80"
+    ],
+    "reviewedQuestions": 41,
+    "wholeUnitIndependentReviewComplete": false,
+    "onlyChangedQuestionField": "c22-s32-u04-w038.prompt",
+    "answerContractsAndBankVersionsUnchanged": true,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "paperModesOnlyPromptChanged": 2,
+    "nativeSceneImagesViewed": 2,
+    "newImagesAndOcr": 0,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase484/"
+  },
+  "followup485": {
+    "scope": "Earth and sea questions49-80 reviewed with displayed materials; specific teacher feedback only",
+    "unit": "c22-s32-u02",
+    "questionsReviewed": 32,
+    "wholeUnitIndependentReviewComplete": false,
+    "misconceptionsChanged": 32,
+    "criteriaChanged": 26,
+    "answersChoicesPromptsAndContractsUnchanged": true,
+    "otherQuestionFieldsAndAllPagesUnchanged": true,
+    "futureQuestionVariantsProtected": 128,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "changedPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "studentAndQuickOutputsUnchanged": true,
+    "nativeImageViewed": 1,
+    "officialSourceTextPagesRead": 3,
+    "newImagesAndOcr": 0,
+    "native": {
+      "files": 351,
+      "tests": 1711,
+      "pass": 1709,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "fullSnapshotsPreserved": 3741,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase485/"
+  },
+  "followup486": {
+    "scope": "Career questions97-128 with four tables; align q123 explanation with same-type thermometer givens",
+    "unit": "c22-s62-u04",
+    "questionsReviewed": 32,
+    "wholeUnitIndependentReviewComplete": false,
+    "question": "c22-s62-u04-b123",
+    "newVersion": "20261116-career-temperature-condition",
+    "workbookChangedFields": [
+      "explanation",
+      "criteria"
+    ],
+    "answersChoicesPromptsGivensAndContractsUnchanged": true,
+    "otherCareerItemsUnchanged": 127,
+    "otherWorkbooksUnchanged": 31,
+    "paperModesUnchanged": 126,
+    "changedPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "bankPaperModesUnchanged": [
+      "student",
+      "quick"
+    ],
+    "changedBankPaperModes": [
+      "teacher",
+      "answers"
+    ],
+    "newFullSnapshots": 1,
+    "fullSnapshotsNow": 3742,
+    "legacyDeltas": 2,
+    "oldBankPresentationMatchesCapturedBefore": true,
+    "native": {
+      "files": 352,
+      "tests": 1714,
+      "pass": 1712,
+      "fail": 0,
+      "browserSkip": 2
+    },
+    "requiredCliAllExit0": true,
+    "sourceRevisionsPreserved": 201,
+    "browserStarted": false,
+    "cloudWrites": 0,
+    "deployed": false,
+    "privateEvidence": "phase486/"
+  }
+}

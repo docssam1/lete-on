@@ -1,0 +1,234 @@
+{
+  "phase": 231,
+  "date": "2026-11-05",
+  "baseCommit": "d9b62eae5c443192b71c8d7eccc75aa6340e9bdd",
+  "request": "Use curriculum terminology and natural student language; opening questions should be warmups.",
+  "scope": "First two pages only: 13 existing opening-field labels, eight learning-guide tables, three opening paragraphs and three warmup hints. Generated data bodies remain byte-identical under an additive export editor.",
+  "curriculumSource": "Education Ministry 2022-33 Annex 9; existing verified science-curriculum.txt, sections 4과01/02/03/08/13/14/16 and 6과03.",
+  "examples": [
+    {
+      "before": "양분 역할 분류",
+      "after": "생물 요소와 비생물 요소를 조사하고 분류하기"
+    },
+    {
+      "before": "용해와 같은 전체 무게",
+      "after": "용해 현상을 관찰하고 용해 전과 후의 무게 비교하기"
+    },
+    {
+      "before": "배울 줄기",
+      "after": "배울 내용"
+    },
+    {
+      "before": "세 질문으로 밤하늘을 읽어요",
+      "after": "이번 단원에서 배울 내용"
+    }
+  ],
+  "preservation": {
+    "unitsReviewed": 32,
+    "questionsPreserved": 3080,
+    "changedUnits": [
+      "c22-s32-u01",
+      "c22-s32-u02",
+      "s41-u01",
+      "c22-s42-u01",
+      "c22-s51-u03",
+      "s31-u01",
+      "s31-u02",
+      "s31-u03",
+      "s31-u04",
+      "c22-s42-u02",
+      "c22-s32-u03",
+      "c22-s32-u04",
+      "c22-s42-u04",
+      "s41-u02",
+      "s41-u03"
+    ],
+    "warmupFieldsInUnits": 30,
+    "openersWithProseOnly": [
+      "c22-s32-u04",
+      "c22-s42-u04"
+    ],
+    "generatedDataBodiesByteIdentical": 15,
+    "onlyFirstTwoPagesWordingChanged": true,
+    "blockCountsTableDimensionsWritingSpaceAndRailsPreserved": true,
+    "questionsAnswersFiguresTeacherSolutionsQuickAnswerPagesPreserved": true,
+    "changedProducts": [
+      {
+        "unit": "c22-s32-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s51-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u01",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "s31-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s32-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "student"
+      },
+      {
+        "unit": "c22-s42-u04",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u02",
+        "mode": "teacher"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "student"
+      },
+      {
+        "unit": "s41-u03",
+        "mode": "teacher"
+      }
+    ],
+    "unchangedAnswerAndQuickProducts": 64,
+    "slidesUnchanged": 64,
+    "careerHistoryUnchanged": true,
+    "baselineScienceFiles": 6337,
+    "changedExistingFiles": [
+      "science-lab/data/book/c22-s32-u01.workbook.js",
+      "science-lab/data/book/c22-s32-u02.workbook.js",
+      "science-lab/data/book/c22-s32-u03.workbook.js",
+      "science-lab/data/book/c22-s32-u04.workbook.js",
+      "science-lab/data/book/c22-s42-u01.workbook.js",
+      "science-lab/data/book/c22-s42-u02.workbook.js",
+      "science-lab/data/book/c22-s42-u04.workbook.js",
+      "science-lab/data/book/c22-s51-u03.workbook.js",
+      "science-lab/data/book/s31-u01.workbook.js",
+      "science-lab/data/book/s31-u02.workbook.js",
+      "science-lab/data/book/s31-u03.workbook.js",
+      "science-lab/data/book/s31-u04.workbook.js",
+      "science-lab/data/book/s41-u01.workbook.js",
+      "science-lab/data/book/s41-u02.workbook.js",
+      "science-lab/data/book/s41-u03.workbook.js",
+      "science-lab/v2/bank-catalog.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-lesson.js",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ]
+  },
+  "renderingEvidence": {
+    "actualHtmlProducts": 30,
+    "openingTextExtracted": 30,
+    "browserOrLayoutVerified": false,
+    "note": "Node generates actual student/teacher HTML; text extraction is not browser or A4 layout verification."
+  },
+  "tests": {
+    "v2": {
+      "pass": 812,
+      "fail": 0,
+      "existingBrowserSkips": 2
+    },
+    "threeDPlanOnly": {
+      "pass": 5,
+      "fail": 0,
+      "runtimeVerified": false
+    },
+    "newMirrorTestsAdded": 0
+  },
+  "cacheVersion": "20261105-student-opening",
+  "outOfScope": "No question/answer/history/diagnosis, reports, photos, SVG/3D, styles, student records or external APIs modified. Right-rail content and remaining body language need their own review.",
+  "remaining": "Actual PC/mobile/A4, audio and mandatory 3D gate; main integration and deployment. Prior browser reauthorization remains unanswered. Do not bypass.",
+  "status": {
+    "localVerified": true,
+    "mainMerged": false,
+    "pushed": false,
+    "deployed": false,
+    "goal": "active"
+  },
+  "evidence": "Existing science-question-review/phase231 baseline/current 32 workbook objects, 128 product hashes, 64 slide arrays, career history, generated data wrapper reversal, 30 HTML products/texts and test logs."
+}

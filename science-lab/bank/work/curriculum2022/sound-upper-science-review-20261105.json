@@ -1,0 +1,168 @@
+{
+  "phase": 266,
+  "date": "2026-11-05",
+  "baseCommit": "be4476b46cf57f859aa9de71c805265b918ac0c2",
+  "unit": "c22-s32-u03",
+  "version": "20261105-sound-upper-science",
+  "scope": "13 extension notes mirrored to teacher pages,26 fields. Clarify amplitude/frequency/waveform and level boundaries; period/longitudinal waves/reflection/transmission/interference identified as high-school mechanics. Basic observation and assessment untouched.",
+  "sources": [
+    {
+      "authority": "교육부2022-33 별책9",
+      "curriculumSHA256": "94db7b91c1fc2a0792a0857b4af2c1a224936d42cd6cb4a3d016d84d2c341510",
+      "standards": [
+        "9과10-04",
+        "12역학03-01~05"
+      ],
+      "supports": "Middle-school amplitude/frequency/waveform and digital tools.9과10 explicitly excludes longitudinal/transverse classification; high-school mechanics includes spring-wave implementation, reflection/transmission/interference and noise control."
+    },
+    {
+      "title": "NASA The Science of Sound",
+      "url": "https://www3.nasa.gov/specials/Quesst/science-of-sound.html",
+      "supports": "Sound through a medium and amplitude/pitch-frequency distinction; longitudinal sound only as high-school extension here."
+    },
+    {
+      "title": "NASA Speed of Sound grades9-12",
+      "url": "https://www.nasa.gov/stem-content/speed-of-sound-9-12/",
+      "supports": "Upper-level amplitude, wavelength, period and longitudinal/transverse activities; no NASA figure or numerical exercise copied."
+    },
+    {
+      "title": "SFU Sonic Studio Handbook: Waveform",
+      "url": "https://www.sfu.ca/sonic-studio-webdav/handbook/Waveform.html",
+      "supports": "Time-domain waveform and relation to timbre; no claim waveform alone explains every aspect of timbre."
+    }
+  ],
+  "preservation": {
+    "changedUpperNotes": [
+      {
+        "page": 3,
+        "title": "길이만 바꾼 비교일까요?",
+        "before": "상위 학습 · 상위 학습에서는 길이에 따른 높낮이를 진동수로 비교해요. 진동수는 같은 시간에 몇 번 떨렸는지를 나타내요.",
+        "after": "상위 학습 · 중학교에서는 소리의 높낮이를 진동수와 연결해 설명해요. 같은 시간 동안 더 많이 떨릴수록 진동수가 크고 높은 소리가 나요."
+      },
+      {
+        "page": 9,
+        "title": "기록하지 않은 것은 작은 소리일까요?",
+        "before": "상위 학습 · 디지털 소리 기록도 측정 시간과 도구 설정이 같아야 비교하기 좋아요. 빈 기록 구간에는 떨림의 횟수나 폭을 정해 넣을 수 없어요.",
+        "after": "상위 학습 · 중학교에서는 진폭으로 소리의 세기를 비교해요. 같은 조건에서 작은 진폭과 큰 진폭은 서로 다른 세기를 나타내지만, 기록이 없는 구간은 진폭이 작다는 뜻이 아니에요."
+      },
+      {
+        "page": 12,
+        "title": "필요한 소리를 지키며 소음 줄이기",
+        "before": "상위 학습 · 상위 학습에서는 소리가 반사되거나 물질에 흡수되는 현상도 살펴요. 교실의 울림을 줄이는 재료 선택과 연결할 수 있어요.",
+        "after": "상위 학습 · 고등학교 역학과 에너지에서는 소리가 경계에서 반사되거나 통과하는 현상을 배워요. 벽에서 되돌아온 소리도 원래 소리와 겹쳐 공간의 울림에 영향을 줄 수 있어요."
+      },
+      {
+        "page": 17,
+        "title": "소리와 떨림",
+        "before": "상위 학습 · 소리 파형의 변화와 물체의 떨림 변화를 함께 보면 발생 원인을 연결할 수 있어요. 기록이 끝난 것과 떨림이 멈춘 것은 구별해요.",
+        "after": "상위 학습 · 중학교에서는 소리를 시간에 따른 파형으로 나타내요. 반복되는 신호에서 진동수를, 중심에서 벗어난 폭에서 진폭을 살펴요. 파형은 물체의 생김새나 이동 경로를 그린 그림과 달라요."
+      },
+      {
+        "page": 22,
+        "title": "소리의 세기",
+        "before": "상위 학습 · 파형의 세로 눈금이 다르면 그림의 높이만 바로 비교하기 어려워요. 실제 값과 눈금의 범위를 함께 읽는 학습으로 이어져요.",
+        "after": "상위 학습 · 중학교에서 배우는 진폭은 떨림의 중심에서 가장 멀리 벗어난 거리예요. 파형의 위끝에서 아래끝까지 전체 높이와 구별해, 중심을 기준으로 비교해요."
+      },
+      {
+        "page": 26,
+        "title": "길이와 높낮이",
+        "before": "상위 학습 · 한 번 떨리는 데 걸린 시간을 주기라고 해요. 같은 시간에 더 자주 떨리면 주기는 짧아지고 진동수는 커져요.",
+        "after": "상위 학습 · 고등학교 역학과 에너지에서는 한 번 떨리는 데 걸린 시간인 주기를 배워요. 같은 시간에 더 자주 떨릴수록 주기는 짧아지고 진동수는 커져요."
+      },
+      {
+        "page": 29,
+        "title": "세기와 높낮이 구별",
+        "before": "상위 학습 · 같은 높이의 음도 악기에 따라 음색이 달라요. 상위 학습에서는 파형의 모양을 비교해 음색의 차이도 살펴요.",
+        "after": "상위 학습 · 중학교에서는 파형으로 소리의 특징을 비교해요. 같은 높이의 음도 악기에 따라 음색이 다를 수 있어요. 같은 시간의 반복 횟수뿐 아니라 파형의 모양도 살펴요."
+      },
+      {
+        "page": 31,
+        "title": "여러 물질의 전달",
+        "before": "상위 학습 · 공기 중의 소리는 공기의 빽빽함과 성김이 이어지는 파동으로 설명해요. 이를 종파와 연결하는 학습으로 넓힐 수 있어요.",
+        "after": "상위 학습 · 고등학교 역학과 에너지에서는 파동의 진행 방향과 매질이 떨리는 방향을 비교해요. 공기 중의 소리처럼 두 방향이 나란한 파동을 종파라고 해요."
+      },
+      {
+        "page": 34,
+        "title": "소음 줄이기",
+        "before": "상위 학습 · 디지털 도구의 소리 크기 기록에는 측정 거리와 시간이 중요해요. 측정값에 사람의 활동 맥락을 더하면 소음 문제를 더 잘 살필 수 있어요.",
+        "after": "상위 학습 · 고등학교 역학과 에너지에서는 두 소리가 겹쳐 서로 약해지는 간섭을 이용한 소음 제어도 배워요. 소리를 막는 재료를 쓰는 방법과 파동을 겹치는 방법은 달라요."
+      },
+      {
+        "page": 36,
+        "title": "같은 조건의 짝을 찾아요",
+        "before": "상위 학습 · 파형 비교도 같은 시간 범위와 세로 눈금을 맞춰야 해요. 눈금 조건을 빠뜨리면 진폭·진동수의 차이를 잘못 읽을 수 있어요.",
+        "after": "상위 학습 · 중학교에서는 진폭과 진동수를 서로 다른 소리의 특징으로 구별해요. 반복 횟수를 그대로 두고 진폭만 바꾸면 높낮이를 유지하면서 세기가 달라지는 경우를 나타낼 수 있어요."
+      },
+      {
+        "page": 41,
+        "title": "조건의 역할과 생활 속 행동",
+        "before": "상위 학습 · 소리 신호 그래프의 축 이름과 단위는 기록 방법을 알려 줘요. 같은 모양의 그래프라도 축이 다르면 같은 뜻으로 읽지 않아요.",
+        "after": "상위 학습 · 중학교에서는 소리가 매질을 통해 에너지와 정보를 전달하는 파동임을 배워요. 경보의 높낮이·길이·차례가 달라지면 서로 다른 정보를 담을 수 있어요."
+      },
+      {
+        "page": 42,
+        "title": "관찰에서 근거 설명까지",
+        "before": "상위 학습 · 소리 센서로 파형을 얻을 때도 측정 조건을 정하고 기록을 해석해요. 기기가 그려 준 선 자체가 원인을 설명해 주지는 않아요.",
+        "after": "상위 학습 · 중학교에서는 디지털 탐구 도구로 소리의 진폭·진동수·파형을 살펴요. 큰 소리와 높은 소리는 파형의 위아래 폭과 같은 시간의 반복 횟수로 구별해요."
+      },
+      {
+        "page": 45,
+        "title": "공정한 길이 비교",
+        "before": "상위 학습 · 상위 학습에서는 길이가 다른 물체의 진동수를 비교해요. 재료와 고정 조건이 달라지면 길이만으로 진동수를 정할 수 없어요.",
+        "after": "상위 학습 · 중학교에서는 물체의 떨림을 진동수로 비교해요. 같은 자에서 밖으로 나온 길이를 바꾼 비교와 재료·굵기까지 다른 자를 비교한 경우를 구별해요."
+      }
+    ],
+    "changedFields": 26,
+    "all49CurrentUpperNotesUnique": true,
+    "noVagueUpperSubjectPrefixAfterLabel": true,
+    "unchangedWorkbooks": 31,
+    "unchangedQuestions": 3080,
+    "unchangedProducts": 126,
+    "changedProducts": [
+      {
+        "unit": "c22-s32-u03",
+        "mode": "student",
+        "sha256": "9a648c5f3fe2cee3ece998601e5cd0c0c345baecf8d881e665bbd7c24ecf627c"
+      },
+      {
+        "unit": "c22-s32-u03",
+        "mode": "teacher",
+        "sha256": "ba260ee5043c11aac4e9a92d1528b499263e0d9992db13e62e6105bf3c75e0f8"
+      }
+    ],
+    "unchangedSlideArrays": 64,
+    "unchangedRuntimeUnits": 32,
+    "exactPriorWorkbookIncludingUndefined": true,
+    "priorEditorialBytesUnchanged": true,
+    "coreNotesAndStudentWritingTasksUnchanged": true,
+    "renderedNotes": 26,
+    "unchangedAssets": 1249,
+    "changedTrackedFiles": [
+      "science-lab/data/book/c22-s32-u03.rail-notes.js",
+      "science-lab/data/book/c22-s32-u03.workbook.js",
+      "science-lab/v2/index.html",
+      "science-lab/v2/revised-textbook.js",
+      "science-lab/v2/v2.js"
+    ],
+    "browserVerified": false
+  },
+  "tests": {
+    "total": 1200,
+    "passed": 1198,
+    "failed": 0,
+    "existingBrowserSkips": 2,
+    "syntaxFiles": 4,
+    "command": "env -u SCIENCE_PLAYWRIGHT node --test science-lab/*.test.mjs science-lab/bank/*.test.mjs science-lab/v2/*.test.mjs scripts/tests/science-3d-plan.test.mjs"
+  },
+  "reviewBoundary": "Retained p43 clipping explanation because directly related to its question. Fixed QA-only mistaken assumption that teacher/student page arrays had same order; validate by corresponding notes. Distinct49 notes and140-character ceiling are not actual layout or all-semantics proof.",
+  "evidenceDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase266",
+  "studentDataReads": 0,
+  "studentDataWrites": 0,
+  "networkInNativeValidation": 0,
+  "browserVerified": false,
+  "remaining": [
+    "Other units extension notes, explanations and teaching criteria; full curriculum/content review",
+    "Actual PC/phone/A4 font/reflow/clipping/voice/WebGL/mandatory3D gate",
+    "Main WIP preservation, integration and deployment"
+  ]
+}

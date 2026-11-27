@@ -1,0 +1,424 @@
+{
+  "date": "2026-11-02",
+  "base": "2e71c36ef3002d2ba04c3abb7ebd511f90c9374f",
+  "branch": "codex/science-workbook-integration-20261102",
+  "unit": "c22-s32-u01",
+  "status": "local candidate; no push or deployment",
+  "skills": [
+    "instructional-design (continued)",
+    "ux-writing (continued)",
+    "gfield-textbook-design (existing scoped layout; local paper/green palette)"
+  ],
+  "curriculum": [
+    {
+      "code": "4과05-01",
+      "text": "물체를 이루는 여러 가지 물질의 성질을 비교하고, 물질의 종류에 따라 물체를 분류할 수 있다."
+    },
+    {
+      "code": "4과05-02",
+      "text": "물질의 세 가지 상태인 고체, 액체, 기체의 성질을 관찰하여 비교할 수 있다."
+    },
+    {
+      "code": "4과05-03",
+      "text": "다양한 물질의 성질을 이용하여 쓰임새 있는 물체를 설계할 수 있다."
+    }
+  ],
+  "curriculumSource": {
+    "title": "교육부 고시 제2022-33호 [별책9] 과학과 교육과정",
+    "url": "https://www.moe.go.kr/boardCnts/viewRenew.do?boardID=141&boardSeq=93458&lev=0",
+    "attachment": "https://www.moe.go.kr/boardCnts/fileDown.do?fileSeq=1512facbda6c234a1641ac7e9c156ca2&m=&s=moe",
+    "member": "[별책9] 과학과 교육과정.hwp",
+    "sha256": "d049caa5b3e7420a0505345dc70ca325faf65a18468ba393eec103b44b78c790",
+    "section": "나. 성취기준 > 초등학교3~4학년 > (5) 물체와 물질",
+    "checkedAt": "2026-10-17"
+  },
+  "changes": [
+    "학생31/교사32장·80분·12확인 수업과 Daily 연결",
+    "원래 막대 모형의 네 시험 결과를 예상 후 열고 네 종류 모두 비교해야 자료 비교만 완료",
+    "고체·액체·기체를 그릇을 바꾸는 조건과 관찰 근거로 비교",
+    "재료 종류에 따른 분류·부분별 기능/성질 설계·질문 소통",
+    "선택 기록32쪽과 원래 실제 시료·모형 기록 보존",
+    "새 수업의 예상/쓰기/교사 의견은 예전 순서 기록을 덮지 않는 별도 문항 ID로 읽기",
+    "빈칸은 별도 입력과 원래 인정 답안으로 판정; 교사 확인에서도 빈칸별 질문 찾기",
+    "모형·사진 비교 결과 표의 제목을 각 수업 이름으로 표시"
+  ],
+  "tests": {
+    "total": 372,
+    "passCount": 370,
+    "fail": 0,
+    "existingBrowserSkips": 2
+  },
+  "slides": {
+    "scope": "Actual withThink item augmentation and interaction modules supplied. Storage identity attributes are normalized only for content comparison.",
+    "otherModesContentUnchanged": 18,
+    "units": [
+      {
+        "unit": "s31-u01",
+        "modes": {
+          "self": {
+            "slides": 26,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 27,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u02",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u03",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "s31-u04",
+        "modes": {
+          "self": {
+            "slides": 27,
+            "checks": 11
+          },
+          "teach": {
+            "slides": 28,
+            "checks": 11
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u02",
+        "modes": {
+          "self": {
+            "slides": 37,
+            "checks": 12
+          },
+          "teach": {
+            "slides": 38,
+            "checks": 12
+          }
+        }
+      },
+      {
+        "unit": "s41-u01",
+        "modes": {
+          "self": {
+            "slides": 30,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 30,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u01",
+        "modes": {
+          "self": {
+            "slides": 31,
+            "checks": 12,
+            "images": [
+              "../assets/book/c22-s32-u01-photo-materials.webp",
+              "../assets/book/c22-s32-u01-photo-cups.webp",
+              "../assets/book/c22-s32-u01-photo-scissors.webp",
+              "../assets/activities/c22-s32-u01/sand-grains-reference.webp",
+              "../assets/book/c22-s32-u01-photo-states.webp"
+            ]
+          },
+          "teach": {
+            "slides": 32,
+            "checks": 12,
+            "images": [
+              "../assets/book/c22-s32-u01-photo-materials.webp",
+              "../assets/book/c22-s32-u01-photo-cups.webp",
+              "../assets/book/c22-s32-u01-photo-scissors.webp",
+              "../assets/activities/c22-s32-u01/sand-grains-reference.webp",
+              "../assets/book/c22-s32-u01-photo-states.webp"
+            ]
+          }
+        }
+      },
+      {
+        "unit": "c22-s32-u02",
+        "modes": {
+          "self": {
+            "slides": 29,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 29,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s42-u01",
+        "modes": {
+          "self": {
+            "slides": 29,
+            "checks": 6
+          },
+          "teach": {
+            "slides": 29,
+            "checks": 6
+          }
+        }
+      },
+      {
+        "unit": "c22-s51-u03",
+        "modes": {
+          "self": {
+            "slides": 86,
+            "checks": 16
+          },
+          "teach": {
+            "slides": 87,
+            "checks": 16
+          }
+        }
+      }
+    ]
+  },
+  "routes": {
+    "scope": "actual pageStart/pageLabClass/pageDaily/pageLabBook functions in Node vm; captured deck/view/Daily rendering; animal/plant/life/ecology/material comparison event handlers; actual withThink augmentation where configured and actual BOOKS/RECORDS_BOOKS maps executed; not browser/layout validation",
+    "units": [
+      {
+        "unit": "s31-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "labRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "animalCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u03",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "plantCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "s31-u04",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 11,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "lifeCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s42-u02",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "ecologyCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      },
+      {
+        "unit": "c22-s32-u01",
+        "startLinks": true,
+        "defaultThinkingClass": true,
+        "checksSharedWithDaily": 12,
+        "teacherStudentReads": 0,
+        "teacherStudentWrites": 0,
+        "studentStorageKey": "materialCompareRows",
+        "originalReportAndObservationStatePreserved": true,
+        "optionalRecordBookOriginal": true,
+        "releaseDisposesMountedActivities": true
+      }
+    ]
+  },
+  "records": {
+    "key": "materialCompareRows",
+    "originalModelKey": "materialRows",
+    "similar": 70,
+    "supplement": 64,
+    "thinking": 12,
+    "originalRecordBookPages": 32,
+    "originalClassModes": {
+      "self": 29,
+      "teach": 29
+    },
+    "selectedChecks": 12,
+    "originalContractsUnchanged": true,
+    "originalFiles": [
+      {
+        "file": "science-lab/data/book/c22-s32-u01.book.js",
+        "sha256": "26bada6283496e4bdecf450b1651a2c6c5908967c1f77b65547cf1637a19cd5a"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u01.records-book.js",
+        "sha256": "b698879aec7080892591672e4abcf52888b49502ef6a29fc01074541ec9c9d5d"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u01.workbook.js",
+        "sha256": "ddb4a3bab1f8d14e1b056abe5075b20c39a1c9a205d68651a1c5dcc898226f22"
+      },
+      {
+        "file": "science-lab/data/book/c22-s32-u01.workbook-art.js",
+        "sha256": "ffafe3301215730393191634498c7a22d5c0bec42927f239d3a1967a09f14f38"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.js",
+        "sha256": "74da6571b2ac561f1ca112a5138f2ed00b4c608f4ada96efe7a013278d2f738b"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.similar.js",
+        "sha256": "f90d0b84c284ccc53bb003ba1870f5a67d3f4e14fff3e4077fe1e2b291927023"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.source.js",
+        "sha256": "930d7abd52031e6ec7771a95d29b223609276cbf25eba49ab3b58aa12ac93438"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.think.js",
+        "sha256": "8271f6f20120c772c823198171de73a9cf45e6405f841fad7144ff1211cb7b7a"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.lesson.js",
+        "sha256": "b5d82e519996f483599f6fcd7374814d6ceba6bc58b96148470f5ee0d49be96d"
+      },
+      {
+        "file": "science-lab/data/units/c22-s32-u01.records.js",
+        "sha256": "75172a08c53ea4394f90100ef1624b757906fdf68e66f73e75d42db277e71aac"
+      },
+      {
+        "file": "science-lab/scenes/material-model.js",
+        "sha256": "39c9f4b1522cd303c80e2289176889a9bf899df4b0e100fa971657e6be0d8662"
+      },
+      {
+        "file": "science-lab/scenes/material-bars.js",
+        "sha256": "2252aee2f1ac6317db2bea75b1150e66f58fce6cefb6539ce0b4c9440bd09c29"
+      },
+      {
+        "file": "science-lab/v2/lab-material.js",
+        "sha256": "fea9e5cd9e91910d0b3a9e8b2b7ccd6bf2c2864c99af332224891bc0aa8e7a22"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-materials.webp",
+        "sha256": "285b5a3c5e9df351a862143ce1c421767f7a45c84b713cbc296795aeb12fcdd9"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+        "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+        "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511"
+      },
+      {
+        "file": "science-lab/assets/book/c22-s32-u01-photo-states.webp",
+        "sha256": "64a58a1d1780b3ebe4f5693653ce98c89509bac9f4b52976868b7fd5743e27ec"
+      },
+      {
+        "file": "science-lab/assets/activities/c22-s32-u01/sand-grains-reference.webp",
+        "sha256": "a03e36b4faa248bd3b78339568436346c69f959b3bae566da3779eb3cb6c7b52"
+      }
+    ]
+  },
+  "images": [
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-materials.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "285b5a3c5e9df351a862143ce1c421767f7a45c84b713cbc296795aeb12fcdd9",
+      "ocrPage": 1
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-cups.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "fc3ae1d695e967922e50e633cf762da7bc3eba1d013975632ea11e09d45158b3",
+      "ocrPage": 2
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-scissors.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "9f8577e917b37c14dff94b8deeacfb3ffb3cd24ed56e64440e10e7820c345511",
+      "ocrPage": 3
+    },
+    {
+      "file": "science-lab/assets/book/c22-s32-u01-photo-states.webp",
+      "width": 1024,
+      "height": 640,
+      "sha256": "64a58a1d1780b3ebe4f5693653ce98c89509bac9f4b52976868b7fd5743e27ec",
+      "ocrPage": 4
+    },
+    {
+      "file": "science-lab/assets/activities/c22-s32-u01/sand-grains-reference.webp",
+      "width": 1024,
+      "height": 768,
+      "sha256": "a03e36b4faa248bd3b78339568436346c69f959b3bae566da3779eb3cb6c7b52",
+      "ocrPage": 5
+    }
+  ],
+  "appleVision": {
+    "actualImages": 5,
+    "words": [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "failed": 0,
+    "skipped": 0,
+    "humanReviewed": true
+  },
+  "qaDirectory": "/Users/docssam/.codex/visualizations/2026/10/17/01a14825-a1b3-7531-9a67-c9ff8e8253e9/science-question-review/phase163",
+  "verificationScope": "Actual withThink augmentation and interaction modules supplied to slide comparisons; actual four route functions and comparison events run in Node VM with captured rendering adapters. Font/layout/browser navigation not verified.",
+  "apis": 0,
+  "newImages": 0,
+  "newPdf": 0,
+  "pushes": 0,
+  "deployments": 0,
+  "next": "3-2 지구와 바다·소리·감염병 등 다른 학기 수업 보완, 최신 main 통합 검토·실제 브라우저/A4 검수. 전체 목표 active."
+}

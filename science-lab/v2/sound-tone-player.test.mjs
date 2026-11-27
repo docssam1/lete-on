@@ -1,0 +1,18 @@
+import test from'node:test';import assert from'node:assert/strict';import{createSoundTonePlayer,TONE_DURATION,TONE_MAX_GAIN}from'./sound-tone-player.js';
+function audio({defer=false,reject=false}={}){
+ let resolve;const pending=new Promise(r=>resolve=r),contexts=[],ticks=new Map();let serial=0;
+ const createContext=()=>{const ctx={state:defer?'suspended':'running',currentTime:5,destination:{},nodes:[],gains:[],resumeCalls:0,closed:0,resume(){this.resumeCalls++;return(reject?Promise.reject(Error('blocked')):defer?pending:Promise.resolve()).then(()=>{this.state='running';});},close(){this.closed++;this.state='closed';return Promise.resolve();},createOscillator(){const node={frequency:{setValueAtTime:(...v)=>node.freq=v},connect(x){this.connected=x;},disconnect(){this.disconnected=true;},start(t){this.startTime=t;},stop(t){(this.stops||=[]).push(t);}};this.nodes.push(node);return node;},createGain(){const gain={events:[],gain:{setValueAtTime:(...v)=>gain.events.push(['set',...v]),linearRampToValueAtTime:(...v)=>gain.events.push(['ramp',...v])},connect(x){this.connected=x;},disconnect(){this.disconnected=true;}};this.gains.push(gain);return gain;}};contexts.push(ctx);return ctx;};
+ return{contexts,createContext,resolve:()=>resolve(),setInterval:fn=>{ticks.set(++serial,fn);return serial;},clearInterval:id=>ticks.delete(id),tick:()=>{for(const fn of [...ticks.values()])fn();},ticks};
+}
+test('소리는 요청 전 만들지 않고 기존 모형의 높낮이·세기와 짧은 완만한 음량을 사용한다',async()=>{
+ const env=audio(),p=createSoundTonePlayer(env);assert.equal(env.contexts.length,0);assert((await p.play(5,'약하게')).started);const ctx=env.contexts[0];assert.deepEqual(ctx.nodes[0].freq,[440,5]);assert.equal(ctx.nodes[0].type,'sine');assert.equal(ctx.nodes[0].startTime,5);assert.deepEqual(ctx.nodes[0].stops,[5+TONE_DURATION]);assert.deepEqual(ctx.gains[0].events,[['set',0,5],['ramp',TONE_MAX_GAIN*.35,5.025],['set',TONE_MAX_GAIN*.35,5.65],['ramp',0,5+TONE_DURATION]]);
+ await p.play(15,'세게');assert(ctx.nodes[0].disconnected);assert(ctx.gains[0].disconnected);assert.deepEqual(ctx.nodes[1].freq,[165,5]);assert.equal(ctx.gains[1].events[1][1],.08);assert.equal(env.ticks.size,1);ctx.nodes[1].onended();assert.equal(env.ticks.size,0);p.dispose();assert.equal(ctx.closed,1);p.dispose();assert.equal(ctx.closed,1);
+});
+test('정지·비활성·해제는 기다리는 재생을 무효화하고 재생 중 소리와 타이머를 없앤다',async()=>{
+ for(const action of['stop','inactive','dispose']){let active=true;const env=audio({defer:true}),p=createSoundTonePlayer({...env,isActive:()=>active}),pending=p.play(10,'약하게');if(action==='inactive')active=false;else p[action]();env.resolve();assert.equal((await pending).started,false);assert.equal(env.contexts[0].nodes.length,0);p.dispose();assert.equal(env.ticks.size,0);}
+ let active=true;const env=audio(),p=createSoundTonePlayer({...env,isActive:()=>active});await p.play(10,'세게');active=false;env.tick();assert(env.contexts[0].nodes[0].disconnected);assert.equal(env.ticks.size,0);assert.equal((await p.play(10,'세게')).started,false);p.dispose();
+});
+test('늦게 허용된 예전 요청이 새 소리를 덮어쓰지 않고 지원 실패 뒤 설명 자료를 사용할 수 있다',async()=>{
+ const env=audio({defer:true}),p=createSoundTonePlayer(env),first=p.play(5,'약하게'),last=p.play(15,'세게');env.resolve();assert.equal((await first).started,false);assert.equal((await last).started,true);assert.equal(env.contexts[0].nodes.length,1);assert.deepEqual(env.contexts[0].nodes[0].freq,[165,5]);p.dispose();
+ assert.deepEqual(await createSoundTonePlayer({createContext:()=>null}).play(10,'약하게'),{started:false,reason:'unavailable'});const bad=audio({defer:true,reject:true}),q=createSoundTonePlayer(bad);assert.equal((await q.play(10,'약하게')).reason,'unavailable');assert.equal(bad.contexts[0].nodes.length,0);q.dispose();await assert.rejects(()=>q.play(999,'약하게'),RangeError);
+});
