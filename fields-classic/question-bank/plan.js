@@ -1,4 +1,4 @@
-import { GM_PATH as CURRICULUM } from "./source-data.js?v=20261127b";
+import { GM_PATH as CURRICULUM } from "./source-data.js?v=20261127d";
 import { loadRecords, saveRecord, loggedIn, memberCall } from "./study-progress.js?v=20261117a";
 import { sessionCount } from "./study-deck.js?v=20261127b";
 import { HOLIDAYS, WEEKDAYS, defaultPlan, sessionSequence, schedule, changesOf, isClassDay, parseYmd, today } from "./study-plan.js?v=20261127b";
