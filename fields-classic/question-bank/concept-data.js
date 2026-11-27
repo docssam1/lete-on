@@ -1284,11 +1284,11 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "마주 보는 꼭짓점을 곱하거나 한 변의 조건만 맞춘 뒤 다른 변의 곱을 확인하지 않았는지 살펴봅니다.",
     [book5Evidence("곱셈 매트릭스", 1, [2])]
   ),
-  "symbol-product-pair": sourceLesson(
+  "symbol-product-sum-diff-set-b5": sourceLesson(
     "concept:number:symbol-product-equation-chain",
     [
       beat("find-repeated-symbol", "같은 도형이 반복된 식을 찾아요", "도형이 적고 같은 도형이 반복되어 값을 바로 찾기 쉬운 식부터 고릅니다."),
-      beat("solve-symbol-pair", "곱과 합으로 두 값을 찾아요", "두 도형의 곱과 합 조건을 함께 만족하는 수의 짝을 찾습니다."),
+      beat("solve-symbol-pair", "곱과 합(차)으로 두 값을 찾아요", "두 도형의 곱과 합(또는 차) 조건을 함께 만족하는 수의 짝을 찾습니다."),
       beat("substitute-and-check", "도형을 수로 바꾸어 확인해요", "찾은 값을 모든 식의 같은 도형에 넣고 곱과 합이 모두 맞는지 확인합니다.")
     ],
     "곱 조건만 맞는 수의 짝을 고르거나 같은 도형에 서로 다른 수를 넣지 않았는지 확인합니다.",
