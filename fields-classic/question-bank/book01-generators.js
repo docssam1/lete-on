@@ -925,6 +925,7 @@ export const BOOK01_GENERATORS = {
 };
 
 export const BOOK01_INTERNALS = {
+  makeDigitalBoardSum,
   patternKey,
   transformPattern,
   isCongruentPartition,

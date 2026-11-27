@@ -700,17 +700,22 @@ function reverseTransferEventsBook8({ difficulty = 2 }) {
 }
 
 function reverseMultiplyDivideBook8({ difficulty = 2 }) {
-  const multiplier = randomInt(2, difficulty === 3 ? 6 : 4);
-  const divisor = randomInt(2, difficulty === 3 ? 5 : 4);
+  // 가운데 단계는 더하기(연습)와 빼기(활동)를 섞는다 — 교재 꼴 「×, ±, ÷」.
+  const multiplier = randomInt(2, difficulty === 3 ? 6 : 5);
+  const divisor = randomInt(2, difficulty === 3 ? 9 : 5);
   const start = randomInt(3, difficulty === 3 ? 20 : 12) * divisor;
-  const added = randomInt(2, difficulty === 3 ? 15 : 9) * divisor;
-  const final = (start * multiplier + added) / divisor;
-  if ([multiplier, added, divisor, final].includes(start)) return reverseMultiplyDivideBook8({ difficulty });
+  const minus = Math.random() < 0.5;
+  const amount = randomInt(1, difficulty === 3 ? 15 : 9) * divisor;
+  const added = minus ? -amount : amount;
+  const middle = start * multiplier + added;
+  const final = middle / divisor;
+  if (middle <= 0 || [multiplier, amount, divisor, final].includes(start)) return reverseMultiplyDivideBook8({ difficulty });
+  const stepText = minus ? `${numberObject(amount)} 뺀 뒤` : `${numberObject(amount)} 더한 뒤`;
   return book8Problem({
-    prompt: `어떤 수에 ${numberObject(multiplier)} 곱하고 ${numberObject(added)} 더한 뒤 ${divisor}로 나누었더니 ${numberSubject(final)} 되었습니다. 처음 수를 구하세요.`,
-    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`× ${multiplier}`, `+ ${added}`, `÷ ${divisor}`], result: final },
+    prompt: `어떤 수에 ${numberObject(multiplier)} 곱하고 ${stepText} ${divisor}${[0, 3, 6].includes(divisor % 10) ? "으로" : "로"} 나누었더니 ${numberSubject(final)} 되었습니다. 처음 수를 구하세요.`,
+    subtype: "process", visual: { layoutRole: "support", compactPolicy: "omit", start: "?", steps: [`× ${multiplier}`, `${minus ? "−" : "+"} ${amount}`, `÷ ${divisor}`], result: final },
     answer: start,
-    solution: `${final}×${divisor}-${added}=${start * multiplier}, ${start * multiplier}÷${multiplier}=${start}입니다.`,
+    solution: `거꾸로 계산합니다. ${final}×${divisor}=${middle}, ${middle}${minus ? "+" : "-"}${amount}=${start * multiplier}, ${start * multiplier}÷${multiplier}=${start}입니다.`,
     family: "reverse-multiply-divide-b8", meta: { start, multiplier, added, divisor, final, result: start }
   });
 }

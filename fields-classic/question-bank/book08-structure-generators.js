@@ -15,6 +15,7 @@
 //   2단원 모양 피라미드(줄 2~3, 모양 1~3) · 모두 모양인 덧셈 복면산 — 자리마다 받아올림을 따지는 풀이기로 답이 하나인지 센다.
 //   4단원 거꾸로 생각하기 — 세·네 단계 과정(버스 정류장·계단·주고받기·수) · 상대가 가진 만큼 준 뒤 「둘 다 N」.
 
+import { frac } from "./math-markup.js";
 const randomInt = (min, max) => min + Math.floor(Math.random() * (max - min + 1));
 const pick = (list) => list[randomInt(0, list.length - 1)];
 
@@ -1668,7 +1669,112 @@ function cardSumAllB8({ difficulty = 2 }) {
   }
 }
 
+// ── (3차) 4단원 거꾸로 생각하기 — 흐름 그림 없이 글로만(원장 2026-11-27 「그림빼」) ──────────
+
+const lastHangulHasBatchim = (word) => {
+  const ch = String(word).trim().slice(-1);
+  if (/[0-9]/.test(ch)) return hasBatchim(Number(ch));
+  const code = ch.charCodeAt(0) - 0xac00;
+  return code >= 0 && code <= 11171 && code % 28 !== 0;
+};
+const pp = (word, withFinal, withoutFinal) => `${word}${lastHangulHasBatchim(word) ? withFinal : withoutFinal}`;
+const PEOPLE8 = ["현우", "서아", "지호", "하린", "도윤", "예린", "민재", "유나", "준서", "다인"];
+
+// 주고·받고·동생과 똑같이 나누기 — 차례 두 가지(주고받은 뒤 나누기 / 나눈 뒤 주고받기).
+function reverseGiveReceiveSplitB8({ difficulty = 2 }) {
+  const [me, other1, other2] = shuffle(PEOPLE8).slice(0, 3);
+  const [item, unit] = pick([["카드", "장"], ["구슬", "개"], ["사탕", "개"], ["딱지", "장"]]);
+  const order = pick(["trade-then-split", "split-then-trade"]);
+  const give = randomInt(2, difficulty === 3 ? 15 : 9);
+  const get = randomInt(2, difficulty === 3 ? 15 : 9);
+  const left = randomInt(difficulty === 1 ? 5 : 8, difficulty === 3 ? 30 : 20);
+  if (give === get) return reverseGiveReceiveSplitB8({ difficulty });
+  let start, solution, prompt;
+  const n = (v) => `${v}${unit}`;
+  if (order === "trade-then-split") {
+    const beforeSplit = left * 2;
+    start = beforeSplit - get + give;
+    if (start - give < 1) return reverseGiveReceiveSplitB8({ difficulty });
+    prompt = `${pp(me, "이가", "가")} 가진 ${item} 중 ${pp(n(give), "을", "를")} ${other1}에게 주고 ${other2}에게서 ${pp(n(get), "을", "를")} 받은 다음, 그 ${pp(item, "을", "를")} 동생과 반씩 나누었더니 ${me}에게 ${pp(n(left), "이", "가")} 있습니다. ${pp(me, "이가", "가")} 처음 가진 ${pp(item, "은", "는")} 몇 ${unit}인가요?`;
+    solution = `끝에서부터 거꾸로 계산합니다. 동생과 똑같이 나누기 전에는 ${left}×2=${beforeSplit}${unit}, 받기 전에는 ${beforeSplit}-${get}=${beforeSplit - get}${unit}, 주기 전에는 ${beforeSplit - get}+${give}=${start}${unit}입니다.`;
+  } else {
+    const share = left - get + give;
+    if (share < 1 || share + get < give) return reverseGiveReceiveSplitB8({ difficulty });
+    start = share * 2;
+    prompt = `${pp(me, "이가", "가")} 가진 ${pp(item, "을", "를")} 먼저 동생과 반씩 나누었습니다. 그 뒤 ${other1}에게서 ${pp(n(get), "을", "를")} 받고 ${other2}에게 ${pp(n(give), "을", "를")} 주었더니 ${me}에게 ${pp(n(left), "이", "가")} 있습니다. ${pp(me, "이가", "가")} 처음 가진 ${pp(item, "은", "는")} 몇 ${unit}인가요?`;
+    solution = `끝에서부터 거꾸로 계산합니다. 주기 전에는 ${left}+${give}=${left + give}${unit}, 받기 전에는 ${left + give}-${get}=${share}${unit}, 동생과 나누기 전에는 ${share}×2=${start}${unit}입니다.`;
+  }
+  return {
+    prompt,
+    answer: `${start}${unit}`,
+    solution,
+    meta: { family: "reverse-give-receive-split-b8", order, give, get, left, start, result: start }
+  };
+}
+
+// 원을 같은 크기로 나눈 그림에서 색칠한 부분을 분수로 읽고, 구슬 M개의 그 분수만큼 구하기(작은 문제 넷). 원 그림이 곧 문제다.
+function circleFractionSvg(n, shaded, label) {
+  const r = 42, cx = 50, cy = 48;
+  let body = "";
+  for (let i = 0; i < n; i += 1) {
+    const a0 = -Math.PI / 2 + (2 * Math.PI * i) / n, a1 = -Math.PI / 2 + (2 * Math.PI * (i + 1)) / n;
+    const x0 = cx + r * Math.cos(a0), y0 = cy + r * Math.sin(a0), x1 = cx + r * Math.cos(a1), y1 = cy + r * Math.sin(a1);
+    const large = 2 * Math.PI / n > Math.PI ? 1 : 0;
+    body += `<path d="M${cx},${cy} L${x0.toFixed(2)},${y0.toFixed(2)} A${r},${r} 0 ${large} 1 ${x1.toFixed(2)},${y1.toFixed(2)} Z" style="fill:${shaded.includes(i) ? "#cfe6ee" : "#fff"};stroke:#3d7d8c;stroke-width:1.2"/>`;
+  }
+  body += text(cx, 112, label, 13);
+  return `${svgOpen(100, 120, `${label} 원을 ${n}칸으로 나눈 그림`)}${body}</svg>`;
+}
+
+function circleFractionMarblesB8({ difficulty = 2 }) {
+  const total = difficulty === 1 ? pick([12, 24]) : difficulty === 2 ? pick([24, 36, 48]) : pick([48, 60, 72]);
+  const pool = (difficulty === 1 ? [2, 3, 4, 6] : [3, 4, 5, 6, 8, 9, 10, 12]).filter((n) => total % n === 0 && n <= total / 2);
+  if (pool.length < 4) return circleFractionMarblesB8({ difficulty });
+  const ns = shuffle(pool).slice(0, 4).sort((a, b) => a - b);
+  const parts = ns.map((n) => {
+    const k = randomInt(1, n - 1);
+    const shaded = shuffle(range(0, n - 1)).slice(0, k);
+    return { n, k, shaded, count: (total * k) / n };
+  });
+  const labels = ["(1)", "(2)", "(3)", "(4)"];
+  return {
+    prompt: `그림은 원을 같은 크기로 나눈 것입니다. 색칠한 부분을 분수로 나타내고, 구슬 ${total}개의 그 분수만큼은 몇 개인지 각각 구하세요.`,
+    visual: figs(...parts.map((q, i) => circleFractionSvg(q.n, q.shaded, labels[i]))),
+    answer: parts.map((q, i) => `${labels[i]} ${q.k}/${q.n}, ${q.count}개`).join(" "),
+    solution: parts.map((q, i) => `${labels[i]} ${q.n}칸 중 ${q.k}칸이므로 ${q.k}/${q.n}입니다. ${total}개를 ${q.n}묶음으로 나누면 한 묶음이 ${total / q.n}개이고, ${q.k}묶음은 ${q.count}개입니다.`).join(" "),
+    meta: { family: "circle-fraction-marbles-b8", total, parts }
+  };
+}
+
+// 여러 사람이 차례로 「남은 것의 1/m」을 먹고 남은 수로 처음 수 구하기(3~5단계, 분모가 하나씩 작아짐).
+function sequentialFractionChainB8({ difficulty = 2 }) {
+  const steps = difficulty === 1 ? 3 : difficulty === 2 ? 4 : 5;
+  const top = steps + pick([1, 2]);
+  const dens = Array.from({ length: steps }, (_, i) => top - i);
+  const unitsLeft = top - steps;
+  const t = randomInt(difficulty === 3 ? 2 : 1, difficulty === 1 ? 4 : 6);
+  const start = top * t;
+  const left = unitsLeft * t;
+  const people = shuffle(["아빠", "엄마", "오빠", "언니", "동생", "할머니", "형"]).slice(0, steps);
+  const [item, buyer] = pick([["귤", "승우"], ["쿠키", "서진"], ["사탕", "하율"], ["떡", "지안"]]);
+  const lines = people.map((who, i) => `${i === 0 ? "먼저" : "다음에"} ${pp(who, "이", "가")} ${i === 0 ? "전체" : "남은 것"}의 ${frac(1, dens[i])}을`);
+  const remains = [start];
+  dens.forEach((d) => remains.push(remains.at(-1) - remains.at(-1) / d));
+  if (remains.at(-1) !== left) throw new Error("fraction chain mismatch");
+  const back = [];
+  for (let i = steps - 1; i >= 0; i -= 1) back.push(`${pp(people[i], "이", "가")} 먹기 전 ${remains[i]}개(${remains[i + 1]}개가 ${frac(dens[i] - 1, dens[i])})`);
+  return {
+    prompt: `${pp(buyer, "이네", "네")} 상자에 든 ${pp(item, "을", "를")} 가족이 차례로 나누어 먹었습니다. ${lines.join(", ")} 먹었더니 상자에 ${pp(item, "이", "가")} ${left}개 남았습니다. 처음 상자에 든 ${pp(item, "은", "는")} 몇 개인가요?`,
+    answer: `${start}개`,
+    solution: `남은 것에서 거꾸로 갑니다. 남은 것의 몇 분의 1을 먹으면 나머지가 남으므로, 남은 수를 나머지 칸 수로 나누어 한 칸을 구하고 전체 칸 수를 곱합니다. ${back.join(" → ")}. 처음은 ${start}개입니다.`,
+    meta: { family: "sequential-fraction-chain-b8", steps, dens, start, left, remains, result: start }
+  };
+}
+
 export const BOOK08_STRUCTURE_GENERATORS = {
+  reverseGiveReceiveSplitB8,
+  circleFractionMarblesB8,
+  sequentialFractionChainB8,
   symbolChainFourB8,
   rowSumsOnlyMatrixB8,
   digitSwapAddB8,
@@ -1712,6 +1818,9 @@ export const BOOK08_STRUCTURE_SOLVERS = { bruteSolutions, propagate, cryptSoluti
 const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, middle, label, generator, searchAliases: aliases });
 
 export const BOOK08_STRUCTURE_TYPE_ROWS = [
+  row("reverse-give-receive-split-b8", "logic", "거꾸로 생각하기", "주고받기와 동생과 똑같이 나누기를 거꾸로 풀기", "reverseGiveReceiveSplitB8", ["거꾸로 생각하기", "똑같이 나누기"]),
+  row("circle-fraction-marbles-b8", "number", "그림 그려 해결하기", "원 그림의 색칠한 분수만큼 구슬 수 구하기", "circleFractionMarblesB8", ["분수", "원 나누기", "분수만큼"]),
+  row("sequential-fraction-chain-b8", "logic", "거꾸로 생각하기", "여러 사람이 남은 것의 분수만큼 차례로 먹은 처음 수", "sequentialFractionChainB8", ["거꾸로 생각하기", "남은 것의 분수"]),
   row("symbol-chain-four-b8", "number", "묶음수와 매트릭스", "네 도형 식(항 2~4개)을 이어 이름 붙은 도형의 수 구하기", "symbolChainFourB8", ["도형 식", "덧셈 사슬"]),
   row("row-sums-only-matrix-b8", "number", "덧셈 매트릭스", "가로줄 합만 있는 4×4 모양 표 풀기", "rowSumsOnlyMatrixB8", ["덧셈 매트릭스", "가로합"]),
   row("digit-swap-add-b8", "number", "덧셈 복면산", "두 자리 수 + 한 자리 수 = 자리가 바뀐 수", "digitSwapAddB8", ["복면산", "자리 바뀐 수"]),
@@ -1750,6 +1859,9 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK08_STRUCTURE_GUIDES = {
+  "reverse-give-receive-split-b8": "끝에서부터 거꾸로 갑니다. 똑같이 나눈 것은 두 배, 받은 것은 빼고, 준 것은 더합니다.",
+  "circle-fraction-marbles-b8": "색칠한 칸 수가 분자, 나눈 칸 수가 분모입니다. 전체를 분모만큼 묶어 한 묶음을 구하고 분자만큼 곱합니다.",
+  "sequential-fraction-chain-b8": "남은 것을 똑같이 나눈 칸 수로 생각합니다. 마지막 사람부터 거꾸로 먹기 전 수를 구합니다.",
   "symbol-chain-four-b8": "한 가지 모양만 있는 식부터 풀고, 아는 모양을 빼며 새 모양을 하나씩 찾습니다.",
   "row-sums-only-matrix-b8": "한 가지 모양만 있는 줄로 첫 모양을 찾고, 새 모양이 하나씩 끼는 줄에서 아는 것을 뺍니다.",
   "digit-swap-add-b8": "자리가 바뀐 두 수의 차는 (두 숫자의 차) × 9입니다. 한 자리 수를 더했으니 차는 9뿐입니다.",
@@ -1788,6 +1900,11 @@ export const BOOK08_STRUCTURE_GUIDES = {
 };
 
 export const BOOK08_STRUCTURE_REMAPS = [
+  // (3차) 4단원 — 주고받기·똑같이 나누기 두 차례, 원 그림 분수, 다섯 단계 분수 먹기
+  ["book-08", 4, "activity", 1, [4], "reverse-give-receive-split-b8"],
+  ["book-08", 4, "practice", 1, [6], "reverse-give-receive-split-b8"],
+  ["book-08", 4, "practice", 1, [11], "circle-fraction-marbles-b8"],
+  ["book-08", 4, "advanced", 1, [3], "sequential-fraction-chain-b8"],
   // (2차) 1단원 네 식 사슬·가로합만, 2단원 자리 바뀐 수·카드 합 모두
   ["book-08", 1, "activity", 1, [2, 4], "symbol-chain-four-b8"],
   ["book-08", 1, "advanced", 1, [2], "row-sums-only-matrix-b8"],

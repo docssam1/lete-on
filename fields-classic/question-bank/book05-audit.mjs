@@ -599,6 +599,35 @@ function validate(type, problem, difficulty) {
       else assert(String(problem.answer) === String((meta.fromLarge ? brute.slice().reverse() : brute)[meta.rank - 1]), id, difficulty, "directed difference rank mismatch");
       return;
     }
+    case "symbol-product-sum-diff-set-b5":
+      assert(meta.parts.length === 4 && new Set(meta.parts.map((q) => q.op)).size === 2, id, difficulty, "sum/diff part mix");
+      meta.parts.forEach((q) => {
+        const fits = [];
+        for (let x = 1; x <= 9; x += 1) for (let y = 1; y < x; y += 1) if (x * y === q.P && (q.op === "+" ? x + y : x - y) === q.S) fits.push(`${x},${y}`);
+        assert(fits.length === 1 && fits[0] === `${q.big},${q.small}`, id, difficulty, "product sum/diff mismatch");
+      });
+      return;
+    case "square-pyramid-tile-growth-b5": {
+      let total = 0; for (let r = 1; r <= meta.target; r += 1) total += 2 * r - 1;
+      assert(total === meta.result && problem.answer === `${total}장` && /<svg/.test(problem.visual?.html || ""), id, difficulty, "pyramid tile count");
+      return;
+    }
+    case "triangle-border-stone-diff-b5": {
+      let black = 0, white = 0;
+      for (let row = 0; row < meta.side; row += 1) for (let j = 0; j <= row; j += 1) { if (row === meta.side - 1 || j === 0 || j === row) black += 1; else white += 1; }
+      const more = black > white ? "검은 돌" : "흰 돌";
+      assert(black !== white && problem.answer === `${more}, ${Math.abs(black - white)}개` && meta.side === meta.firstSide + meta.target - 1, id, difficulty, "border stone diff");
+      const svg = problem.visual?.html || "";
+      const drawnBlack = (svg.match(/fill:#2f2a24;stroke/g) || []).length;
+      let firstFour = 0; for (let k = 0; k < 4; k += 1) firstFour += 3 * (meta.firstSide + k - 1);
+      assert(drawnBlack === firstFour, id, difficulty, "drawn border stones");
+      return;
+    }
+    case "cube-stair-wall-total-b5": {
+      const drawn = ((problem.visual?.html || "").match(/<rect /g) || []).length;
+      assert(drawn === meta.result && meta.result === (meta.n * (meta.n + 1)) / 2, id, difficulty, "stair wall count");
+      return;
+    }
     case "triangular-table-b5":
       assert(meta.asked.every((n, i) => meta.answers[i] === sum(Array.from({ length: n }, (_, j) => j + 1))), id, difficulty, "triangular table mismatch");
       return;
@@ -610,7 +639,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-05 missing");
 if (units.length !== 4) throw new Error(`book-05 unit count ${units.length}`);
-if (typeIds.length !== 82) throw new Error(`book-05 type count ${typeIds.length}`);
+if (typeIds.length !== 86) throw new Error(`book-05 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-05 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-05 unit test number ${question.number}, expected ${index + 1}`);
