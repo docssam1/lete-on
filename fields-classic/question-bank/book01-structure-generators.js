@@ -508,7 +508,7 @@ function bibRankMismatch({ difficulty = 2 }) {
 // ─────────────────────────────────────────────────────────────
 function tableHtml(head, rows) {
   const cell = "border:1.4px solid #a59a87;padding:6px 8px;text-align:center;font-weight:800;font-size:13px;word-break:keep-all";
-  return `<table style="border-collapse:collapse;background:#fff;color:${INK};min-width:300px;max-width:100%"><thead><tr>${head.map((label) => `<th style="${cell};background:#f3ede0;font-size:12px">${esc(label)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((value, index) => `<td style="${cell}${index === 1 ? ";min-width:150px" : ""}${value === "" ? `;background:${SOFT}` : ""}">${esc(value)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  return `<table style="border-collapse:collapse;background:#fff;color:${INK};min-width:300px;max-width:100%"><thead><tr>${head.map((label) => `<th style="${cell};background:#f3ede0;font-size:12px${String(label).length <= 4 ? ";white-space:nowrap" : ""}">${esc(label)}</th>`).join("")}</tr></thead><tbody>${rows.map((row) => `<tr>${row.map((value, index) => `<td style="${cell}${index === 1 ? ";min-width:150px" : ""}${String(value).length <= 4 ? ";white-space:nowrap" : ""}${value === "" ? `;background:${SOFT}` : ""}">${esc(value)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 
 function equalStepNumbers(step, up) {

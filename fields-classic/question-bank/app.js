@@ -1,6 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261127b";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261127d";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { GENERATORS } from "./generators.js?v=20261127b";
+import { GENERATORS } from "./generators.js?v=20261127d";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -28,7 +28,8 @@ const mathShown = (question, text) => (text === null || text === undefined ? tex
 // 답 그림(칸 표)이 있을 때 곁에 붙이는 답 글. 칸 표를 줄마다 「/」로 이어 적은 답(마방진 「492/357/816」·「13 8 12 1 / 3 10 6 15 / …」)은
 // 그림과 같은 수를 되풀이하고 분수처럼 읽히므로 뺀다(원장 2026-11-22 「정확한 수학 표현」). 채점용 답 값은 그대로다.
 const rowCodedAnswer = (answer) => { const a = String(answer ?? "").trim(); return /^[\d\s]+(\/[\d\s]+)+$/.test(a) && (/\s\/\s/.test(a) || (a.match(/\//g) || []).length >= 2); };
-const pictureAnswerText = (question) => (rowCodedAnswer(question.answer) ? "" : `<div class="answer-text">${mathShown(question, question.answer)}</div>`);
+// 답 그림이 표(줄마다 답을 다 적은 표)면 같은 답을 글로 한 번 더 쓰지 않는다(원장 2026-11-27 「답안 인쇄할 때 길게 한 줄로」)
+const pictureAnswerText = (question, picture = "") => (rowCodedAnswer(question.answer) || /<table[\s>]/u.test(picture) ? "" : `<div class="answer-text">${mathShown(question, question.answer)}</div>`);
 
 const {
   ageStages: AGE_STAGES,
@@ -3549,7 +3550,7 @@ function studentCheckMarkup(question, index) {
     <div class="student-check-actions"><button type="button" class="student-check-button" data-student-check="${index}">${typed ? "답 확인" : "정답 보기"}</button>
       ${question.generationCase?.mode === "source" ? "" : `<button type="button" data-question-action="replace" data-question-index="${index}">유사문제 풀기</button>`}</div>
     <p class="student-check-message" role="status"></p>
-    <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}${pictureAnswerText(question)}` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>
+    <div class="student-answer${handAnswers ? " is-hand" : ""}" hidden><strong>정답</strong>${picture ? `${picture}${pictureAnswerText(question, picture)}` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution && (!handAnswers || handSolution) ? `<p class="${handSolution ? "hand-solution" : ""}"><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>
   </div>`;
 }
 
@@ -3775,7 +3776,7 @@ const testMarks = [];
 let testGraded = false;
 function testAnswerMarkup(question) {
   const picture = answerVisualMarkup(question);
-  return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}${pictureAnswerText(question)}` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution ? `<p><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>`;
+  return `<div class="test-answer" hidden><strong>정답</strong>${picture ? `${picture}${pictureAnswerText(question, picture)}` : `<span>${mathShown(question, question.answer)}</span>`}${question.solution ? `<p><b>풀이</b> ${mathShown(question, question.solution)}</p>` : ""}</div>`;
 }
 function testTypeRows() {
   const rows = new Map();
@@ -3865,7 +3866,7 @@ function openAnswers() {
     // 말로만 적혀 나왔다. 그림을 그리되 글로 쓴 답도 함께 남긴다 — 채점자가 그림만
     // 보고 판단하지 않아도 되게.
     const answerPicture = answerVisualMarkup(question);
-    const answer = answerPicture ? `${answerPicture}${pictureAnswerText(question)}` : mathShown(question, question.answer);
+    const answer = answerPicture ? `${answerPicture}${pictureAnswerText(question, answerPicture)}` : mathShown(question, question.answer);
     return `<tr><td>${index + 1}</td><td>${domain.label}</td><td>${question.type.middle}</td><td>${question.type.label}</td><td>${question.representativeConcept?.label || question.type.middle}</td><td>${academyStyleLabels(question).join(" · ")}</td><td>${answer}</td><td>${state.includeSolution ? mathShown(question, question.solution) : "-"}</td></tr>`;
   }).join("");
   // 답안지 머리 = 그 시험지 제목(인쇄해서 문제지와 짝을 맞추게 — 원장 2026-11-16 「인쇄해야지」)
