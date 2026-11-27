@@ -1,4 +1,4 @@
-import { loggedIn, memberCall } from "./study-progress.js?v=20261117a";
+import { loggedIn, memberCall, checkSession } from "./study-progress.js?v=20261117a";
 
 // 스스로 공부를 어디까지 열어 주나(원장 2026-10-29 「이메일 인증 후 2주 체험 · 인증하지 않고 둘러보기는 한 주분만 · 그다음 정식」)
 //   둘러보기(로그인 안 함)      → 1권 1단원(한 주 = 1·2차시)만
@@ -63,6 +63,9 @@ export const isPaid = () => canRetry(PREVIEW.book, PREVIEW.unit).why !== "retry"
 // 강사용 교안(?as=class)은 승인 권한에 따라(원장 2026-11-11 「승인 권한에 따라 다르도록」): 관리자(DOCSSAM)이거나
 // 승인 관리(fields-classic/admin.html)에서 「강사용 교안」 권한을 켠 승인번호로 로그인했을 때만 연다. 화면 쪽 잠금이다.
 export const TEACH_PERMISSION = "강사용교안";
+// 문제은행(index.html, 시험지 짜기·편집·인쇄)을 학부모에게 권별로 연다(원장 2026-11-27 「권한을 열으면 학부모도 이 문제은행은 권별로 사용할 수 있도록」).
+// 관리자 화면에서 「문제은행 (권별)」 권한을 켠 승인번호 → 그 아이에게 GM으로 열린 권(1과정·2과정)만 보인다. 관리자는 전부. 화면 쪽 잠금이다.
+export const BANK_PERMISSION = "문제은행";
 export function canTeach() {
   const me = loggedIn();
   return Boolean(me) && (me.type === "admin" || (me.permissions || []).includes(TEACH_PERMISSION));
@@ -84,10 +87,11 @@ export async function askOnKakao(kind, note) {
     ? `[다음 권 추가 요청] 아이 이름: ${who.name || ""}${note ? ` · ${note}` : ""}`
     : kind === "extend" ? `[이용 기간 연장 요청] 아이 이름: ${who.name || ""}`
     : kind === "gm" ? `[스스로 공부(GM 과정) 열기 요청] 아이 이름: ${who.name || ""}`
+    : kind === "bank" ? `[문제은행 사용 요청] 아이 이름: ${who.name || ""}`
     : `[정규회원 승인 요청] 아이 이름: ${who.name || ""}`;
   try { await navigator.clipboard?.writeText(text); } catch {}
   window.open(KAKAO, "_blank", "noopener");
-  if (who.kind === "member") await memberCall({ action: "request", kind: kind === "book" ? "book" : "regular" }).catch(() => null);
+  if (who.kind === "member" && kind !== "bank") await memberCall({ action: "request", kind: kind === "book" ? "book" : "regular" }).catch(() => null);
   return text;
 }
 
@@ -107,6 +111,14 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
     <h2>강사용 교안은 승인된 강사만 열 수 있어요</h2>
     <p>원장님께 「강사용 교안」 권한을 받은 승인번호로 로그인해 주세요.${who.kind !== "preview" ? " 지금 로그인한 승인번호에는 이 권한이 없어요." : ""}</p>
     <div class="fa-actions"><a class="fa-btn primary" href="${login}">승인번호로 로그인 ›</a><a class="fa-btn" href="./start.html">학생 화면으로</a></div></div>`;
+  if (why === "bank") return `<div class="fa-lock"><p class="fa-kick">문제은행</p>
+    <h2>문제은행은 승인된 회원이 쓸 수 있어요</h2>
+    <p>원장님께 「문제은행」 권한을 받은 승인번호로 로그인하면, 아이에게 열린 권의 문제로 학습지·시험지를 만들고 인쇄할 수 있어요.${who.kind !== "preview" ? " 지금 로그인한 승인번호에는 이 권한이 없어요." : ""}</p>
+    <div class="fa-actions">${who.kind === "preview" ? `<a class="fa-btn primary" href="${login}">승인번호로 로그인 ›</a>` : `<button type="button" class="fa-btn primary" data-fa="bank">문제은행 사용 요청(카톡) ›</button><a class="fa-btn" href="${login}">다른 승인번호로 로그인</a>`}<a class="fa-btn" href="./home.html">처음 화면으로</a></div><p class="fa-small" data-fa-msg></p></div>`;
+  if (why === "bank_books") return `<div class="fa-lock"><p class="fa-kick">문제은행</p>
+    <h2>아직 열린 권이 없어요</h2>
+    <p>문제은행은 아이에게 열린 권의 문제만 보여요. 원장님께 권을 열어 달라고 요청해 주세요.</p>
+    <div class="fa-actions"><button type="button" class="fa-btn primary" data-fa="gm">권 열기 요청(카톡) ›</button><a class="fa-btn" href="./home.html">처음 화면으로</a></div><p class="fa-small" data-fa-msg></p></div>`;
   if (why === "gm_none") return `<div class="fa-lock"><p class="fa-kick">스스로 공부</p>
     <h2>스스로 공부는 아직 열리지 않았어요</h2>
     <p>이 승인번호로는 지금 <b>1권 1단원(한 주 분량)</b>까지 둘러볼 수 있어요. 스스로 공부를 이어서 하려면 원장님께 카톡으로 요청해 주세요.</p>
@@ -143,7 +155,7 @@ export function lockCard(why, { bookId = "", here = "" } = {}) {
 export function wireAccess(root) {
   root.addEventListener("click", async (event) => {
     const button = event.target.closest("[data-fa]");
-    if (!button || !["book", "regular", "extend", "gm"].includes(button.dataset.fa)) return;
+    if (!button || !["book", "regular", "extend", "gm", "bank"].includes(button.dataset.fa)) return;
     const box = button.closest(".fa-lock, .fa-banner");
     const msg = box?.querySelector("[data-fa-msg]");
     await askOnKakao(button.dataset.fa, button.dataset.book ? `${BOOK_LABEL(button.dataset.book)} 열어 주세요` : "");
@@ -168,6 +180,24 @@ export function accessBanner() {
     return `<div class="fa-banner"><span><b>체험 중</b> · ${left ? `${left}일 남았어요` : "오늘까지예요"}(${day(m.trialUntil)}까지) · ${esc(BOOK_LABEL(m.upTo))}</span>${m.approvalRequestedAt ? `<small>정규회원 요청을 보냈어요</small>` : `<button type="button" class="fa-btn small primary" data-fa="regular">정규회원 승인 요청(카톡) ›</button>`}<small data-fa-msg></small></div>`;
   }
   return "";
+}
+
+// 문제은행 첫 화면을 열어도 되나 → { ok, books(null = 모든 권), why: bank | bank_books }. 열 때마다 서버에 세션을 묻는다.
+export async function bankGate() {
+  if (!loggedIn()) return { ok: false, why: "bank" };
+  const me = await checkSession();
+  if (!me) return { ok: false, why: "bank" };
+  if (me.type === "admin") return { ok: true, books: null, name: me.name };
+  if (!(loggedIn()?.permissions || []).includes(BANK_PERMISSION)) return { ok: false, why: "bank" };
+  if (!me.member) return { ok: true, books: null, name: me.name };   // GM 상태를 안 주는 옛 승인번호는 스스로 공부처럼 전부(canStudy legacy)
+  const books = (me.member.open ? me.member.books || [] : []).filter((id) => /^(book-\d\d|course-02-[ag][1-5])$/u.test(id));
+  return books.length ? { ok: true, books, name: me.name } : { ok: false, why: "bank_books" };
+}
+export function lockBank(why) {
+  addCss();
+  document.body.className = "fa-page";
+  document.body.innerHTML = `<main class="fa-wrap">${lockCard(why, { here: "index.html" })}</main>`;
+  wireAccess(document.body);
 }
 
 // 화면 전체를 잠금 안내로 바꾼다(study.html 처럼 그 자리에서 공부를 시작하는 화면)

@@ -38,7 +38,9 @@ const PRODUCT_IDS = new Set(["개념완성", "연산연습", "진단모의고사
   // 입학 모의고사 — 회차별(원장 2026-11-16 「승인도 회차별로」, 화면 쪽 이름표 question-bank/entrance-products.js)
   "초1입학모의고사1차", "초1입학모의고사2차", "초1입학모의고사3차", "초1입학모의고사4차", "초1입학모의고사6차",
   "초2입학모의고사1차", "초2입학모의고사2차", "초2입학모의고사3차", "초2입학모의고사4차",
-  "입학문제은행"]);
+  "입학문제은행",
+  // 문제은행(question-bank/index.html)을 학부모에게 권별로 여는 권한(원장 2026-11-27, 화면 쪽 fields-access.js BANK_PERMISSION)
+  "문제은행"]);
 const cleanPermissions = (v: unknown) => Array.isArray(v) ? [...new Set(v.map(String).filter((id) => PRODUCT_IDS.has(id)))] : [];
 const cleanDate = (v: unknown) => { const d = String(v ?? ""); return /^\d{4}-\d{2}-\d{2}$/.test(d) && !Number.isNaN(Date.parse(`${d}T00:00:00Z`)) ? d : null; };
 const todayKst = () => new Date(Date.now() + 9 * 3600000).toISOString().slice(0, 10);
