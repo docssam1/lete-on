@@ -887,7 +887,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("check-complete-composition", "겹침과 빈틈을 확인해요", "모든 조각을 사용했는지, 서로 겹치지 않는지, 바깥선 안에 빈틈없이 들어갔는지 검산합니다.")
     ],
     "조각의 크기를 늘리거나 줄여 모양에 맞추거나, 빈틈과 겹침을 확인하지 않고 완성했다고 하지 않았는지 살펴봅니다.",
-    [book3Evidence("단위넓이와 분수", 1, [1, 2, 3])]
+    [book3Evidence("단위넓이와 분수", 1, [2])]
   ),
   "unit-grid-area": sourceLesson(
     "concept:geometry:unit-grid-area",
@@ -907,7 +907,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("write-fraction-order", "전체와 색칠한 부분을 분수로 써요", "전체 부분 수를 아래에, 색칠한 부분 수를 위에 써서 분수로 나타내고 그림과 다시 대조합니다.")
     ],
     "색칠한 부분을 분모에 쓰거나 크기가 서로 다른 부분을 같은 한 부분으로 세지 않았는지 확인합니다.",
-    [book3Evidence("단위넓이와 분수", 2, [1, 2, 3])]
+    [book3Evidence("단위넓이와 분수", 2, [1, 2])]
   ),
   "equal-partition-drawing": sourceLesson(
     "concept:geometry:equal-partition-construction",
@@ -919,15 +919,16 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "부분의 개수만 맞추고 넓이가 다른 부분을 만들거나 경계선을 도형 밖으로 그리지 않았는지 확인합니다.",
     [book3Evidence("단위넓이와 분수", 2, [4])]
   ),
-  "folded-strip-length": sourceLesson(
+  // 2단원 활동 1-1은 한 칸 폭 띠를 반의 반 바퀴로 꺾어 접은 꼴(folded-tape-one-fold-b3)로 옮겼다 — 수업도 그 유형으로.
+  "folded-tape-one-fold-b3": sourceLesson(
     "concept:geometry:folded-strip-total-length",
     [
-      beat("mark-strip-turns", "띠가 꺾이는 점을 표시해요", "모눈 위에서 띠의 방향이 바뀌는 점을 찾아 가로 구간과 세로 구간으로 나눕니다."),
-      beat("count-each-strip-segment", "각 구간의 칸 수를 세요", "구간마다 지나간 모눈 칸 수를 세고, 같은 자리를 다시 지나더라도 띠의 서로 다른 구간이면 각각 기록합니다."),
-      beat("sum-strip-segments", "모든 구간 길이를 더해요", "처음부터 끝까지 기록한 구간 길이를 모두 더하고 꺾인 구간을 빠뜨리지 않았는지 다시 따라갑니다.")
+      beat("mark-strip-turns", "띠가 꺾인 곳을 찾아요", "모눈 위에서 띠가 접혀 방향이 바뀐 모서리를 찾고, 곧은 부분과 접힌 모서리로 나눕니다."),
+      beat("count-each-strip-segment", "곧은 부분의 칸 수를 세요", "곧은 부분마다 띠가 덮은 칸 수를 세고, 접힌 모서리의 삼각형은 띠 한 칸이 반으로 겹친 자리라 한 칸으로 셉니다."),
+      beat("sum-strip-segments", "모두 더해요", "곧은 부분의 칸 수와 접힌 모서리의 칸 수를 모두 더하고, 띠의 가운데 선을 따라가며 빠뜨린 칸이 없는지 다시 따라갑니다.")
     ],
-    "두 끝점 사이의 곧은 거리만 구하거나 화면에서 겹쳐 보이는 서로 다른 구간을 한 번만 세지 않았는지 확인합니다.",
-    [book3Evidence("단위길이와 배수", 1, [1, 2])]
+    "접힌 모서리를 세지 않거나 모서리 칸을 두 번 세지 않았는지 확인합니다.",
+    [book3Evidence("단위길이와 배수", 1, [1])]
   ),
   "midpoint-number-line": sourceLesson(
     "concept:number:number-line-midpoint",

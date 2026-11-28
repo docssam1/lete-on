@@ -258,7 +258,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03", "book-09"])
   }),
-  "folded-strip-length": Object.freeze({
+  "folded-tape-one-fold-b3": Object.freeze({
     conceptId: "concept:geometry:folded-strip-total-length",
     sourceBookId: "book-03",
     placementBooks: Object.freeze(["book-03"])

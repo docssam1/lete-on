@@ -7,6 +7,9 @@
 //   BOOK03_STRUCTURE_REMAPS     — [[권 id, 단원, 묶음, 묶음 번호, 번호들, 유형 id]] (textbook-remaps.js와 같은 꼴)
 //   verifyBook03Structure(problem) — 검사기(book03-audit.mjs)가 부르는 독립 검산(다시 풀어 답이 하나인지 본다)
 
+import { dimArc } from "./length-dim.js?v=20261124h";
+import { mixed } from "./math-markup.js";
+
 const randomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 const sample = (items) => items[randomInt(0, items.length - 1)];
 function shuffle(items) {
@@ -891,6 +894,995 @@ function rodRowsMixed({ difficulty = 2 } = {}) {
 
 function gcdInt(a, b) { let x = Math.abs(a); let y = Math.abs(b); while (y) [x, y] = [y, x % y]; return x || 1; }
 
+// ───────────────────────────── 1단원 — 조각 나누기와 분수(공용 도구) ─────────────────────────────
+// 도형을 「모양과 크기가 같은 가장 작은 조각(칸)」으로 나눈 틀을 만들고, 이웃한 칸을 볼록한 모양으로만 합쳐 그림의 조각을 만든다.
+// 그림에는 조각의 경계만 긋는다(빠진 선). 칸 하나짜리 조각을 꼭 남겨 「가장 작은 조각」이 그림에 보이게 한다.
+// 답 = 색칠한 칸 수 / 전체 칸 수. 검사기는 넓이(신발끈 공식)로 따로 셈한다.
+
+const SQ3 = Math.sqrt(3);
+const r6 = (value) => Math.round(value * 1e6) / 1e6;
+const SHADE = "#f7d878";
+const ADDED = "#c0392b";
+const vkey = ([x, y]) => `${Math.round(x * 1e4)},${Math.round(y * 1e4)}`;
+const ekey = (a, b) => { const p = vkey(a); const q = vkey(b); return p < q ? `${p}|${q}` : `${q}|${p}`; };
+const signedArea = (poly) => poly.reduce((sum, [x, y], index) => { const [u, v] = poly[(index + 1) % poly.length]; return sum + x * v - u * y; }, 0) / 2;
+const areaOf = (poly) => Math.abs(signedArea(poly));
+const meanPoint = (poly) => [poly.reduce((s, [x]) => s + x, 0) / poly.length, poly.reduce((s, [, y]) => s + y, 0) / poly.length];
+const midOf = (a, b) => [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+const CIRCLED = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"];
+
+function hullArea(points) {
+  const hull = hullPoints(points);
+  return hull.length < 3 ? 0 : areaOf(hull);
+}
+function hullPoints(points) {
+  const unique = [...new Map(points.map((p) => [vkey(p), p])).values()].sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+  if (unique.length < 3) return unique;
+  const cross = (o, a, b) => (a[0] - o[0]) * (b[1] - o[1]) - (a[1] - o[1]) * (b[0] - o[0]);
+  const lower = [];
+  for (const p of unique) { while (lower.length >= 2 && cross(lower[lower.length - 2], lower[lower.length - 1], p) <= 1e-9) lower.pop(); lower.push(p); }
+  const upper = [];
+  for (const p of [...unique].reverse()) { while (upper.length >= 2 && cross(upper[upper.length - 2], upper[upper.length - 1], p) <= 1e-9) upper.pop(); upper.push(p); }
+  return [...lower.slice(0, -1), ...upper.slice(0, -1)];
+}
+
+// 세 꼭짓점 A·B·C 삼각형을 같은 간격 n등분 — n×n개의 닮은 작은 삼각형(정삼각형이면 모두 정삼각형)
+function subdivideTriangle(A, B, C, n) {
+  const P = (i, j) => [A[0] + ((B[0] - A[0]) * i) / n + ((C[0] - B[0]) * j) / n, A[1] + ((B[1] - A[1]) * i) / n + ((C[1] - B[1]) * j) / n];
+  const cells = [];
+  for (let i = 0; i < n; i += 1) {
+    for (let j = 0; j <= i; j += 1) cells.push([P(i, j), P(i + 1, j), P(i + 1, j + 1)]);
+    for (let j = 0; j < i; j += 1) cells.push([P(i, j), P(i + 1, j + 1), P(i, j + 1)]);
+  }
+  return cells;
+}
+const splitThree = (cell) => { const g = meanPoint(cell); return cell.map((v, k) => [v, cell[(k + 1) % 3], g]); };
+const splitSix = (cell) => { const g = meanPoint(cell); return cell.flatMap((v, k) => { const w = cell[(k + 1) % 3]; const m = midOf(v, w); return [[v, m, g], [m, w, g]]; }); };
+const hexVertex = (r, k) => [r * Math.cos(((-90 + 60 * k) * Math.PI) / 180), r * Math.sin(((-90 + 60 * k) * Math.PI) / 180)];
+
+// 틀(가장 작은 조각들). 이름은 meta에 남는다.
+const LATTICES = {
+  tri: (n) => subdivideTriangle([0, 0], [-n / 2, (n * SQ3) / 2], [n / 2, (n * SQ3) / 2], n),
+  triThirds: (n) => LATTICES.tri(n).flatMap(splitThree),
+  triSixths: (n) => LATTICES.tri(n).flatMap(splitSix),
+  grid: (n) => { const cells = []; for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) cells.push([[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]]); return cells; },
+  strips: (n) => range(0, n - 1).map((x) => [[x, 0], [x + 1, 0], [x + 1, n], [x, n]]),
+  halves: (dir) => (dir === "v" ? [[[0, 0], [1, 0], [1, 2], [0, 2]], [[1, 0], [2, 0], [2, 2], [1, 2]]] : [[[0, 0], [2, 0], [2, 1], [0, 1]], [[0, 1], [2, 1], [2, 2], [0, 2]]]),
+  sqHalf: (n, dir = 0) => {
+    const cells = [];
+    for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) {
+      if (dir === 0) cells.push([[x, y], [x + 1, y], [x + 1, y + 1]], [[x, y], [x + 1, y + 1], [x, y + 1]]);
+      else cells.push([[x, y], [x + 1, y], [x, y + 1]], [[x + 1, y], [x + 1, y + 1], [x, y + 1]]);
+    }
+    return cells;
+  },
+  sqQuarter: (n) => {
+    const cells = [];
+    for (let y = 0; y < n; y += 1) for (let x = 0; x < n; x += 1) {
+      const c = [x + 0.5, y + 0.5];
+      const q = [[x, y], [x + 1, y], [x + 1, y + 1], [x, y + 1]];
+      q.forEach((v, k) => cells.push([v, q[(k + 1) % 4], c]));
+    }
+    return cells;
+  },
+  sqEighth: () => LATTICES.sqQuarter(1).flatMap(([a, b, c]) => { const m = midOf(a, b); return [[a, m, c], [m, b, c]]; }),
+  // 직각이등변삼각형(직각은 왼쪽 아래, 빗변은 (0,0)–(n,n))
+  rightHalf: (n) => LATTICES.sqHalf(n, 0).filter((cell) => { const [x, y] = meanPoint(cell); return y > x; }),
+  rightQuarter: (n) => LATTICES.sqQuarter(n).filter((cell) => { const [x, y] = meanPoint(cell); return y > x; }),
+  hex: (n) => range(0, 5).flatMap((k) => subdivideTriangle([0, 0], hexVertex(n, k), hexVertex(n, k + 1), n)),
+  hexHalves: () => range(0, 5).flatMap((k) => { const a = hexVertex(1, k); const b = hexVertex(1, k + 1); const m = midOf(a, b); return [[[0, 0], a, m], [[0, 0], m, b]]; }),
+  hexThirds: () => LATTICES.hex(1).flatMap(splitThree),
+  hexEars: () => {
+    const V = (k) => hexVertex(1, k);
+    return [[V(0), V(1), V(2)], [V(2), V(3), V(4)], [V(4), V(5), V(0)], [[0, 0], V(0), V(2)], [[0, 0], V(2), V(4)], [[0, 0], V(4), V(0)]];
+  },
+  hexRhombi: () => [0, 2, 4].map((k) => [[0, 0], hexVertex(1, k), hexVertex(1, k + 1), hexVertex(1, k + 2)]),
+  hexagram: () => [
+    ...LATTICES.hex(1),
+    ...range(0, 5).map((k) => { const a = hexVertex(1, k); const b = hexVertex(1, k + 1); return [a, [a[0] + b[0], a[1] + b[1]], b]; })
+  ]
+};
+
+// 넓이 무게 중심을 가운데로 놓고 돌리고(도) 뒤집는다.
+function placeCells(cells, { turn = 0, mirror = false } = {}) {
+  let cx = 0; let cy = 0; let total = 0;
+  cells.forEach((cell) => { const a = areaOf(cell); const [x, y] = meanPoint(cell); cx += x * a; cy += y * a; total += a; });
+  cx /= total; cy /= total;
+  const rad = (turn * Math.PI) / 180;
+  const cos = Math.cos(rad); const sin = Math.sin(rad);
+  const out = cells.map((cell) => cell.map(([x, y]) => {
+    const dx = (mirror ? -1 : 1) * (x - cx); const dy = y - cy;
+    return [r6(dx * cos - dy * sin), r6(dx * sin + dy * cos)];
+  }));
+  return out.map((cell) => (mirror ? [...cell].reverse() : cell));
+}
+
+function edgeOwners(cells) {
+  const owners = new Map();
+  cells.forEach((cell, index) => cell.forEach((v, k) => {
+    const w = cell[(k + 1) % cell.length];
+    const key = ekey(v, w);
+    if (!owners.has(key)) owners.set(key, { a: v, b: w, cells: [] });
+    owners.get(key).cells.push(index);
+  }));
+  return owners;
+}
+
+function isConvexUnion(cells, indices) {
+  const total = indices.reduce((sum, index) => sum + areaOf(cells[index]), 0);
+  return Math.abs(hullArea(indices.flatMap((index) => cells[index])) - total) < 1e-6;
+}
+
+// 이웃 칸을 볼록하게만 합쳐 조각을 만든다. fixed: 미리 정한 조각(칸 번호 목록들)
+function randomPieces(cells, { maxCells = 4, rounds = 12, fixed = [] } = {}) {
+  const owners = edgeOwners(cells);
+  const neighbors = cells.map(() => new Set());
+  owners.forEach(({ cells: list }) => { if (list.length === 2) { neighbors[list[0]].add(list[1]); neighbors[list[1]].add(list[0]); } });
+  const pieceOf = cells.map((_, index) => index);
+  const members = new Map(cells.map((_, index) => [index, [index]]));
+  const locked = new Set();
+  fixed.forEach((group) => {
+    const id = group[0];
+    group.forEach((cell) => { members.delete(pieceOf[cell]); pieceOf[cell] = id; });
+    members.set(id, [...group]);
+    locked.add(id);
+  });
+  for (let round = 0; round < rounds; round += 1) {
+    const ids = [...members.keys()].filter((id) => !locked.has(id));
+    if (!ids.length) break;
+    const id = sample(ids);
+    const near = [...new Set(members.get(id).flatMap((cell) => [...neighbors[cell]].map((other) => pieceOf[other])))].filter((other) => other !== id && !locked.has(other));
+    if (!near.length) continue;
+    const other = sample(near);
+    const union = [...members.get(id), ...members.get(other)];
+    if (union.length > maxCells || !isConvexUnion(cells, union)) continue;
+    members.get(other).forEach((cell) => { pieceOf[cell] = id; });
+    members.set(id, union);
+    members.delete(other);
+  }
+  return [...members.values()].map((list) => [...list].sort((a, b) => a - b));
+}
+
+// 조각 그림(SVG). pieces가 없으면 칸마다 조각(다 그은 그림). answer면 빠졌던 선을 빨갛게 긋는다.
+function partitionSvg(cells, { pieces = null, shaded = new Set(), scale = 60, answer = false, label = "", maxWidth = 260 } = {}) {
+  const pieceOf = new Map();
+  (pieces || cells.map((_, index) => [index])).forEach((list, id) => list.forEach((cell) => pieceOf.set(cell, id)));
+  const xs = cells.flat().map(([x]) => x); const ys = cells.flat().map(([, y]) => y);
+  const minX = Math.min(...xs); const minY = Math.min(...ys);
+  const pad = 4;
+  const W = (Math.max(...xs) - minX) * scale + pad * 2;
+  const bodyH = (Math.max(...ys) - minY) * scale + pad * 2;
+  const H = bodyH + (label ? 20 : 0);
+  const at = ([x, y]) => [fmt((x - minX) * scale + pad), fmt((y - minY) * scale + pad)];
+  const parts = [];
+  cells.forEach((cell, index) => {
+    if (!shaded.has(index)) return;
+    parts.push(`<polygon points="${cell.map((p) => at(p).join(",")).join(" ")}" fill="${SHADE}" stroke="${SHADE}" stroke-width="0.8"/>`);
+  });
+  const added = [];
+  edgeOwners(cells).forEach(({ a, b, cells: list }) => {
+    const boundary = list.length === 1 || pieceOf.get(list[0]) !== pieceOf.get(list[1]);
+    const [x1, y1] = at(a); const [x2, y2] = at(b);
+    if (boundary) parts.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${INK}" stroke-width="1.6" stroke-linecap="round"/>`);
+    else if (answer) added.push(`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="${ADDED}" stroke-width="1.3" stroke-linecap="round"/>`);
+  });
+  parts.push(...added);
+  if (label) parts.push(`<text x="${fmt(W / 2)}" y="${fmt(bodyH + 15)}" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">${label}</text>`);
+  return `<svg viewBox="0 0 ${fmt(W)} ${fmt(H)}" style="width:${fmt(Math.min(W, maxWidth))}px;max-width:100%;height:auto" role="img" aria-label="조각으로 나눈 도형">${parts.join("")}</svg>`;
+}
+
+// 빠진 선 문제 하나 — lattice: 칸 목록, fixed: 꼭 둘 조각(예: 정사각형), shadeFixedOnly: 정해 둔 조각만 색칠
+function incompletePartition({ cells, maxCells, rounds, fixed = [], shadeFixedOnly = false, scale }) {
+  for (let attempt = 0; attempt < 80; attempt += 1) {
+    const pieces = randomPieces(cells, { maxCells, rounds: randomInt(Math.ceil(rounds / 3), rounds), fixed: fixed.length ? [fixed] : [] });
+    const singles = pieces.filter((list) => list.length === 1).length;
+    const merged = pieces.filter((list) => list.length > 1).length;
+    if (!singles || !merged || pieces.length < 3) continue;
+    let shadedPieces;
+    if (shadeFixedOnly) shadedPieces = pieces.filter((list) => list[0] === [...fixed].sort((a, b) => a - b)[0]);
+    else {
+      const order = shuffle(pieces);
+      const count = randomInt(1, Math.max(1, Math.min(order.length - 1, Math.ceil(order.length / 2))));
+      shadedPieces = order.slice(0, count);
+      if (!shadedPieces.some((list) => list.length > 1)) continue;
+    }
+    const shadedCells = shadedPieces.flat();
+    if (!shadedCells.length || shadedCells.length >= cells.length) continue;
+    const shaded = new Set(shadedCells);
+    return {
+      pieces,
+      shadedPieces,
+      shaded,
+      svg: partitionSvg(cells, { pieces, shaded, scale }),
+      answerSvg: partitionSvg(cells, { pieces, shaded, scale, answer: true })
+    };
+  }
+  return null;
+}
+
+const FORM_WORDS = {
+  tri: ["큰 정삼각형", "작은 정삼각형"],
+  triThirds: ["큰 정삼각형", "작은 삼각형"],
+  sqHalf: ["정사각형", "작은 삼각형"],
+  sqQuarter: ["정사각형", "작은 삼각형"],
+  rightHalf: ["직각이등변삼각형", "작은 삼각형"],
+  rightQuarter: ["직각이등변삼각형", "작은 삼각형"],
+  hexEars: ["정육각형", "작은 삼각형"],
+  hexHalves: ["정육각형", "작은 삼각형"],
+  hex: ["정육각형", "작은 정삼각형"],
+  hexagram: ["육각별", "작은 정삼각형"]
+};
+
+function incompleteProblem({ form, size, cells, maxCells, rounds, scale, fixed, shadeFixedOnly, lead, turnNote }) {
+  const made = incompletePartition({ cells, maxCells, rounds, fixed, shadeFixedOnly, scale });
+  if (!made) return null;
+  const [whole, piece] = FORM_WORDS[form];
+  const total = cells.length;
+  const shadedCount = made.shaded.size;
+  const sizes = made.shadedPieces.map((list) => list.length).sort((a, b) => b - a);
+  const answer = `${shadedCount}/${total}`;
+  return {
+    prompt: `${lead || `그림은 ${whole}을 몇 조각으로 나눈 것입니다.`} 빠진 선을 그어 ${whole} 전체를 모양과 크기가 같은 ${piece} 조각으로 나누고, 색칠한 부분을 분수로 나타내세요.`,
+    visual: { kind: "fig", html: made.svg },
+    answerVisual: { kind: "fig", html: made.answerSvg },
+    answer,
+    solution: `그림에서 가장 작은 조각 하나를 기준으로 빠진 선을 그으면 ${whole} 전체는 ${total}조각입니다.${turnNote ? ` ${turnNote}` : ""} 색칠한 부분은 ${sizes.length > 1 ? `${sizes.join(" + ")} = ${shadedCount}` : shadedCount}조각이므로 ${answer}입니다.`,
+    meta: {
+      family: "b3s-partition",
+      form,
+      size,
+      cells: cells.map((cell) => cell.map(([x, y]) => [r6(x), r6(y)])),
+      pieces: made.pieces,
+      shaded: [...made.shaded].sort((a, b) => a - b),
+      total,
+      shadedCount
+    }
+  };
+}
+
+const TRI_TURNS = [0, 120, 240];
+
+function partitionTriangleMixed({ difficulty = 2 } = {}) {
+  const n = difficulty === 1 ? 3 : difficulty === 2 ? sample([3, 4]) : 4;
+  const cells = placeCells(LATTICES.tri(n), { turn: sample(TRI_TURNS), mirror: Math.random() < 0.5 });
+  return incompleteProblem({ form: "tri", size: n, cells, maxCells: difficulty === 3 ? 9 : 4, rounds: n * n * 2, scale: n === 3 ? 62 : 50 });
+}
+
+function partitionTriangleThirds({ difficulty = 2 } = {}) {
+  const n = difficulty === 3 ? 3 : 2;
+  const cells = placeCells(LATTICES.triThirds(n), { turn: sample(TRI_TURNS), mirror: Math.random() < 0.5 });
+  return incompleteProblem({ form: "triThirds", size: n, cells, maxCells: difficulty === 1 ? 3 : 6, rounds: n * n * 5, scale: n === 2 ? 92 : 64 });
+}
+
+function partitionSquare({ difficulty = 2 } = {}) {
+  const pick = difficulty === 1 ? { form: "sqHalf", n: 2 } : difficulty === 2 ? sample([{ form: "sqHalf", n: 3 }, { form: "sqQuarter", n: 2 }]) : sample([{ form: "sqQuarter", n: 2 }, { form: "sqHalf", n: 4 }]);
+  const base = pick.form === "sqHalf" ? LATTICES.sqHalf(pick.n, randomInt(0, 1)) : LATTICES.sqQuarter(pick.n);
+  const cells = placeCells(base, { turn: sample([0, 90, 180, 270]), mirror: Math.random() < 0.5 });
+  return incompleteProblem({ form: pick.form, size: pick.n, cells, maxCells: pick.form === "sqQuarter" ? 4 : difficulty === 3 ? 8 : 4, rounds: cells.length * 2, scale: 180 / pick.n });
+}
+
+// 직각이등변삼각형 안의 정사각형 — 틀 안에서 칸의 합으로 딱 맞는 정사각형(바로 선 것·기운 것)을 모두 찾아 하나를 고른다.
+const SQUARE_CACHE = new Map();
+function squaresInLattice(cells) {
+  const xs = cells.flat().map(([x]) => x); const ys = cells.flat().map(([, y]) => y);
+  const [x0, x1, y0, y1] = [Math.min(...xs), Math.max(...xs), Math.min(...ys), Math.max(...ys)];
+  const found = [];
+  const inside = (poly, [px, py]) => {
+    // 볼록 다각형 안(경계 제외)
+    let sign = 0;
+    for (let k = 0; k < poly.length; k += 1) {
+      const [ax, ay] = poly[k]; const [bx, by] = poly[(k + 1) % poly.length];
+      const c = (bx - ax) * (py - ay) - (by - ay) * (px - ax);
+      if (Math.abs(c) < 1e-9) return false;
+      if (!sign) sign = Math.sign(c); else if (Math.sign(c) !== sign) return false;
+    }
+    return true;
+  };
+  const tryPoly = (poly, kind) => {
+    const members = cells.map((cell, index) => (inside(poly, meanPoint(cell)) ? index : -1)).filter((index) => index >= 0);
+    if (!members.length || members.length === cells.length) return;
+    const sum = members.reduce((s, index) => s + areaOf(cells[index]), 0);
+    const onOrIn = ([px, py]) => poly.every(([ax, ay], k) => { const [bx, by] = poly[(k + 1) % poly.length]; return (bx - ax) * (py - ay) - (by - ay) * (px - ax) >= -1e-9; });
+    if (Math.abs(sum - areaOf(poly)) < 1e-6 && members.every((index) => cells[index].every(onOrIn))) found.push({ members, kind, poly });
+  };
+  for (let s = 0.5; s <= x1 - x0; s += 0.5) for (let x = x0; x + s <= x1 + 1e-9; x += 0.5) for (let y = y0; y + s <= y1 + 1e-9; y += 0.5) {
+    tryPoly([[x, y], [x + s, y], [x + s, y + s], [x, y + s]], "upright");
+  }
+  for (let h = 0.5; h <= (x1 - x0) / 2; h += 0.5) for (let cx = x0; cx <= x1; cx += 0.5) for (let cy = y0; cy <= y1; cy += 0.5) {
+    tryPoly([[cx, cy - h], [cx + h, cy], [cx, cy + h], [cx - h, cy]], "tilted");
+  }
+  return found;
+}
+
+function partitionRightTriangleSquare(options = {}) {
+  for (let attempt = 0; attempt < 8; attempt += 1) {
+    const problem = rightTriangleSquareOnce(options);
+    if (problem) return problem;
+  }
+  return null;
+}
+
+function rightTriangleSquareOnce({ difficulty = 2 } = {}) {
+  const pick = difficulty === 1 ? { form: "rightHalf", n: sample([2, 3]) } : difficulty === 2 ? sample([{ form: "rightQuarter", n: 2 }, { form: "rightHalf", n: 4 }]) : { form: "rightQuarter", n: 3 };
+  const base = LATTICES[pick.form](pick.n);
+  const cacheKey = `${pick.form}-${pick.n}`;
+  if (!SQUARE_CACHE.has(cacheKey)) SQUARE_CACHE.set(cacheKey, squaresInLattice(base).filter((square) => square.members.length * 2 <= base.length));
+  const squares = SQUARE_CACHE.get(cacheKey);
+  if (!squares.length) return null;
+  const square = sample(squares);
+  const mirror = Math.random() < 0.5;
+  const cells = placeCells(base, { turn: 0, mirror });
+  const problem = incompleteProblem({
+    form: pick.form,
+    size: pick.n,
+    cells,
+    maxCells: 4,
+    rounds: cells.length * 2,
+    scale: 180 / pick.n,
+    fixed: square.members,
+    shadeFixedOnly: true,
+    lead: `그림은 직각이등변삼각형 안에 ${square.kind === "tilted" ? "기울어진 " : ""}정사각형을 그린 것입니다.`
+  });
+  if (problem) problem.meta.square = square.kind;
+  return problem;
+}
+
+function partitionHexagon({ difficulty = 2 } = {}) {
+  const form = difficulty === 1 ? "hexEars" : difficulty === 2 ? sample(["hexEars", "hexHalves"]) : sample(["hexHalves", "hex"]);
+  const base = form === "hex" ? LATTICES.hex(2) : LATTICES[form]();
+  const cells = placeCells(base, { turn: sample([0, 60, 120, 180, 240, 300]), mirror: Math.random() < 0.5 });
+  return incompleteProblem({ form, size: form === "hex" ? 2 : 1, cells, maxCells: form === "hex" ? 4 : 3, rounds: cells.length * 2, scale: form === "hex" ? 48 : 90 });
+}
+
+function partitionHexagram({ difficulty = 2 } = {}) {
+  const cells = placeCells(LATTICES.hexagram(), { turn: sample([30, 90, 150, 210, 270, 330]), mirror: Math.random() < 0.5 });
+  return incompleteProblem({ form: "hexagram", size: 1, cells, maxCells: difficulty === 1 ? 2 : 6, rounds: difficulty === 3 ? 30 : 20, scale: 52 });
+}
+
+// ───────────── 1단원 — 다 나눈 도형 여러 개를 차례로(연습·활동의 한 줄 분수) ─────────────
+// 같은 도형을 조각 수가 늘어나는 차례로 그리고, 칸 몇 개를 색칠해 그림마다 분수로 쓰게 한다.
+
+function rowFractionProblem({ figures, prompt, whole, family, extra = {} }) {
+  const svgs = [];
+  const answers = [];
+  figures.forEach((figure, index) => {
+    svgs.push(partitionSvg(figure.cells, { shaded: figure.shaded, scale: figure.scale, label: CIRCLED[index], maxWidth: 150 }));
+    answers.push(`${CIRCLED[index]} ${figure.shaded.size}/${figure.cells.length}`);
+  });
+  return {
+    prompt,
+    visual: { kind: "fig", html: svgs.join("") },
+    answer: answers.join(", "),
+    responseKind: "list",
+    solution: `그림마다 ${whole} 전체가 같은 조각 몇 개로 나뉘었는지(분모) 세고, 색칠한 조각을 셉니다(분자). ${figures.map((figure, index) => `${CIRCLED[index]}은 ${figure.cells.length}조각 중 ${figure.shaded.size}조각`).join(", ")}이므로 ${answers.join(", ")}입니다.`,
+    meta: {
+      family,
+      ...extra,
+      figures: figures.map((figure) => ({ template: figure.template, cells: figure.cells.map((cell) => cell.map(([x, y]) => [r6(x), r6(y)])), shaded: [...figure.shaded].sort((a, b) => a - b) }))
+    }
+  };
+}
+
+const randomShade = (count, parts) => new Set(shuffle(range(0, parts - 1)).slice(0, count));
+
+function squareGridRow({ difficulty = 2 } = {}) {
+  const sizes = difficulty === 1 ? [2, 3, 4] : difficulty === 2 ? [2, 3, 4, 5] : [3, 4, 5, 6];
+  const figures = sizes.map((n) => {
+    const parts = n * n;
+    return { template: `grid${n}`, cells: LATTICES.grid(n), shaded: randomShade(randomInt(1, parts - 1), parts), scale: 108 / n };
+  });
+  return rowFractionProblem({ figures, whole: "정사각형", family: "b3s-row-fraction", extra: { shape: "square-grid" }, prompt: "정사각형을 모양과 크기가 같은 작은 정사각형으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요." });
+}
+
+const SQUARE_SPLITS = {
+  2: [() => LATTICES.halves("v"), () => LATTICES.halves("h"), () => LATTICES.sqHalf(1, randomInt(0, 1)).map((cell) => cell.map(([x, y]) => [x * 2, y * 2]))],
+  4: [() => LATTICES.grid(2), () => LATTICES.sqQuarter(1).map((cell) => cell.map(([x, y]) => [x * 2, y * 2])), () => LATTICES.strips(4).map((cell) => cell.map(([x, y]) => [x / 2, y / 2]))],
+  8: [() => LATTICES.sqHalf(2, randomInt(0, 1)), () => LATTICES.sqEighth().map((cell) => cell.map(([x, y]) => [x * 2, y * 2]))],
+  16: [() => LATTICES.sqQuarter(2), () => LATTICES.grid(4).map((cell) => cell.map(([x, y]) => [x / 2, y / 2]))]
+};
+
+function squareSplitRow({ difficulty = 2 } = {}) {
+  const counts = difficulty === 1 ? [2, 4, 8] : difficulty === 2 ? [2, 4, 8, 16] : [4, 8, 16, 16];
+  const used = new Set();
+  const figures = counts.map((parts) => {
+    let index;
+    do index = randomInt(0, SQUARE_SPLITS[parts].length - 1); while (used.has(`${parts}-${index}`) && used.size < 6);
+    used.add(`${parts}-${index}`);
+    const cells = placeCells(SQUARE_SPLITS[parts][index](), { turn: sample([0, 90]) });
+    return { template: `square-${parts}-${index}`, cells, shaded: randomShade(randomInt(1, parts - 1), parts), scale: 54 };
+  });
+  return rowFractionProblem({ figures, whole: "정사각형", family: "b3s-row-fraction", extra: { shape: "square-split" }, prompt: "정사각형을 모양과 크기가 같은 조각으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요." });
+}
+
+const TRIANGLE_SPLITS = { 3: () => LATTICES.triThirds(1), 4: () => LATTICES.tri(2), 6: () => LATTICES.triSixths(1), 9: () => LATTICES.tri(3), 12: () => LATTICES.triThirds(2), 24: () => LATTICES.triSixths(2) };
+
+function triangleSplitRow({ difficulty = 2 } = {}) {
+  const counts = difficulty === 1 ? [3, 4, 6] : difficulty === 2 ? sample([[3, 4, 6, 12], [3, 4, 6, 9]]) : sample([[4, 6, 12, 24], [3, 6, 9, 12]]);
+  const figures = counts.map((parts) => {
+    const cells = placeCells(TRIANGLE_SPLITS[parts](), { turn: sample(TRI_TURNS) });
+    const xs = cells.flat().map(([x]) => x);
+    return { template: `triangle-${parts}`, cells, shaded: randomShade(randomInt(1, parts - 1), parts), scale: 118 / (Math.max(...xs) - Math.min(...xs)) };
+  });
+  return rowFractionProblem({ figures, whole: "정삼각형", family: "b3s-row-fraction", extra: { shape: "triangle-split" }, prompt: "정삼각형을 모양과 크기가 같은 조각으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요." });
+}
+
+const HEXAGON_SPLITS = { 3: () => LATTICES.hexRhombi(), 6: () => LATTICES.hex(1), 12: () => LATTICES.hexHalves(), 18: () => LATTICES.hexThirds(), 24: () => LATTICES.hex(2).map((cell) => cell.map(([x, y]) => [x / 2, y / 2])) };
+
+function hexagonSplitRow({ difficulty = 2 } = {}) {
+  const counts = difficulty === 1 ? [3, 6, 12] : difficulty === 2 ? [3, 6, 12, 24] : sample([[6, 12, 18, 24], [3, 12, 18, 24]]);
+  const figures = counts.map((parts) => {
+    const cells = placeCells(HEXAGON_SPLITS[parts](), { turn: sample([0, 60, 120]) });
+    return { template: `hexagon-${parts}`, cells, shaded: randomShade(randomInt(1, parts - 1), parts), scale: 58 };
+  });
+  return rowFractionProblem({ figures, whole: "정육각형", family: "b3s-row-fraction", extra: { shape: "hexagon-split" }, prompt: "정육각형을 모양과 크기가 같은 조각으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요." });
+}
+
+// 원 — 같은 크기 부채꼴(조각) 그림
+function circleSvg(parts, shadedList, { label = "", radius = 52, start = 0 } = {}) {
+  const pad = 4; const size = radius * 2 + pad * 2;
+  const cx = size / 2; const cy = radius + pad;
+  const point = (k) => { const angle = -Math.PI / 2 + ((k + start) * Math.PI * 2) / parts; return [fmt(cx + radius * Math.cos(angle)), fmt(cy + radius * Math.sin(angle))]; };
+  const out = [];
+  shadedList.forEach((k) => {
+    const [x1, y1] = point(k); const [x2, y2] = point(k + 1);
+    out.push(`<path d="M${cx} ${cy}L${x1} ${y1}A${radius} ${radius} 0 0 1 ${x2} ${y2}Z" fill="${SHADE}" stroke="${SHADE}" stroke-width="0.6"/>`);
+  });
+  range(0, parts - 1).forEach((k) => { const [x, y] = point(k); out.push(`<line x1="${cx}" y1="${cy}" x2="${x}" y2="${y}" stroke="${INK}" stroke-width="1.2"/>`); });
+  out.push(`<circle cx="${cx}" cy="${cy}" r="${radius}" fill="none" stroke="${INK}" stroke-width="1.6"/>`);
+  if (label) out.push(`<text x="${cx}" y="${size + 12}" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">${label}</text>`);
+  return `<svg viewBox="0 0 ${size} ${size + (label ? 18 : 0)}" style="width:${size}px;max-width:100%;height:auto" role="img" aria-label="원을 ${parts}조각으로 나눈 그림">${out.join("")}</svg>`;
+}
+
+// 연습 8 꼴 — 조각 수가 2배·3배인 원에 같은 크기만큼 색칠(같은 크기의 분수)
+function circleEquivalentRow({ difficulty = 2 } = {}) {
+  const base = difficulty === 1 ? sample([2, 3, 4]) : sample([3, 4, 5, 6]);
+  const factors = difficulty === 3 && base <= 4 ? [1, 3, 4] : difficulty === 1 ? [1, 2, 3] : sample([[1, 2, 3], [1, 2, 4]]);
+  const usable = factors.filter((factor) => base * factor <= 24);
+  if (usable.length < 3) return null;
+  const top = randomInt(1, base - 1);
+  const start = randomInt(0, base - 1);
+  const circles = usable.map((factor) => ({ parts: base * factor, shaded: top * factor, start: start * factor }));
+  const svgs = circles.map((circle, index) => circleSvg(circle.parts, range(0, circle.shaded - 1), { label: CIRCLED[index], start: circle.start }));
+  const answers = circles.map((circle, index) => `${CIRCLED[index]} ${circle.shaded}/${circle.parts}`);
+  return {
+    prompt: "원을 모양과 크기가 같은 조각으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요.",
+    visual: { kind: "fig", html: svgs.join("") },
+    answer: answers.join(", "),
+    responseKind: "list",
+    solution: `원마다 전체 조각 수와 색칠한 조각 수를 셉니다. ${circles.map((circle, index) => `${CIRCLED[index]}은 ${circle.parts}조각 중 ${circle.shaded}조각`).join(", ")}입니다. 조각이 ${usable.slice(1).map((factor) => `${factor}배`).join("·")}로 잘게 나뉘면 색칠한 조각 수도 같은 배만큼 늘어나 색칠한 크기는 모두 같습니다.`,
+    meta: { family: "b3s-circle-row", mode: "equivalent", circles }
+  };
+}
+
+// 연습 9 꼴 — 조각이 반씩 작아지는 원에 한 조각만 색칠
+function circleHalvingRow({ difficulty = 2 } = {}) {
+  const base = difficulty === 1 ? sample([2, 3, 4]) : difficulty === 2 ? sample([2, 3]) : sample([3, 4]);
+  const count = difficulty === 1 ? 3 : 4;
+  const circles = range(0, count - 1).map((k) => ({ parts: base * 2 ** k, shaded: 1, start: randomInt(0, base * 2 ** k - 1) }));
+  const svgs = circles.map((circle, index) => circleSvg(circle.parts, [0], { label: CIRCLED[index], start: circle.start }));
+  const answers = circles.map((circle, index) => `${CIRCLED[index]} 1/${circle.parts}`);
+  return {
+    prompt: "원을 모양과 크기가 같은 조각으로 나누었습니다. 그림마다 색칠한 부분을 분수로 나타내세요.",
+    visual: { kind: "fig", html: svgs.join("") },
+    answer: answers.join(", "),
+    responseKind: "list",
+    solution: `원마다 같은 조각이 몇 개인지 셉니다. ${circles.map((circle, index) => `${CIRCLED[index]}은 ${circle.parts}조각 중 1조각`).join(", ")}입니다. 조각 수가 두 배가 될 때마다 한 조각의 크기는 반이 됩니다.`,
+    meta: { family: "b3s-circle-row", mode: "halving", circles }
+  };
+}
+
+// ───────────── 1단원 — 칠교 ─────────────
+// 4×4 칠교(가장 큰 직각이등변삼각형 2조각 + 나머지 5조각). 큰 삼각형 2조각을 놓아 두고 나머지 5조각으로 채우기(활동 1-1),
+// 5조각으로 만든 정사각형에 큰 삼각형 2조각을 붙여 여러 사각형·삼각형 만들기(활동 1-3).
+const TANGRAM_COLORS = { big1: "#f2a7cd", big2: "#f5c84a", small1: "#8dd36a", square: "#f4a261", medium: "#b9a6e0", small2: "#ef8f80", para: "#a8dcc0" };
+const TANGRAM_PIECES = {
+  big1: [[0, 0], [4, 0], [2, 2]],
+  big2: [[0, 0], [2, 2], [0, 4]],
+  small1: [[4, 0], [4, 2], [3, 1]],
+  square: [[2, 2], [3, 1], [4, 2], [3, 3]],
+  medium: [[4, 2], [4, 4], [2, 4]],
+  small2: [[2, 2], [3, 3], [1, 3]],
+  para: [[0, 4], [1, 3], [3, 3], [2, 4]]
+};
+const TANGRAM_NAMES = { small1: "작은 삼각형", small2: "작은 삼각형", square: "정사각형", medium: "중간 삼각형", para: "평행사변형" };
+const squareSymmetry = (k, side) => ([x, y]) => {
+  let p = [x, y];
+  for (let t = 0; t < k % 4; t += 1) p = [side - p[1], p[0]];
+  return k >= 4 ? [side - p[0], p[1]] : p;
+};
+
+function gridDots(width, height, cell, pad) {
+  const out = [];
+  for (let i = 0; i <= width; i += 1) out.push(`<line x1="${pad + i * cell}" y1="${pad}" x2="${pad + i * cell}" y2="${pad + height * cell}" stroke="#c9bfa9" stroke-width="0.8" stroke-dasharray="3 3"/>`);
+  for (let j = 0; j <= height; j += 1) out.push(`<line x1="${pad}" y1="${pad + j * cell}" x2="${pad + width * cell}" y2="${pad + j * cell}" stroke="#c9bfa9" stroke-width="0.8" stroke-dasharray="3 3"/>`);
+  return out.join("");
+}
+const polySvg = (poly, cell, pad, fill, extra = "") => `<polygon points="${poly.map(([x, y]) => `${fmt(pad + x * cell)},${fmt(pad + y * cell)}`).join(" ")}" fill="${fill}" stroke="${INK}" stroke-width="1.6" stroke-linejoin="round"${extra}/>`;
+
+function tangramFillAroundBig({ difficulty = 2 } = {}) {
+  const symmetry = randomInt(0, 7);
+  const map = squareSymmetry(symmetry, 4);
+  const pieces = Object.fromEntries(Object.entries(TANGRAM_PIECES).map(([name, poly]) => [name, poly.map(map)]));
+  const rest = ["small1", "square", "medium", "small2", "para"];
+  const preset = difficulty === 1 ? [sample(rest)] : [];
+  const shown = ["big1", "big2", ...preset];
+  const cell = 36; const pad = 6;
+  const board = `<svg viewBox="0 0 ${cell * 4 + pad * 2} ${cell * 4 + pad * 2}" style="width:${cell * 4 + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="큰 삼각형 두 조각을 놓은 정사각형 판">${gridDots(4, 4, cell, pad)}${shown.map((name) => polySvg(pieces[name], cell, pad, TANGRAM_COLORS[name])).join("")}<rect x="${pad}" y="${pad}" width="${cell * 4}" height="${cell * 4}" fill="none" stroke="${INK}" stroke-width="2"/></svg>`;
+  const left = rest.filter((name) => !preset.includes(name));
+  // 남은 조각 보관함 — 조각마다 돌린 모양(그대로 맞춰 넣지 못하게 방향을 섞는다)
+  const kit = left.map((name) => {
+    const turned = TANGRAM_PIECES[name].map(squareSymmetry(difficulty === 3 ? randomInt(0, 7) : randomInt(0, 3), 4));
+    const xs = turned.map(([x]) => x); const ys = turned.map(([, y]) => y);
+    const shifted = turned.map(([x, y]) => [x - Math.min(...xs), y - Math.min(...ys)]);
+    const w = Math.max(...xs) - Math.min(...xs); const h = Math.max(...ys) - Math.min(...ys);
+    const c = cell; // 판과 같은 크기 — 조각 크기를 그대로 견주게
+    return `<svg viewBox="0 0 ${w * c + 8} ${h * c + 8}" style="width:${w * c + 8}px;max-width:100%;height:auto" role="img" aria-label="${TANGRAM_NAMES[name]} 조각">${polySvg(shifted, c, 4, TANGRAM_COLORS[name])}</svg>`;
+  });
+  const full = `<svg viewBox="0 0 ${cell * 4 + pad * 2} ${cell * 4 + pad * 2}" style="width:${cell * 4 + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="칠교 일곱 조각으로 채운 정사각형">${gridDots(4, 4, cell, pad)}${Object.keys(pieces).map((name) => polySvg(pieces[name], cell, pad, TANGRAM_COLORS[name])).join("")}</svg>`;
+  return {
+    prompt: `칠교 조각 가운데 가장 큰 삼각형 2조각${preset.length ? `과 ${TANGRAM_NAMES[preset[0]]} 1조각` : ""}을 정사각형 판 위에 놓았습니다. 오른쪽의 남은 ${left.length}조각을 돌리거나 뒤집어 빈 곳을 빈틈없이 채우고, 조각 사이의 선을 그으세요.`,
+    visual: { kind: "fig", html: `${board}${kit.join("")}` },
+    answerVisual: { kind: "fig", html: full },
+    answer: "그림과 같이 남은 조각으로 빈 곳을 채움",
+    responseKind: "drawing",
+    solution: `빈 곳의 넓이는 판 넓이의 반이고, 남은 조각(작은 삼각형 2, 중간 삼각형·정사각형·평행사변형 각 1)의 넓이를 모두 더한 것과 같습니다. 직각인 모서리에는 삼각형의 직각을, 기운 선에는 조각의 긴 변을 맞추며 넣으면 빈틈이 없습니다.`,
+    meta: { family: "b3s-tangram-fill", symmetry, preset, pieces }
+  };
+}
+
+// 5조각 정사각형(한 변 2칸)의 안쪽 선 — 중간 삼각형·정사각형·작은 삼각형 2·평행사변형
+const FIVE_SQUARE = [[[0, 2], [2, 2], [1, 1]], [[1, 0], [2, 0], [2, 1], [1, 1]], [[1, 1], [2, 1], [2, 2]], [[0, 0], [1, 0], [0, 1]], [[0, 1], [1, 0], [1, 1], [0, 2]]];
+const SQUARE_PLUS_TWO = {
+  "직사각형": { outline: [[0, 0], [4, 0], [4, 2], [0, 2]], square: [0, 0], tris: [[[2, 0], [4, 0], [2, 2]], [[4, 0], [4, 2], [2, 2]]] },
+  "평행사변형": { outline: [[2, 0], [6, 0], [4, 2], [0, 2]], square: [2, 0], tris: [[[0, 2], [2, 0], [2, 2]], [[4, 0], [6, 0], [4, 2]]] },
+  "사다리꼴": { outline: [[2, 0], [4, 0], [6, 2], [0, 2]], square: [2, 0], tris: [[[0, 2], [2, 0], [2, 2]], [[4, 0], [6, 2], [4, 2]]] },
+  "직각삼각형": { outline: [[0, 0], [4, 4], [0, 4]], square: [0, 2], tris: [[[0, 0], [2, 2], [0, 2]], [[2, 2], [4, 4], [2, 4]]] }
+};
+
+function tangramSquarePlusTwo({ difficulty = 2 } = {}) {
+  const count = difficulty;
+  const names = shuffle(Object.keys(SQUARE_PLUS_TWO)).slice(0, count);
+  const cell = 26; const pad = 6;
+  const kit = (() => {
+    const sq = FIVE_SQUARE.map((poly, index) => polySvg(poly, cell, pad, Object.values(TANGRAM_COLORS)[2 + index])).join("");
+    const t1 = polySvg([[3, 0], [5, 0], [3, 2]], cell, pad, TANGRAM_COLORS.big1);
+    const t2 = polySvg([[6, 0], [8, 0], [6, 2]], cell, pad, TANGRAM_COLORS.big2);
+    return `<svg viewBox="0 0 ${cell * 8 + pad * 2} ${cell * 2 + pad * 2}" style="width:${cell * 8 + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="5조각으로 만든 정사각형과 큰 삼각형 두 조각">${sq}${t1}${t2}</svg>`;
+  })();
+  const shapes = names.map((name, index) => {
+    const spec = SQUARE_PLUS_TWO[name];
+    const flipX = Math.random() < 0.5; const flipY = name !== "직사각형" && Math.random() < 0.5;
+    const xs = spec.outline.map(([x]) => x); const ys = spec.outline.map(([, y]) => y);
+    const w = Math.max(...xs); const h = Math.max(...ys);
+    const map = ([x, y]) => [flipX ? w - x : x, flipY ? h - y : y];
+    const outline = spec.outline.map(map);
+    const [sx, sy] = spec.square;
+    const squarePoly = [[sx, sy], [sx + 2, sy], [sx + 2, sy + 2], [sx, sy + 2]].map(map);
+    const tris = spec.tris.map((tri) => tri.map(map));
+    const view = `0 0 ${w * cell + pad * 2} ${h * cell + pad * 2 + 18}`;
+    const label = `<text x="${(w * cell) / 2 + pad}" y="${h * cell + pad * 2 + 14}" text-anchor="middle" font-size="13" font-weight="700" fill="${INK}">${CIRCLED[index]} ${name}</text>`;
+    const question = `<svg viewBox="${view}" style="width:${w * cell + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="${name} 바깥선">${gridDots(w, h, cell, pad)}${polySvg(outline, cell, pad, "none", ' stroke-width="2"')}${label}</svg>`;
+    const answer = `<svg viewBox="${view}" style="width:${w * cell + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="${name}을 채운 답">${gridDots(w, h, cell, pad)}${polySvg(squarePoly, cell, pad, TANGRAM_COLORS.square)}${tris.map((tri, k) => polySvg(tri, cell, pad, k ? TANGRAM_COLORS.big2 : TANGRAM_COLORS.big1)).join("")}${label}</svg>`;
+    return { name, question, answer, outline, squarePoly, tris };
+  });
+  return {
+    prompt: `칠교 7조각을 모두 써서 사각형·삼각형을 만들려고 합니다. 작은 5조각으로 만든 정사각형에 가장 큰 삼각형 2조각을 붙여 ${names.map((name, index) => `${CIRCLED[index]} ${name}`).join(", ")}${count > 1 ? "을 차례로" : "을"} 만들고, 조각을 놓은 자리에 선을 그으세요.`,
+    visual: { kind: "fig", html: `${kit}${shapes.map((shape) => shape.question).join("")}` },
+    answerVisual: { kind: "fig", html: shapes.map((shape) => shape.answer).join("") },
+    answer: `${names.join(", ")} — 정사각형 1개와 큰 삼각형 2개로 채움`,
+    responseKind: "drawing",
+    solution: `5조각 정사각형의 한 변과 큰 삼각형의 짧은 변은 길이가 같습니다(모눈 2칸). 그래서 ${shapes.map((shape) => (shape.name === "직사각형" ? "직사각형은 정사각형 옆에 두 삼각형을 맞대 붙인 정사각형을" : shape.name === "평행사변형" ? "평행사변형은 정사각형 양쪽에 삼각형을 하나씩 같은 방향으로" : shape.name === "사다리꼴" ? "사다리꼴은 정사각형 양쪽에 삼각형을 하나씩 서로 마주 보게" : "직각삼각형은 정사각형의 두 변에 삼각형을 하나씩")).join(", ")} 붙여 만듭니다. 넓이는 모두 모눈 8칸입니다.`,
+    meta: { family: "b3s-tangram-shapes", names, shapes: shapes.map(({ name, outline, squarePoly, tris }) => ({ name, outline, squarePoly, tris })) }
+  };
+}
+
+// ───────────── 1단원 연습 2 — 모눈 위 삼각형(밑변·높이) ─────────────
+function gridTriangleAreas({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const tris = range(0, 2).map(() => {
+      const base = difficulty === 1 ? sample([2, 4, 6]) : randomInt(2, difficulty === 3 ? 7 : 6);
+      // 너무 납작한 삼각형은 그림에서 읽기 어려워 밑변은 높이의 세 배까지만
+      const height = randomInt(Math.max(1, Math.ceil(base / 3)), Math.max(Math.ceil(base / 3), difficulty === 1 ? 3 : 4));
+      const apex = randomInt(0, base);
+      return { base, height, apex };
+    });
+    // 기울기가 모두 반 바퀴의 반(45°)인 삼각형만 있으면 칸 세기로 끝나므로 다시
+    if (tris.every(({ base, height, apex }) => apex === height && base - apex === height)) continue;
+    if (tris.filter(({ base, height, apex }) => (apex === 0 || apex === base || Math.abs(apex - height) > 0 || Math.abs(base - apex - height) > 0)).length < 2) continue;
+    if (new Set(tris.map(({ base, height, apex }) => `${base},${height},${apex}`)).size < 3) continue;
+    const top = Math.max(...tris.map(({ height }) => height)) + 1;
+    const cell = 22; const pad = 6;
+    let x = 1;
+    const placed = tris.map((tri) => {
+      const points = [[x, top], [x + tri.base, top], [x + tri.apex, top - tri.height]];
+      x += tri.base + 1;
+      return { ...tri, points };
+    });
+    const width = x;
+    const height = top + 1;
+    const body = placed.map((tri, index) => {
+      const cx = tri.points[0][0] + tri.base / 2;
+      return `${polySvg(tri.points, cell, pad, SHADE)}<text x="${fmt(pad + cx * cell)}" y="${fmt(pad + (top + 0.8) * cell)}" text-anchor="middle" font-size="13" font-weight="700" fill="${INK}">${CIRCLED[index]}</text>`;
+    }).join("");
+    const grid = [];
+    for (let i = 0; i <= width; i += 1) grid.push(`<line x1="${pad + i * cell}" y1="${pad}" x2="${pad + i * cell}" y2="${pad + height * cell}" stroke="#cfc6b3" stroke-width="0.9"/>`);
+    for (let j = 0; j <= height; j += 1) grid.push(`<line x1="${pad}" y1="${pad + j * cell}" x2="${pad + width * cell}" y2="${pad + j * cell}" stroke="#cfc6b3" stroke-width="0.9"/>`);
+    const svg = `<svg viewBox="0 0 ${width * cell + pad * 2} ${height * cell + pad * 2}" style="width:${width * cell + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="모눈 위의 삼각형 세 개">${grid.join("")}${body}</svg>`;
+    const areaText = (tri) => { const twice = tri.base * tri.height; return twice % 2 ? mixed(Math.floor(twice / 2), 1, 2) : String(twice / 2); };
+    return {
+      prompt: "모눈 한 칸의 넓이를 1이라고 할 때, 색칠한 삼각형 ㉠, ㉡, ㉢의 넓이를 각각 구하세요.",
+      visual: { kind: "fig", html: svg },
+      answer: placed.map((tri, index) => `${CIRCLED[index]} ${areaText(tri)}`).join(", "),
+      responseKind: "list",
+      solution: `삼각형을 꼭 감싸는 직사각형(밑변 × 높이)을 그리면, 꼭짓점에서 내린 세로선 양쪽이 각각 반씩 색칠되어 삼각형은 직사각형의 반입니다. ${placed.map((tri, index) => `${CIRCLED[index]}: ${tri.base} × ${tri.height}의 반 = ${areaText(tri)}`).join(", ")}입니다.`,
+      meta: { family: "b3s-grid-triangle", tris: placed }
+    };
+  }
+  return null;
+}
+
+// ───────────── 2단원 — 한 칸 폭 띠를 반의 반 바퀴로 꺾어 접기 ─────────────
+// 띠의 가운데 선 길이 = 띠의 길이. 그림으로 보면 곧은 부분의 칸 수 + 접힌 모서리마다 한 칸(삼각형 하나가 한 칸).
+const DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1]];
+
+function foldedTapeFigure(arms, turns) {
+  // arms: 곧은 칸 수(첫 팔, 가운데…, 마지막 팔), turns: 접는 쪽(+1 왼쪽, −1 오른쪽)
+  let dir = randomInt(0, 3);
+  let pos = [0, 0];
+  const pieces = [];
+  arms.forEach((length, index) => {
+    const [dx, dy] = DIRS[dir];
+    const cells = [];
+    for (let k = 0; k < length; k += 1) { cells.push(pos); pos = [pos[0] + dx, pos[1] + dy]; }
+    pieces.push({ kind: "arm", cells, face: index % 2 });
+    if (index < turns.length) {
+      const nextDir = (dir + (turns[index] > 0 ? 3 : 1)) % 4;
+      pieces.push({ kind: "corner", cell: pos, inDir: dir, outDir: nextDir, face: (index + 1) % 2 });
+      const [ndx, ndy] = DIRS[nextDir];
+      pos = [pos[0] + ndx, pos[1] + ndy];
+      dir = nextDir;
+    }
+  });
+  const all = pieces.flatMap((piece) => (piece.kind === "arm" ? piece.cells : [piece.cell]));
+  if (new Set(all.map((cell) => cell.join(","))).size !== all.length) return null;
+  const minX = Math.min(...all.map(([x]) => x)); const minY = Math.min(...all.map(([, y]) => y));
+  pieces.forEach((piece) => {
+    if (piece.kind === "arm") piece.cells = piece.cells.map(([x, y]) => [x - minX + 1, y - minY + 1]);
+    else piece.cell = [piece.cell[0] - minX + 1, piece.cell[1] - minY + 1];
+  });
+  const width = Math.max(...all.map(([x]) => x)) - minX + 3;
+  const height = Math.max(...all.map(([, y]) => y)) - minY + 3;
+  return { pieces, width, height };
+}
+
+function foldedTapeSvg(figure, label) {
+  const cell = 22; const pad = 4;
+  const colors = ["#e9b949", "#fbe8b0"];
+  const grid = [];
+  for (let i = 0; i <= figure.width; i += 1) grid.push(`<line x1="${pad + i * cell}" y1="${pad}" x2="${pad + i * cell}" y2="${pad + figure.height * cell}" stroke="#cfc6b3" stroke-width="0.9"/>`);
+  for (let j = 0; j <= figure.height; j += 1) grid.push(`<line x1="${pad}" y1="${pad + j * cell}" x2="${pad + figure.width * cell}" y2="${pad + j * cell}" stroke="#cfc6b3" stroke-width="0.9"/>`);
+  const shapes = figure.pieces.map((piece) => {
+    if (piece.kind === "arm") {
+      if (!piece.cells.length) return "";
+      const xs = piece.cells.map(([x]) => x); const ys = piece.cells.map(([, y]) => y);
+      const x0 = Math.min(...xs); const y0 = Math.min(...ys);
+      return `<rect x="${pad + x0 * cell}" y="${pad + y0 * cell}" width="${(Math.max(...xs) - x0 + 1) * cell}" height="${(Math.max(...ys) - y0 + 1) * cell}" fill="${colors[piece.face]}" stroke="${INK}" stroke-width="1.5"/>`;
+    }
+    // 모서리 칸: 바깥 모서리(들어온 쪽으로 더 가고, 나가는 쪽의 반대)를 잘라 낸 삼각형
+    const [cx, cy] = piece.cell;
+    const [ix, iy] = DIRS[piece.inDir]; const [ox, oy] = DIRS[piece.outDir];
+    const corners = [[0, 0], [1, 0], [1, 1], [0, 1]];
+    const outer = [0.5 + (ix - ox) / 2, 0.5 + (iy - oy) / 2];
+    const kept = corners.filter(([x, y]) => !(x === outer[0] && y === outer[1]));
+    return `<polygon points="${kept.map(([x, y]) => `${pad + (cx + x) * cell},${pad + (cy + y) * cell}`).join(" ")}" fill="${colors[piece.face]}" stroke="${INK}" stroke-width="1.5" stroke-linejoin="round"/>`;
+  });
+  const w = figure.width * cell + pad * 2; const h = figure.height * cell + pad * 2;
+  return `<svg viewBox="0 0 ${w} ${h + 18}" style="width:${w}px;max-width:100%;height:auto" role="img" aria-label="모눈 위에 접어 놓은 띠">${grid.join("")}${shapes.join("")}<text x="${w / 2}" y="${h + 14}" text-anchor="middle" font-size="14" font-weight="700" fill="${INK}">${label}</text></svg>`;
+}
+
+function foldedTapeProblem(folds, { difficulty = 2 } = {}) {
+  const maxArm = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 7;
+  const figures = [];
+  for (let attempt = 0; attempt < 60 && figures.length < 2; attempt += 1) {
+    const arms = range(0, folds).map(() => randomInt(1, maxArm));
+    const turns = range(1, folds).map(() => (Math.random() < 0.5 ? 1 : -1));
+    const figure = foldedTapeFigure(arms, turns);
+    if (!figure || figure.width > 11 || figure.height > 9) continue;
+    const length = arms.reduce((sum, value) => sum + value, 0) + folds;
+    if (figures.some((other) => other.length === length && JSON.stringify(other.arms) === JSON.stringify(arms))) continue;
+    figures.push({ figure, arms, turns, length });
+  }
+  if (figures.length < 2) return null;
+  const svgs = figures.map((item, index) => foldedTapeSvg(item.figure, CIRCLED[index]));
+  return {
+    prompt: `한 칸의 길이가 1cm인 모눈 위에 폭이 한 칸인 띠를 ${folds === 1 ? "한 번" : "두 번"} 접어 놓았습니다. 띠 ㉠, ㉡을 펼쳤을 때의 길이는 각각 몇 cm인지 구하세요.`,
+    visual: { kind: "fig", html: svgs.join("") },
+    answer: figures.map((item, index) => `${CIRCLED[index]} ${item.length}cm`).join(", "),
+    responseKind: "list",
+    solution: `접힌 모서리의 삼각형은 띠 한 칸이 반으로 겹쳐 접힌 자리라 한 칸으로 셉니다. ${figures.map((item, index) => `${CIRCLED[index]}은 곧은 부분 ${item.arms.join(" + ")}칸에 접힌 곳 ${folds}칸을 더해 ${item.length}cm`).join(", ")}입니다.`,
+    meta: { family: "b3s-folded-tape", folds, figures: figures.map(({ figure, arms, turns, length }) => ({ arms, turns, length, pieces: figure.pieces })) }
+  };
+}
+
+// ───────────── 2단원 — 성냥개비로 잰 길이(점선 맞춤) ─────────────
+// 위 줄: 긴 것 1개 + 성냥 a개, 아래 줄: 성냥 b개 + 같은 것 k개. 끝이 맞는 자리에 세로 점선이 있다.
+// 성냥 한 개의 길이는 쓰지 않는다 — 마지막 물건 하나가 성냥 몇 개와 끝이 맞는지 그림에서 읽는다.
+function matchRowsLayout({ difficulty = 2 } = {}) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const q = randomInt(2, difficulty === 3 ? 5 : 4);
+    const k = difficulty === 3 ? sample([2, 3]) : 2;
+    const a = randomInt(q, q + 3);
+    const b = randomInt(1, 4);
+    const r = b + k * q - a;
+    if (r < 2 || r === q || r + a > 13) continue;
+    const match = randomInt(2, difficulty === 1 ? 4 : 6);
+    return { q, k, a, b, r, match };
+  }
+  return null;
+}
+
+function matchRowsSvg({ q, k, a, b, r }, { bigLabel, smallLabel, unit = 24, rods = false }) {
+  const pad = 14; const rowH = 22; const top = 46;
+  const total = r + a;
+  const X = (u) => fmt(pad + u * unit);
+  const W = total * unit + pad * 2;
+  const y1 = top; const y2 = top + rowH + 16;
+  const matchSvg = (u, y) => `<line x1="${X(u) + 2}" y1="${y + rowH / 2}" x2="${fmt(X(u + 1) - 4)}" y2="${y + rowH / 2}" stroke="#c99a5b" stroke-width="3.2" stroke-linecap="round"/><circle cx="${fmt(X(u + 1) - 4)}" cy="${y + rowH / 2}" r="3.4" fill="#c0392b"/>`;
+  const parts = [];
+  parts.push(`<rect x="${X(0)}" y="${y1}" width="${r * unit}" height="${rowH}" rx="${rods ? 2 : 9}" fill="${rods ? "#f6efdc" : "#ead2a8"}" stroke="${INK}" stroke-width="1.5"/><text x="${fmt(pad + (r * unit) / 2)}" y="${y1 + 15}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}">${bigLabel}</text>`);
+  range(r, total - 1).forEach((u) => parts.push(matchSvg(u, y1)));
+  range(0, b - 1).forEach((u) => parts.push(matchSvg(u, y2)));
+  range(0, k - 1).forEach((j) => {
+    const x0 = b + j * q;
+    parts.push(rods
+      ? `<rect x="${X(x0)}" y="${y2}" width="${q * unit}" height="${rowH}" rx="2" fill="#f6efdc" stroke="${INK}" stroke-width="1.5"/><text x="${fmt(pad + (x0 + q / 2) * unit)}" y="${y2 + 15}" text-anchor="middle" font-size="12" font-weight="700" fill="${INK}">${smallLabel}</text>`
+      : `<polygon points="${X(x0)},${y2 + 4} ${fmt(X(x0 + q) - 9)},${y2 + 4} ${X(x0 + q)},${y2 + rowH / 2} ${fmt(X(x0 + q) - 9)},${y2 + rowH - 4} ${X(x0)},${y2 + rowH - 4}" fill="#9fc79a" stroke="${INK}" stroke-width="1.3"/><text x="${fmt(pad + (x0 + q / 2) * unit)}" y="${y2 + 15}" text-anchor="middle" font-size="11" font-weight="700" fill="${INK}">${smallLabel}</text>`);
+  });
+  // 끝이 맞는 자리 점선: 위 줄의 긴 것 시작·끝, 아래 줄 물건 경계 가운데 위 줄 성냥 자리에 오는 것
+  const marks = new Set([0, r, total]);
+  range(0, k).forEach((j) => { const u = b + j * q; if (u >= r) marks.add(u); });
+  [...marks].forEach((u) => parts.push(`<line x1="${X(u)}" y1="${y1 - 8}" x2="${X(u)}" y2="${y2 + rowH + 8}" stroke="${LINE}" stroke-width="1" stroke-dasharray="3 3"/>`));
+  const last = b + (k - 1) * q;
+  return { parts, W, H: y2 + rowH + 40, last, X, y1, y2, rowH };
+}
+
+function matchLengthPicture(layout, { bigName, smallName, givenSide, givenValue, rods }) {
+  const { parts, W, H, last, X, y1, y2, rowH } = matchRowsSvg(layout, { bigLabel: bigName, smallLabel: smallName, rods });
+  const r = layout.r; const q = layout.q;
+  if (givenSide === "big") {
+    parts.push(dimArc(Number(X(0)), y1, Number(X(r)), y1, -12, `${givenValue}cm`));
+    parts.push(dimArc(Number(X(last)), y2 + rowH, Number(X(last + q)), y2 + rowH, 12, "", { blank: true }));
+  } else {
+    parts.push(dimArc(Number(X(0)), y1, Number(X(r)), y1, -12, "", { blank: true }));
+    parts.push(dimArc(Number(X(last)), y2 + rowH, Number(X(last + q)), y2 + rowH, 12, `${givenValue}cm`));
+  }
+  return `<svg viewBox="0 0 ${W} ${H}" style="width:${W}px;max-width:100%;height:auto" role="img" aria-label="두 줄로 늘어놓은 ${bigName}·${smallName}과 성냥개비">${parts.join("")}</svg>`;
+}
+
+function logMatchPencil({ difficulty = 2 } = {}) {
+  const layout = matchRowsLayout({ difficulty });
+  if (!layout) return null;
+  const { q, k, a, b, r, match } = layout;
+  const log = r * match; const pencil = q * match;
+  const givenSide = difficulty === 1 ? "big" : sample(["big", "small"]);
+  const givenValue = givenSide === "big" ? log : pencil;
+  const answer = givenSide === "big" ? pencil : log;
+  const html = matchLengthPicture(layout, { bigName: "통나무", smallName: "연필", givenSide, givenValue, rods: false });
+  return {
+    prompt: `통나무 1개와 성냥개비 ${a}개를 이은 길이는 성냥개비 ${b}개와 연필 ${k}자루를 이은 길이와 같습니다. ${givenSide === "big" ? `통나무 1개의 길이가 ${givenValue}cm일 때, 연필 1자루` : `연필 1자루의 길이가 ${givenValue}cm일 때, 통나무 1개`}의 길이를 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${answer}cm`,
+    solution: `점선을 보면 마지막 연필 1자루는 위 줄의 성냥개비 ${q}개와 끝이 맞습니다. 아래 줄은 성냥개비 ${b} + ${q} × ${k} = ${b + q * k}개 길이이고, 위 줄은 통나무에 성냥개비 ${a}개를 이었으므로 통나무는 성냥개비 ${b + q * k} − ${a} = ${r}개 길이입니다. ${givenSide === "big" ? `성냥개비 1개는 ${log} ÷ ${r} = ${match}cm이고 연필은 ${match} × ${q} = ${pencil}cm` : `성냥개비 1개는 ${pencil} ÷ ${q} = ${match}cm이고 통나무는 ${match} × ${r} = ${log}cm`}입니다.`,
+    meta: { family: "b3s-match-rows", ...layout, givenSide, givenValue, answer, rods: false }
+  };
+}
+
+function rodMatchGuides({ difficulty = 2 } = {}) {
+  const layout = matchRowsLayout({ difficulty });
+  if (!layout) return null;
+  const { q, k, a, b, r, match } = layout;
+  const big = r * match; const small = q * match;
+  const givenSide = difficulty === 1 ? "big" : sample(["big", "small"]);
+  const givenValue = givenSide === "big" ? big : small;
+  const answer = givenSide === "big" ? small : big;
+  const html = matchLengthPicture(layout, { bigName: "㉠", smallName: "㉡", givenSide, givenValue, rods: true });
+  return {
+    prompt: `그림과 같이 위 줄에는 막대 ㉠과 성냥개비를, 아래 줄에는 성냥개비와 막대 ㉡을 늘어놓았더니 두 줄의 길이가 같습니다. 막대 ${givenSide === "big" ? "㉠" : "㉡"}의 길이가 ${givenValue}cm일 때, 막대 ${givenSide === "big" ? "㉡" : "㉠"}의 길이를 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${answer}cm`,
+    solution: `두 줄에서 같은 수의 성냥개비를 지우고 생각합니다. 점선을 보면 마지막 막대 ㉡은 위 줄의 성냥개비 ${q}개와 끝이 맞습니다. 위 줄은 ㉠ + 성냥개비 ${a}개, 아래 줄은 성냥개비 ${b}개 + ㉡ ${k}개(성냥개비 ${q * k}개)이므로 ㉠은 성냥개비 ${b + q * k} − ${a} = ${r}개 길이입니다. ${givenSide === "big" ? `성냥개비 1개는 ${big} ÷ ${r} = ${match}cm, ㉡은 ${match} × ${q} = ${small}cm` : `성냥개비 1개는 ${small} ÷ ${q} = ${match}cm, ㉠은 ${match} × ${r} = ${big}cm`}입니다.`,
+    meta: { family: "b3s-match-rows", ...layout, givenSide, givenValue, answer, rods: true }
+  };
+}
+
+// ───────────── 2단원 — 수직선 위 점 사이의 거리(겹친 구간으로 구간 찾기) ─────────────
+// 구간 [i, j]: i번째 점부터 j번째 점까지. 아는 구간끼리 「이어 붙이기·같은 끝에서 빼기」만으로 알아내는지 따라간다.
+const POINT_NAMES = ["A", "B", "C", "D", "E", "F"];
+const spanName = ([i, j]) => `${POINT_NAMES[i]}${POINT_NAMES[j]}`;
+
+function deriveSpans(given) {
+  const known = new Map(given.map(([i, j]) => [`${i},${j}`, [i, j]]));
+  let grew = true;
+  while (grew) {
+    grew = false;
+    const list = [...known.values()];
+    for (const [a, b] of list) for (const [c, d] of list) {
+      const add = (i, j) => { if (i < j && !known.has(`${i},${j}`)) { known.set(`${i},${j}`, [i, j]); grew = true; } };
+      if (b === c) add(a, d);
+      if (a === c && b !== d) add(Math.min(b, d), Math.max(b, d));
+      if (b === d && a !== c) add(Math.min(a, c), Math.max(a, c));
+    }
+  }
+  return known;
+}
+
+function numberLineSvg(gaps, spans, { blanks = [] } = {}) {
+  const total = gaps.reduce((s, v) => s + v, 0);
+  const width = 420; const pad = 24;
+  const xs = [pad];
+  gaps.forEach((gap) => xs.push(xs[xs.length - 1] + (gap / total) * width));
+  const axisY = 96;
+  const parts = [`<line x1="${pad - 12}" y1="${axisY}" x2="${fmt(xs[xs.length - 1] + 12)}" y2="${axisY}" stroke="${INK}" stroke-width="1.6"/>`];
+  xs.forEach((x, index) => parts.push(`<circle cx="${fmt(x)}" cy="${axisY}" r="3.6" fill="${INK}"/><text x="${fmt(x)}" y="${axisY - 9}" text-anchor="middle" font-size="13" font-weight="700" fill="${INK}">${POINT_NAMES[index]}</text>`));
+  // 위·아래 줄(겹치면 다음 줄)
+  const lanes = { up: [], down: [] };
+  const overlap = ([a, b], [c, d]) => Math.max(a, c) < Math.min(b, d);
+  spans.forEach((span, index) => {
+    const side = span.side;
+    let lane = 0;
+    while ((lanes[side][lane] || []).some((other) => overlap(other, span.range))) lane += 1;
+    (lanes[side][lane] = lanes[side][lane] || []).push(span.range);
+    const [i, j] = span.range;
+    const bend = (side === "up" ? -1 : 1) * (16 + lane * 17);
+    const y = side === "up" ? axisY - 16 : axisY;
+    parts.push(dimArc(xs[i], y, xs[j], y, bend, span.label, span.blank ? { blank: true } : { halo: true }));
+    if (span.blank) blanks.push(index);
+  });
+  return `<svg viewBox="0 0 ${width + pad * 2} 190" style="width:${width + pad * 2}px;max-width:100%;height:auto" role="img" aria-label="수직선 위 점 사이의 거리">${parts.join("")}</svg>`;
+}
+
+const GAP_COMBOS = [
+  { given: [[0, 2], [1, 3], [1, 2]], ask: [[0, 1], [2, 3], [0, 3]] },
+  { given: [[0, 3], [0, 1], [2, 3]], ask: [[1, 2], [0, 2], [1, 3]] },
+  { given: [[0, 2], [2, 3], [1, 3]], ask: [[0, 1], [1, 2], [0, 3]] }
+];
+
+function segmentChainInnerGiven({ difficulty = 2 } = {}) {
+  const combo = difficulty === 3 ? sample(GAP_COMBOS) : GAP_COMBOS[0];
+  const low = difficulty === 1 ? 3 : 5; const high = difficulty === 1 ? 12 : difficulty === 2 ? 20 : 30;
+  const gaps = range(0, 2).map(() => randomInt(low, high));
+  const length = ([i, j]) => gaps.slice(i, j).reduce((s, v) => s + v, 0);
+  const sides = ["up", "up", "down"];
+  const spans = combo.given.map((range, index) => ({ range, label: `${length(range)}cm`, side: combo === GAP_COMBOS[1] && index === 0 ? "down" : sides[index] }));
+  const html = numberLineSvg(gaps, spans);
+  const answer = combo.ask.map((span) => `${spanName(span)}=${length(span)}cm`).join(", ");
+  const steps = [];
+  if (combo === GAP_COMBOS[0]) steps.push(`AC에서 BC를 빼면 AB = ${length([0, 2])} − ${length([1, 2])} = ${gaps[0]}cm, BD에서 BC를 빼면 CD = ${length([1, 3])} − ${length([1, 2])} = ${gaps[2]}cm입니다. AD = AB + BD = ${gaps[0]} + ${length([1, 3])} = ${length([0, 3])}cm입니다.`);
+  else if (combo === GAP_COMBOS[1]) steps.push(`AD에서 AB와 CD를 빼면 BC = ${length([0, 3])} − ${gaps[0]} − ${gaps[2]} = ${gaps[1]}cm입니다. AC = AB + BC = ${length([0, 2])}cm, BD = BC + CD = ${length([1, 3])}cm입니다.`);
+  else steps.push(`BD에서 CD를 빼면 BC = ${length([1, 3])} − ${gaps[2]} = ${gaps[1]}cm, AC에서 BC를 빼면 AB = ${length([0, 2])} − ${gaps[1]} = ${gaps[0]}cm입니다. AD = AC + CD = ${length([0, 3])}cm입니다.`);
+  return {
+    prompt: `수직선 위 네 점 A, B, C, D 사이의 거리를 그림에 나타냈습니다. ${combo.ask.map((span) => `${span.map((index) => POINT_NAMES[index]).join("와 ")}`).join(", ")} 사이의 거리를 각각 구하세요.`,
+    visual: { kind: "fig", html },
+    answer,
+    responseKind: "list",
+    solution: steps.join(" "),
+    meta: { family: "b3s-point-spans", gaps, given: combo.given, ask: combo.ask, values: combo.ask.map(length) }
+  };
+}
+
+function sixPointsThreeGaps({ difficulty = 2 } = {}) {
+  const pool = [];
+  for (let i = 0; i < 6; i += 1) for (let j = i + 1; j < 6; j += 1) if (j - i >= 2 && j - i <= 4) pool.push([i, j]);
+  for (let attempt = 0; attempt < 400; attempt += 1) {
+    const given = shuffle(pool).slice(0, 5);
+    if (difficulty === 1 && Math.random() < 0.7) given[randomInt(0, 4)] = sample([[1, 2], [2, 3], [3, 4]]);
+    const keys = new Set(given.map(([i, j]) => `${i},${j}`));
+    if (keys.size < 5) continue;
+    const known = deriveSpans(given);
+    if (!range(0, 4).every((k) => known.has(`${k},${k + 1}`))) continue;
+    // 하나라도 빼면 못 푸는(꼭 필요한 것만 준) 묶음
+    if (given.some((_, index) => { const rest = given.filter((__, other) => other !== index); const k2 = deriveSpans(rest); return range(0, 4).every((k) => k2.has(`${k},${k + 1}`)); })) continue;
+    const askable = range(0, 4).filter((k) => !keys.has(`${k},${k + 1}`));
+    if (askable.length < 3) continue;
+    const ask = shuffle(askable).slice(0, 3).sort((a, b) => a - b).map((k) => [k, k + 1]);
+    const gaps = range(0, 4).map(() => randomInt(difficulty === 1 ? 6 : 8, difficulty === 3 ? 34 : 24));
+    const length = ([i, j]) => gaps.slice(i, j).reduce((s, v) => s + v, 0);
+    const spans = given.map((range, index) => ({ range, label: `${length(range)}cm`, side: index % 2 ? "down" : "up" }));
+    const html = numberLineSvg(gaps, spans);
+    return {
+      prompt: `수직선 위 여섯 점 A, B, C, D, E, F 사이의 거리를 그림에 나타냈습니다. ${ask.map((span) => `두 점 ${POINT_NAMES[span[0]]}와 ${POINT_NAMES[span[1]]}`).join(", ")} 사이의 거리를 각각 구하세요.`,
+      visual: { kind: "fig", html },
+      answer: ask.map((span) => `${spanName(span)}=${length(span)}cm`).join(", "),
+      responseKind: "list",
+      solution: `한 끝이 같은 두 거리의 차는 나머지 구간의 거리이고, 이어진 두 거리의 합은 긴 구간의 거리입니다. 주어진 ${given.map((span) => `${spanName(span)} ${length(span)}cm`).join(", ")}에서 이렇게 차례로 구하면 AB = ${gaps[0]}, BC = ${gaps[1]}, CD = ${gaps[2]}, DE = ${gaps[3]}, EF = ${gaps[4]}(cm)입니다.`,
+      meta: { family: "b3s-point-spans", gaps, given, ask, values: ask.map(length) }
+    };
+  }
+  return null;
+}
+
+// ───────────── 3단원 도전 4 — 모양 관계식 + 같은 두 자리 수 여러 번 더하기 ─────────────
+const RELATIONS = { double: { times: 2, text: (a, b) => `${a} + ${a} = ${b}` }, triple: { times: 3, text: (a, b) => `${a} + ${a} + ${a} = ${b}` } };
+const relationCache = new Map();
+function relationFamily(relation, pattern, count) {
+  const key = `${relation}|${pattern}|${count}`;
+  if (relationCache.has(key)) return relationCache.get(key);
+  const byKey = new Map();
+  const times = RELATIONS[relation].times;
+  for (let A = 0; A <= 9; A += 1) {
+    const B = A * times;
+    if (B > 9 || B === A) continue;
+    const digits = { A, B };
+    const addend = pattern.split("").map((letter) => digits[letter]);
+    if (addend[0] === 0) continue;
+    const value = addend[0] * 10 + addend[1];
+    const sum = value * count;
+    const map = new Map([[A, "A"], [B, "B"]]);
+    const extra = [];
+    const sumTokens = String(sum).split("").map(Number).map((digit) => { if (!map.has(digit)) { const letter = ["C", "D", "E"][extra.length]; extra.push(digit); map.set(digit, letter); } return map.get(digit); });
+    if (!extra.length) continue;
+    const shape = sumTokens.join("");
+    const entryKey = `${pattern}|${count}|${shape}`;
+    const hit = byKey.get(entryKey);
+    if (hit) { hit.count += 1; continue; }
+    byKey.set(entryKey, { count: 1, A, B, pattern, sumTokens, extra, value, sum });
+  }
+  const list = [...byKey.values()].filter((entry) => entry.count === 1 && countRelationSolutions(relation, pattern, count, entry.sumTokens) === 1);
+  relationCache.set(key, list);
+  return list;
+}
+
+// 관계식과 세로셈을 모두 맞추는 숫자 배정을 처음부터 다시 센다(검산용).
+export function countRelationSolutions(relation, pattern, count, sumTokens) {
+  const times = RELATIONS[relation].times;
+  const letters = [...new Set(["A", "B", ...sumTokens])];
+  let found = 0;
+  const assign = {};
+  const used = new Set();
+  const walk = (index) => {
+    if (found > 1) return;
+    if (index === letters.length) {
+      if (assign.B !== assign.A * times) return;
+      const addend = pattern.split("").map((letter) => assign[letter]);
+      if (addend[0] === 0 || assign[sumTokens[0]] === 0) return;
+      const sum = sumTokens.reduce((total, letter) => total * 10 + assign[letter], 0);
+      if ((addend[0] * 10 + addend[1]) * count === sum) found += 1;
+      return;
+    }
+    for (let digit = 0; digit <= 9; digit += 1) {
+      if (used.has(digit)) continue;
+      used.add(digit); assign[letters[index]] = digit;
+      walk(index + 1);
+      used.delete(digit);
+    }
+  };
+  walk(0);
+  return found;
+}
+
+function cryptRelationRepeat({ difficulty = 2 } = {}) {
+  const options = [];
+  const relations = difficulty === 1 ? ["double"] : ["double", "triple"];
+  const counts = difficulty === 1 ? [2, 3] : difficulty === 2 ? [3] : [3, 4];
+  relations.forEach((relation) => ["AB", "BA"].forEach((pattern) => counts.forEach((count) => relationFamily(relation, pattern, count).forEach((entry) => options.push({ relation, count, entry })))));
+  if (!options.length) return null;
+  const { relation, count, entry } = sample(options);
+  const glyphs = shuffle(SHAPES);
+  const glyph = { A: glyphs[0], B: glyphs[1], C: glyphs[2], D: glyphs[3], E: glyphs[4] };
+  const askLetter = sample(entry.sumTokens.filter((letter) => !["A", "B"].includes(letter)));
+  const digitOf = { A: entry.A, B: entry.B };
+  entry.extra.forEach((digit, index) => { digitOf[["C", "D", "E"][index]] = digit; });
+  const addRow = entry.pattern.split("").map((letter) => glyph[letter]);
+  const relationText = RELATIONS[relation].text(glyph.A, glyph.B);
+  return {
+    prompt: `다음 식에서 ${relationText}이고, 같은 모양은 같은 숫자를, 다른 모양은 다른 숫자를 나타냅니다. ${glyph[askLetter]}가 나타내는 숫자를 구하세요.`,
+    visual: { kind: "cryptarithm-vertical", addends: Array.from({ length: count }, () => [...addRow]), sum: entry.sumTokens.map((letter) => glyph[letter]) },
+    answer: String(digitOf[askLetter]),
+    solution: `${relationText}이므로 ${glyph.B}는 ${glyph.A}의 ${RELATIONS[relation].times}배입니다. 가능한 ${glyph.A}를 하나씩 넣어 보면 ${glyph.A}=${entry.A}일 때 ${glyph.B}=${entry.B}이고, ${addRow.join("")}는 ${entry.value}이므로 ${entry.value} × ${count} = ${entry.sum}입니다. 결과의 모양과 맞으므로 ${glyph[askLetter]}=${digitOf[askLetter]}입니다.`,
+    meta: { family: "b3s-crypt-relation", relation, pattern: entry.pattern, count, sumTokens: entry.sumTokens, digits: digitOf, askLetter, glyph }
+  };
+}
+
 // ───────────────────────────── 생성기 · 유형 · 안내 · 번호 ─────────────────────────────
 
 export const BOOK03_STRUCTURE_GENERATORS = {
@@ -917,7 +1909,29 @@ export const BOOK03_STRUCTURE_GENERATORS = {
   b3sRingOtherSum: ringOtherSum,
   b3sNestedSquareDoubling: nestedSquareDoubling,
   b3sRodRowsCounts: rodRowsCounts,
-  b3sRodRowsMixed: rodRowsMixed
+  b3sRodRowsMixed: rodRowsMixed,
+  b3sPartitionTriangleMixed: partitionTriangleMixed,
+  b3sPartitionTriangleThirds: partitionTriangleThirds,
+  b3sPartitionSquare: partitionSquare,
+  b3sPartitionRightTriangleSquare: partitionRightTriangleSquare,
+  b3sPartitionHexagon: partitionHexagon,
+  b3sPartitionHexagram: partitionHexagram,
+  b3sSquareGridRow: squareGridRow,
+  b3sSquareSplitRow: squareSplitRow,
+  b3sTriangleSplitRow: triangleSplitRow,
+  b3sHexagonSplitRow: hexagonSplitRow,
+  b3sCircleEquivalentRow: circleEquivalentRow,
+  b3sCircleHalvingRow: circleHalvingRow,
+  b3sTangramFillAroundBig: tangramFillAroundBig,
+  b3sTangramSquarePlusTwo: tangramSquarePlusTwo,
+  b3sGridTriangleAreas: gridTriangleAreas,
+  b3sFoldedTapeOne: (options) => foldedTapeProblem(1, options),
+  b3sFoldedTapeTwo: (options) => foldedTapeProblem(2, options),
+  b3sLogMatchPencil: logMatchPencil,
+  b3sRodMatchGuides: rodMatchGuides,
+  b3sSegmentChainInnerGiven: segmentChainInnerGiven,
+  b3sSixPointsThreeGaps: sixPointsThreeGaps,
+  b3sCryptRelationRepeat: cryptRelationRepeat
 };
 
 const cryptRow = (id, label, generator, aliases = []) => ({
@@ -936,6 +1950,18 @@ const magicRow = (id, label, generator, aliases = []) => ({
   id, domain: "pattern", middle: "마방진", label, generator,
   catalogGroup: "마방진", catalogStrategy: "한 줄의 합 먼저",
   searchAliases: ["마방진", ...aliases]
+});
+
+const fractionRow = (id, label, generator, strategy, aliases = []) => ({
+  id, domain: "geometry", middle: "도형의 분할과 분수", label, generator,
+  catalogGroup: "단위넓이와 분수", catalogStrategy: strategy,
+  searchAliases: ["분수", "도형 분할", ...aliases]
+});
+
+const lengthRow = (id, label, generator, strategy, aliases = []) => ({
+  id, domain: "geometry", middle: "단위길이", label, generator,
+  catalogGroup: "단위길이와 배수", catalogStrategy: strategy,
+  searchAliases: ["길이", ...aliases]
 });
 
 export const BOOK03_STRUCTURE_TYPE_ROWS = [
@@ -962,7 +1988,29 @@ export const BOOK03_STRUCTURE_TYPE_ROWS = [
   magicRow("ring-other-sum-b3", "오각진의 세 수 합을 정해진 합으로 맞추기", "b3sRingOtherSum", ["오각진", "합 19"]),
   { id: "nested-square-doubling-b3", domain: "pattern", middle: "넓이 규칙", label: "바로 선·기운 정사각형이 번갈아 감싸 넓이가 두 배씩", generator: "b3sNestedSquareDoubling", catalogGroup: "단위넓이", catalogStrategy: "두 배씩 커지는 넓이", searchAliases: ["겹친 정사각형", "기운 정사각형", "넓이 두 배"] },
   { id: "rod-rows-counts-b3", domain: "geometry", middle: "막대와 배수", label: "같은 길이 줄을 막대 여러 가지로 채운 막대 사슬", generator: "b3sRodRowsCounts", catalogGroup: "단위길이와 배수", catalogStrategy: "한 줄의 길이 먼저", searchAliases: ["막대", "막대 사슬", "배수"] },
-  { id: "rod-rows-mixed-b3", domain: "geometry", middle: "막대와 배수", label: "긴 막대와 짧은 막대가 섞인 줄의 막대 길이", generator: "b3sRodRowsMixed", catalogGroup: "단위길이와 배수", catalogStrategy: "끝이 맞는 막대 찾기", searchAliases: ["막대", "막대 사슬", "끝 맞추기"] }
+  { id: "rod-rows-mixed-b3", domain: "geometry", middle: "막대와 배수", label: "긴 막대와 짧은 막대가 섞인 줄의 막대 길이", generator: "b3sRodRowsMixed", catalogGroup: "단위길이와 배수", catalogStrategy: "끝이 맞는 막대 찾기", searchAliases: ["막대", "막대 사슬", "끝 맞추기"] },
+  fractionRow("partition-triangle-mixed-b3", "크기가 다른 조각이 섞인 정삼각형 — 빠진 선 긋고 분수로", "b3sPartitionTriangleMixed", "빠진 선 긋기", ["빠진 선", "정삼각형 분할"]),
+  fractionRow("partition-triangle-thirds-b3", "정삼각형 한 칸을 셋으로 나눈 조각 — 빠진 선 긋고 분수로", "b3sPartitionTriangleThirds", "빠진 선 긋기", ["빠진 선", "세 조각", "가운데 점"]),
+  fractionRow("partition-square-b3", "정사각형을 작은 삼각형으로 — 빠진 선 긋고 분수로", "b3sPartitionSquare", "빠진 선 긋기", ["빠진 선", "정사각형 분할", "대각선"]),
+  fractionRow("partition-right-triangle-square-b3", "직각이등변삼각형 안의 정사각형을 분수로", "b3sPartitionRightTriangleSquare", "빠진 선 긋기", ["빠진 선", "직각이등변삼각형", "안의 정사각형"]),
+  fractionRow("partition-hexagon-b3", "정육각형을 작은 삼각형으로 — 빠진 선 긋고 분수로", "b3sPartitionHexagon", "빠진 선 긋기", ["빠진 선", "정육각형 분할"]),
+  fractionRow("partition-hexagram-b3", "육각별을 작은 정삼각형으로 — 빠진 선 긋고 분수로", "b3sPartitionHexagram", "빠진 선 긋기", ["빠진 선", "육각별", "별 모양"]),
+  fractionRow("square-grid-fraction-row-b3", "모눈으로 나눈 정사각형 여러 개의 색칠한 부분 분수", "b3sSquareGridRow", "전체와 부분 세기", ["모눈", "정사각형 분수"]),
+  fractionRow("square-split-fraction-row-b3", "반·넷·여덟·열여섯으로 나눈 정사각형의 분수", "b3sSquareSplitRow", "전체와 부분 세기", ["정사각형 분수", "대각선"]),
+  fractionRow("triangle-split-fraction-row-b3", "여러 가지로 나눈 정삼각형의 분수", "b3sTriangleSplitRow", "전체와 부분 세기", ["정삼각형 분수", "가운데 점"]),
+  fractionRow("hexagon-split-fraction-row-b3", "마름모·삼각형으로 나눈 정육각형의 분수", "b3sHexagonSplitRow", "전체와 부분 세기", ["정육각형 분수", "마름모"]),
+  fractionRow("circle-equivalent-fraction-row-b3", "조각이 2배·3배로 늘어난 원의 같은 크기 분수", "b3sCircleEquivalentRow", "전체와 부분 세기", ["원 분수", "같은 크기 분수"]),
+  fractionRow("circle-halving-fraction-row-b3", "조각이 반씩 작아지는 원의 한 조각 분수", "b3sCircleHalvingRow", "전체와 부분 세기", ["원 분수", "단위분수"]),
+  { id: "tangram-fill-around-big-b3", domain: "geometry", middle: "칠교와 넓이", label: "큰 삼각형 두 조각을 놓은 판을 남은 5조각으로 채우기", generator: "b3sTangramFillAroundBig", catalogGroup: "단위넓이", catalogStrategy: "넓이와 변 맞추기", searchAliases: ["칠교", "칠교 채우기"] },
+  { id: "tangram-square-plus-two-b3", domain: "geometry", middle: "칠교와 넓이", label: "5조각 정사각형에 큰 삼각형 둘을 붙여 사각형 만들기", generator: "b3sTangramSquarePlusTwo", catalogGroup: "단위넓이", catalogStrategy: "넓이와 변 맞추기", searchAliases: ["칠교", "직사각형", "평행사변형", "사다리꼴"] },
+  { id: "grid-triangle-areas-b3", domain: "geometry", middle: "단위넓이", label: "모눈 위 삼각형 세 개의 넓이(밑변과 높이)", generator: "b3sGridTriangleAreas", catalogGroup: "단위넓이", catalogStrategy: "감싸는 직사각형의 반", searchAliases: ["삼각형 넓이", "모눈"] },
+  lengthRow("folded-tape-one-fold-b3", "한 번 접은 한 칸 폭 띠의 길이", "b3sFoldedTapeOne", "접힌 곳은 한 칸", ["색 테이프", "접은 띠"]),
+  lengthRow("folded-tape-two-folds-b3", "두 번 접은 한 칸 폭 띠의 길이", "b3sFoldedTapeTwo", "접힌 곳은 한 칸", ["리본 끈", "접은 띠"]),
+  lengthRow("log-match-pencil-guides-b3", "통나무·성냥개비·연필 두 줄 — 점선으로 성냥 수 읽기", "b3sLogMatchPencil", "끝이 맞는 점선 읽기", ["성냥개비", "통나무", "연필"]),
+  lengthRow("rod-match-guides-b3", "막대와 성냥개비 두 줄 — 같은 성냥 지우고 막대 길이", "b3sRodMatchGuides", "끝이 맞는 점선 읽기", ["성냥개비", "막대"]),
+  { ...lengthRow("segment-chain-inner-given-b3", "네 점 — 겹친 거리와 가운데 거리로 나머지 거리", "b3sSegmentChainInnerGiven", "겹친 구간 빼기", ["수직선", "점 사이 거리"]), middle: "수직선과 길이" },
+  { ...lengthRow("six-points-three-gaps-b3", "여섯 점 — 겹친 거리 다섯으로 구간 세 개", "b3sSixPointsThreeGaps", "겹친 구간 빼기", ["수직선", "여섯 점"]), middle: "수직선과 길이" },
+  cryptRow("crypt-relation-repeat-b3", "모양 관계식과 같은 두 자리 수 여러 번 더하기", "b3sCryptRelationRepeat", ["관계식", "여러 번 더하기"])
 ];
 
 export const BOOK03_STRUCTURE_GUIDES = {
@@ -989,7 +2037,29 @@ export const BOOK03_STRUCTURE_GUIDES = {
   "ring-other-sum-b3": "꼭짓점 다섯 수의 합은 (한 줄의 합) × 5 − 55입니다. 두 수를 아는 줄부터 빼서 채웁니다.",
   "nested-square-doubling-b3": "감싸는 정사각형은 안쪽 정사각형의 넓이에 같은 넓이를 한 번 더 붙인 것이라 두 배씩 커집니다.",
   "rod-rows-counts-b3": "아는 막대로 한 줄의 길이를 먼저 구하고, 그 길이를 다른 막대의 개수로 나눕니다.",
-  "rod-rows-mixed-b3": "끝이 맞는 곳을 찾아 짧은 막대 몇 개가 아래 막대 하나인지 보고, 한 줄의 길이를 구한 뒤 나머지를 뺍니다."
+  "rod-rows-mixed-b3": "끝이 맞는 곳을 찾아 짧은 막대 몇 개가 아래 막대 하나인지 보고, 한 줄의 길이를 구한 뒤 나머지를 뺍니다.",
+  "partition-triangle-mixed-b3": "가장 작은 정삼각형 하나를 기준으로 큰 조각 안에 선을 그어, 큰 조각이 작은 조각 몇 개인지 셉니다.",
+  "partition-triangle-thirds-b3": "셋으로 나뉜 한 칸을 보고 다른 칸도 가운데 점에서 꼭짓점으로 선을 그어 셋씩 나눈 뒤 셉니다.",
+  "partition-square-b3": "가장 작은 삼각형과 같은 모양이 되도록 대각선과 가운데 선을 이어 긋고, 색칠한 조각이 작은 삼각형 몇 개인지 셉니다.",
+  "partition-right-triangle-square-b3": "정사각형의 변을 늘이거나 대각선을 그어 작은 삼각형으로 나누고, 정사각형이 그 삼각형 몇 개인지 셉니다.",
+  "partition-hexagon-b3": "가장 작은 삼각형을 찾아 같은 모양이 되도록 가운데 점과 꼭짓점을 잇는 선을 더 긋고 셉니다.",
+  "partition-hexagram-b3": "별의 끝 삼각형과 같은 크기가 되도록 가운데 육각형을 정삼각형 여섯 개로 나누어 셉니다.",
+  "square-grid-fraction-row-b3": "작은 정사각형이 모두 몇 개인지(가로 칸 수 × 세로 칸 수) 세어 분모로, 색칠한 칸 수를 분자로 씁니다.",
+  "square-split-fraction-row-b3": "그림마다 정사각형이 같은 조각 몇 개로 나뉘었는지 세어 분모로, 색칠한 조각 수를 분자로 씁니다.",
+  "triangle-split-fraction-row-b3": "그림마다 정삼각형이 같은 조각 몇 개로 나뉘었는지 세어 분모로, 색칠한 조각 수를 분자로 씁니다.",
+  "hexagon-split-fraction-row-b3": "그림마다 정육각형이 같은 조각 몇 개로 나뉘었는지 세어 분모로, 색칠한 조각 수를 분자로 씁니다.",
+  "circle-equivalent-fraction-row-b3": "조각이 두 배로 잘게 나뉘면 색칠한 조각 수도 두 배가 되어, 색칠한 크기는 그대로입니다.",
+  "circle-halving-fraction-row-b3": "조각 수가 두 배가 될 때마다 한 조각은 반으로 작아집니다. 원마다 전체 조각 수를 분모로 씁니다.",
+  "tangram-fill-around-big-b3": "빈 곳의 직각 모서리와 기운 선을 먼저 보고, 직각과 긴 변이 맞는 조각부터 돌리거나 뒤집어 넣습니다.",
+  "tangram-square-plus-two-b3": "5조각 정사각형의 한 변과 큰 삼각형의 짧은 변 길이가 같다는 것을 이용해 맞대어 붙입니다.",
+  "grid-triangle-areas-b3": "삼각형을 꼭 감싸는 직사각형을 그리면 삼각형은 그 직사각형의 반이므로 (밑변 × 높이)의 반입니다.",
+  "folded-tape-one-fold-b3": "곧은 부분의 칸을 세고, 접힌 모서리의 삼각형은 한 칸으로 더합니다.",
+  "folded-tape-two-folds-b3": "곧은 부분의 칸을 모두 세고, 접힌 곳마다 한 칸씩 더합니다.",
+  "log-match-pencil-guides-b3": "점선으로 마지막 물건 하나가 성냥개비 몇 개인지 읽고, 두 줄의 같은 성냥개비를 지워 나머지를 성냥개비 수로 바꿉니다.",
+  "rod-match-guides-b3": "두 줄에서 같은 수의 성냥개비를 지우고, 점선으로 막대 하나가 성냥개비 몇 개인지 읽어 길이를 구합니다.",
+  "segment-chain-inner-given-b3": "한 끝이 같은 두 거리의 차가 남은 구간이고, 이어진 두 구간의 합이 긴 구간입니다.",
+  "six-points-three-gaps-b3": "한 끝이 같은 거리끼리 빼서 짧은 구간을 하나씩 찾고, 찾은 구간을 다른 거리에서 다시 뺍니다.",
+  "crypt-relation-repeat-b3": "관계식으로 두 모양의 짝(1과 2, 2와 4 …)을 먼저 좁히고, 하나씩 넣어 세로셈 결과의 모양과 맞는지 봅니다."
 };
 
 export const BOOK03_STRUCTURE_REMAPS = [
@@ -1031,7 +2101,40 @@ export const BOOK03_STRUCTURE_REMAPS = [
   ["book-03", 1, "check", 1, [4], "nested-square-doubling-b3"],
   ["book-03", 1, "practice", 1, [7], "nested-square-doubling-b3"],
   ["book-03", 2, "practice", 1, [13], "rod-rows-mixed-b3"],
-  ["book-03", 2, "practice", 1, [14], "rod-rows-counts-b3"]
+  ["book-03", 2, "practice", 1, [14], "rod-rows-counts-b3"],
+  // 1단원 칠교 · 삼각형 넓이 · 조각 나누기 분수
+  ["book-03", 1, "activity", 1, [1], "tangram-fill-around-big-b3"],
+  ["book-03", 1, "activity", 1, [3], "tangram-square-plus-two-b3"],
+  ["book-03", 1, "activity", 2, [3], "hexagon-split-fraction-row-b3"],
+  ["book-03", 1, "check", 2, [2], "partition-triangle-mixed-b3"],
+  ["book-03", 1, "check", 2, [3, 4], "partition-square-b3"],
+  ["book-03", 1, "practice", 1, [2], "grid-triangle-areas-b3"],
+  ["book-03", 1, "practice", 1, [8], "circle-equivalent-fraction-row-b3"],
+  ["book-03", 1, "practice", 1, [9], "circle-halving-fraction-row-b3"],
+  ["book-03", 1, "practice", 1, [10], "square-grid-fraction-row-b3"],
+  ["book-03", 1, "practice", 1, [11], "triangle-split-fraction-row-b3"],
+  ["book-03", 1, "practice", 1, [12], "square-split-fraction-row-b3"],
+  ["book-03", 1, "practice", 1, [13], "partition-hexagram-b3"],
+  ["book-03", 1, "practice", 1, [16], "partition-hexagon-b3"],
+  ["book-03", 1, "practice", 1, [18], "partition-triangle-mixed-b3"],
+  ["book-03", 1, "practice", 1, [20], "partition-square-b3"],
+  ["book-03", 1, "advanced", 1, [1], "partition-right-triangle-square-b3"],
+  ["book-03", 1, "advanced", 1, [2], "partition-triangle-thirds-b3"],
+  ["book-03", 1, "advanced", 1, [3], "partition-hexagon-b3"],
+  // 2단원 접은 띠 · 점 사이 거리 · 성냥개비 두 줄
+  ["book-03", 2, "activity", 1, [1], "folded-tape-one-fold-b3"],
+  ["book-03", 2, "activity", 1, [2], "folded-tape-two-folds-b3"],
+  ["book-03", 2, "practice", 1, [1], "folded-tape-one-fold-b3"],
+  ["book-03", 2, "practice", 1, [2], "folded-tape-two-folds-b3"],
+  ["book-03", 2, "check", 1, [2], "segment-chain-inner-given-b3"],
+  ["book-03", 2, "practice", 1, [6], "segment-chain-inner-given-b3"],
+  ["book-03", 2, "check", 2, [1], "log-match-pencil-guides-b3"],
+  ["book-03", 2, "practice", 1, [15], "log-match-pencil-guides-b3"],
+  ["book-03", 2, "check", 2, [2], "rod-match-guides-b3"],
+  ["book-03", 2, "practice", 1, [16], "rod-match-guides-b3"],
+  ["book-03", 2, "advanced", 1, [1], "six-points-three-gaps-b3"],
+  // 3단원 도전 4
+  ["book-03", 3, "advanced", 1, [4], "crypt-relation-repeat-b3"]
 ];
 
 // 검사기용: 새 생성기 문항을 다른 방법으로 다시 풀어 본다. 틀리면 까닭을 글로 돌려준다(맞으면 "").
@@ -1109,5 +2212,153 @@ export function verifyBook03Structure(problem) {
     if (new Set(meta.rods.map((rod) => rod.length)).size !== meta.rods.length) return "막대 길이가 겹침";
     return "";
   }
+  if (meta.family === "b3s-partition") return checkPartition(meta, problem.answer);
+  if (meta.family === "b3s-row-fraction") {
+    const want = meta.figures.map((figure, index) => {
+      const why = congruentCells(figure.cells);
+      if (why) throw new Error(`${figure.template}: ${why}`);
+      const shadedArea = figure.shaded.reduce((sum, cell) => sum + areaOf(figure.cells[cell]), 0);
+      const totalArea = figure.cells.reduce((sum, cell) => sum + areaOf(cell), 0);
+      if (Math.abs(shadedArea / totalArea - figure.shaded.length / figure.cells.length) > 1e-6) throw new Error("넓이 비가 다름");
+      return `${CIRCLED[index]} ${figure.shaded.length}/${figure.cells.length}`;
+    }).join(", ");
+    return problem.answer === want ? "" : "답이 다름";
+  }
+  if (meta.family === "b3s-circle-row") {
+    const values = meta.circles.map((circle) => circle.shaded / circle.parts);
+    if (meta.mode === "equivalent" && values.some((value) => Math.abs(value - values[0]) > 1e-12)) return "같은 크기가 아님";
+    if (meta.mode === "halving" && meta.circles.some((circle, index) => index && circle.parts !== meta.circles[index - 1].parts * 2)) return "반씩 작아지지 않음";
+    const want = meta.circles.map((circle, index) => `${CIRCLED[index]} ${circle.shaded}/${circle.parts}`).join(", ");
+    return problem.answer === want ? "" : "답이 다름";
+  }
+  if (meta.family === "b3s-tangram-fill") {
+    const areas = Object.fromEntries(Object.entries(meta.pieces).map(([name, poly]) => [name, areaOf(poly)]));
+    const expect = { big1: 4, big2: 4, small1: 1, small2: 1, square: 2, medium: 2, para: 2 };
+    if (Object.entries(expect).some(([name, value]) => Math.abs(areas[name] - value) > 1e-9)) return "조각 넓이가 다름";
+    if (Object.values(meta.pieces).flat().some(([x, y]) => x < 0 || y < 0 || x > 4 || y > 4)) return "판 밖으로 나감";
+    // 겹침이 없으면 판을 잘게 나눈 점마다 딱 한 조각 안에 든다
+    for (let i = 0; i < 16; i += 1) for (let j = 0; j < 16; j += 1) {
+      const point = [(i + 0.5) / 4 + 1e-3, (j + 0.5) / 4 + 2e-3];
+      const hits = Object.values(meta.pieces).filter((poly) => insideConvex(poly, point)).length;
+      if (hits !== 1) return "조각이 겹치거나 빈틈";
+    }
+    return "";
+  }
+  if (meta.family === "b3s-tangram-shapes") {
+    for (const shape of meta.shapes) {
+      if (Math.abs(areaOf(shape.outline) - 8) > 1e-9) return "모양 넓이가 8이 아님";
+      const pieces = [shape.squarePoly, ...shape.tris];
+      if (Math.abs(areaOf(shape.squarePoly) - 4) > 1e-9 || shape.tris.some((tri) => Math.abs(areaOf(tri) - 2) > 1e-9)) return "조각 넓이가 다름";
+      const xs = shape.outline.map(([x]) => x); const ys = shape.outline.map(([, y]) => y);
+      for (let x = Math.min(...xs) + 0.13; x < Math.max(...xs); x += 0.25) for (let y = Math.min(...ys) + 0.17; y < Math.max(...ys); y += 0.25) {
+        const inOutline = insideConvex(shape.outline, [x, y]);
+        const hits = pieces.filter((poly) => insideConvex(poly, [x, y])).length;
+        if ((inOutline ? 1 : 0) !== hits) return "모양을 채우지 못함";
+      }
+    }
+    return "";
+  }
+  if (meta.family === "b3s-grid-triangle") {
+    const want = meta.tris.map((tri, index) => {
+      const twice = Math.round(areaOf(tri.points) * 2);
+      if (twice !== tri.base * tri.height) throw new Error("넓이 식이 다름");
+      return `${CIRCLED[index]} ${twice % 2 ? mixed(Math.floor(twice / 2), 1, 2) : twice / 2}`;
+    }).join(", ");
+    return problem.answer === want ? "" : "답이 다름";
+  }
+  if (meta.family === "b3s-folded-tape") {
+    // 띠의 가운데 선을 따라가며 길이를 잰다(그림의 칸 수와 다른 방법)
+    for (const figure of meta.figures) {
+      const arms = figure.pieces.filter((piece) => piece.kind === "arm");
+      const corners = figure.pieces.filter((piece) => piece.kind === "corner");
+      if (corners.length !== meta.folds) return "접은 횟수가 다름";
+      const center = ([x, y]) => [x + 0.5, y + 0.5];
+      const path = [];
+      const firstDir = DIRS[corners[0].inDir];
+      const first = center(arms[0].cells[0]);
+      path.push([first[0] - firstDir[0] / 2, first[1] - firstDir[1] / 2]);
+      corners.forEach((corner) => path.push(center(corner.cell)));
+      const lastDir = DIRS[corners[corners.length - 1].outDir];
+      const lastArm = arms[arms.length - 1];
+      const last = center(lastArm.cells[lastArm.cells.length - 1]);
+      path.push([last[0] + lastDir[0] / 2, last[1] + lastDir[1] / 2]);
+      const length = path.slice(1).reduce((sum, point, index) => sum + Math.hypot(point[0] - path[index][0], point[1] - path[index][1]), 0);
+      if (Math.abs(length - figure.length) > 1e-9) return "띠 길이가 다름";
+    }
+    const want = meta.figures.map((figure, index) => `${CIRCLED[index]} ${figure.length}cm`).join(", ");
+    return problem.answer === want ? "" : "답이 다름";
+  }
+  if (meta.family === "b3s-match-rows") {
+    const { q, k, a, b, r, match } = meta;
+    if (r + a !== b + k * q) return "두 줄 길이가 다름";
+    if (b + (k - 1) * q < r) return "마지막 물건이 위 줄 성냥과 맞닿지 않음";
+    const big = r * match; const small = q * match;
+    const want = meta.givenSide === "big" ? small : big;
+    if (meta.answer !== want || problem.answer !== `${want}cm`) return "답이 다름";
+    if (problem.visual.html.includes(`>${want}cm<`) && want !== meta.givenValue) return "답이 그림에 보임";
+    return "";
+  }
+  if (meta.family === "b3s-point-spans") {
+    const length = ([i, j]) => meta.gaps.slice(i, j).reduce((sum, value) => sum + value, 0);
+    const known = deriveSpans(meta.given);
+    if (meta.ask.some(([i, j]) => !known.has(`${i},${j}`))) return "주어진 거리로 구할 수 없음";
+    if (meta.ask.some(([i, j]) => meta.given.some(([g, h]) => g === i && h === j))) return "묻는 거리가 그림에 있음";
+    const want = meta.ask.map((span) => `${spanName(span)}=${length(span)}cm`).join(", ");
+    return problem.answer === want ? "" : "답이 다름";
+  }
+  if (meta.family === "b3s-crypt-relation") {
+    if (countRelationSolutions(meta.relation, meta.pattern, meta.count, meta.sumTokens) !== 1) return "답이 하나가 아님";
+    const d = meta.digits;
+    if (d.B !== d.A * RELATIONS[meta.relation].times) return "관계식이 맞지 않음";
+    const addend = meta.pattern.split("").reduce((total, letter) => total * 10 + d[letter], 0);
+    if (addend * meta.count !== meta.sumTokens.reduce((total, letter) => total * 10 + d[letter], 0)) return "세로셈이 맞지 않음";
+    if (problem.answer !== String(d[meta.askLetter])) return "답이 다름";
+    return "";
+  }
   return `모르는 꼴 ${meta.family}`;
+}
+
+function insideConvex(poly, [px, py]) {
+  let sign = 0;
+  for (let k = 0; k < poly.length; k += 1) {
+    const [ax, ay] = poly[k]; const [bx, by] = poly[(k + 1) % poly.length];
+    const c = (bx - ax) * (py - ay) - (by - ay) * (px - ax);
+    if (Math.abs(c) < 1e-12) return false;
+    if (!sign) sign = Math.sign(c); else if (Math.sign(c) !== sign) return false;
+  }
+  return true;
+}
+
+// 칸이 모두 모양과 크기가 같은지 — 넓이와 변 길이(작은 것부터)가 같으면 같은 모양으로 본다.
+function congruentCells(cells) {
+  const sig = (cell) => cell.map((v, k) => Math.hypot(cell[(k + 1) % cell.length][0] - v[0], cell[(k + 1) % cell.length][1] - v[1])).sort((a, b) => a - b);
+  const first = sig(cells[0]); const area0 = areaOf(cells[0]);
+  for (const cell of cells) {
+    if (Math.abs(areaOf(cell) - area0) > 1e-3) return "칸 넓이가 다름";
+    const s = sig(cell);
+    if (s.length !== first.length || s.some((value, index) => Math.abs(value - first[index]) > 1e-3)) return "칸 모양이 다름";
+  }
+  return "";
+}
+
+function checkPartition(meta, answer) {
+  const why = congruentCells(meta.cells);
+  if (why) return why;
+  const seen = meta.pieces.flat();
+  if (seen.length !== meta.cells.length || new Set(seen).size !== meta.cells.length) return "조각이 칸을 한 번씩 덮지 않음";
+  if (!meta.pieces.some((piece) => piece.length === 1) || !meta.pieces.some((piece) => piece.length > 1)) return "가장 작은 조각·합친 조각이 함께 있지 않음";
+  if (meta.pieces.some((piece) => !isConvexUnion(meta.cells, piece))) return "볼록하지 않은 조각";
+  const shaded = new Set(meta.shaded);
+  if (meta.pieces.some((piece) => piece.some((cell) => shaded.has(cell)) && !piece.every((cell) => shaded.has(cell)))) return "색칠이 조각 단위가 아님";
+  const totalArea = meta.cells.reduce((sum, cell) => sum + areaOf(cell), 0);
+  const shadedArea = meta.shaded.reduce((sum, cell) => sum + areaOf(meta.cells[cell]), 0);
+  const [top, bottom] = String(answer).split("/").map(Number);
+  if (bottom !== meta.cells.length || Math.abs(top / bottom - shadedArea / totalArea) > 1e-6) return "넓이 비와 답이 다름";
+  if (top <= 0 || top >= bottom) return "색칠한 부분이 비었거나 전체";
+  if (meta.square) {
+    const hull = hullPoints(meta.shaded.flatMap((cell) => meta.cells[cell]));
+    const sides = hull.map((p, k) => Math.hypot(hull[(k + 1) % hull.length][0] - p[0], hull[(k + 1) % hull.length][1] - p[1]));
+    if (hull.length !== 4 || sides.some((side) => Math.abs(side - sides[0]) > 1e-4) || Math.abs(areaOf(hull) - sides[0] ** 2) > 1e-4) return "색칠한 조각이 정사각형이 아님";
+  }
+  return "";
 }
