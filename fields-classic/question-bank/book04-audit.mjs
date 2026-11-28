@@ -234,6 +234,166 @@ function differenceFromRelations(relations, a, b) {
   return Math.abs(value.get(a) - value.get(b));
 }
 
+// ── 2차(2026-11-28) 새 생성기 독립 검산 도우미 ──
+// 칸 조각을 한 칸씩 붙여 키우며 서로 다른 모양(돌리고 뒤집어 같은 것은 하나)을 모두 센다.
+const freePolyominoMemo = new Map();
+function freePolyominoes(size) {
+  if (freePolyominoMemo.has(size)) return freePolyominoMemo.get(size);
+  let shapes = new Map([[polyominoSignature([[0, 0]]), [[0, 0]]]]);
+  for (let s = 1; s < size; s += 1) {
+    const next = new Map();
+    for (const cells of shapes.values()) {
+      const has = new Set(cells.map(([r, c]) => `${r}:${c}`));
+      for (const [r, c] of cells) for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        if (has.has(`${r + dr}:${c + dc}`)) continue;
+        const grown = [...cells, [r + dr, c + dc]];
+        next.set(polyominoSignature(grown), grown);
+      }
+    }
+    shapes = next;
+  }
+  freePolyominoMemo.set(size, shapes);
+  return shapes;
+}
+
+// 같은 조각만으로 rows×cols를 덮을 수 있는지: 맨 위 왼쪽 빈칸을 덮는 놓임을 모두 시도한다.
+function rectTileableBy(rows, cols, cells) {
+  const orients = new Map();
+  for (const reflected of [false, true]) for (let turns = 0; turns < 4; turns += 1) {
+    let t = cells.map(([r, c]) => [r, reflected ? -c : c]);
+    for (let i = 0; i < turns; i += 1) t = t.map(([r, c]) => [c, -r]);
+    t.sort((a, b) => a[0] - b[0] || a[1] - b[1]);
+    const [r0, c0] = t[0];
+    const rel = t.map(([r, c]) => [r - r0, c - c0]);
+    orients.set(JSON.stringify(rel), rel);
+  }
+  const filled = Array.from({ length: rows }, () => Array(cols).fill(false));
+  const go = () => {
+    let at = null;
+    for (let r = 0; r < rows && !at; r += 1) for (let c = 0; c < cols; c += 1) if (!filled[r][c]) { at = [r, c]; break; }
+    if (!at) return true;
+    for (const rel of orients.values()) {
+      const placed = rel.map(([dr, dc]) => [at[0] + dr, at[1] + dc]);
+      if (!placed.every(([r, c]) => r >= 0 && c >= 0 && r < rows && c < cols && !filled[r][c])) continue;
+      placed.forEach(([r, c]) => { filled[r][c] = true; });
+      if (go()) return true;
+      placed.forEach(([r, c]) => { filled[r][c] = false; });
+    }
+    return false;
+  };
+  return (rows * cols) % cells.length === 0 && go();
+}
+
+// 칸 목록을 같은 수의 두 덩어리(둘 다 이어짐)로 나누고, 두 덩어리가 같은 모양인 것을 모양마다 센다.
+function countCongruentHalves(cells, adjacent, signature) {
+  const N = cells.length;
+  const isConnected = (list) => {
+    const seen = new Set([0]);
+    const queue = [0];
+    while (queue.length) {
+      const i = queue.shift();
+      list.forEach((cell, j) => { if (!seen.has(j) && adjacent(list[i], cell)) { seen.add(j); queue.push(j); } });
+    }
+    return seen.size === list.length;
+  };
+  const shapes = new Set();
+  const choose = (start, picked) => {
+    if (picked.length === N / 2) {
+      const a = picked.map((i) => cells[i]);
+      const b = cells.filter((_, i) => !picked.includes(i));
+      if (isConnected(a) && isConnected(b) && signature(a) === signature(b)) shapes.add(signature(a));
+      return;
+    }
+    for (let i = start; i < N; i += 1) choose(i + 1, [...picked, i]);
+  };
+  choose(1, [0]);
+  return shapes;
+}
+const squareAdjacent = ([a, b], [c, d]) => Math.abs(a - c) + Math.abs(b - d) === 1;
+const triangleCorners = ([a, b, up]) => (up ? [[a, b], [a + 1, b], [a, b + 1]] : [[a + 1, b], [a, b + 1], [a + 1, b + 1]]);
+const triangleAdjacent = (s, t) => {
+  const keys = new Set(triangleCorners(s).map(String));
+  return triangleCorners(t).filter((p) => keys.has(String(p))).length === 2;
+};
+// 삼각형 칸 모양: 여섯 방향 돌리기와 뒤집기 가운데 가장 작은 글자.
+function triangleSignature(tris) {
+  const out = [];
+  for (const flip of [false, true]) {
+    for (let turn = 0; turn < 6; turn += 1) {
+      const corners = tris.map((t) => triangleCorners(t).map(([a, b]) => {
+        let p = flip ? [b, a] : [a, b];
+        for (let i = 0; i < turn; i += 1) p = [-p[1], p[0] + p[1]];
+        return p;
+      }));
+      const a0 = Math.min(...corners.flat().map((p) => p[0]));
+      const b0 = Math.min(...corners.flat().map((p) => p[1]));
+      out.push(corners.map((t) => t.map(([a, b]) => `${a - a0}.${b - b0}`).sort().join(",")).sort().join("/"));
+    }
+  }
+  return out.sort()[0];
+}
+const halvesMemo = new Map();
+
+// 칸 도형을 n칸씩 이어진 조각으로 나누는 모든 방법 가운데 accept(pieces)를 만족하는 것의 수.
+function countPartitionsWithPieces(cells, n, accept, limit = 3, pieceOk = () => true) {
+  const all = new Set(cells.map(([r, c]) => `${r}:${c}`));
+  const order = [...cells].sort((a, b) => a[0] - b[0] || a[1] - b[1]).map(([r, c]) => `${r}:${c}`);
+  const used = new Set();
+  const pieces = [];
+  let count = 0;
+  const grow = (first) => {
+    let sets = new Map([[first, [first]]]);
+    for (let s = 1; s < n; s += 1) {
+      const next = new Map();
+      for (const piece of sets.values()) for (const cell of piece) {
+        const [r, c] = cell.split(":").map(Number);
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const k = `${r + dr}:${c + dc}`;
+          if (!all.has(k) || used.has(k) || piece.includes(k)) continue;
+          next.set([...piece, k].sort().join("|"), [...piece, k]);
+        }
+      }
+      sets = next;
+    }
+    return [...sets.values()];
+  };
+  const run = () => {
+    if (count >= limit) return;
+    const first = order.find((k) => !used.has(k));
+    if (!first) { if (accept(pieces.map((p) => p.map((k) => k.split(":").map(Number))))) count += 1; return; }
+    for (const piece of grow(first)) {
+      if (!pieceOk(piece.map((k) => k.split(":").map(Number)), pieces.map((p) => p.map((k) => k.split(":").map(Number))))) continue;
+      piece.forEach((k) => used.add(k));
+      pieces.push(piece);
+      run();
+      pieces.pop();
+      piece.forEach((k) => used.delete(k));
+    }
+  };
+  run();
+  return count;
+}
+
+const pointInPolygonAudit = (poly, p) => {
+  let inside = false;
+  for (let i = 0, j = poly.length - 1; i < poly.length; j = i, i += 1) {
+    const a = poly[i];
+    const b = poly[j];
+    if ((a.y > p.y) !== (b.y > p.y) && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x) inside = !inside;
+  }
+  return inside;
+};
+const distToPolygonEdge = (poly, p) => Math.min(...poly.map((a, i) => {
+  const b = poly[(i + 1) % poly.length];
+  const dx = b.x - a.x;
+  const dy = b.y - a.y;
+  const t = Math.max(0, Math.min(1, ((p.x - a.x) * dx + (p.y - a.y) * dy) / (dx * dx + dy * dy || 1)));
+  return Math.hypot(p.x - (a.x + t * dx), p.y - (a.y + t * dy));
+}));
+
+const permutationsAudit = (list) => (list.length < 2 ? [list] : list.flatMap((x, i) => permutationsAudit([...list.slice(0, i), ...list.slice(i + 1)]).map((rest) => [x, ...rest])));
+const stripJosa = (word) => word.replace(/(이|가|은|는|과|와|을|를)$/u, "");
+
 function validateSurface(problem, id, difficulty) {
   const text = [problem.prompt, problem.answer, problem.solution].join(" ");
   assert(problem.prompt?.trim(), id, difficulty, "prompt missing");
@@ -315,9 +475,10 @@ function validate(type, problem, difficulty) {
       assert(meta.cutCells.length === 2 ** meta.folds.length, id, difficulty, "fold layer count mismatch");
       const problemMarkup = book04Markup(problem.visual);
       assert(problemMarkup.includes("b4-fold-sequence"), id, difficulty, "fold sequence diagram missing");
-      assert((problemMarkup.match(/<figure>/g) || []).length === meta.folds.length + 1, id, difficulty, "fold stage count mismatch");
+      // 접기 그림은 한 줄 흐름 SVG(처음 → 1번 접음 → …, 색종이 그림 기준 2026-11-21) — 장면 이름으로 센다
+      assert((problemMarkup.match(/처음/g) || []).length === 1 && (problemMarkup.match(/번 접음/g) || []).length === meta.folds.length, id, difficulty, "fold stage count mismatch");
       assert(problem.answerVisual?.reveal === true, id, difficulty, "fold answer reveal missing");
-      assert(book04Markup(problem.answerVisual).includes("is-cut"), id, difficulty, "fold answer cut cells missing");
+      assert((book04Markup(problem.answerVisual).match(/#b03a5b/gi) || []).length === meta.cutCells.length, id, difficulty, "fold answer cut cells missing");
       return;
     }
     case "fold-number-grid-diagonal-two": {
@@ -566,6 +727,228 @@ function validate(type, problem, difficulty) {
       assert(problem.answer === (meta.askFloor ? `${floor}층` : `${meta.fromTop}번째`), id, difficulty, "floor answer mismatch");
       return;
     }
+    case "polyomino-all-draw-b4": {
+      const all = freePolyominoes(meta.size);
+      assert(all.size === meta.total && problem.answer === `${all.size}가지`, id, difficulty, `free polyomino count ${all.size}`);
+      const givenSigs = meta.given.map((g) => polyominoSignature(g.cells));
+      assert(new Set(givenSigs).size === givenSigs.length && givenSigs.every((sig) => all.has(sig)), id, difficulty, "given pieces repeat or are not polyominoes");
+      assert(meta.given.length + meta.missing.length === all.size, id, difficulty, "given + missing must be every shape");
+      assert(problem.responseKind === "drawing" && problem.answerVisual?.kind === "fig", id, difficulty, "missing drawing answer");
+      return;
+    }
+    case "same-piece-rect-tiling-b4": {
+      const cannot = meta.options.filter((o) => !rectTileableBy(meta.rows, meta.cols, o.cells)).map((o) => o.option);
+      assert(JSON.stringify(cannot) === JSON.stringify(meta.cannot), id, difficulty, `tiling check mismatch ${cannot}`);
+      assert(cannot.length >= 1 && cannot.length < meta.options.length, id, difficulty, "all or no options tile");
+      assert(problem.answer === cannot.map((n) => `${n}번`).join(", "), id, difficulty, "tiling answer mismatch");
+      assert(new Set(meta.options.map((o) => polyominoSignature(o.cells))).size === meta.options.length, id, difficulty, "repeated option piece");
+      return;
+    }
+    case "rect-halves-all-ways-b4": {
+      const key = `sq${meta.rows}x${meta.cols}`;
+      if (!halvesMemo.has(key)) {
+        const cells = Array.from({ length: meta.rows * meta.cols }, (_, i) => [Math.floor(i / meta.cols), i % meta.cols]);
+        halvesMemo.set(key, countCongruentHalves(cells, squareAdjacent, polyominoSignature));
+      }
+      const shapes = halvesMemo.get(key);
+      assert(shapes.size === meta.total && problem.answer === `${shapes.size}가지`, id, difficulty, `rect halves count ${shapes.size}`);
+      const drawn = meta.ways.map((cells) => polyominoSignature(cells));
+      assert(new Set(drawn).size === drawn.length && drawn.every((sig) => shapes.has(sig)), id, difficulty, "drawn ways repeat or are wrong");
+      assert(drawn.includes(polyominoSignature(meta.example)), id, difficulty, "example is not one of the ways");
+      return;
+    }
+    case "triangle-grid-halves-b4": {
+      const key = `tri:${meta.shape}`;
+      if (!halvesMemo.has(key)) halvesMemo.set(key, countCongruentHalves(meta.tris, triangleAdjacent, triangleSignature));
+      const shapes = halvesMemo.get(key);
+      assert(meta.tris.length % 2 === 0 && shapes.size === meta.total && problem.answer === `${shapes.size}가지`, id, difficulty, `triangle halves count ${shapes.size}`);
+      const drawn = meta.ways.map(triangleSignature);
+      assert(new Set(drawn).size === drawn.length && drawn.every((sig) => shapes.has(sig)), id, difficulty, "drawn triangle ways wrong");
+      assert(meta.total <= 5, id, difficulty, "more ways than drawing panels");
+      return;
+    }
+    case "count-balanced-partition-b4": {
+      const cells = Array.from({ length: meta.rows * meta.cols }, (_, i) => [Math.floor(i / meta.cols), i % meta.cols]);
+      const n = cells.length / 4;
+      const markSet = new Set(meta.marks.map(([r, c]) => `${r}:${c}`));
+      const fits = (pieces) => new Set(pieces.map(polyominoSignature)).size === 1
+        && pieces.every((piece) => piece.filter(([r, c]) => markSet.has(`${r}:${c}`)).length === meta.per);
+      assert(meta.pieces.length === 4 && meta.pieces.every((p) => p.length === n && connected(p)) && fits(meta.pieces), id, difficulty, "given partition invalid");
+      assert(new Set(meta.pieces.flat().map(String)).size === cells.length, id, difficulty, "partition does not cover");
+      // 조각마다 도토리 수가 맞고 첫 조각과 같은 모양인 것만 이어 간다(가지치기 — 마지막에 fits로 다시 본다).
+      const pieceOk = (piece, before) => piece.filter(([r, c]) => markSet.has(`${r}:${c}`)).length === meta.per
+        && (!before.length || polyominoSignature(piece) === polyominoSignature(before[0]));
+      assert(countPartitionsWithPieces(cells, n, fits, 3, pieceOk) === 1, id, difficulty, "balanced partition not unique");
+      return;
+    }
+    case "fold-cut-two-corner-b4": {
+      // 종이의 점을 접는 순서대로 접어 옮겼을 때 자른 조각 안에 들어가면 그 점은 잘려 나간다 — 펼친 구멍과 견준다.
+      const fold = (p) => meta.lines.reduce((q, line) => {
+        const side = (line.b.x - line.a.x) * (q.y - line.a.y) - (line.b.y - line.a.y) * (q.x - line.a.x);
+        if (side * line.sign >= 0) return q;
+        const dx = line.b.x - line.a.x;
+        const dy = line.b.y - line.a.y;
+        const t = ((q.x - line.a.x) * dx + (q.y - line.a.y) * dy) / (dx * dx + dy * dy);
+        return { x: 2 * (line.a.x + t * dx) - q.x, y: 2 * (line.a.y + t * dy) - q.y };
+      }, p);
+      let bad = 0;
+      for (let i = 0; i < 37; i += 1) for (let j = 0; j < 37; j += 1) {
+        const p = { x: (i + 0.5) / 37, y: (j + 0.5) / 37 };
+        const q = fold(p);
+        if (distToPolygonEdge(meta.cut, q) < 0.01 || meta.holes.some((h) => distToPolygonEdge(h, p) < 0.01)) continue;
+        if (pointInPolygonAudit(meta.cut, q) !== meta.holes.some((h) => pointInPolygonAudit(h, p))) bad += 1;
+      }
+      assert(bad === 0, id, difficulty, `unfolded holes mismatch at ${bad} points`);
+      assert(meta.holes.length === 4 && problem.responseKind === "drawing", id, difficulty, "two folds must give four hole copies");
+      return;
+    }
+    case "pyramid-wall-nth-b4": {
+      let cubes = 0;
+      for (let width = 1; width <= 2 * meta.k - 1; width += 2) cubes += width;
+      assert(cubes === meta.answer && problem.answer === `${cubes}개`, id, difficulty, "pyramid wall count mismatch");
+      assert(meta.k > meta.shown, id, difficulty, "asked figure is already drawn");
+      return;
+    }
+    case "stepped-pyramid-hidden-b4": {
+      const parts = [];
+      meta.figures.forEach((figure) => {
+        const h = figure.heights;
+        const at = (r, c) => (r < 0 || c < 0 || r >= h.length || c >= h.length ? 0 : h[r][c]);
+        let total = 0;
+        let hidden = 0;
+        for (let r = 0; r < h.length; r += 1) for (let c = 0; c < h.length; c += 1) for (let z = 0; z < h[r][c]; z += 1) {
+          total += 1;
+          // 바닥을 뺀 다섯 면이 모두 다른 나무에 막혀 있으면 보이지 않는다.
+          if (z + 1 < h[r][c] && [[1, 0], [-1, 0], [0, 1], [0, -1]].every(([dr, dc]) => at(r + dr, c + dc) > z)) hidden += 1;
+        }
+        assert(total === figure.total && hidden === figure.hidden, id, difficulty, `pyramid hidden mismatch ${hidden}`);
+        parts.push(`(${parts.length + 1}) ${hidden}개`);
+      });
+      assert(problem.answer === parts.join(", "), id, difficulty, "pyramid answer mismatch");
+      return;
+    }
+    case "age-list-matching-b4": {
+      const tests = meta.clues.map((text) => {
+        let m = text.match(/^(.+?) (.+?)보다 (\d+)살 (많|적)습니다\.$/u);
+        if (m) { const x = stripJosa(m[1]); const y = m[2]; const d = Number(m[3]) * (m[4] === "많" ? 1 : -1); return (q) => q[x] - q[y] === d; }
+        m = text.match(/^(.+?) (.+?)의 동생입니다\.$/u);
+        if (m) { const x = stripJosa(m[1]); const y = m[2]; return (q) => q[x] < q[y]; }
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, "unparsed age clue");
+      const fitsAll = permutationsAudit(meta.ages).map((list) => Object.fromEntries(meta.names.map((x, i) => [x, list[i]]))).filter((q) => tests.every((t) => t(q)));
+      assert(fitsAll.length === 1 && fitsAll[0][meta.target] === meta.answer && problem.answer === `${meta.answer}살`, id, difficulty, `age assignment not unique (${fitsAll.length})`);
+      return;
+    }
+    case "bib-rank-derangement-b4": {
+      const tests = meta.clues.map((text) => {
+        let m = text.match(/^(\d)번 선수: (\d)번 선수는 제 바로 뒤에 들어왔습니다\.$/u);
+        if (m) { const a = Number(m[1]); const b = Number(m[2]); return (o) => o.indexOf(b) === o.indexOf(a) + 1; }
+        m = text.match(/^(\d)번 선수: 저는 (\d)번 선수보다 먼저 들어왔습니다\.$/u);
+        if (m) { const a = Number(m[1]); const b = Number(m[2]); return (o) => o.indexOf(a) < o.indexOf(b); }
+        m = text.match(/^(\d)번 선수: 저는 1등도 꼴찌도 아닙니다\.$/u);
+        if (m) { const a = Number(m[1]); return (o) => o.indexOf(a) !== 0 && o.indexOf(a) !== o.length - 1; }
+        if (/^심판: 자기 등 번호와 같은 등수로 들어온 선수는 한 명도 없습니다\.$/u.test(text)) return (o) => o.every((b, i) => b !== i + 1);
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, "unparsed bib clue");
+      const bibs = Array.from({ length: meta.n }, (_, i) => i + 1);
+      const fitsAll = permutationsAudit(bibs).filter((o) => tests.every((t) => t(o)));
+      assert(fitsAll.length === 1 && JSON.stringify(fitsAll[0]) === JSON.stringify(meta.order), id, difficulty, `bib order not unique (${fitsAll.length})`);
+      const withoutReferee = permutationsAudit(bibs).filter((o) => tests.slice(0, -1).every((t) => t(o)));
+      assert(withoutReferee.length > 1, id, difficulty, "referee clue is not needed");
+      assert(problem.answer === meta.order.map((b) => `${b}번`).join(", "), id, difficulty, "bib answer mismatch");
+      return;
+    }
+    case "race-talk-ranking-b4": {
+      const n = meta.names.length;
+      const tests = meta.clues.map((text) => {
+        const [speaker, said] = text.split(": ");
+        let m = said.match(/^나는 (\d)명을 이겼어\.$/u);
+        if (m) return (q) => q[speaker] === n - Number(m[1]);
+        if (/맨 마지막으로 들어왔어\.$/u.test(said)) return (q) => q[speaker] === n;
+        if (said === "나는 1등도 꼴찌도 아니었어.") return (q) => q[speaker] !== 1 && q[speaker] !== n;
+        m = said.match(/^이번에는 (.+) 나를 이겼어\.$/u);
+        if (m) { const x = stripJosa(m[1]); return (q) => q[x] < q[speaker]; }
+        m = said.match(/^(.+) 나를 포함해서 (\d)명을 이겼어\.$/u);
+        if (m) { const x = stripJosa(m[1]); const k = Number(m[2]); return (q) => q[x] === n - k && q[x] < q[speaker]; }
+        m = said.match(/^나는 (.+)보다 먼저 들어왔어\.$/u);
+        if (m) { const x = m[1]; return (q) => q[speaker] < q[x]; }
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, `unparsed talk clue ${meta.clues[tests.findIndex((t) => !t)]}`);
+      const fitsAll = permutationsAudit(meta.names).map((o) => Object.fromEntries(o.map((x, i) => [x, i + 1]))).filter((q) => tests.every((t) => t(q)));
+      assert(fitsAll.length === 1 && meta.order.every((x, i) => fitsAll[0][x] === i + 1) && problem.answer === meta.order.join(", "), id, difficulty, `talk ranking not unique (${fitsAll.length})`);
+      assert(new Set(meta.clues.map((c) => c.split(": ")[0])).size === meta.clues.length, id, difficulty, "a child speaks twice");
+      return;
+    }
+    case "round-table-seat-b4": {
+      const n = meta.n;
+      const near = (a, b) => (a - b + n) % n === 1 || (b - a + n) % n === 1;
+      const tests = meta.clues.map((text) => {
+        let m = text.match(/^(.+?) (.+?)의 (오른쪽|왼쪽) 옆에 앉아 있습니다\.$/u);
+        if (m) { const y = stripJosa(m[1]); const x = m[2]; const step = m[3] === "오른쪽" ? 1 : n - 1; return (o) => o.indexOf(y) === (o.indexOf(x) + step) % n; }
+        m = text.match(/^(.+?) (.+?) 서로 떨어져 앉아 있습니다\.$/u);
+        if (m) { const x = stripJosa(m[1]); const y = stripJosa(m[2]); return (o) => !near(o.indexOf(x), o.indexOf(y)); }
+        m = text.match(/^(.+?) (.+?) (.+?) 사이에 앉아 있습니다\.$/u);
+        if (m) { const z = stripJosa(m[1]); const x = stripJosa(m[2]); const y = m[3]; return (o) => near(o.indexOf(z), o.indexOf(x)) && near(o.indexOf(z), o.indexOf(y)); }
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, `unparsed seat clue ${meta.clues[tests.findIndex((t) => !t)]}`);
+      const rest = meta.names.filter((x) => x !== meta.anchor);
+      const fitsAll = permutationsAudit(rest).map((o) => [meta.anchor, ...o]).filter((o) => tests.every((t) => t(o)));
+      assert(fitsAll.length === 1 && fitsAll[0][meta.target] === problem.answer, id, difficulty, `round table not unique (${fitsAll.length})`);
+      return;
+    }
+    case "person-item-full-match-b4": {
+      const tests = meta.clues.map((text) => {
+        let m = text.match(/^(.+?) (.+?) (.+?) (?:좋아하지|배우지) 않습니다\.$/u);
+        if (m) { const p = stripJosa(m[1]); const a = stripJosa(m[2]); const b = stripJosa(m[3]); return (q) => q[p] !== a && q[p] !== b; }
+        m = text.match(/^(.+?) (.+?) (?:좋아하지|배우지) 않습니다\.$/u);
+        if (m) { const p = stripJosa(m[1]); const a = stripJosa(m[2]); return (q) => q[p] !== a; }
+        m = text.match(/^(.+?) (?:좋아하는|배우는) 사람, (.+?), (.+?) (?:좋아하는|배우는) 사람은 서로 다른 친구입니다\.$/u);
+        if (m) { const a = stripJosa(m[1]); const p = m[2]; const b = stripJosa(m[3]); return (q) => q[p] !== a && q[p] !== b; }
+        m = text.match(/^(.+?) (.+?) (.+?) (?:좋아하는|배우는) 사람과 친구입니다\.$/u);
+        if (m) { const p = stripJosa(m[1]); const p2 = stripJosa(m[2]); const a = stripJosa(m[3]); return (q) => q[p] !== a && q[p2] !== a; }
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, `unparsed match clue ${meta.clues[tests.findIndex((t) => !t)]}`);
+      const fitsAll = permutationsAudit(meta.items).map((o) => Object.fromEntries(meta.people.map((p, i) => [p, o[i]]))).filter((q) => tests.every((t) => t(q)));
+      assert(fitsAll.length === 1 && meta.people.every((p) => fitsAll[0][p] === meta.truth[p]), id, difficulty, `matching not unique (${fitsAll.length})`);
+      assert(problem.answer === meta.people.map((p) => `${p} ${meta.truth[p]}`).join(", "), id, difficulty, "matching answer mismatch");
+      return;
+    }
+    case "grid-placement-b4": {
+      const { rows, cols } = meta;
+      const pos = (o, x) => { const i = o.indexOf(x); return [Math.floor(i / cols), i % cols]; };
+      const tests = meta.clues.map((text) => {
+        let m = text.match(/^(.+?) (.+?)의 바로 (위쪽 우리|위|아래|오른쪽 우리|오른쪽)에 있습니다\.$/u);
+        if (m) {
+          const x = stripJosa(m[1]); const y = m[2]; const where = m[3];
+          return (o) => {
+            const [a, b] = pos(o, x); const [c, e] = pos(o, y);
+            if (where.startsWith("위")) return b === e && a === c - 1;
+            if (where === "아래") return b === e && a === c + 1;
+            return a === c && b === e + 1;
+          };
+        }
+        m = text.match(/^(.+?) (.+?) 서로 붙어 있는 우리에 있습니다\.$/u);
+        if (m) { const x = stripJosa(m[1]); const y = stripJosa(m[2]); return (o) => { const [a, b] = pos(o, x); const [c, e] = pos(o, y); return Math.abs(a - c) + Math.abs(b - e) === 1; }; }
+        m = text.match(/^(.+?) (.+?) 가장 멀리 떨어진 두 우리에 있습니다\.$/u);
+        if (m) {
+          const x = stripJosa(m[1]); const y = stripJosa(m[2]);
+          return (o) => { const [a, b] = pos(o, x); const [c, e] = pos(o, y); return Math.abs(a - c) + Math.abs(b - e) === rows - 1 + cols - 1; };
+        }
+        m = text.match(/^(.+?) (.+?) 같은 줄에 있습니다\.$/u);
+        if (m) { const x = stripJosa(m[1]); const y = stripJosa(m[2]); return (o) => pos(o, x)[0] === pos(o, y)[0]; }
+        return null;
+      });
+      assert(tests.every(Boolean), id, difficulty, `unparsed grid clue ${meta.clues[tests.findIndex((t) => !t)]}`);
+      const others = meta.items.filter((x) => x !== meta.fixed);
+      const fitsAll = permutationsAudit(others).map((o) => [...o.slice(0, meta.fixedIndex), meta.fixed, ...o.slice(meta.fixedIndex)]).filter((o) => tests.every((t) => t(o)));
+      assert(fitsAll.length === 1 && fitsAll[0][meta.targetIndex] === problem.answer && JSON.stringify(fitsAll[0]) === JSON.stringify(meta.placed), id, difficulty, `grid placement not unique (${fitsAll.length})`);
+      return;
+    }
     default:
       // 1~3권과 Geometry Worksheet에서 이미 독립 검산한 재사용 생성기다.
       assert(meta.family || type.generator, id, difficulty, "reused generator has no audit identity");
@@ -574,7 +957,7 @@ function validate(type, problem, difficulty) {
 
 if (!book) throw new Error("book-04 missing");
 if (units.length !== 4) throw new Error(`book-04 unit count ${units.length}`);
-if (typeIds.length !== 76) throw new Error(`book-04 type count ${typeIds.length}`);
+if (typeIds.length !== 92) throw new Error(`book-04 type count ${typeIds.length}`);
 if (unitTestQuestions.length !== 25) throw new Error(`book-04 unit test count ${unitTestQuestions.length}`);
 unitTestQuestions.forEach((question, index) => {
   if (question.number !== index + 1) throw new Error(`book-04 unit test number ${question.number}, expected ${index + 1}`);

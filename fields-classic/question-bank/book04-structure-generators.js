@@ -7,6 +7,7 @@
 //   BOOK04_STRUCTURE_REMAPS     — [[권 id, 단원, 묶음, 묶음 번호, 번호들, 유형 id]] (textbook-remaps.js와 같은 꼴)
 
 import { shapeSvg } from "./book02-renderers.js?v=20261101m";
+import { foldGeometryHelpers, foldWordStrip } from "./fold-visuals.js?v=20261123a";
 
 // ── 공용 ─────────────────────────────────────────────
 
@@ -1203,6 +1204,1000 @@ function digitalThreeMovesBoard({ difficulty = 2 } = {}, n) {
   return null;
 }
 
+// ════════════════════════════════════════════════════════════════
+// 남은 번호(2차, 2026-11-28) — 1단원 칸 도형 모두 그리기·같은 조각으로 덮기·똑같이 나누기,
+// 2단원 두 번 접어 모서리 자르기·피라미드 쌓기나무, 3단원 나이 목록, 4단원 자리·등수 조건.
+// ════════════════════════════════════════════════════════════════
+
+const KOR_ORD = Object.freeze(["", "첫", "두", "세", "네", "다섯", "여섯", "일곱", "여덟"]);
+const circled = (n) => "①②③④⑤⑥⑦⑧"[n - 1];
+const clueListHtml = (clues) => `<ul style="margin:0 0 12px;padding:10px 16px 10px 30px;background:#e3f1f4;border-radius:12px;line-height:1.75;${FONT};font-size:15px;color:#1f2a30;text-align:left">${clues.map((c) => `<li>${esc(c)}</li>`).join("")}</ul>`;
+const capWrap = (svg, caption) => `<div style="display:flex;flex-direction:column;align-items:center;gap:4px">${svg}<span style="${FONT};font-size:13px;color:#2f3a40">${esc(caption)}</span></div>`;
+
+// 빈 모눈(그리는 칸)
+function blankGridSvg(rows, cols, { cell = 16 } = {}) {
+  const pad = 2;
+  const W = cols * cell + pad * 2;
+  const H = rows * cell + pad * 2;
+  let d = "";
+  for (let r = 1; r < rows; r += 1) d += `M${pad} ${pad + r * cell}H${pad + cols * cell}`;
+  for (let c = 1; c < cols; c += 1) d += `M${pad + c * cell} ${pad}V${pad + rows * cell}`;
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}" style="width:${W}px;max-width:100%;height:auto" role="img" aria-label="빈 모눈"><rect x="${pad}" y="${pad}" width="${cols * cell}" height="${rows * cell}" fill="#fff" stroke="#1f6f86" stroke-width="1.6"/><path d="${d}" stroke="#4f8fa3" stroke-width="1" stroke-dasharray="3 3"/></svg>`;
+}
+
+const polyCanon = (cells) => polyOrientations(cells).map(polyKey).sort()[0];
+const rectCells = (rows, cols) => Array.from({ length: rows * cols }, (_, i) => [Math.floor(i / cols), i % cols]);
+
+// ── 1단원 활동 1-1 · 서로 다른 칸 조각(테트로미노·펜토미노) 모두 그리기 ─────────
+// 교재: 테트로미노를 모두 그린다. 여기서는 몇 가지는 미리 그려 두고(돌리거나 뒤집은 모양으로) 나머지를 그리며 모두 몇 가지인지 쓴다.
+function polyominoAllDraw({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const size = d === 3 ? 5 : 4;
+  const ids = Object.keys(POLY_BASE[size]);
+  const givenCount = d === 1 ? randomInt(2, 3) : d === 2 ? randomInt(0, 2) : randomInt(6, 8);
+  const given = shuffle(ids).slice(0, givenCount).map((id) => ({ id, cells: pick(POLY_ORIENTS[size][id]) }));
+  const givenIds = new Set(given.map((g) => g.id));
+  const missing = ids.filter((id) => !givenIds.has(id)).map((id) => ({ id, cells: POLY_BASE[size][id] }));
+  const word = POLY_WORD[size];
+  const shelf = given.length
+    ? `<div style="${FONT};font-size:13px;color:#2f3a40;margin-bottom:4px">이미 그린 모양</div><div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:center;padding:8px 12px;border:1px solid #b7d6de;border-radius:10px;margin-bottom:10px">${given.map((g) => pieceSvg(g.cells, { cell: 15, fill: "#dcedf2" })).join("")}</div>`
+    : "";
+  const grid = blankGridSvg(size === 4 ? 5 : 7, size === 4 ? 12 : 16, { cell: 28 });
+  const prompt = `작은 정사각형 ${size}칸을 변끼리 이어 붙인 모양을 ${word}라고 합니다. 돌리거나 뒤집어서 꼭 겹쳐지는 모양은 같은 것으로 봅니다. 서로 다른 ${word}는 모두 몇 가지인지 쓰고, ${given.length ? "이미 그린 모양을 뺀 나머지를" : "서로 다른 모양을 모두"} 모눈에 그리세요.`;
+  const solution = size === 4
+    ? `가장 긴 줄의 칸 수로 나누어 찾습니다. 네 칸이 한 줄(1가지), 세 칸 줄의 끝이나 가운데에 한 칸을 붙인 모양(2가지), 두 칸씩 두 줄로 나란히 붙이거나 엇갈려 붙인 모양(2가지)을 더하면 모두 5가지입니다.${given.length ? " 이미 그린 모양을 빼고 나머지를 그립니다." : ""}`
+    : `가장 긴 줄의 칸 수가 5칸(1가지), 4칸(2가지), 3칸(7가지), 2칸(2가지)인 모양으로 나누어 빠짐없이 찾으면 모두 12가지입니다. 돌리거나 뒤집어 같아지는 모양은 한 번만 셉니다.`;
+  return {
+    prompt,
+    answer: `${ids.length}가지`,
+    responseKind: "drawing",
+    solution,
+    visual: { kind: "fig", html: `${shelf}${grid}` },
+    answerVisual: { kind: "fig", html: `<div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:center">${missing.map((m) => pieceSvg(m.cells, { cell: 15, fill: "#bfe0ea" })).join("")}</div>` },
+    meta: { family: "polyomino-all-draw-b4", size, given, missing: missing.map((m) => m.id), total: ids.length }
+  };
+}
+
+// ── 1단원 활동 1-2 · 같은 조각 여러 개로 직사각형을 덮을 수 없는 조각 고르기 ─────────
+const TILE_TARGETS = Object.freeze({
+  1: { size: 4, rects: [[4, 4], [2, 4], [4, 6]] },
+  2: { size: 4, rects: [[3, 4], [2, 8], [4, 5], [2, 6], [4, 4]] },
+  3: { size: 5, rects: [[2, 5], [3, 5], [4, 5]] }
+});
+const tilingMemo = new Map();
+function rectTilingWith(rows, cols, size, id) {
+  const key = `${rows}x${cols}:${size}${id}`;
+  if (!tilingMemo.has(key)) tilingMemo.set(key, countTilings(rectCells(rows, cols), { [id]: POLY_ORIENTS[size][id] }, { same: true, limit: 1 }).tiling);
+  return tilingMemo.get(key);
+}
+
+function samePieceRectTiling({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const spec = TILE_TARGETS[d];
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    let [rows, cols] = pick(spec.rects);
+    if (Math.random() < 0.5) [rows, cols] = [cols, rows];
+    const ids = spec.size === 4 ? shuffle(Object.keys(POLY_BASE[4])) : shuffle(Object.keys(POLY_BASE[5])).slice(0, 6);
+    const options = ids.map((id, i) => ({ option: i + 1, id, cells: pick(POLY_ORIENTS[spec.size][id]), tiling: rectTilingWith(rows, cols, spec.size, id) }));
+    const cannot = options.filter((o) => !o.tiling);
+    if (!cannot.length || cannot.length === options.length) continue;
+    const k = (rows * cols) / spec.size;
+    const shapeWord = rows === cols ? `한 변이 ${rows}칸인 정사각형` : `가로 ${cols}칸, 세로 ${rows}칸인 직사각형`;
+    const optionHtml = options.map((o) => capWrap(pieceSvg(o.cells, { cell: 14 }), circled(o.option))).join("");
+    const answer = cannot.map((o) => `${o.option}번`).join(", ");
+    const can = options.filter((o) => o.tiling);
+    const answerFigs = can.map((o) => capWrap(regionSvg(rectCells(rows, cols), { tiling: o.tiling, cell: 16 }), `${circled(o.option)} 조각 ${k}개`));
+    return {
+      prompt: `같은 모양의 조각 ${k}개를 빈틈없이 붙여 ${shapeWord}을 만들려고 합니다. 조각은 돌리거나 뒤집어 놓아도 됩니다. 같은 조각 ${k}개로 이 모양을 만들 수 없는 조각을 모두 고르세요.`,
+      answer,
+      solution: `칸 수는 ${rows * cols}칸이므로 ${spec.size}칸 조각이 ${k}개 필요합니다. 모서리 칸부터 조각을 하나씩 놓아 보면 ${can.map((o) => circled(o.option)).join(", ")} 조각은 그림처럼 빈틈없이 덮을 수 있지만, ${cannot.map((o) => circled(o.option)).join(", ")} 조각은 어떻게 놓아도 덮이지 않는 칸이 남습니다. 따라서 답은 ${answer}입니다.`,
+      visual: { kind: "fig", html: `<div style="display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:center;padding:10px 12px;border:1px solid #b7d6de;border-radius:12px;margin-bottom:10px">${optionHtml}</div>${rowWrap([blankGridSvg(rows, cols, { cell: 26 }), blankGridSvg(rows, cols, { cell: 26 })])}` },
+      answerVisual: { kind: "fig", html: rowWrap(answerFigs) },
+      meta: { family: "same-piece-rect-tiling-b4", size: spec.size, rows, cols, options: options.map((o) => ({ option: o.option, id: o.id, cells: o.cells })), cannot: cannot.map((o) => o.option) }
+    };
+  }
+  return null;
+}
+
+// ── 똑같은 두 조각으로 나누는 방법 모두 찾기(정사각형 칸·삼각형 칸 공용) ─────────
+// cells를 같은 수의 두 덩어리로 나누어(두 덩어리 모두 이어져 있어야 함) 두 조각이 돌리거나 뒤집어 꼭 겹치는 방법을
+// 조각 모양마다 하나씩 모은다(교재: 「조각을 돌리거나 뒤집었을 때 같은 도형이면 한 가지로 봅니다」).
+function congruentHalvesAll(cells, adjacent, canon) {
+  const N = cells.length;
+  if (N % 2 || N > 20) return [];
+  const nbr = cells.map((a, i) => cells.map((b, j) => (i !== j && adjacent(a, b) ? j : -1)).filter((j) => j >= 0));
+  const connected = (mask) => {
+    let start = -1;
+    for (let i = 0; i < N; i += 1) if ((mask >> i) & 1) { start = i; break; }
+    if (start < 0) return false;
+    let seen = 1 << start;
+    const stack = [start];
+    while (stack.length) {
+      const i = stack.pop();
+      for (const j of nbr[i]) if (((mask >> j) & 1) && !((seen >> j) & 1)) { seen |= 1 << j; stack.push(j); }
+    }
+    return seen === mask;
+  };
+  const full = (1 << N) - 1;
+  const ways = new Map();
+  for (let mask = 1; mask < full; mask += 2) {
+    let pc = 0;
+    for (let x = mask; x; x &= x - 1) pc += 1;
+    if (pc !== N / 2) continue;
+    const other = full ^ mask;
+    if (!connected(mask) || !connected(other)) continue;
+    const A = cells.filter((_, i) => (mask >> i) & 1);
+    const B = cells.filter((_, i) => (other >> i) & 1);
+    const key = canon(A);
+    if (key !== canon(B) || ways.has(key)) continue;
+    ways.set(key, { A, B });
+  }
+  return [...ways.values()];
+}
+
+// 1단원 도전 1, 2 · 직사각형(정사각형)을 똑같은 두 조각으로 나누는 방법 모두
+const sqAdjacent = ([r1, c1], [r2, c2]) => Math.abs(r1 - r2) + Math.abs(c1 - c2) === 1;
+const rectHalvesMemo = new Map();
+function rectHalves(rows, cols) {
+  const key = `${rows}x${cols}`;
+  if (!rectHalvesMemo.has(key)) rectHalvesMemo.set(key, congruentHalvesAll(rectCells(rows, cols), sqAdjacent, polyCanon));
+  return rectHalvesMemo.get(key);
+}
+const RECT_HALF_SIZES = Object.freeze({ 1: [[2, 4], [2, 5], [2, 6]], 2: [[3, 4], [2, 8], [4, 4]], 3: [[4, 4], [3, 4], [2, 8]] });
+
+function rectHalvesAllWays({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  let [rows, cols] = pick(RECT_HALF_SIZES[d]);
+  if (rows !== cols && Math.random() < 0.5) [rows, cols] = [cols, rows];
+  const ways = rectHalves(rows, cols);
+  if (ways.length < 2) return null;
+  const exampleIndex = randomInt(0, ways.length - 1);
+  const all = rectCells(rows, cols);
+  const draw = (w, label = "") => regionSvg(all, { tiling: [{ cells: w.A }, { cells: w.B }], cell: 18, label, shade: new Set(w.A.map(([r, c]) => `${r},${c}`)) });
+  const example = draw(ways[exampleIndex], "보기");
+  const blanks = Array.from({ length: 6 }, () => regionSvg(all, { cell: 18 }));
+  const shapeWord = rows === cols ? `한 변이 ${rows}칸인 정사각형` : `가로 ${cols}칸, 세로 ${rows}칸인 직사각형`;
+  return {
+    prompt: `${shapeWord}을 점선을 따라 잘라 모양과 크기가 같은 두 조각으로 나누려고 합니다. 나누어진 조각을 돌리거나 뒤집었을 때 같은 모양이면 한 가지로 봅니다. 보기의 방법까지 넣어 나누는 방법은 모두 몇 가지인지 쓰고, 보기와 다른 방법을 빈 모눈에 그리세요.`,
+    answer: `${ways.length}가지`,
+    responseKind: "drawing",
+    solution: `두 조각은 ${(rows * cols) / 2}칸씩입니다. 똑같은 두 조각은 가운데 점을 중심으로 반 바퀴 돌리거나 뒤집으면 서로 겹치므로, 자르는 선도 가운데를 지나며 반 바퀴 돌려도 같은 모양이 됩니다. 가운데에서 시작해 한 칸씩 꺾어 나가며 빠짐없이 찾고 조각 모양이 같은 것은 한 번만 세면 모두 ${ways.length}가지입니다.`,
+    visual: { kind: "fig", html: `${rowWrap([example])}<div style="height:8px"></div>${rowWrap(blanks)}` },
+    answerVisual: { kind: "fig", html: rowWrap(ways.map((w) => draw(w))) },
+    meta: { family: "rect-halves-all-ways-b4", rows, cols, example: ways[exampleIndex].A, ways: ways.map((w) => w.A), total: ways.length }
+  };
+}
+
+// 1단원 연습 5 · 삼각형 칸으로 된 도형을 똑같은 두 조각으로 나누는 방법 모두
+// 삼각형 하나 = [a, b, 위(1)/아래(0)], 꼭짓점은 비스듬한 좌표 (a, b) — 화면 좌표는 (a + b/2, b × √3/2).
+const triVerts = ([a, b, u]) => (u ? [[a, b], [a + 1, b], [a, b + 1]] : [[a + 1, b], [a, b + 1], [a + 1, b + 1]]);
+const triAdjacent = (t1, t2) => {
+  const s = new Set(triVerts(t1).map(String));
+  return triVerts(t2).filter((p) => s.has(String(p))).length === 2;
+};
+function triCanon(tris) {
+  const rot = ([a, b]) => [-b, a + b];
+  const keys = [];
+  for (const flip of [false, true]) {
+    let cur = tris.map((t) => triVerts(t).map(([a, b]) => (flip ? [b, a] : [a, b])));
+    for (let r = 0; r < 6; r += 1) {
+      cur = cur.map((t) => t.map(rot));
+      const a0 = Math.min(...cur.flat().map((p) => p[0]));
+      const b0 = Math.min(...cur.flat().map((p) => p[1]));
+      keys.push(cur.map((t) => t.map(([a, b]) => [a - a0, b - b0]).sort((x, y) => x[0] - y[0] || x[1] - y[1]).join(";")).sort().join("|"));
+    }
+  }
+  return keys.sort()[0];
+}
+const TRI_SHAPES = Object.freeze({
+  hex2: [[0, 0], [2, 0], [2, 1], [1, 2], [-1, 2], [-1, 1]],
+  hex3: [[0, 0], [3, 0], [3, 1], [2, 2], [-1, 2], [-1, 1]],
+  hex4: [[0, 0], [4, 0], [4, 1], [3, 2], [-1, 2], [-1, 1]],
+  para2: [[0, 0], [2, 0], [2, 2], [0, 2]],
+  para3: [[0, 0], [3, 0], [3, 2], [0, 2]]
+});
+const TRI_LEVELS = Object.freeze({ 1: ["hex2", "para2", "hex3"], 2: ["hex3", "para3", "hex2"], 3: ["hex4", "para3", "hex3"] });
+const triCart = ([a, b]) => [a + b / 2, (b * Math.sqrt(3)) / 2];
+function trianglesInside(polyLattice) {
+  const poly = polyLattice.map(triCart);
+  const inside = ([x, y]) => {
+    let sign = 0;
+    for (let i = 0; i < poly.length; i += 1) {
+      const [x1, y1] = poly[i];
+      const [x2, y2] = poly[(i + 1) % poly.length];
+      const cr = (x2 - x1) * (y - y1) - (y2 - y1) * (x - x1);
+      if (!sign) sign = Math.sign(cr);
+      else if (Math.sign(cr) !== sign) return false;
+    }
+    return true;
+  };
+  const out = [];
+  for (let a = -6; a < 10; a += 1) for (let b = -1; b < 5; b += 1) for (const u of [1, 0]) {
+    const v = triVerts([a, b, u]).map(triCart);
+    if (inside([(v[0][0] + v[1][0] + v[2][0]) / 3, (v[0][1] + v[1][1] + v[2][1]) / 3])) out.push([a, b, u]);
+  }
+  return out;
+}
+const triHalvesMemo = new Map();
+function triHalves(name) {
+  if (!triHalvesMemo.has(name)) {
+    const tris = trianglesInside(TRI_SHAPES[name]);
+    triHalvesMemo.set(name, { tris, ways: congruentHalvesAll(tris, triAdjacent, triCanon) });
+  }
+  return triHalvesMemo.get(name);
+}
+
+function triGridSvg(tris, { pieceA = null, unit = 30 } = {}) {
+  const pts = tris.flatMap(triVerts).map(triCart);
+  const xs = pts.map((p) => p[0]);
+  const ys = pts.map((p) => p[1]);
+  const x0 = Math.min(...xs);
+  const y1 = Math.max(...ys);
+  const pad = 4;
+  const X = (p) => pad + (triCart(p)[0] - x0) * unit;
+  const Y = (p) => pad + (y1 - triCart(p)[1]) * unit;
+  const W = (Math.max(...xs) - x0) * unit + pad * 2;
+  const H = (y1 - Math.min(...ys)) * unit + pad * 2;
+  const inA = new Set((pieceA || []).map(String));
+  const edgeOwners = new Map();
+  tris.forEach((t) => {
+    const v = triVerts(t);
+    for (let i = 0; i < 3; i += 1) {
+      const e = [v[i], v[(i + 1) % 3]].map(String).sort().join("~");
+      if (!edgeOwners.has(e)) edgeOwners.set(e, { ends: [v[i], v[(i + 1) % 3]], owners: [] });
+      edgeOwners.get(e).owners.push(t);
+    }
+  });
+  let fills = "";
+  tris.forEach((t) => {
+    const fill = pieceA && inA.has(String(t)) ? "#cfe6ee" : "#fff";
+    fills += `<polygon points="${triVerts(t).map((p) => `${X(p).toFixed(1)},${Y(p).toFixed(1)}`).join(" ")}" fill="${fill}"/>`;
+  });
+  let dashed = "";
+  let outline = "";
+  let cuts = "";
+  for (const { ends: [p, q], owners } of edgeOwners.values()) {
+    const seg = `M${X(p).toFixed(1)} ${Y(p).toFixed(1)}L${X(q).toFixed(1)} ${Y(q).toFixed(1)}`;
+    if (owners.length === 1) outline += seg;
+    else if (pieceA && inA.has(String(owners[0])) !== inA.has(String(owners[1]))) cuts += seg;
+    else dashed += seg;
+  }
+  return `<svg width="${W.toFixed(0)}" height="${H.toFixed(0)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}" style="width:${W.toFixed(0)}px;max-width:100%;height:auto" role="img" aria-label="삼각형 칸으로 된 도형">${fills}`
+    + `<path d="${dashed}" fill="none" stroke="#4f8fa3" stroke-width="1" stroke-dasharray="3 3"/>`
+    + (cuts ? `<path d="${cuts}" fill="none" stroke="#d2372c" stroke-width="3" stroke-linecap="round"/>` : "")
+    + `<path d="${outline}" fill="none" stroke="#1f6f86" stroke-width="2" stroke-linejoin="round"/></svg>`;
+}
+
+function triangleGridHalvesAll({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const name = pick(TRI_LEVELS[d]);
+  const { tris, ways } = triHalves(name);
+  if (ways.length < 2) return null;
+  const blanks = Array.from({ length: 5 }, () => triGridSvg(tris, { unit: 26 }));
+  return {
+    prompt: "삼각형 칸으로 된 도형을 점선을 따라 잘라 모양과 크기가 같은 두 조각으로 나누려고 합니다. 나누어진 조각을 돌리거나 뒤집었을 때 같은 모양이면 한 가지로 봅니다. 나누는 방법은 모두 몇 가지인지 쓰고, 서로 다른 방법을 모두 그리세요.",
+    answer: `${ways.length}가지`,
+    responseKind: "drawing",
+    solution: `삼각형 칸은 모두 ${tris.length}칸이므로 한 조각은 ${tris.length / 2}칸입니다. 두 조각은 가운데를 중심으로 반 바퀴 돌리거나 뒤집으면 겹쳐야 하므로, 자르는 선이 도형의 가운데를 지나도록 한 칸씩 바꾸어 가며 찾습니다. 조각 모양이 같은 것은 한 번만 세면 모두 ${ways.length}가지입니다.`,
+    visual: { kind: "fig", html: rowWrap(blanks) },
+    answerVisual: { kind: "fig", html: rowWrap(ways.map((w) => triGridSvg(tris, { pieceA: w.A, unit: 26 }))) },
+    meta: { family: "triangle-grid-halves-b4", shape: name, tris, ways: ways.map((w) => w.A), total: ways.length }
+  };
+}
+
+// ── 1단원 확인 1-3·연습 9 · 표시가 같은 수씩 들어가게 똑같은 네 부분으로 나누기 ─────────
+// 우리(칸 도형) 안 여러 칸에 도토리가 있다. 모양과 크기가 같은 네 부분으로 나누되 부분마다 도토리 수가 같게(자리는 달라도 됨).
+// 그 조건을 만족하는 나누기가 한 가지뿐일 때만 낸다.
+const congruentPartitionMemo = new Map();
+function congruentFourPartitions(rows, cols) {
+  const key = `${rows}x${cols}`;
+  if (congruentPartitionMemo.has(key)) return congruentPartitionMemo.get(key);
+  const n = (rows * cols) / 4;
+  const all = new Set(rectCells(rows, cols).map(([r, c]) => `${r},${c}`));
+  const order = rectCells(rows, cols).map(([r, c]) => `${r},${c}`);
+  const used = new Set();
+  const pieces = [];
+  const out = [];
+  const grow = (first) => {
+    let sets = new Map([[first, [first]]]);
+    for (let s = 1; s < n; s += 1) {
+      const next = new Map();
+      for (const piece of sets.values()) for (const cell of piece) {
+        const [r, c] = cell.split(",").map(Number);
+        for (const [dr, dc] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+          const k = `${r + dr},${c + dc}`;
+          if (!all.has(k) || used.has(k) || piece.includes(k)) continue;
+          const g = [...piece, k];
+          next.set([...g].sort().join("|"), g);
+        }
+      }
+      sets = next;
+    }
+    return [...sets.values()];
+  };
+  const run = (shape) => {
+    const first = order.find((k) => !used.has(k));
+    if (!first) { out.push(pieces.map((p) => p.map((k) => k.split(",").map(Number)))); return; }
+    for (const piece of grow(first)) {
+      const canon = polyCanon(piece.map((k) => k.split(",").map(Number)));
+      if (shape && canon !== shape) continue;
+      piece.forEach((k) => used.add(k));
+      pieces.push(piece);
+      run(shape || canon);
+      pieces.pop();
+      piece.forEach((k) => used.delete(k));
+    }
+  };
+  run(null);
+  congruentPartitionMemo.set(key, out);
+  return out;
+}
+
+function acornSvgGrid(rows, cols, marks, { tiling = null, cell = 30 } = {}) {
+  const region = rectCells(rows, cols);
+  const base = regionSvg(region, { tiling, cell });
+  const pad = 3;
+  const acorn = ([r, c]) => {
+    const cx = pad + c * cell + cell / 2;
+    const cy = pad + r * cell + cell / 2;
+    return `<g><ellipse cx="${cx}" cy="${cy + 3}" rx="${cell * 0.2}" ry="${cell * 0.24}" fill="#b5793d"/><path d="M${cx - cell * 0.24} ${cy - 1}Q${cx} ${cy - cell * 0.3} ${cx + cell * 0.24} ${cy - 1}Z" fill="#6e4a24"/><path d="M${cx} ${cy - cell * 0.2}V${cy - cell * 0.32}" stroke="#6e4a24" stroke-width="2"/></g>`;
+  };
+  return base.replace("</svg>", `${marks.map(acorn).join("")}</svg>`);
+}
+
+const BALANCED_LEVELS = Object.freeze({ 1: { rows: 4, cols: 4, per: [3] }, 2: { rows: 4, cols: 4, per: [2, 3] }, 3: { rows: 4, cols: 5, per: [2, 3] } });
+
+function countBalancedPartition({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const spec = BALANCED_LEVELS[d];
+  let [rows, cols] = [spec.rows, spec.cols];
+  if (rows !== cols && Math.random() < 0.5) [rows, cols] = [cols, rows];
+  const parts = congruentFourPartitions(rows, cols);
+  const n = (rows * cols) / 4;
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const truth = pick(parts);
+    if (d > 1 && polyCanon(truth[0]) === polyCanon(POLY_BASE[n]?.I || [])) continue;
+    const per = pick(spec.per);
+    const marks = truth.flatMap((piece) => shuffle(piece).slice(0, per));
+    const markSet = new Set(marks.map(String));
+    const fits = parts.filter((p) => p.every((piece) => piece.filter((cell) => markSet.has(String(cell))).length === per));
+    if (fits.length !== 1) continue;
+    return {
+      prompt: `우리 안의 칸 ${marks.length}곳에 도토리가 놓여 있습니다. 칸의 선을 따라 우리를 모양과 크기가 같은 네 부분으로 나누되, 부분마다 도토리가 같은 개수만큼 들어가게 울타리를 그리세요. 부분마다 도토리가 놓인 자리는 달라도 됩니다.`,
+      answer: "그림 답안",
+      responseKind: "drawing",
+      solution: `칸은 ${rows * cols}칸이므로 한 부분은 ${n}칸이고, 도토리는 ${marks.length}개이므로 한 부분에 ${per}개씩 들어갑니다. 도토리가 없는 칸은 ${rows * cols - marks.length}칸이니 부분마다 ${n - per}칸씩 나누어 가집니다. 모서리 칸이 들어갈 부분부터 ${n}칸 조각을 정하며 도토리 수를 맞추면 나누는 방법은 그림과 같이 한 가지뿐입니다.`,
+      visual: { kind: "fig", html: acornSvgGrid(rows, cols, marks) },
+      answerVisual: { kind: "fig", html: acornSvgGrid(rows, cols, marks, { tiling: truth.map((cells) => ({ cells })) }) },
+      meta: { family: "count-balanced-partition-b4", rows, cols, per, marks, pieces: truth }
+    };
+  }
+  return null;
+}
+
+// ── 2단원 활동 1-1·연습 1 · 두 번 접어 모서리를 자르고 펼친 모양 그리기 ─────────
+// 반으로 두 번(가로·세로) 또는 대각선으로 두 번 접은 뒤, 접힌 모양의 한 꼭짓점이나 한 변 쪽을 잘라 낸다.
+// 펼친 모양은 마지막 접는 선부터 거꾸로 거울에 비춰 붙인 것.
+const FOLD_PAIRS = Object.freeze({
+  straight: [["아래로", "왼쪽으로"], ["아래로", "오른쪽으로"], ["위로", "왼쪽으로"], ["위로", "오른쪽으로"], ["왼쪽으로", "아래로"], ["왼쪽으로", "위로"], ["오른쪽으로", "아래로"], ["오른쪽으로", "위로"]],
+  diagonal: [["대각선-내림", "대각선-오름"], ["대각선-오름", "대각선-내림"]]
+});
+function foldLineOf(word, poly) {
+  const xs = poly.map((p) => p.x);
+  const ys = poly.map((p) => p.y);
+  const box = { x0: Math.min(...xs), x1: Math.max(...xs), y0: Math.min(...ys), y1: Math.max(...ys) };
+  const mx = (box.x0 + box.x1) / 2;
+  const my = (box.y0 + box.y1) / 2;
+  if (word === "아래로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keepPoint: { x: mx, y: box.y1 } };
+  if (word === "위로") return { a: { x: box.x0, y: my }, b: { x: box.x1, y: my }, keepPoint: { x: mx, y: box.y0 } };
+  if (word === "왼쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keepPoint: { x: box.x0, y: my } };
+  if (word === "오른쪽으로") return { a: { x: mx, y: box.y0 }, b: { x: mx, y: box.y1 }, keepPoint: { x: box.x1, y: my } };
+  if (word === "대각선-내림") return { a: { x: box.x0, y: box.y0 }, b: { x: box.x1, y: box.y1 }, keepPoint: { x: box.x0, y: box.y1 } };
+  return { a: { x: box.x0, y: box.y1 }, b: { x: box.x1, y: box.y0 }, keepPoint: { x: box.x0, y: box.y0 } };
+}
+const lineSide = (line, p) => (line.b.x - line.a.x) * (p.y - line.a.y) - (line.b.y - line.a.y) * (p.x - line.a.x);
+function reflectOver(line, p) {
+  const dx = line.b.x - line.a.x;
+  const dy = line.b.y - line.a.y;
+  const t = ((p.x - line.a.x) * dx + (p.y - line.a.y) * dy) / (dx * dx + dy * dy);
+  return { x: 2 * (line.a.x + t * dx) - p.x, y: 2 * (line.a.y + t * dy) - p.y };
+}
+function foldedShape(words) {
+  const { clip } = foldGeometryHelpers();
+  let poly = [{ x: 0, y: 0 }, { x: 1, y: 0 }, { x: 1, y: 1 }, { x: 0, y: 1 }];
+  const lines = [];
+  for (const word of words) {
+    const line = foldLineOf(word, poly);
+    const sign = Math.sign(lineSide(line, line.keepPoint)) || 1;
+    poly = clip(poly, (p) => sign * lineSide(line, p));
+    lines.push({ ...line, sign });
+  }
+  return { poly, lines };
+}
+const angleOf = (v) => Math.atan2(v.y, v.x);
+function cornerCut(poly) {
+  const n = poly.length;
+  const i = randomInt(0, n - 1);
+  const V = poly[i];
+  const P = poly[(i + n - 1) % n];
+  const Q = poly[(i + 1) % n];
+  const u1 = { x: P.x - V.x, y: P.y - V.y };
+  const u2 = { x: Q.x - V.x, y: Q.y - V.y };
+  const l1 = Math.hypot(u1.x, u1.y);
+  const l2 = Math.hypot(u2.x, u2.y);
+  const L = Math.min(l1, l2) * (0.3 + Math.random() * 0.2);
+  const e1 = { x: u1.x / l1, y: u1.y / l1 };
+  const e2 = { x: u2.x / l2, y: u2.y / l2 };
+  const right = Math.abs(e1.x * e2.x + e1.y * e2.y) < 1e-6;
+  const kind = pick(right ? ["tri", "sq", "arc"] : ["tri", "arc"]);
+  if (kind === "tri") return { kind, at: i, points: [V, { x: V.x + e1.x * L, y: V.y + e1.y * L }, { x: V.x + e2.x * L, y: V.y + e2.y * L }] };
+  if (kind === "sq") return { kind, at: i, points: [V, { x: V.x + e1.x * L, y: V.y + e1.y * L }, { x: V.x + (e1.x + e2.x) * L, y: V.y + (e1.y + e2.y) * L }, { x: V.x + e2.x * L, y: V.y + e2.y * L }] };
+  let a1 = angleOf(e1);
+  let a2 = angleOf(e2);
+  let diff = a2 - a1;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  const steps = 10;
+  const pts = [V];
+  for (let s = 0; s <= steps; s += 1) {
+    const a = a1 + (diff * s) / steps;
+    pts.push({ x: V.x + Math.cos(a) * L, y: V.y + Math.sin(a) * L });
+  }
+  return { kind, at: i, points: pts };
+}
+function edgeBandCut(poly) {
+  const { clip } = foldGeometryHelpers();
+  const n = poly.length;
+  const i = randomInt(0, n - 1);
+  const A = poly[i];
+  const B = poly[(i + 1) % n];
+  const cx = poly.reduce((t, p) => t + p.x, 0) / n;
+  const cy = poly.reduce((t, p) => t + p.y, 0) / n;
+  const base = { a: A, b: B };
+  const sideIn = Math.sign(lineSide(base, { x: cx, y: cy })) || 1;
+  const len = Math.hypot(B.x - A.x, B.y - A.y);
+  const nx = (-(B.y - A.y) / len) * sideIn;
+  const ny = ((B.x - A.x) / len) * sideIn;
+  // 안쪽으로 높이를 재어 띠를 둔다(넓이의 가운데쯤, 변에 닿지 않게)
+  const far = Math.max(...poly.map((p) => Math.abs(lineSide(base, p)) / len));
+  const t1 = far * (0.3 + Math.random() * 0.15);
+  const t2 = t1 + far * (0.18 + Math.random() * 0.1);
+  const shift = (t) => ({ a: { x: A.x + nx * t, y: A.y + ny * t }, b: { x: B.x + nx * t, y: B.y + ny * t } });
+  const l1 = shift(t1);
+  const l2 = shift(t2);
+  const s1 = Math.sign(lineSide(l1, { x: A.x + nx * t2, y: A.y + ny * t2 })) || 1;
+  const s2 = Math.sign(lineSide(l2, { x: A.x + nx * t1, y: A.y + ny * t1 })) || 1;
+  const band = clip(clip(poly, (p) => s1 * lineSide(l1, p)), (p) => s2 * lineSide(l2, p));
+  return band.length >= 3 ? { kind: "band", at: i, points: band } : null;
+}
+const ptsAttr = (points, shift, top, size) => points.map((p) => `${(shift + p.x * size).toFixed(1)},${(top + p.y * size).toFixed(1)}`).join(" ");
+function unfoldedSquareSvg(lines, holes, shift, top, size) {
+  const crease = lines.map((l) => {
+    // 접는 선을 정사각형 끝까지 늘려 긋는다
+    const dx = l.b.x - l.a.x;
+    const dy = l.b.y - l.a.y;
+    const p = { x: l.a.x - dx * 3, y: l.a.y - dy * 3 };
+    const q = { x: l.b.x + dx * 3, y: l.b.y + dy * 3 };
+    const { clip } = foldGeometryHelpers();
+    void clip;
+    const cl = (v) => Math.max(0, Math.min(1, v));
+    const ends = [];
+    for (const t of [0, 1]) {
+      // 정사각형 경계와의 교점(가운데 선·대각선이라 끝점이 경계 위에 있다)
+      const s = t ? q : p;
+      ends.push({ x: cl(s.x), y: cl(s.y) });
+    }
+    if (Math.abs(dx) > 1e-9 && Math.abs(dy) > 1e-9) return `<line x1="${shift}" y1="${top + (dy * dx > 0 ? 0 : size)}" x2="${shift + size}" y2="${top + (dy * dx > 0 ? size : 0)}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+    return `<line x1="${(shift + ends[0].x * size).toFixed(1)}" y1="${(top + ends[0].y * size).toFixed(1)}" x2="${(shift + ends[1].x * size).toFixed(1)}" y2="${(top + ends[1].y * size).toFixed(1)}" stroke="#d4756c" stroke-width="1.4" stroke-dasharray="5 4"/>`;
+  }).join("");
+  const holeSvg = (holes || []).map((h) => `<polygon points="${ptsAttr(h, shift, top, size)}" fill="#fff" stroke="#b03a5b" stroke-width="1.4"/>`).join("");
+  return `<rect x="${shift}" y="${top}" width="${size}" height="${size}" fill="#f9c8c4" stroke="#e8968f" stroke-width="2"/>${crease}${holeSvg}`;
+}
+
+function foldCutTwoCornerUnfold({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const family = d === 1 ? "straight" : d === 2 ? pick(["straight", "diagonal"]) : "diagonal";
+  const words = pick(FOLD_PAIRS[family]);
+  const { poly, lines } = foldedShape(words);
+  const cut = (d === 3 || Math.random() < 0.3) ? edgeBandCut(poly) || cornerCut(poly) : cornerCut(poly);
+  let holes = [cut.points];
+  for (let i = lines.length - 1; i >= 0; i -= 1) holes = holes.concat(holes.map((h) => h.map((p) => reflectOver(lines[i], p))));
+  const finalCut = (shift, top, size) => `<polygon points="${ptsAttr(cut.points, shift, top, size)}" fill="#b03a5b"/>`;
+  const strip = (reveal) => foldWordStrip(words, {
+    final: finalCut,
+    finalExtra: "자르기",
+    label: reveal ? "두 번 접어 자른 색종이를 펼친 모양" : "색종이를 두 번 접어 색칠한 부분을 자르기",
+    after: (shift, top, size) => unfoldedSquareSvg(lines, reveal ? holes : [], shift, top, size),
+    afterCaption: "펼친 모양"
+  });
+  const where = family === "straight" ? "가로와 세로로 반씩" : "대각선으로";
+  return {
+    prompt: `색종이를 ${where} 두 번 접은 뒤 색칠한 부분을 잘라 냈습니다. 남은 종이를 펼쳤을 때의 모양을 마지막 칸에 그리세요.`,
+    answer: "그림 답안",
+    responseKind: "drawing",
+    solution: `두 번째로 접은 선부터 거꾸로 펼칩니다. 두 번째 접는 선에 거울을 대듯 잘린 부분을 반대쪽에 하나 더 그리고, 다시 첫 번째 접는 선에 비추어 그리면 잘린 부분이 모두 ${holes.length}곳에 나타납니다. 접는 선에 닿아 있던 잘린 부분은 펼치면 서로 이어져 한 덩어리로 보입니다.`,
+    visual: { kind: "fig", html: strip(false) },
+    answerVisual: { kind: "fig", html: strip(true) },
+    meta: { family: "fold-cut-two-corner-b4", words, lines: lines.map(({ a, b, sign }) => ({ a, b, sign })), cut: cut.points, cutKind: cut.kind, holes }
+  };
+}
+
+// ── 2단원 연습 13 · 한 겹 피라미드 벽(1, 4, 9, …개) 몇 번째 그림의 개수 ─────────
+function pyramidWallSvg(n, { s = 16 } = {}) {
+  const dx = Math.round(s * 0.45);
+  const dy = Math.round(s * 0.35);
+  const width = (2 * n - 1) * s + dx + 4;
+  const height = n * s + dy + 4;
+  const ox = 2;
+  const oy = height - 2;
+  let body = "";
+  for (let row = 0; row < n; row += 1) {
+    const count = 2 * (n - row) - 1;
+    for (let k = 0; k < count; k += 1) {
+      const x = ox + (row + k) * s;
+      const y = oy - (row + 1) * s;
+      body += `<polygon points="${x},${y} ${x + dx},${y - dy} ${x + s + dx},${y - dy} ${x + s},${y}" fill="#e8f3f6" stroke="#3d7d8c" stroke-width="1"/>`;
+      body += `<polygon points="${x + s},${y} ${x + s + dx},${y - dy} ${x + s + dx},${y + s - dy} ${x + s},${y + s}" fill="#a9cbd4" stroke="#3d7d8c" stroke-width="1"/>`;
+      body += `<rect x="${x}" y="${y}" width="${s}" height="${s}" fill="#d4eaf0" stroke="#3d7d8c" stroke-width="1"/>`;
+    }
+  }
+  return `<svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" style="width:${width}px;max-width:100%;height:auto" role="img" aria-label="한 겹으로 쌓은 피라미드 모양 쌓기나무">${body}</svg>`;
+}
+function orderTableHtml(count) {
+  const cell = "border:1px solid #6f9fae;padding:4px 8px;min-width:34px;text-align:center";
+  return `<table style="border-collapse:collapse;margin:10px auto 0;${FONT};font-size:14px"><tr><th style="${cell};background:#dcedf2">순서</th>${Array.from({ length: count }, (_, i) => `<td style="${cell};background:#eef6f8">${i + 1}</td>`).join("")}</tr><tr><th style="${cell};background:#dcedf2">개수</th>${Array.from({ length: count }, () => `<td style="${cell};height:24px"></td>`).join("")}</tr></table>`;
+}
+
+function pyramidWallNth({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const shown = randomInt(3, 4);
+  const k = d === 1 ? randomInt(5, 7) : d === 2 ? randomInt(6, 9) : randomInt(9, 13);
+  const figs = Array.from({ length: shown }, (_, i) => capWrap(pyramidWallSvg(i + 1), `${i + 1}번째`));
+  const counts = Array.from({ length: k }, (_, i) => (i + 1) * (i + 1));
+  return {
+    prompt: `쌓기나무를 한 겹으로 피라미드 모양이 되게 일정한 규칙으로 쌓았습니다. 표를 채워 ${k}번째 모양에 필요한 쌓기나무는 몇 개인지 구하세요.`,
+    answer: `${k * k}개`,
+    solution: `n번째 모양은 아래에서부터 한 줄에 ${"2×n−1"}개, 그 위로 2개씩 줄어 맨 위는 1개입니다. 1, 3, 5, …처럼 홀수를 차례로 더하면 1, 4, 9, 16, …이 되어 n번째 모양은 n × n개입니다. 표를 채우면 ${counts.join(", ")}이므로 ${k}번째는 ${k} × ${k} = ${k * k}개입니다.`.replace("2×n−1", "(n의 2배보다 1 작은 수)"),
+    visual: { kind: "fig", html: `${rowWrap(figs)}${orderTableHtml(k)}` },
+    meta: { family: "pyramid-wall-nth-b4", shown, k, counts, answer: k * k }
+  };
+}
+
+// ── 2단원 확인 2-2·연습 16 · 계단 피라미드에서 보이지 않는 쌓기나무 ─────────
+// 한 층 올라갈 때마다 가장자리가 한 칸씩 안으로 들어간(가운데 맞춘) 정사각형 층. 바닥은 보이지 않는다.
+// 위에서 보면 기둥마다 꼭대기 하나씩 보이고, 가장자리가 한 칸씩 계단이라 옆에서 보이는 나무도 모두 기둥 꼭대기다.
+function pyramidLayers(base, top) {
+  const layers = [];
+  for (let s = base; s >= top; s -= 2) layers.push(s);
+  return layers;
+}
+function pyramidHeights(base, layers) {
+  return Array.from({ length: base }, (_, r) => Array.from({ length: base }, (_, c) => layers.filter((s, i) => r >= i && r < i + s && c >= i && c < i + s).length));
+}
+function isoCubesSvg(heights, { s = 15 } = {}) {
+  const R = heights.length;
+  const C = heights[0].length;
+  // 위에서 비스듬히 내려다본 모습: 바닥은 마름모, 옆면은 얕게
+  const ax = s * 0.62;
+  const ay = s * 0.62;
+  const hz = s * 0.6;
+  const maxH = Math.max(...heights.flat());
+  const pad = 6;
+  const ox = pad + R * ax;
+  const oy = pad + maxH * hz;
+  const P = (r, c, z) => [ox + (c - r) * ax, oy + (c + r) * ay - z * hz];
+  const poly = (pts, fill) => `<polygon points="${pts.map(([x, y]) => `${x.toFixed(1)},${y.toFixed(1)}`).join(" ")}" fill="${fill}" stroke="#2f7385" stroke-width="0.9" stroke-linejoin="round"/>`;
+  const floor = poly([P(-0.6, -0.6, 0), P(-0.6, C + 0.6, 0), P(R + 0.6, C + 0.6, 0), P(R + 0.6, -0.6, 0)], "#fbe5d6").replace('stroke="#2f7385"', 'stroke="none"');
+  const cubes = [];
+  for (let r = 0; r < R; r += 1) for (let c = 0; c < C; c += 1) for (let z = 0; z < heights[r][c]; z += 1) cubes.push([r, c, z]);
+  cubes.sort((a, b) => a[0] + a[1] - (b[0] + b[1]) || a[2] - b[2]);
+  const body = cubes.map(([r, c, z]) => poly([P(r, c, z + 1), P(r, c + 1, z + 1), P(r + 1, c + 1, z + 1), P(r + 1, c, z + 1)], "#e4f2f6")
+    + poly([P(r + 1, c, z + 1), P(r + 1, c + 1, z + 1), P(r + 1, c + 1, z), P(r + 1, c, z)], "#c4e0e8")
+    + poly([P(r, c + 1, z + 1), P(r + 1, c + 1, z + 1), P(r + 1, c + 1, z), P(r, c + 1, z)], "#9fc8d3")).join("");
+  const W = ox + C * ax + pad + ax;
+  const H = oy + (R + C) * ay + pad + ay;
+  return `<svg width="${W.toFixed(0)}" height="${H.toFixed(0)}" viewBox="0 0 ${W.toFixed(1)} ${H.toFixed(1)}" style="width:${W.toFixed(0)}px;max-width:100%;height:auto" role="img" aria-label="쌓기나무로 쌓은 계단 피라미드">${floor}${body}</svg>`;
+}
+const PYRAMID_LEVELS = Object.freeze({ 1: [3, 4, 5], 2: [4, 5, 6, 7], 3: [6, 7, 8, 9] });
+function steppedPyramidHidden({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const bases = shuffle(PYRAMID_LEVELS[d]).slice(0, 2).sort((a, b) => a - b);
+  const figs = bases.map((base) => {
+    const minTop = base % 2 ? 1 : 2;
+    const top = d === 3 && base - 2 > minTop && Math.random() < 0.4 ? minTop + 2 : minTop;
+    const layers = pyramidLayers(base, top);
+    const total = layers.reduce((t, s) => t + s * s, 0);
+    return { base, top, layers, total, hidden: total - base * base, heights: pyramidHeights(base, layers) };
+  });
+  if (figs.some((f) => f.layers.length < 2)) return null;
+  const answer = figs.map((f, i) => `(${i + 1}) ${f.hidden}개`).join(", ");
+  return {
+    prompt: "쌓기나무를 층마다 가장자리가 한 칸씩 안으로 들어가게 쌓아 계단 모양 피라미드를 만들었습니다. 각 그림에서 어느 쪽에서 보아도 보이지 않는 쌓기나무는 몇 개인지 구하세요. (단, 바닥면은 보이지 않습니다.)",
+    answer,
+    solution: figs.map((f, i) => `(${i + 1}) 층마다 ${f.layers.map((s) => `${s * s}`).join(", ")}개이므로 모두 ${f.layers.map((s) => s * s).join(" + ")} = ${f.total}개입니다. 위에서 보면 기둥마다 맨 위 한 개씩 ${f.base} × ${f.base} = ${f.base * f.base}개가 보이고, 계단이 한 칸씩 들어가 있어 옆에서 보이는 나무도 이 기둥의 맨 위 나무뿐입니다. 따라서 보이지 않는 나무는 ${f.total} − ${f.base * f.base} = ${f.hidden}개입니다.`).join(" "),
+    visual: { kind: "fig", html: rowWrap(figs.map((f, i) => capWrap(isoCubesSvg(f.heights, { s: f.base > 7 ? 20 : 24 }), `(${i + 1})`))) },
+    meta: { family: "stepped-pyramid-hidden-b4", figures: figs.map(({ base, top, layers, total, hidden, heights }) => ({ base, top, layers, total, hidden, heights })) }
+  };
+}
+
+// ── 3단원 도전 2 · 나이 목록과 조건으로 한 사람의 나이 찾기 ─────────
+const SIBLING_NAMES = Object.freeze(["도현", "시우", "예준", "하준", "주원", "지호", "은우", "선우", "건우", "서진"]);
+function ageListMatching({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const n = d === 3 ? 6 : 5;
+  const names = shuffle(SIBLING_NAMES).slice(0, n);
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const ages = shuffle(Array.from({ length: d === 1 ? 10 : 14 }, (_, i) => i + (d === 1 ? 8 : 6))).slice(0, n).sort((a, b) => b - a);
+    const truth = Object.fromEntries(shuffle(ages).map((age, i) => [names[i], age]));
+    const pool = [];
+    for (const x of names) for (const y of names) {
+      if (x === y) continue;
+      const diff = truth[x] - truth[y];
+      if (diff > 0 && diff <= 6) pool.push({ kind: "diff", who: [x, y], text: `${josa(x, "은", "는")} ${y}보다 ${diff}살 많습니다.`, test: (q) => q[x] - q[y] === diff });
+      if (diff < 0 && -diff <= 6) pool.push({ kind: "diff", who: [x, y], text: `${josa(x, "은", "는")} ${y}보다 ${-diff}살 적습니다.`, test: (q) => q[y] - q[x] === -diff });
+      if (diff < 0) pool.push({ kind: "young", who: [x, y], text: `${josa(x, "은", "는")} ${y}의 동생입니다.`, test: (q) => q[x] < q[y] });
+    }
+    const perms = permutationsOf(ages).map((list) => Object.fromEntries(names.map((x, i) => [x, list[i]])));
+    const target = pick(names);
+    const chosen = [];
+    let remaining = perms;
+    for (const clue of shuffle(pool)) {
+      if (remaining.length === 1) break;
+      if (clue.kind === "young" && chosen.filter((c) => c.kind === "young").length >= 1) continue;
+      if (clue.who.includes(target) && clue.kind === "diff" && chosen.some((c) => c.kind === "diff" && c.who.includes(target))) continue;
+      const next = remaining.filter((q) => clue.test(q));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const rest = chosen.filter((_, j) => j !== i);
+      if (perms.filter((q) => rest.every((c) => c.test(q))).length === 1) chosen.splice(i, 1);
+    }
+    if (chosen.length < 3 || chosen.length > (d === 3 ? 5 : 4) || !chosen.some((c) => c.kind === "young")) continue;
+    // 묻는 사람의 나이가 단서 하나로 바로 나오지 않게(그 사람이 단서에 한 번 이하로 나옴)
+    if (chosen.filter((c) => c.who.includes(target)).length > 1) continue;
+    const asc = [...ages].sort((a, b) => a - b);
+    const cell = "border:1px solid #6f9fae;padding:4px 10px;min-width:44px;text-align:center";
+    const table = `<table style="border-collapse:collapse;margin:0 auto;${FONT};font-size:14px"><tr>${asc.map((a) => `<th style="${cell};background:#dcedf2">${a}살</th>`).join("")}</tr><tr>${asc.map(() => `<td style="${cell};height:26px"></td>`).join("")}</tr></table>`;
+    const ordered = [...names].sort((a, b) => truth[b] - truth[a]);
+    return {
+      prompt: `${names.join(", ")} ${n}명은 형제입니다. 형제들의 나이는 많은 쪽부터 ${ages.map((a) => `${a}살`).join(", ")}입니다. 조건을 보고 ${target}의 나이를 구하세요.`,
+      answer: `${truth[target]}살`,
+      solution: `나이의 차가 정해진 두 사람을 목록에서 찾으면 그 차가 되는 나이의 짝은 몇 개뿐입니다. 이런 짝을 표에 하나씩 놓아 보며 조건을 모두 따르면 나이가 많은 쪽부터 ${ordered.map((x) => `${x} ${truth[x]}살`).join(", ")}의 한 가지로 정해집니다. 따라서 ${target}의 나이는 ${truth[target]}살입니다.`,
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(chosen.map((c) => c.text))}${table}</div>` },
+      meta: { family: "age-list-matching-b4", names, ages, clues: chosen.map((c) => c.text), truth, target, answer: truth[target] }
+    };
+  }
+  return null;
+}
+
+// ── 4단원 확인 1-4 · 등 번호와 등수가 같은 선수가 없는 달리기 ─────────
+function bibRankDerangement({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const n = d === 3 ? 5 : 4;
+  const bibs = Array.from({ length: n }, (_, i) => i + 1);
+  const all = permutationsOf(bibs); // 순서[등수 − 1] = 등 번호
+  const derange = (o) => o.every((b, i) => b !== i + 1);
+  const deranged = all.filter(derange);
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const truth = pick(deranged);
+    const rank = (o, b) => o.indexOf(b) + 1;
+    const pool = [];
+    for (const a of bibs) for (const b of bibs) {
+      if (a === b) continue;
+      if (rank(truth, b) === rank(truth, a) + 1) pool.push({ speaker: a, text: `${a}번 선수: ${b}번 선수는 제 바로 뒤에 들어왔습니다.`, test: (o) => rank(o, b) === rank(o, a) + 1 });
+      if (rank(truth, a) < rank(truth, b) && rank(truth, b) - rank(truth, a) > 1) pool.push({ speaker: a, text: `${a}번 선수: 저는 ${b}번 선수보다 먼저 들어왔습니다.`, test: (o) => rank(o, a) < rank(o, b) });
+    }
+    if (d === 3) for (const a of bibs) if (rank(truth, a) !== n && rank(truth, a) !== 1) pool.push({ speaker: a, text: `${a}번 선수: 저는 1등도 꼴찌도 아닙니다.`, test: (o) => rank(o, a) !== 1 && rank(o, a) !== n });
+    const chosen = [];
+    let remaining = deranged;
+    for (const clue of shuffle(pool)) {
+      if (remaining.length === 1) break;
+      if (chosen.some((c) => c.speaker === clue.speaker)) continue;
+      const next = remaining.filter((o) => clue.test(o));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const rest = chosen.filter((_, j) => j !== i);
+      if (deranged.filter((o) => rest.every((c) => c.test(o))).length === 1) chosen.splice(i, 1);
+    }
+    // 심판의 말이 꼭 쓰여야 한다(빼면 하나로 정해지지 않음)
+    if (all.filter((o) => chosen.every((c) => c.test(o))).length < 2) continue;
+    if (chosen.length > (d === 1 ? 1 : d === 2 ? 2 : 3)) continue;
+    const clues = [...chosen.map((c) => c.text), "심판: 자기 등 번호와 같은 등수로 들어온 선수는 한 명도 없습니다."];
+    const cell = "border:1px solid #6f9fae;padding:4px 10px;min-width:44px;text-align:center";
+    const table = `<table style="border-collapse:collapse;margin:0 auto;${FONT};font-size:14px"><tr><th style="${cell};background:#dcedf2">등수</th>${bibs.map((b) => `<th style="${cell};background:#dcedf2">${b}등</th>`).join("")}</tr><tr><th style="${cell};background:#dcedf2">등 번호</th>${bibs.map(() => `<td style="${cell};height:26px"></td>`).join("")}</tr></table>`;
+    const answer = truth.map((b) => `${b}번`).join(", ");
+    return {
+      prompt: `달리기 대회에 등 번호가 1번부터 ${n}번까지인 선수 ${n}명이 나왔고, 함께 들어온 선수는 없습니다. 선수들과 심판의 말을 보고 1등부터 ${n}등까지 선수의 등 번호를 차례로 쓰세요.`,
+      answer,
+      solution: `「바로 뒤」 말로 붙어 들어온 두 선수를 한 묶음으로 놓고, 그 묶음이 놓일 수 있는 자리를 차례로 따져 봅니다. 이때 자기 번호와 같은 등수가 되는 자리는 심판의 말 때문에 지웁니다. 남는 순서는 1등부터 ${answer}의 한 가지뿐입니다.`,
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(clues)}${table}</div>` },
+      meta: { family: "bib-rank-derangement-b4", n, clues, order: truth }
+    };
+  }
+  return null;
+}
+
+// ── 4단원 도전 3 · 아이들이 한 말로 달리기 등수 정하기 ─────────
+const TALK_NAMES = Object.freeze(["태윤", "지안", "로운", "하율", "서후", "도경", "이안", "규리"]);
+function raceTalkRanking({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const n = d === 1 ? 4 : 5;
+  const names = shuffle(TALK_NAMES).slice(0, n);
+  const perms = permutationsOf(names).map((o) => Object.fromEntries(o.map((x, i) => [x, i + 1])));
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const truth = pick(perms);
+    const pool = [];
+    for (const s of names) {
+      const rs = truth[s];
+      if (rs < n) pool.push({ speaker: s, kind: "self", text: `${s}: 나는 ${n - rs}명을 이겼어.`, test: (q) => q[s] === rs });
+      if (rs === n) pool.push({ speaker: s, kind: "self", text: `${s}: 앞서 달리다 넘어지는 바람에 맨 마지막으로 들어왔어.`, test: (q) => q[s] === n });
+      if (rs !== 1 && rs !== n) pool.push({ speaker: s, kind: "mid", text: `${s}: 나는 1등도 꼴찌도 아니었어.`, test: (q) => q[s] !== 1 && q[s] !== n });
+      for (const x of names) {
+        if (x === s) continue;
+        if (truth[x] < rs) {
+          pool.push({ speaker: s, kind: "rel", text: `${s}: 이번에는 ${josa(x, "이", "가")} 나를 이겼어.`.replace(/([가-힣])이 나를/u, (m) => m), test: (q) => q[x] < q[s] });
+          const beaten = n - truth[x];
+          pool.push({ speaker: s, kind: "count", text: `${s}: ${josa(x, "은", "는")} 나를 포함해서 ${beaten}명을 이겼어.`, test: (q) => q[x] === n - beaten && q[x] < q[s] });
+        } else {
+          pool.push({ speaker: s, kind: "rel", text: `${s}: 나는 ${x}보다 먼저 들어왔어.`, test: (q) => q[s] < q[x] });
+        }
+      }
+    }
+    const chosen = [];
+    let remaining = perms;
+    for (const clue of shuffle(pool)) {
+      if (remaining.length === 1) break;
+      if (chosen.some((c) => c.speaker === clue.speaker)) continue;
+      if (clue.kind === "self" && chosen.some((c) => c.kind === "self")) continue;
+      const next = remaining.filter((q) => clue.test(q));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const rest = chosen.filter((_, j) => j !== i);
+      if (perms.filter((q) => rest.every((c) => c.test(q))).length === 1) chosen.splice(i, 1);
+    }
+    if (chosen.length < 3) continue;
+    const order = [...names].sort((a, b) => truth[a] - truth[b]);
+    const cell = "border:1px solid #6f9fae;width:54px;height:30px;text-align:center";
+    const table = `<table style="border-collapse:collapse;margin:0 auto;${FONT};font-size:14px"><tr>${order.map((_, i) => `<th style="${cell};background:#dcedf2">${i + 1}등</th>`).join("")}</tr><tr>${order.map(() => `<td style="${cell}"></td>`).join("")}</tr></table>`;
+    const talk = chosen.map((c) => c.text);
+    return {
+      prompt: `${listJosa(names)} 달리기를 했습니다. 아이들이 나눈 말을 보고 1등부터 ${n}등까지 차례로 쓰세요. (함께 들어온 아이는 없습니다.)`,
+      answer: order.join(", "),
+      solution: `「몇 명을 이겼다」는 말은 그 아이 뒤에 들어온 아이 수이므로 등수를 바로 알려 줍니다(${n}명 중 m명을 이기면 ${n} − m등). 등수가 정해진 아이부터 칸에 쓰고, 누가 누구를 이겼는지 말하는 아이들로 나머지 칸을 채우면 1등부터 ${order.join(", ")}입니다.`,
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(talk)}${table}</div>` },
+      meta: { family: "race-talk-ranking-b4", names, clues: talk, order }
+    };
+  }
+  return null;
+}
+
+// ── 4단원 활동 2-4·연습 13 · 둥근 식탁 자리(오른쪽·왼쪽 옆, 사이, 떨어져 앉음) ─────────
+// 모두 식탁 가운데를 보고 앉는다. 자리 번호는 기준 사람(아래 자리)부터 그 사람의 오른쪽 옆으로 1, 2, …
+const TABLE_NAMES = Object.freeze(["나래", "보민", "세아", "유건", "재희", "찬영", "하린", "다온", "윤슬"]);
+function roundTableSvg(n, labels) {
+  const R = 62;
+  const cx = 96;
+  const cy = 92;
+  const seat = (k) => {
+    const phi = (2 * Math.PI * k) / n;
+    return [cx + R * Math.sin(phi), cy + R * Math.cos(phi)];
+  };
+  let body = `<circle cx="${cx}" cy="${cy}" r="${R - 26}" fill="#dcedf2" stroke="#6f9fae" stroke-width="1.5"/>`;
+  for (let k = 0; k < n; k += 1) {
+    const [x, y] = seat(k);
+    body += `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="18" fill="#fff" stroke="#6f9fae" stroke-width="1.5"/>`;
+    if (labels[k]) body += `<text x="${x.toFixed(1)}" y="${(y + 5).toFixed(1)}" text-anchor="middle" font-size="${labels[k].length > 1 ? 13 : 16}" fill="#1f2a30" style="${FONT}">${esc(labels[k])}</text>`;
+  }
+  return `<svg width="192" height="186" viewBox="0 0 192 186" style="width:192px;max-width:100%;height:auto" role="img" aria-label="둥근 식탁 자리">${body}</svg>`;
+}
+function roundTableProblem({ difficulty = 2 } = {}, n) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const names = shuffle(TABLE_NAMES).slice(0, n);
+  const anchor = names[0];
+  const rest = names.slice(1);
+  const arrangements = permutationsOf(rest).map((o) => [anchor, ...o]);
+  const seatOf = (o, x) => o.indexOf(x);
+  const nb = (a, b) => ((a - b + n) % n === 1) || ((b - a + n) % n === 1);
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const truth = pick(arrangements);
+    const target = randomInt(1, n - 1);
+    const pool = [];
+    for (const x of names) for (const y of names) {
+      if (x === y) continue;
+      const sx = seatOf(truth, x);
+      const sy = seatOf(truth, y);
+      if (sy === (sx + 1) % n) pool.push({ kind: "side", text: `${josa(y, "은", "는")} ${x}의 오른쪽 옆에 앉아 있습니다.`, test: (o) => seatOf(o, y) === (seatOf(o, x) + 1) % n });
+      if (sy === (sx - 1 + n) % n) pool.push({ kind: "side", text: `${josa(y, "은", "는")} ${x}의 왼쪽 옆에 앉아 있습니다.`, test: (o) => seatOf(o, y) === (seatOf(o, x) - 1 + n) % n });
+      if (x < y && !nb(sx, sy)) pool.push({ kind: "apart", text: `${josa(x, "과", "와")} ${josa(y, "은", "는")} 서로 떨어져 앉아 있습니다.`, test: (o) => !nb(seatOf(o, x), seatOf(o, y)) });
+      if (n >= 5) for (const z of names) {
+        if (z === x || z === y || x > y) continue;
+        if (nb(seatOf(truth, z), sx) && nb(seatOf(truth, z), sy)) pool.push({ kind: "between", text: `${josa(z, "은", "는")} ${josa(x, "과", "와")} ${y} 사이에 앉아 있습니다.`, test: (o) => nb(seatOf(o, z), seatOf(o, x)) && nb(seatOf(o, z), seatOf(o, y)) });
+      }
+    }
+    const chosen = [];
+    let remaining = arrangements;
+    for (const clue of shuffle(pool)) {
+      if (remaining.length === 1) break;
+      const next = remaining.filter((o) => clue.test(o));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const restClues = chosen.filter((_, j) => j !== i);
+      if (arrangements.filter((o) => restClues.every((c) => c.test(o))).length === 1) chosen.splice(i, 1);
+    }
+    if (chosen.length < 2 || chosen.length > (n === 4 ? 3 : 4)) continue;
+    if (n >= 5 && d > 1 && !chosen.some((c) => c.kind === "between" || c.kind === "apart")) continue;
+    const labels = Array.from({ length: n }, (_, k) => (k === 0 ? anchor : k === target ? "㉠" : ""));
+    const answer = truth[target];
+    return {
+      prompt: `${listJosa(names)} 둥근 식탁에 둘러앉아 있습니다. 모두 식탁 가운데를 보고 앉아 있고, 「오른쪽」·「왼쪽」은 앉은 사람의 손 방향입니다. ㉠에 앉아 있는 사람은 누구일까요?`,
+      answer,
+      solution: `${josa(anchor, "이", "가")} 앉은 자리를 기준으로, 오른쪽·왼쪽 옆을 말하는 조건부터 자리에 써 넣습니다. 「사이」는 양옆에 앉은 것이고, 「떨어져 앉음」은 옆자리가 아니라는 뜻입니다. 조건을 모두 따르면 ${anchor}에서 오른쪽 옆으로 한 자리씩 돌아가며 ${truth.join(", ")} 차례로 앉아 있으므로 ㉠에는 ${josa(answer, "이", "가")} 앉아 있습니다.`,
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(chosen.map((c) => c.text))}<div style="display:flex;justify-content:center">${roundTableSvg(n, labels)}</div></div>` },
+      meta: { family: "round-table-seat-b4", n, names, anchor, target, clues: chosen.map((c) => c.text), order: truth, answer }
+    };
+  }
+  return null;
+}
+
+// ── 4단원 연습 3 · 네 사람과 네 가지를 모두 짝 짓기(친구 사이 조건) ─────────
+const MATCH_THEMES = Object.freeze([
+  { like: "좋아합니다", items: ["장미", "국화", "튤립", "백합"], what: "꽃" },
+  { like: "좋아합니다", items: ["사과", "포도", "귤", "자두"], what: "과일" },
+  { like: "배웁니다", items: ["수영", "태권도", "피아노", "미술"], what: "학원" },
+  { like: "좋아합니다", items: ["축구", "야구", "농구", "배구"], what: "운동" }
+]);
+const MATCH_NAMES = Object.freeze(["예린", "도율", "시아", "준서", "하온", "민재", "채원", "윤호"]);
+function personItemFullMatch({ difficulty = 2 } = {}) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const theme = pick(MATCH_THEMES);
+  const people = shuffle(MATCH_NAMES).slice(0, 4);
+  const items = theme.items;
+  const perms = permutationsOf(items).map((o) => Object.fromEntries(people.map((p, i) => [p, o[i]])));
+  const liker = (item) => `${josa(item, "을", "를")} ${theme.like === "배웁니다" ? "배우는" : "좋아하는"} 사람`;
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const truth = pick(perms);
+    const owner = Object.fromEntries(people.map((p) => [truth[p], p]));
+    const pool = [];
+    for (const p of people) {
+      const nots = items.filter((it) => truth[p] !== it);
+      for (let i = 0; i < nots.length; i += 1) {
+        pool.push({ kind: "not", text: `${josa(p, "은", "는")} ${josa(nots[i], "을", "를")} ${theme.like === "배웁니다" ? "배우지" : "좋아하지"} 않습니다.`, test: (q) => q[p] !== nots[i] });
+        for (let j = i + 1; j < nots.length; j += 1) pool.push({ kind: "not2", text: `${josa(p, "은", "는")} ${josa(nots[i], "과", "와")} ${josa(nots[j], "을", "를")} ${theme.like === "배웁니다" ? "배우지" : "좋아하지"} 않습니다.`, test: (q) => q[p] !== nots[i] && q[p] !== nots[j] });
+      }
+    }
+    for (const p of people) for (const a of items) for (const b of items) {
+      if (a >= b || owner[a] === p || owner[b] === p) continue;
+      pool.push({ kind: "friend3", text: `${liker(a)}, ${p}, ${liker(b)}은 서로 다른 친구입니다.`, test: (q) => q[p] !== a && q[p] !== b });
+    }
+    for (const p of people) for (const p2 of people) for (const a of items) {
+      if (p >= p2 || owner[a] === p || owner[a] === p2) continue;
+      pool.push({ kind: "friend2", text: `${josa(p, "과", "와")} ${josa(p2, "은", "는")} ${liker(a)}과 친구입니다.`, test: (q) => q[p] !== a && q[p2] !== a });
+    }
+    const friends = shuffle(pool.filter((c) => c.kind.startsWith("friend")));
+    const others = shuffle(pool.filter((c) => !c.kind.startsWith("friend")));
+    const chosen = [];
+    let remaining = perms;
+    for (const clue of [...friends.slice(0, d === 1 ? 1 : 2), ...others, ...friends.slice(2)]) {
+      if (remaining.length === 1) break;
+      const next = remaining.filter((q) => clue.test(q));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const rest = chosen.filter((_, j) => j !== i);
+      if (perms.filter((q) => rest.every((c) => c.test(q))).length === 1) chosen.splice(i, 1);
+    }
+    if (chosen.length < 2 || chosen.length > 4 || !chosen.some((c) => c.kind.startsWith("friend"))) continue;
+    const cell = "border:1px solid #6f9fae;width:50px;height:28px;text-align:center";
+    const table = `<table style="border-collapse:collapse;margin:0 auto;${FONT};font-size:14px"><tr><th style="${cell};background:#eef6f8"></th>${items.map((it) => `<th style="${cell};background:#dcedf2">${esc(it)}</th>`).join("")}</tr>${people.map((p) => `<tr><th style="${cell};background:#dcedf2">${esc(p)}</th>${items.map(() => `<td style="${cell}"></td>`).join("")}</tr>`).join("")}</table>`;
+    const answer = people.map((p) => `${p} ${truth[p]}`).join(", ");
+    return {
+      prompt: `${listJosa(people)} ${items.join(", ")} 가운데 서로 다른 ${theme.what}을 하나씩 ${theme.like}. 조건을 보고 누가 어떤 ${theme.what}을 ${theme.like === "배웁니다" ? "배우는지" : "좋아하는지"} 모두 쓰세요.`.replace(/([가-힣]+)을 하나씩/u, (m, w) => `${josa(w, "을", "를")} 하나씩`).replace(/어떤 ([가-힣]+)을 (배우|좋아)/u, (m, w, v) => `어떤 ${josa(w, "을", "를")} ${v}`),
+      answer,
+      solution: `「서로 다른 친구」라는 말은 그 사람들이 모두 다른 사람이라는 뜻이므로, 그 사람은 거기 나온 ${theme.what}을 ${theme.like === "배웁니다" ? "배우지" : "좋아하지"} 않습니다. 표에 아닌 칸마다 ✕를 하고, 한 줄이나 한 칸에 하나만 남으면 ○를 한 뒤 같은 줄·칸의 나머지에 ✕를 합니다. 표를 다 채우면 ${answer}입니다.`.replace(/([가-힣]+)을 (배우지|좋아하지)/u, (m, w, v) => `${josa(w, "을", "를")} ${v}`),
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(chosen.map((c) => c.text))}${table}</div>` },
+      meta: { family: "person-item-full-match-b4", people, items, clues: chosen.map((c) => c.text), truth }
+    };
+  }
+  return null;
+}
+
+// ── 4단원 연습 9, 10 · 2줄 칸에 동물·숫자 놓기(바로 위·오른쪽, 붙어 있음, 가장 멀리, 같은 줄) ─────────
+const PEN_ANIMALS = Object.freeze(["토끼", "염소", "거위", "돼지", "닭", "오리", "양", "소"]);
+const indexPermMemo = new Map();
+function indexPermutations(n) {
+  if (!indexPermMemo.has(n)) indexPermMemo.set(n, permutationsOf(Array.from({ length: n }, (_, i) => i)));
+  return indexPermMemo.get(n);
+}
+function gridPlacementProblem({ difficulty = 2 } = {}, mode) {
+  const d = Math.max(1, Math.min(3, Number(difficulty) || 2));
+  const rows = 2;
+  const cols = d === 3 ? 4 : 3;
+  const n = rows * cols;
+  const items = mode === "digit" ? Array.from({ length: n }, (_, i) => String(i + 1)) : shuffle(PEN_ANIMALS).slice(0, n);
+  const cells = rectCells(rows, cols);
+  // 놓기 하나 = 물건 번호 → 칸 번호 목록(모든 놓기를 한 번만 만들어 둔다).
+  const perms = indexPermutations(n);
+  const posOf = (w, x) => cells[w[x]];
+  const name = (x) => items[x];
+  const subj = (x) => (mode === "digit" ? `${x}${hasBatchim(x) ? "은" : "는"}` : josa(x, "은", "는"));
+  const farD = rows - 1 + cols - 1;
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const where = pick(perms);
+    const truth = [];
+    where.forEach((cell, item) => { truth[cell] = item; });
+    const fixedIndex = randomInt(0, n - 1);
+    let targetIndex = randomInt(0, n - 1);
+    if (targetIndex === fixedIndex) continue;
+    const fixedItem = truth[fixedIndex];
+    const fixed = name(fixedItem);
+    const base = perms.filter((w) => w[fixedItem] === fixedIndex);
+    const pool = [];
+    for (let x = 0; x < n; x += 1) for (let y = 0; y < n; y += 1) {
+      if (x === y) continue;
+      const [rx, cx] = posOf(where, x);
+      const [ry, cy] = posOf(where, y);
+      if (cx === cy && rx === ry - 1) pool.push({ kind: "up", text: mode === "digit" ? `${subj(name(x))} ${name(y)}의 바로 위에 있습니다.` : `${subj(name(x))} ${name(y)}의 바로 위쪽 우리에 있습니다.`, test: (o) => { const [a, b] = posOf(o, x); const [c, e] = posOf(o, y); return b === e && a === c - 1; } });
+      if (cx === cy && rx === ry + 1 && mode === "digit") pool.push({ kind: "down", text: `${subj(name(x))} ${name(y)}의 바로 아래에 있습니다.`, test: (o) => { const [a, b] = posOf(o, x); const [c, e] = posOf(o, y); return b === e && a === c + 1; } });
+      if (rx === ry && cx === cy + 1) pool.push({ kind: "right", text: mode === "digit" ? `${subj(name(x))} ${name(y)}의 바로 오른쪽에 있습니다.` : `${subj(name(x))} ${name(y)}의 바로 오른쪽 우리에 있습니다.`, test: (o) => { const [a, b] = posOf(o, x); const [c, e] = posOf(o, y); return a === c && b === e + 1; } });
+      if (x < y) {
+        const dist = Math.abs(rx - ry) + Math.abs(cx - cy);
+        if (mode === "animal" && dist === 1) pool.push({ kind: "adj", text: `${josa(name(x), "과", "와")} ${josa(name(y), "은", "는")} 서로 붙어 있는 우리에 있습니다.`, test: (o) => { const [a, b] = posOf(o, x); const [c, e] = posOf(o, y); return Math.abs(a - c) + Math.abs(b - e) === 1; } });
+        if (mode === "animal" && dist === farD) pool.push({ kind: "far", text: `${josa(name(x), "과", "와")} ${josa(name(y), "은", "는")} 가장 멀리 떨어진 두 우리에 있습니다.`, test: (o) => { const [a, b] = posOf(o, x); const [c, e] = posOf(o, y); return Math.abs(a - c) + Math.abs(b - e) === farD; } });
+        if (mode === "digit" && rx === ry) pool.push({ kind: "row", text: `${subj(name(x))} ${name(y)}와 같은 줄에 있습니다.`.replace(/(\d)와/u, (m, g) => `${g}${hasBatchim(g) ? "과" : "와"}`), test: (o) => posOf(o, x)[0] === posOf(o, y)[0] });
+      }
+    }
+    const chosen = [];
+    let remaining = base;
+    for (const clue of shuffle(pool)) {
+      if (remaining.length === 1) break;
+      const next = remaining.filter((o) => clue.test(o));
+      if (next.length === remaining.length || !next.length) continue;
+      chosen.push(clue);
+      remaining = next;
+    }
+    if (remaining.length !== 1) continue;
+    for (let i = chosen.length - 1; i >= 0; i -= 1) {
+      const rest = chosen.filter((_, j) => j !== i);
+      if (base.filter((o) => rest.every((c) => c.test(o))).length === 1) chosen.splice(i, 1);
+    }
+    if (chosen.length < 3 || chosen.length > (d === 3 ? 7 : 5)) continue;
+    if (mode === "animal" && !chosen.some((c) => c.kind === "far" || c.kind === "adj")) continue;
+    if (mode === "digit" && !chosen.some((c) => c.kind === "row")) continue;
+    const answer = name(truth[targetIndex]);
+    const cellPx = 64;
+    const grid = `<div style="display:grid;grid-template-columns:repeat(${cols},${cellPx}px);border:${mode === "animal" ? "4px solid #8a6d2f" : "1.5px solid #1f6f86"};width:max-content;margin:0 auto">${cells.map((_, i) => `<span style="display:flex;align-items:center;justify-content:center;height:46px;border:${mode === "animal" ? "2px solid #8a6d2f" : "1px solid #6f9fae"};${FONT};font-size:16px;color:#1f2a30">${i === fixedIndex ? esc(fixed) : i === targetIndex ? "㉠" : ""}</span>`).join("")}</div>`;
+    const placed = cells.map((_, i) => name(truth[i]));
+    return {
+      prompt: mode === "digit"
+        ? `조건에 맞게 빈칸에 1부터 ${n}까지의 수를 한 번씩 써 넣을 때, ㉠에 들어갈 수를 구하세요.`
+        : `농장의 우리 ${n}칸에 ${items.join(", ")}를 한 마리씩 넣으려고 합니다. 조건에 맞게 넣을 때 ㉠ 우리에 들어갈 동물은 무엇일까요?`.replace(/([가-힣]+)를 한 마리씩/u, (m, w) => `${josa(w, "을", "를")} 한 마리씩`),
+      answer,
+      solution: `이미 자리가 정해진 ${mode === "digit" ? `수 ${fixed}` : fixed}부터 시작해, 「바로 위」·「바로 오른쪽」처럼 자리를 하나로 정하는 조건을 먼저 씁니다. ${mode === "digit" ? "「같은 줄」 조건은 위 줄과 아래 줄 가운데 어느 쪽인지 정해 줍니다." : "「가장 멀리 떨어진 두 우리」는 서로 맞은편 모서리 두 칸이고, 「붙어 있는 우리」는 변이 맞닿은 두 칸입니다."} 칸을 모두 채우면 윗줄은 ${placed.slice(0, cols).join(", ")}, 아랫줄은 ${placed.slice(cols).join(", ")}이므로 ㉠에는 ${josa(answer, "이", "가")} 들어갑니다.`,
+      visual: { kind: "fig", html: `<div style="display:inline-block;max-width:100%">${clueListHtml(chosen.map((c) => c.text))}${grid}</div>` },
+      meta: { family: "grid-placement-b4", mode, rows, cols, items, fixedIndex, fixed, targetIndex, clues: chosen.map((c) => c.text), placed, answer }
+    };
+  }
+  return null;
+}
+
 export const BOOK04_STRUCTURE_INTERNALS = { makeBalanceSystem, childSolve, ratioDetermined, eqNormalize };
 
 export const BOOK04_STRUCTURE_GENERATORS = {
@@ -1224,7 +2219,23 @@ export const BOOK04_STRUCTURE_GENERATORS = {
   shapeDifferenceTreeB4: shapeDifferenceTree,
   measurementRelativeDifferenceB4: measurementRelativeDifference,
   mixedPanBalanceTwoB4: (options) => mixedPanBalance(options, { balances: 2 }),
-  mixedPanBalanceThreeB4: (options) => mixedPanBalance(options, { balances: 3 })
+  mixedPanBalanceThreeB4: (options) => mixedPanBalance(options, { balances: 3 }),
+  polyominoAllDrawB4: polyominoAllDraw,
+  samePieceRectTilingB4: samePieceRectTiling,
+  rectHalvesAllWaysB4: rectHalvesAllWays,
+  triangleGridHalvesAllB4: triangleGridHalvesAll,
+  countBalancedPartitionB4: countBalancedPartition,
+  foldCutTwoCornerUnfoldB4: foldCutTwoCornerUnfold,
+  pyramidWallNthB4: pyramidWallNth,
+  steppedPyramidHiddenB4: steppedPyramidHidden,
+  ageListMatchingB4: ageListMatching,
+  bibRankDerangementB4: bibRankDerangement,
+  raceTalkRankingB4: raceTalkRanking,
+  roundTableFourB4: (options) => roundTableProblem(options, 4),
+  roundTableFiveB4: (options) => roundTableProblem(options, 5),
+  personItemFullMatchB4: personItemFullMatch,
+  gridPenPlacementB4: (options) => gridPlacementProblem(options, "animal"),
+  digitGridPlacementB4: (options) => gridPlacementProblem(options, "digit")
 };
 const POLY_GROUP = "칸 도형을 같은 조각으로 나누기";
 const BAL_GROUP = "섞인 접시 양팔저울";
@@ -1250,7 +2261,24 @@ export const BOOK04_STRUCTURE_TYPE_ROWS = [
   { id: "floor-from-top-b4", domain: "logic", middle: "순서와 비교", label: "위에서부터 센 순서로 몇 층인지 구하기", generator: "floorFromTopB4", catalogGroup: ORDER_GROUP, catalogStrategy: "맨 위층부터 거꾸로 세기", searchAliases: ["층수", "위에서부터", "몇 번째"] },
   { id: "line-offset-placement-b4", domain: "logic", middle: "자리 배치", label: "앞뒤 몇 번째 조건으로 한 줄의 자리 정하기", generator: "lineOffsetPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "자리가 바로 정해지는 조건부터 칸 채우기", searchAliases: ["줄 서기", "앞뒤", "몇 번째"] },
   { id: "seat-offset-placement-b4", domain: "logic", middle: "자리 배치", label: "왼쪽·오른쪽 몇 번째 조건으로 나란히 앉은 자리 정하기", generator: "seatOffsetPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "같은 사람이 나오는 조건을 이어 자리 칸 채우기", searchAliases: ["자리 배치", "왼쪽 오른쪽", "몇 번째"] },
-  { id: "race-order-clues-b4", domain: "logic", middle: "순서와 비교", label: "먼저 들어온 조건으로 달리기 등수 정하기", generator: "raceOrderCluesB4", catalogGroup: ORDER_GROUP, catalogStrategy: "등수가 바로 정해지는 조건부터 표 채우기", searchAliases: ["달리기 등수", "순서 정하기", "먼저 들어옴"] }
+  { id: "race-order-clues-b4", domain: "logic", middle: "순서와 비교", label: "먼저 들어온 조건으로 달리기 등수 정하기", generator: "raceOrderCluesB4", catalogGroup: ORDER_GROUP, catalogStrategy: "등수가 바로 정해지는 조건부터 표 채우기", searchAliases: ["달리기 등수", "순서 정하기", "먼저 들어옴"] },
+  // 2차(2026-11-28)
+  { id: "polyomino-all-draw-b4", domain: "geometry", middle: "도형 분할", label: "서로 다른 테트로미노·펜토미노 모두 그리고 가짓수 쓰기", generator: "polyominoAllDrawB4", catalogGroup: POLY_GROUP, catalogStrategy: "가장 긴 줄의 칸 수로 나누어 빠짐없이 찾기", searchAliases: ["테트로미노", "펜토미노", "모두 그리기"] },
+  { id: "same-piece-rect-tiling-b4", domain: "geometry", middle: "도형 분할", label: "같은 조각 여러 개로 직사각형을 덮을 수 없는 조각 고르기", generator: "samePieceRectTilingB4", catalogGroup: POLY_GROUP, catalogStrategy: "모서리 칸부터 같은 조각을 놓아 보기", searchAliases: ["테트로미노", "조각 덮기", "정사각형 만들기"] },
+  { id: "rect-halves-all-ways-b4", domain: "geometry", middle: "도형 분할", label: "직사각형을 똑같은 두 조각으로 나누는 방법 모두 찾기", generator: "rectHalvesAllWaysB4", catalogGroup: POLY_GROUP, catalogStrategy: "가운데를 지나는 선을 한 칸씩 꺾어 가며 찾기", searchAliases: ["합동 분할", "두 조각", "모든 방법"] },
+  { id: "triangle-grid-halves-all-b4", domain: "geometry", middle: "도형 분할", label: "삼각형 칸 도형을 똑같은 두 조각으로 나누는 방법 모두 찾기", generator: "triangleGridHalvesAllB4", catalogGroup: POLY_GROUP, catalogStrategy: "가운데를 지나는 선을 한 칸씩 바꾸어 가며 찾기", searchAliases: ["삼각형 모눈", "합동 분할", "두 조각"] },
+  { id: "count-balanced-partition-b4", domain: "geometry", middle: "도형 분할", label: "도토리가 같은 수씩 들도록 똑같은 네 부분으로 나누기", generator: "countBalancedPartitionB4", catalogGroup: POLY_GROUP, catalogStrategy: "한 부분의 칸 수와 도토리 수를 먼저 구하기", searchAliases: ["합동 분할", "같은 개수", "울타리"] },
+  { id: "fold-cut-two-corner-unfold-b4", domain: "geometry", middle: "색종이 접어 자르기", label: "가로세로·대각선으로 두 번 접어 모서리를 자르고 펼친 모양 그리기", generator: "foldCutTwoCornerUnfoldB4", catalogGroup: "색종이 접어 자르기", catalogStrategy: "마지막 접는 선부터 거울에 비춰 펼치기", searchAliases: ["색종이 접기", "펼친 모양", "대칭"] },
+  { id: "pyramid-wall-nth-b4", domain: "geometry", middle: "쌓기나무 규칙", label: "한 겹 피라미드 쌓기나무의 몇 번째 개수 구하기", generator: "pyramidWallNthB4", catalogGroup: "쌓기나무 규칙", catalogStrategy: "1, 3, 5, …를 차례로 더해 표 채우기", searchAliases: ["쌓기나무 규칙", "피라미드", "홀수의 합"] },
+  { id: "stepped-pyramid-hidden-b4", domain: "geometry", middle: "숨은 쌓기나무", label: "계단 피라미드에서 보이지 않는 쌓기나무의 개수", generator: "steppedPyramidHiddenB4", catalogGroup: "숨은 쌓기나무", catalogStrategy: "전체에서 기둥마다 보이는 맨 위 나무를 빼기", searchAliases: ["보이지 않는 쌓기나무", "피라미드", "층별 개수"] },
+  { id: "age-list-matching-b4", domain: "logic", middle: "순서와 비교", label: "나이 목록과 차·동생 조건으로 한 사람의 나이 찾기", generator: "ageListMatchingB4", catalogGroup: DIFF_GROUP, catalogStrategy: "차가 맞는 나이 짝을 목록에서 찾아 표에 놓기", searchAliases: ["나이 구하기", "형제", "조건 맞추기"] },
+  { id: "bib-rank-derangement-b4", domain: "logic", middle: "순서와 비교", label: "등 번호와 등수가 같은 선수가 없는 달리기 순서 정하기", generator: "bibRankDerangementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "붙어 들어온 두 선수를 묶어 자리를 따져 보기", searchAliases: ["등 번호", "등수", "달리기"] },
+  { id: "race-talk-ranking-b4", domain: "logic", middle: "순서와 비교", label: "아이들이 한 말로 달리기 등수 모두 정하기", generator: "raceTalkRankingB4", catalogGroup: ORDER_GROUP, catalogStrategy: "「몇 명을 이겼다」로 등수부터 정하기", searchAliases: ["달리기 등수", "말로 추리", "몇 명을 이김"] },
+  { id: "round-table-four-b4", domain: "logic", middle: "자리 배치", label: "네 자리 둥근 식탁에서 오른쪽 옆·떨어져 앉은 조건으로 자리 찾기", generator: "roundTableFourB4", catalogGroup: ORDER_GROUP, catalogStrategy: "기준 사람의 오른쪽 옆부터 자리 채우기", searchAliases: ["원탁", "둥근 식탁", "오른쪽 옆"] },
+  { id: "round-table-five-b4", domain: "logic", middle: "자리 배치", label: "다섯 자리 둥근 식탁에서 오른쪽·왼쪽 옆과 사이 조건으로 자리 찾기", generator: "roundTableFiveB4", catalogGroup: ORDER_GROUP, catalogStrategy: "기준 사람의 오른쪽 옆부터 차례로 자리 채우기", searchAliases: ["원탁", "둥근 식탁", "사이에 앉기"] },
+  { id: "person-item-full-match-b4", domain: "logic", middle: "조건 연결", label: "친구 사이 조건으로 네 사람과 네 가지를 모두 짝 짓기", generator: "personItemFullMatchB4", catalogGroup: "표로 조건 정리하기", catalogStrategy: "아닌 칸에 ✕, 하나 남으면 ○", searchAliases: ["논리 추리", "표 채우기", "짝 짓기"] },
+  { id: "grid-pen-placement-b4", domain: "logic", middle: "자리 배치", label: "두 줄 우리에 바로 위·오른쪽·붙어 있음·가장 멀리 조건으로 동물 넣기", generator: "gridPenPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "정해진 칸부터 자리가 하나로 정해지는 조건 쓰기", searchAliases: ["자리 배치", "우리", "가장 멀리"] },
+  { id: "digit-grid-placement-b4", domain: "logic", middle: "자리 배치", label: "두 줄 칸에 바로 아래·오른쪽·같은 줄 조건으로 수 넣기", generator: "digitGridPlacementB4", catalogGroup: ORDER_GROUP, catalogStrategy: "정해진 수부터 바로 위·아래·오른쪽 칸 채우기", searchAliases: ["자리 배치", "수 넣기", "같은 줄"] }
 ];
 
 export const BOOK04_STRUCTURE_GUIDES = {
@@ -1272,7 +2300,23 @@ export const BOOK04_STRUCTURE_GUIDES = {
   "floor-from-top-b4": "맨 위층이 위에서 첫 번째이니, 위에서 몇 번째인지에서 1을 빼고 전체 층수에서 빼면 됩니다.",
   "line-offset-placement-b4": "앞이나 뒤에 몇 명이 있는지 말하는 조건으로 한 자리를 먼저 정하고, 몇 번째 조건으로 나머지를 채웁니다.",
   "seat-offset-placement-b4": "같은 사람이 나오는 조건끼리 이어서 몇 칸 떨어져 있는지 그려 보고 자리를 정합니다.",
-  "race-order-clues-b4": "등수가 바로 정해지는 조건부터 표에 쓰고, 누가 먼저 들어왔는지 조건으로 나머지 칸을 채웁니다."
+  "race-order-clues-b4": "등수가 바로 정해지는 조건부터 표에 쓰고, 누가 먼저 들어왔는지 조건으로 나머지 칸을 채웁니다.",
+  "polyomino-all-draw-b4": "가장 긴 줄이 몇 칸인지로 나누어 차례로 그리고, 돌리거나 뒤집어 같아지는 모양은 한 번만 셉니다.",
+  "same-piece-rect-tiling-b4": "모서리 칸을 덮는 방법부터 같은 조각으로 하나씩 놓아 보고, 어떻게 놓아도 빈칸이 남는 조각을 고릅니다.",
+  "rect-halves-all-ways-b4": "똑같은 두 조각은 가운데를 중심으로 반 바퀴 돌리면 겹치니, 가운데를 지나는 선을 한 칸씩 꺾어 가며 찾고 같은 모양은 한 번만 셉니다.",
+  "triangle-grid-halves-all-b4": "한 조각의 칸 수를 먼저 구하고, 가운데를 지나는 자르는 선을 한 칸씩 바꾸어 가며 같은 모양 두 조각이 되는지 봅니다.",
+  "count-balanced-partition-b4": "한 부분의 칸 수와 한 부분에 들어갈 도토리 수를 먼저 구하고, 모서리 칸이 들어갈 부분부터 정합니다.",
+  "fold-cut-two-corner-unfold-b4": "마지막으로 접은 선부터 거울에 비추듯 잘린 부분을 반대쪽에 그리고, 처음 접은 선에 한 번 더 비춰 그립니다.",
+  "pyramid-wall-nth-b4": "줄마다 1, 3, 5, …개이니 n번째는 1부터 n번째 홀수까지의 합, 곧 n × n개입니다.",
+  "stepped-pyramid-hidden-b4": "층마다 개수를 더해 전체를 구하고, 위에서 보이는 기둥 맨 위 나무의 수(맨 아래층 칸 수)를 뺍니다.",
+  "age-list-matching-b4": "나이 차가 주어진 두 사람은 목록에서 그 차가 나는 짝만 될 수 있으니, 짝을 찾아 표에 놓아 봅니다.",
+  "bib-rank-derangement-b4": "바로 뒤에 들어온 두 선수를 한 묶음으로 놓고, 자기 번호와 같은 등수가 되는 자리는 지웁니다.",
+  "race-talk-ranking-b4": "「몇 명을 이겼다」는 그 아이 뒤에 들어온 아이 수이니 등수부터 정하고, 누가 누구를 이겼는지로 나머지를 채웁니다.",
+  "round-table-four-b4": "모두 식탁 가운데를 보고 앉으니, 기준 사람의 오른손 쪽 자리부터 채우고 떨어져 앉은 두 사람은 마주 보게 놓습니다.",
+  "round-table-five-b4": "기준 사람의 오른손 쪽 옆자리부터 정하고, 「사이」는 양옆, 「떨어져 앉음」은 옆자리가 아님을 이용합니다.",
+  "person-item-full-match-b4": "「서로 다른 친구」로 나온 사람은 그 물건의 주인이 아니니 표에 ✕를 하고, 하나 남은 칸에 ○를 합니다.",
+  "grid-pen-placement-b4": "정해진 칸부터 「바로 위」·「바로 오른쪽」 조건을 쓰고, 가장 멀리 떨어진 두 칸은 맞은편 모서리임을 이용합니다.",
+  "digit-grid-placement-b4": "정해진 수부터 「바로 아래」·「바로 오른쪽」 칸을 채우고, 「같은 줄」 조건으로 윗줄·아랫줄을 가립니다."
 };
 
 export const BOOK04_STRUCTURE_REMAPS = [
@@ -1313,5 +2357,25 @@ export const BOOK04_STRUCTURE_REMAPS = [
   ["book-04", 4, "check", 1, [3], "line-offset-placement-b4"],
   ["book-04", 4, "practice", 1, [8], "line-offset-placement-b4"],
   ["book-04", 4, "practice", 1, [7], "seat-offset-placement-b4"],
-  ["book-04", 4, "practice", 1, [5, 6], "race-order-clues-b4"]
+  ["book-04", 4, "practice", 1, [5, 6], "race-order-clues-b4"],
+  // 2차(2026-11-28)
+  ["book-04", 1, "activity", 1, [1], "polyomino-all-draw-b4"],
+  ["book-04", 1, "activity", 1, [2], "same-piece-rect-tiling-b4"],
+  ["book-04", 1, "practice", 1, [5], "triangle-grid-halves-all-b4"],
+  ["book-04", 1, "check", 1, [3], "count-balanced-partition-b4"],
+  ["book-04", 1, "practice", 1, [9], "count-balanced-partition-b4"],
+  ["book-04", 1, "advanced", 1, [1, 2], "rect-halves-all-ways-b4"],
+  ["book-04", 2, "activity", 1, [1], "fold-cut-two-corner-unfold-b4"],
+  ["book-04", 2, "practice", 1, [1], "fold-cut-two-corner-unfold-b4"],
+  ["book-04", 2, "practice", 1, [13], "pyramid-wall-nth-b4"],
+  ["book-04", 2, "check", 2, [2], "stepped-pyramid-hidden-b4"],
+  ["book-04", 2, "practice", 1, [16], "stepped-pyramid-hidden-b4"],
+  ["book-04", 3, "advanced", 1, [2], "age-list-matching-b4"],
+  ["book-04", 4, "check", 1, [4], "bib-rank-derangement-b4"],
+  ["book-04", 4, "advanced", 1, [3], "race-talk-ranking-b4"],
+  ["book-04", 4, "activity", 2, [4], "round-table-four-b4"],
+  ["book-04", 4, "practice", 1, [13], "round-table-five-b4"],
+  ["book-04", 4, "practice", 1, [3], "person-item-full-match-b4"],
+  ["book-04", 4, "practice", 1, [9], "grid-pen-placement-b4"],
+  ["book-04", 4, "practice", 1, [10], "digit-grid-placement-b4"]
 ];

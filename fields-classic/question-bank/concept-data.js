@@ -1043,24 +1043,25 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "가로줄만 확인하거나 대각선을 빠뜨리고, 한 줄의 합을 목표로 정한 뒤 다른 줄에 적용하지 않았는지 확인합니다.",
     [book3Evidence("마법카드와 마방진", 2, [3])]
   ),
-  "tetromino-family-choice": sourceLesson(
+  // 4권 1단원 활동 1-1·1-2는 교재 대조(2026-11-28)로 「테트로미노 모두 그리기」·「같은 조각으로 정사각형 덮기」 꼴의 새 유형에 이었다.
+  "polyomino-all-draw-b4": sourceLesson(
     "concept:geometry:tetromino-connectivity-fit",
     [
-      beat("count-four-squares", "정사각형 네 개를 세어요", "같은 크기의 정사각형 네 개로 이루어진 모양인지 하나씩 세어 봅니다."),
-      beat("check-edge-connectivity", "변으로 모두 이어졌는지 봐요", "정사각형들이 꼭짓점만 닿지 않고 변으로 서로 이어지는지 확인합니다."),
-      beat("choose-disconnected-option", "변으로 모두 연결되지 않은 보기를 골라요", "네 칸이 변으로 모두 연결되지 않은 보기를 찾아 고릅니다.")
+      beat("count-four-squares", "정사각형 네 개를 변으로 이어요", "같은 크기의 정사각형 네 개가 꼭짓점만 닿지 않고 변으로 모두 이어진 모양만 테트로미노입니다."),
+      beat("sort-by-longest-row", "가장 긴 줄로 나누어 찾아요", "네 칸 한 줄, 세 칸 줄에 한 칸 붙이기, 두 칸씩 두 줄처럼 가장 긴 줄의 칸 수로 나누어 빠짐없이 그립니다."),
+      beat("merge-turned-copies", "돌리거나 뒤집어 같은 모양은 한 번만 세요", "그린 모양을 돌리거나 뒤집어 다른 모양과 꼭 겹치면 같은 것으로 보고 한 번만 셉니다.")
     ],
-    "네 칸이 변으로 모두 연결된 보기를 고르지 말고, 꼭짓점만 닿거나 떨어져 있어 변 연결이 끊긴 보기를 고릅니다.",
+    "돌리거나 뒤집으면 겹치는 모양을 다른 모양으로 두 번 세거나, 꼭짓점만 닿은 모양을 넣지 않았는지 확인합니다.",
     [book4Evidence("도형 분할과 움직이기", 1, [1])]
   ),
-  "tetromino-square-composition": sourceLesson(
+  "same-piece-rect-tiling-b4": sourceLesson(
     "concept:geometry:tetromino-connectivity-fit",
     [
-      beat("read-empty-square", "빈자리를 살펴봐요", "빈 모양의 칸 수와 서로 이어진 모양을 확인하고 조각의 변을 비교합니다."),
-      beat("rotate-piece-to-fit", "조각을 돌려 맞춰요", "조각의 크기와 칸 수는 바꾸지 않고 돌려 빈자리에 맞춥니다."),
-      beat("overlay-and-check", "포개어 빈틈을 확인해요", "맞춘 조각을 빈 모양과 포개어 빈틈이나 겹침이 없는지 살펴봅니다.")
+      beat("count-needed-pieces", "조각이 몇 개 필요한지 세요", "덮을 모양의 칸 수를 조각 한 개의 칸 수로 나누어 같은 조각이 몇 개 필요한지 구합니다."),
+      beat("cover-corner-first", "모서리 칸부터 덮어 봐요", "모서리 칸을 덮을 수 있게 조각을 돌리거나 뒤집어 놓고, 다음 빈 모서리 칸을 차례로 덮습니다."),
+      beat("find-stuck-gap", "끝까지 빈칸이 남는 조각을 찾아요", "어떻게 놓아도 덮이지 않는 칸이 남는 조각은 같은 조각만으로 그 모양을 만들 수 없습니다.")
     ],
-    "조각을 늘리거나 줄여 맞추거나, 돌린 뒤 칸 수와 연결 모양을 확인하지 않았는지 살펴봅니다.",
+    "조각의 칸 수만 맞추고 실제로 놓아 보지 않거나, 조각을 돌리거나 뒤집어 보지 않고 안 된다고 하지 않았는지 확인합니다.",
     [book4Evidence("도형 분할과 움직이기", 1, [2])]
   ),
   "rotational-partition-four": sourceLesson(
@@ -1091,7 +1092,7 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
       beat("unfold-cut-symmetry", "잘린 모양을 대칭으로 펼쳐 그려요", "접은 동작을 거꾸로 되돌리며 잘린 모양을 접은 선 반대쪽의 같은 거리에 대칭으로 그립니다.")
     ],
     "그림을 접은 선 한쪽에만 남기거나 펼칠 때 같은 거리를 지키지 않았는지 확인합니다.",
-    [evidence("색종이 접기", 1, [1]), book4Evidence("색종이 접기와 쌓기나무", 1, [1])]
+    [evidence("색종이 접기", 1, [1])]
   ),
   "fold-number-grid-one": sourceLesson(
     "concept:geometry:folded-number-cut-sum",
@@ -1173,14 +1174,15 @@ export const TYPE_CONCEPT_LESSONS = Object.freeze({
     "수평 저울의 양쪽이 같은 무게라는 조건을 놓치거나, 한쪽에서만 물건을 덜어 내지 않았는지 확인합니다.",
     [book4Evidence("양팔저울과 비교하기", 2, [1, 2, 3, 4])]
   ),
-  "directional-seat-placement": sourceLesson(
+  // 4권 4단원 활동 2-4는 교재 대조(2026-11-28)로 「네 자리 둥근 식탁」 꼴의 새 유형에 이었다.
+  "round-table-four-b4": sourceLesson(
     "concept:logic:relative-direction-placement",
     [
-      beat("mark-reference-seat", "기준 자리를 먼저 정해요", "자리표에서 기준이 되는 자리를 표시하고 그 자리와 가까운 칸을 살펴봅니다."),
-      beat("place-by-direction", "방향대로 차례로 배치해요", "기준 자리부터 바로 위, 아래, 왼쪽, 오른쪽 자리를 조건에 맞게 차례로 채웁니다."),
-      beat("recheck-all-seating", "모든 조건을 다시 검산해요", "완성한 자리표를 처음부터 다시 읽어 모든 사람과 방향 조건이 맞는지 확인합니다.")
+      beat("mark-reference-seat", "기준 자리를 먼저 정해요", "이름이 적힌 자리를 기준으로 삼고, 모두 식탁 가운데를 보고 앉았다는 것을 확인합니다."),
+      beat("place-by-direction", "오른쪽·왼쪽 옆을 차례로 채워요", "앉은 사람의 오른손 쪽이 오른쪽 옆이므로, 기준 자리부터 조건에 맞는 사람을 옆자리에 차례로 놓습니다."),
+      beat("recheck-all-seating", "떨어져 앉은 조건까지 검산해요", "네 자리에서 옆자리가 아니면 마주 보는 자리이므로, 완성한 자리를 처음부터 다시 읽어 모든 조건을 확인합니다.")
     ],
-    "기준 자리 없이 한 사람부터 마음대로 놓거나 대각선 자리를 위·아래·왼쪽·오른쪽으로 잘못 읽고, 마지막 검산을 빠뜨리지 않았는지 확인합니다.",
+    "오른쪽을 그림을 보는 사람 기준으로 읽거나, 떨어져 앉은 두 사람을 옆자리에 놓지 않았는지 확인합니다.",
     [book4Evidence("논리추리와 자리배치", 2, [4])]
   ),
   // 1단원 활동 1-1은 줄마다 방향을 바꾸어 쓴 넓은 수 배열(교재 대조 2026-11-25)
