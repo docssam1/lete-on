@@ -444,7 +444,7 @@ function referenceKeys(stage, references) {
 
 if (!book) throw new Error("book-08 missing");
 if (units.length !== 4) throw new Error(`book-08 unit count ${units.length}`);
-if (typeIds.length !== 108) throw new Error(`book-08 type count ${typeIds.length}`);
+if (typeIds.length !== 122) throw new Error(`book-08 type count ${typeIds.length}`);
 
 let sourceQuestionCount = 0;
 units.forEach((unit, unitIndex) => {
@@ -473,7 +473,7 @@ if (sourceQuestionCount !== 164) throw new Error(`book-08 source count ${sourceQ
 
 
 // ── 교재 번호 꼴 새 유형(book08-structure-generators.js) — 생성기 풀이기와 따로 다시 센다.
-const STRUCTURE_HEAVY = new Set(["all-shape-cryptarithm-b8", "symbol-network-b8", "square-frame-b8", "product-matrix-hidden-b8"]);
+const STRUCTURE_HEAVY = new Set(["seven-letter-relations-b8", "all-shape-cryptarithm-b8", "symbol-network-b8", "square-frame-b8", "product-matrix-hidden-b8"]);
 const evalExpr = (side, val) => {
   // ×·÷ 먼저, 그다음 +·− (음수·나누어떨어지지 않음은 null)
   const terms = [];
@@ -523,7 +523,7 @@ function validateStructure(problem, id, difficulty) {
   const meta = problem.meta;
   const numeric = numericAnswer(problem);
   // 거꾸로 생각하기는 흐름 그림 없이 글로만 낸다(원장 2026-11-27 「그림빼」).
-  if (!["reverse-give-receive-split-b8", "sequential-fraction-chain-b8"].includes(meta.family)) assert(problem.visual?.kind === "fig" && /<svg/.test(problem.visual.html), id, difficulty, "그림 없음");
+  if (!["reverse-give-receive-split-b8", "sequential-fraction-chain-b8", "product-chain-digit-sum-b8", "three-share-two-moves-b8"].includes(meta.family)) assert(problem.visual?.kind === "fig" && /<svg/.test(problem.visual.html), id, difficulty, "그림 없음");
   assert(!/\d\/\d/.test(problem.prompt), id, difficulty, "빗금 분수");
   assert(!hasWrongNumberParticle(problem.prompt) && !hasWrongNumberParticle(problem.solution), id, difficulty, "수 뒤 조사 오류");
   switch (meta.family) {
@@ -746,6 +746,144 @@ function validateStructure(problem, id, difficulty) {
         s.add(10 * c[i] + c[j] + 10 * c[k] + c[l]);
       }
       assert([...s].sort((x, y) => x - y).join(", ") === String(problem.answer), id, difficulty, "카드 합 모두 오류");
+      return;
+    }
+    // ── (4차) 1~3단원 남은 번호 ──
+    case "two-shape-scales-b8": {
+      const hits = [];
+      for (let a = 1; a <= 60; a += 1) for (let b = 1; b <= 60; b += 1) {
+        if (a !== b && meta.scales.every((s) => s.counts[0] * a + s.counts[1] * b === s.total)) hits.push([a, b]);
+      }
+      assert(hits.length === 1 && same(hits[0], meta.vals), id, difficulty, `두 모양 저울 답 ${hits.length}개`);
+      assert(problem.answer === `${meta.vals[meta.ask]}g`, id, difficulty, "두 모양 저울 답 오류");
+      assert((problem.visual.html.match(/<svg /g) || []).length === 2, id, difficulty, "저울 둘이 아님");
+      return;
+    }
+    case "pair-scales-weights-b8": {
+      const hits = [];
+      for (let a = 1; a <= 40; a += 1) for (let b = 1; b <= 40; b += 1) for (let c = 1; c <= 40; c += 1) {
+        const v = [a, b, c];
+        if (new Set(v).size === 3 && meta.pairs.every((p) => v[p.a] + v[p.b] === p.total)) hits.push(v);
+      }
+      assert(hits.length === 1 && same(hits[0], meta.vals) && sum(hits[0]) === meta.all, id, difficulty, `짝 저울 답 ${hits.length}개`);
+      assert(problem.answer.startsWith(`세 모양 ${meta.all}g`) && meta.vals.every((v) => problem.answer.includes(` ${v}g`)), id, difficulty, "짝 저울 답 글 오류");
+      assert((problem.visual.html.match(/<svg /g) || []).length === 7, id, difficulty, "저울 일곱 개가 아님");
+      return;
+    }
+    case "venn-shapes-sum-b8": {
+      const L = [meta.left[0] + meta.mid[0], meta.left[1] + meta.mid[1]];
+      const R = [meta.right[0] + meta.mid[0], meta.right[1] + meta.mid[1]];
+      const hits = [];
+      for (let a = 1; a <= 60; a += 1) for (let b = 1; b <= 60; b += 1) {
+        if (a !== b && L[0] * a + L[1] * b === meta.sums[0] && R[0] * a + R[1] * b === meta.sums[1]) hits.push([a, b]);
+      }
+      assert(hits.length === 1 && same(hits[0], meta.vals) && numeric === meta.vals[meta.ask], id, difficulty, `겹친 원 모양 답 ${hits.length}개`);
+      const glyphs = (problem.visual.html.match(/<(circle|polygon|path) /g) || []).length - 2;
+      assert(glyphs === sum([...meta.left, ...meta.mid, ...meta.right]), id, difficulty, "겹친 원 안 모양 수 그림 오류");
+      return;
+    }
+    case "seven-letter-relations-b8": {
+      // 7자리 1~9 서로 다른 수를 모두 넣어 본다
+      const sols = [];
+      const v = new Array(7);
+      const used = new Set();
+      const holds = (r) => (r.kind === "+" ? v[r.a] + v[r.b] === v[r.c] && v[r.a] > v[r.b] : v[r.a] * r.m === v[r.c]);
+      const visit = (i) => {
+        if (i === 7) { if (v[meta.given] === meta.gv && meta.rels.every(holds)) sols.push([...v]); return; }
+        for (let d = 1; d <= 9; d += 1) { if (used.has(d)) continue; used.add(d); v[i] = d; visit(i + 1); used.delete(d); }
+      };
+      visit(0);
+      const vals = sols.map((s) => s[meta.clue]);
+      const best = meta.kind === "max" ? Math.max(...vals) : Math.min(...vals);
+      const kept = sols.filter((s) => s[meta.clue] === best);
+      assert(sols.length === meta.count && kept.length === 1 && same(kept[0], meta.answer), id, difficulty, `일곱 문자 답 ${kept.length}개`);
+      assert(problem.answer === ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥", "㉦"].map((L, i) => `${L}=${kept[0][i]}`).join(", "), id, difficulty, "일곱 문자 답 글 오류");
+      return;
+    }
+    case "product-chain-digit-sum-b8": {
+      const first = [(o) => o * o, (o) => 2 * o, (o) => 3 * o][meta.firstKind];
+      const found = [];
+      for (let o = 0; o <= 9; o += 1) {
+        const sq = first(o);
+        if (sq < 0 || sq > 9 || sq === o) continue;
+        const st = sq * meta.b * meta.a;
+        if (String(st).length === meta.len && String(st).split("").reduce((s, d) => s + Number(d), 0) === meta.ds) found.push(st);
+      }
+      const list = [...new Set(found)].sort((x, y) => x - y);
+      assert(list.length >= 1 && problem.answer === list.join(", "), id, difficulty, `곱 사슬 답 오류 ${list}`);
+      assert(!problem.visual, id, difficulty, "글로 다 주어진 문제에 그림");
+      return;
+    }
+    case "masked-crypt-b8":
+      meta.parts.forEach((part) => {
+        const sols = cryptCount(part.addends, part.result, part.k);
+        assert(sols.length === 1 && same(sols[0], part.vals), id, difficulty, `섞인 복면산 답 ${sols.length}개`);
+      });
+      if (meta.variant === "repdigit-result") meta.parts.forEach((p) => assert(p.addends.length === 2 && p.result.length === 3 && p.result[0] === p.result[1] && p.vals[p.result[0]] === 1, id, difficulty, "11□ 꼴 아님"));
+      if (meta.variant === "three-two") meta.parts.forEach((p) => assert(p.addends[0].length === 3 && p.addends[1].length === 2 && p.result.length === 3, id, difficulty, "세 자리 + 두 자리 꼴 아님"));
+      if (meta.variant === "repeated-and-mixed") assert(meta.parts[0].addends.every((w) => same(w, [0, 1])) && meta.parts[1].addends.every((w) => w.length === 3), id, difficulty, "거듭 더하기 + 세 자리 꼴 아님");
+      return;
+    case "repeated-addend-relation-b8": {
+      const rels = [(o, d) => d === 2 * o, (o, d) => d === 3 * o, (o, d) => d - o === meta.c, (o, d) => o - d === meta.c];
+      const hits = [];
+      for (let o = 1; o <= 9; o += 1) for (let d = 0; d <= 9; d += 1) for (let s = 0; s <= 9; s += 1) {
+        if (new Set([o, d, s]).size !== 3 || !rels[meta.relIndex](o, d)) continue;
+        const word = meta.pattern.map((p) => [o, d, s][p]);
+        if (word[0] === 0) continue;
+        if (meta.m * (10 * o + d) === 10 * word[0] + word[1]) hits.push([o, d, s]);
+      }
+      assert(hits.length === 1 && same(hits[0], [meta.o, meta.d, meta.s]) && numeric === meta.s, id, difficulty, `관계식 거듭 더하기 답 ${hits.length}개`);
+      return;
+    }
+    case "three-row-repdigit-b8": {
+      const sols = cryptCount(meta.addends, meta.result, 3);
+      assert(sols.length === 1 && same(sols[0], meta.vals) && same(meta.result, [2, 2, 2]), id, difficulty, `세 줄 같은 숫자 답 ${sols.length}개`);
+      return;
+    }
+    case "zero-to-eight-once-b8": {
+      const t = meta.truth;
+      const num = (a, b, c) => 100 * a + 10 * b + c;
+      assert(same([...t].sort((x, y) => x - y), [0, 1, 2, 3, 4, 5, 6, 7, 8]) && num(t[0], t[1], t[2]) + num(t[3], t[4], t[5]) === num(t[6], t[7], t[8]), id, difficulty, "0~8 덧셈식 오류");
+      const hidden = range10.slice(0, 9).filter((i) => !meta.shown.includes(i));
+      const marks = new Set();
+      injectiveSolutions(hidden.length, hidden.map((i) => t[i]), (vals) => {
+        const f = [...t];
+        hidden.forEach((i, j) => { f[i] = vals[j]; });
+        if ([0, 3, 6].some((i) => f[i] === 0)) return false;
+        if (num(f[0], f[1], f[2]) + num(f[3], f[4], f[5]) === num(f[6], f[7], f[8])) marks.add(f[meta.mark]);
+        return true;
+      });
+      assert(marks.size === 1 && numeric === t[meta.mark], id, difficulty, "㉠ 값이 하나가 아님");
+      return;
+    }
+    case "linked-add-subtract-b8": {
+      const val = (w, v) => Number(w.map((x) => (typeof x === "number" ? v[x] : x)).join(""));
+      const lead = (w, v) => !(w.length > 1 && typeof w[0] === "number" && v[w[0]] === 0);
+      const ok = (e, v) => [...e.rows, e.res].every((w) => lead(w, v)) && (e.op === "+" ? e.rows.reduce((s, w) => s + val(w, v), 0) : val(e.rows[0], v) - val(e.rows[1], v)) === val(e.res, v);
+      const sols = injectiveSolutions(3, range10, (v) => meta.eqs.every((e) => ok(e, v)));
+      assert(sols.length === 1 && same(sols[0], meta.vals) && numeric === meta.vals[meta.ask], id, difficulty, `두 복면산 답 ${sols.length}개`);
+      meta.eqs.forEach((e) => assert(new Set(injectiveSolutions(3, range10, (v) => ok(e, v)).map((v) => v[meta.ask])).size >= 2, id, difficulty, "한 식만으로 정해짐"));
+      assert(meta.eqs[1].op === "−" && /−/.test(problem.visual.html), id, difficulty, "뺄셈 복면산 아님");
+      return;
+    }
+    case "subtract-to-repdigit-b8": {
+      const reach = new Set();
+      const digits = [1, 2, 3, 4, 5, 6, 7, 8, 9];
+      injectiveSolutions(meta.k, digits, (v) => { const r = meta.N - sum(v); if (r >= 10 && r <= 99 && r % 11 === 0) reach.add(r); return false; });
+      assert(reach.size === 1 && [...reach][0] === meta.R && numeric === meta.R, id, difficulty, `반복수 뺄셈 답 ${[...reach]}`);
+      return;
+    }
+    case "three-share-two-moves-b8": {
+      const { T, c1, c2 } = meta;
+      const hits = [];
+      for (let a = 1; a < T; a += 1) for (let b = 1; a + b < T; b += 1) {
+        const w = [a, b, T - a - b];
+        const first = c1.kind === "times" ? w[c1.y] + w[c1.x] === c1.k * w[c1.z] : w[c1.y] + w[c1.x] === w[c1.z] + c1.m;
+        if (first && w[c2.p] - c2.d === w[c2.q] + c2.d) hits.push(w);
+      }
+      assert(hits.length === 1 && same(hits[0], meta.values), id, difficulty, `세 사람 두 조건 답 ${hits.length}개`);
+      assert(meta.values.every((v) => problem.answer.includes(` ${v}`)), id, difficulty, "세 사람 답 글 오류");
+      assert(!problem.visual, id, difficulty, "글로 다 주어진 문제에 그림");
       return;
     }
     default:

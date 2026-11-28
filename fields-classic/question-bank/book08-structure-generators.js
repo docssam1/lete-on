@@ -788,7 +788,7 @@ function cryptSolutions(addends, result, k, limit = 3, opts = {}) {
 }
 
 // sh: 모양 번호 → SHAPES 번호. 값이 "box"면 빈 네모, {mark:"㉠"}면 표시한 네모
-function cryptSvg(addends, result, sh) {
+function cryptSvg(addends, result, sh, op = "+") {
   const width = Math.max(result.length, ...addends.map((a) => a.length));
   const c = 30;
   const x0 = 34;
@@ -808,7 +808,7 @@ function cryptSvg(addends, result, sh) {
   rows.forEach((word, i) => {
     const y = 22 + i * 34;
     word.forEach((tok, j) => { body += cell(tok, word.length - 1 - j, y); });
-    if (i === rows.length - 1) body += text(16, y + 7, "+", 20);
+    if (i === rows.length - 1) body += text(16, y + 7, op, 20);
   });
   const lineY = rows.length * 34 + 6;
   body += `<line x1="8" y1="${lineY}" x2="${w - 6}" y2="${lineY}" stroke="${INK}" stroke-width="1.6"/>`;
@@ -1771,7 +1771,783 @@ function sequentialFractionChainB8({ difficulty = 2 }) {
   };
 }
 
+// ── (4차) 1~3단원 남은 번호 ─────────────────────────────
+// 1단원: 두 모양 저울 둘 · 짝지은 저울 셋으로 네 저울 · 겹친 두 원 안의 모양 · 일곱 문자 관계와 가장 큰(작은) 수 · 곱 사슬과 자릿수 합
+// 2단원: 섞인 복면산(두 자리 둘 → 11□ · 세 자리 + 두 자리 · 같은 수 거듭 더하기 + 세 자리 둘) · 거듭 더하기와 모양 관계 ·
+//        세 줄 → 같은 숫자 세 자리 · 0~8을 한 번씩 쓴 덧셈 · 덧셈과 뺄셈 두 복면산 · 몇에서 두 수를 빼 같은 숫자 두 자리
+// 3단원: 세 사람이 나누어 가진 수와 두 조건(모두 주면 몇 배 / 몇 개 더 많음, 몇 개 주면 같아짐)
+
+const SHAPE_POOL = [0, 1, 3, 4, 5, 6]; // 네모(빈칸과 헷갈림)·십자 빼고
+const pickShapes = (n) => shuffle(SHAPE_POOL).slice(0, n);
+const shapeEul = (index) => `${SHAPES[index].ch}${shapeBatchim(index) ? "을" : "를"}`;
+
+// 저울 하나 — 접시 위 모양들, 몸통에 무게(수) 또는 빈칸
+function scaleSvg(items, weight) {
+  const per = 4;
+  const rows = [];
+  for (let i = 0; i < items.length; i += per) rows.push(items.slice(i, i + per));
+  const w = Math.max(104, Math.min(items.length, per) * 26 + 36);
+  const panY = 10 + Math.max(1, rows.length) * 24;
+  const h = panY + 66;
+  const cx = w / 2;
+  let body = "";
+  rows.forEach((row, r) => {
+    const y = panY - 12 - r * 24;
+    row.forEach((s, j) => { body += glyph(SHAPES[s].key, cx + (j - (row.length - 1) / 2) * 26, y, 10); });
+  });
+  body += `<ellipse cx="${cx}" cy="${panY + 3}" rx="${w / 2 - 6}" ry="5" fill="#f3f6f7" stroke="${INK}" stroke-width="1.3"/>`;
+  body += `<line x1="${cx}" y1="${panY + 8}" x2="${cx}" y2="${panY + 15}" stroke="${INK}" stroke-width="1.6"/>`;
+  body += `<rect x="${cx - 36}" y="${panY + 15}" width="72" height="44" rx="7" fill="#fff" stroke="${INK}" stroke-width="1.5"/>`;
+  if (weight === null) {
+    body += `<rect x="${cx - 24}" y="${panY + 26}" width="28" height="22" rx="3" fill="#fff" stroke="${INK}" stroke-width="1.2"/>${text(cx + 14, panY + 43, "g", 16)}`;
+  } else body += text(cx, panY + 44, `${weight}g`, 18);
+  return `${svgOpen(w, h, "저울")}${body}</svg>`;
+}
+const repeatShape = (s, n) => Array.from({ length: n }, () => s);
+
+// 1단원 연습 — 두 모양이 섞인 저울 둘(한 모양의 개수가 같거나, 한 저울을 몇 번 놓으면 같아짐)
+function twoShapeScalesB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const hi = difficulty === 1 ? 9 : difficulty === 2 ? 14 : 20;
+    const x = randomInt(2, hi);
+    const y = randomInt(2, hi);
+    if (x === y) continue;
+    let c1;
+    let c2;
+    let times;
+    if (difficulty === 1 || (difficulty === 2 && Math.random() < 0.5)) {
+      const q = randomInt(1, 3);
+      const p1 = randomInt(1, 3);
+      const p2 = p1 + randomInt(1, 3);
+      const sameFirst = Math.random() < 0.5;
+      c1 = sameFirst ? [q, p1] : [p1, q];
+      c2 = sameFirst ? [q, p2] : [p2, q];
+      if (Math.random() < 0.5) [c1, c2] = [c2, c1];
+      times = 1;
+    } else {
+      times = difficulty === 3 ? pick([2, 3]) : 2;
+      const p1 = randomInt(1, 2);
+      const q1 = randomInt(1, 2);
+      const q2 = q1 * times + pick([1, 2, -1]);
+      if (q2 < 1) continue;
+      c1 = [p1, q1];
+      c2 = [p1 * times, q2];
+    }
+    if (c1[0] + c1[1] > 8 || c2[0] + c2[1] > 8) continue;
+    const ask = randomInt(0, 1);
+    const sh = pickShapes(2);
+    const vals = [x, y];
+    const w1 = c1[0] * x + c1[1] * y;
+    const w2 = c2[0] * x + c2[1] * y;
+    if (w1 === w2 || [w1, w2].includes(vals[ask])) continue;
+    const scales = [{ counts: c1, total: w1 }, { counts: c2, total: w2 }];
+    const items = (c) => shuffle([...repeatShape(sh[0], c[0]), ...repeatShape(sh[1], c[1])]);
+    const ch = (s) => SHAPES[sh[s]].ch;
+    let solution;
+    if (times === 1) {
+      const same = c1[1] === c2[1] ? 1 : 0;
+      const other = 1 - same;
+      const big = c1[other] > c2[other] ? scales[0] : scales[1];
+      const small = big === scales[0] ? scales[1] : scales[0];
+      const diffCount = big.counts[other] - small.counts[other];
+      const rest = small.total - small.counts[other] * vals[other];
+      solution = `두 저울에 ${ch(same)}의 개수가 ${small.counts[same]}개로 같으니, 무게의 차 ${big.total}−${small.total}=${big.total - small.total}g은 ${ch(other)} ${diffCount}개의 무게입니다. 그래서 ${ch(other)}=${vals[other]}g입니다. 가벼운 저울에서 ${ch(other)} ${small.counts[other]}개를 빼면 ${ch(same)} ${small.counts[same]}개가 ${rest}g이므로 ${ch(same)}=${vals[same]}g입니다. 따라서 ${ch(ask)}=${vals[ask]}g입니다.`;
+    } else {
+      const doubled = [c1[0] * times, c1[1] * times];
+      const tw = w1 * times;
+      const extra = c2[1] - doubled[1];
+      const [bigW, smallW] = extra > 0 ? [w2, tw] : [tw, w2];
+      solution = `첫째 저울을 ${times}번 놓았다고 생각하면 ${ch(0)} ${doubled[0]}개와 ${ch(1)} ${doubled[1]}개가 ${tw}g입니다. 둘째 저울과 ${ch(0)}의 개수가 같으니 무게의 차 ${bigW}−${smallW}=${bigW - smallW}g은 ${ch(1)} ${Math.abs(extra)}개의 무게이고, ${ch(1)}=${y}g입니다. 첫째 저울에서 ${ch(1)} ${c1[1]}개를 빼면 ${ch(0)} ${c1[0]}개가 ${w1 - c1[1] * y}g이므로 ${ch(0)}=${x}g입니다. 따라서 ${ch(ask)}=${vals[ask]}g입니다.`;
+    }
+    return {
+      prompt: `다음 저울에서 같은 모양은 같은 무게, 다른 모양은 다른 무게를 나타냅니다. ${shapeIga(sh[ask])} 나타내는 무게를 구하세요.`,
+      visual: figs(...scales.map((s) => scaleSvg(items(s.counts), s.total))),
+      answer: `${vals[ask]}g`,
+      solution,
+      meta: { family: "two-shape-scales-b8", scales, vals, ask, times }
+    };
+  }
+  throw new Error("book08 two-shape scales generation failed");
+}
+
+// 1단원 도전 — 두 모양씩 올린 저울 셋 → 세 모양을 다 올린 저울과 하나씩 올린 저울 셋의 무게
+function pairScalesWeightsB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 500; attempt += 1) {
+    const hi = difficulty === 1 ? 9 : difficulty === 2 ? 14 : 22;
+    const vals = shuffle(range(2, hi)).slice(0, 3);
+    const pairs = [[0, 1], [1, 2], [2, 0]].map(([a, b]) => ({ a, b, total: vals[a] + vals[b] }));
+    const all = vals[0] + vals[1] + vals[2];
+    const sums = pairs.map((p) => p.total);
+    if (new Set(sums).size !== 3) continue;
+    if ([all, ...vals].some((v) => sums.includes(v))) continue;
+    const sh = pickShapes(3);
+    const ch = (s) => SHAPES[sh[s]].ch;
+    const shownPairs = shuffle(pairs);
+    const top = shownPairs.map((p) => scaleSvg(shuffle([sh[p.a], sh[p.b]]), p.total));
+    const bottom = [scaleSvg(shuffle(sh.slice()), null), ...range(0, 2).map((s) => scaleSvg([sh[s]], null))];
+    const row = (list) => `<div style="display:flex;flex-wrap:wrap;gap:14px;justify-content:center">${list.join("")}</div>`;
+    const visual = { kind: "fig", html: `<div style="display:flex;flex-direction:column;gap:14px;align-items:center">${row(top)}${row(bottom)}</div>` };
+    return {
+      prompt: "위의 저울 셋에서 같은 모양은 같은 무게, 다른 모양은 다른 무게를 나타냅니다. 아래 저울 넷의 무게를 각각 구하세요.",
+      visual,
+      answer: `세 모양 ${all}g, ${ch(0)} ${vals[0]}g, ${ch(1)} ${vals[1]}g, ${ch(2)} ${vals[2]}g`,
+      solution: `위의 저울 셋을 모두 더하면 ${sums.join("+")}=${all * 2}g이고, 세 모양이 두 번씩 올라가 있습니다. 그래서 세 모양을 한 번씩 올린 무게는 ${all * 2}÷2=${all}g입니다. 여기에서 두 모양의 무게를 빼면 남은 한 모양의 무게입니다: ${pairs.map((p) => { const rest = 3 - p.a - p.b; return `${ch(rest)}=${all}−${p.total}=${vals[rest]}g`; }).join(", ")}.`,
+      meta: { family: "pair-scales-weights-b8", vals, pairs, all }
+    };
+  }
+  throw new Error("book08 pair scales generation failed");
+}
+
+// 겹친 두 원 — 영역마다 모양(두 가지)이 들어 있고 원 위의 수는 그 원 안 모양의 합
+function vennShapesSvg(regions, sums, sh) {
+  const W = 300;
+  const H = 200;
+  const r = 80;
+  const c1 = 114;
+  const c2 = 186;
+  const cy = 118;
+  let body = `<circle cx="${c1}" cy="${cy}" r="${r}" fill="none" stroke="#3d7d8c" stroke-width="1.4"/><circle cx="${c2}" cy="${cy}" r="${r}" fill="none" stroke="#3d7d8c" stroke-width="1.4"/>`;
+  [[c1 - 18, sums[0]], [c2 + 18, sums[1]]].forEach(([x, v]) => {
+    body += `<rect x="${x - 24}" y="6" width="48" height="26" rx="5" fill="#e3eef2" stroke="none"/>${text(x, 26, v, 17)}`;
+  });
+  const place = (list, x) => {
+    const n = list.length;
+    list.forEach((s, i) => {
+      const y = cy + (i - (n - 1) / 2) * 30;
+      const dx = n > 2 ? (i % 2 ? 9 : -9) : 0;
+      body += glyph(SHAPES[sh[s]].key, x + dx, y, 10);
+    });
+  };
+  place(regions.left, 68);
+  place(regions.mid, 150);
+  place(regions.right, 232);
+  return `${svgOpen(W, H, "겹친 두 원")}${body}</svg>`;
+}
+
+function vennShapesSumB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const hi = difficulty === 1 ? 9 : difficulty === 2 ? 15 : 22;
+    const vals = shuffle(range(2, hi)).slice(0, 2);
+    const cnt = () => [randomInt(0, 2), randomInt(0, 2)];
+    const left = cnt();
+    const mid = cnt();
+    const right = cnt();
+    const maxRegion = difficulty === 3 ? 4 : 3;
+    if ([left, mid, right].some((c) => c[0] + c[1] > maxRegion || c[0] + c[1] === 0)) continue;
+    const L = [left[0] + mid[0], left[1] + mid[1]];
+    const R = [right[0] + mid[0], right[1] + mid[1]];
+    // 한 모양의 개수가 두 원에서 같아야 두 합의 차로 다른 모양을 바로 찾는다
+    const same = L[0] === R[0] ? 0 : L[1] === R[1] ? 1 : -1;
+    if (same < 0) continue;
+    const other = 1 - same;
+    if (L[other] === R[other] || [...L, ...R].some((c) => c === 0)) continue;
+    const sumL = L[0] * vals[0] + L[1] * vals[1];
+    const sumR = R[0] * vals[0] + R[1] * vals[1];
+    const ask = difficulty === 1 ? other : randomInt(0, 1);
+    if ([sumL, sumR].includes(vals[ask])) continue;
+    const sh = pickShapes(2);
+    const ch = (s) => SHAPES[sh[s]].ch;
+    const toList = (c) => shuffle([...repeatShape(0, c[0]), ...repeatShape(1, c[1])]);
+    const regions = { left: toList(left), mid: toList(mid), right: toList(right) };
+    const bigIsR = R[other] > L[other];
+    const [bigSum, smallSum] = bigIsR ? [sumR, sumL] : [sumL, sumR];
+    const bigC = bigIsR ? R : L;
+    const smallC = bigIsR ? L : R;
+    const diffCount = bigC[other] - smallC[other];
+    const fromSmall = smallSum - smallC[other] * vals[other];
+    return {
+      prompt: `같은 모양은 같은 수를 나타냅니다. 원 위의 수는 그 원 안에 있는 모양이 나타내는 수를 모두 더한 값입니다. ${shapeIga(sh[ask])} 나타내는 수를 구하세요.`,
+      visual: figs(vennShapesSvg(regions, [sumL, sumR], sh)),
+      answer: String(vals[ask]),
+      solution: `겹친 부분의 모양은 두 원에 모두 들어갑니다. 왼쪽 원에는 ${ch(0)} ${L[0]}개·${ch(1)} ${L[1]}개, 오른쪽 원에는 ${ch(0)} ${R[0]}개·${ch(1)} ${R[1]}개가 있습니다. ${ch(same)}의 개수가 같으니 두 합의 차 ${bigSum}−${smallSum}=${josa(bigSum - smallSum, "은", "는")} ${ch(other)} ${diffCount}개이고, ${ch(other)}=${vals[other]}입니다.${ask === same ? ` 작은 합에서 ${ch(other)} ${smallC[other]}개를 빼면 ${ch(same)} ${smallC[same]}개가 ${fromSmall}이므로 ${ch(same)}=${vals[same]}입니다.` : ""}`,
+      meta: { family: "venn-shapes-sum-b8", vals, left, mid, right, sums: [sumL, sumR], ask }
+    };
+  }
+  throw new Error("book08 venn shapes generation failed");
+}
+
+// 일곱 문자(서로 다른 1~9)의 관계 + 한 문자의 값 + 「가장 큰(작은) 수」 조건으로 표 채우기
+const LETTERS7 = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥", "㉦"];
+const relText = (r) => (r.kind === "+" ? `${LETTERS7[r.a]}+${LETTERS7[r.b]}=${LETTERS7[r.c]}` : `${LETTERS7[r.a]}×${r.m}=${LETTERS7[r.c]}`);
+const relHolds = (r, v) => (r.kind === "+" ? v[r.a] + v[r.b] === v[r.c] && v[r.a] > v[r.b] : v[r.a] * r.m === v[r.c]);
+const relLetters = (r) => (r.kind === "+" ? [r.a, r.b, r.c] : [r.a, r.c]);
+function relationSolutions(rels, given, gv) {
+  const vals = new Array(7).fill(null);
+  const used = new Set([gv]);
+  vals[given] = gv;
+  const out = [];
+  const order = range(0, 6).filter((i) => i !== given);
+  const ready = (r) => relLetters(r).every((x) => vals[x] !== null);
+  const visit = (i) => {
+    if (i === order.length) { out.push([...vals]); return; }
+    const L = order[i];
+    for (let d = 1; d <= 9; d += 1) {
+      if (used.has(d)) continue;
+      vals[L] = d;
+      used.add(d);
+      if (rels.every((r) => !ready(r) || relHolds(r, vals))) visit(i + 1);
+      used.delete(d);
+      vals[L] = null;
+    }
+  };
+  visit(0);
+  return out;
+}
+
+function tableSvg(headers, cells) {
+  const cw = 44;
+  const w = headers.length * cw + 8;
+  let body = "";
+  headers.forEach((hd, i) => {
+    body += `<rect x="${4 + i * cw}" y="4" width="${cw}" height="30" fill="#e3eef2" stroke="${INK}" stroke-width="1.1"/>${text(4 + i * cw + cw / 2, 25, hd, 16)}`;
+    body += `<rect x="${4 + i * cw}" y="34" width="${cw}" height="34" fill="#fff" stroke="${INK}" stroke-width="1.1"/>`;
+    if (cells[i] !== "") body += text(4 + i * cw + cw / 2, 57, cells[i], 17);
+  });
+  return `${svgOpen(w, 72, "채울 표")}${body}</svg>`;
+}
+
+function sevenLetterRelationsB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const truth = shuffle(range(1, 9)).slice(0, 7);
+    const cands = [];
+    for (let a = 0; a < 7; a += 1) for (let b = 0; b < 7; b += 1) for (let c = 0; c < 7; c += 1) {
+      if (a === b || b === c || a === c) continue;
+      if (truth[a] > truth[b] && truth[a] + truth[b] === truth[c]) cands.push({ kind: "+", a, b, c });
+    }
+    for (let a = 0; a < 7; a += 1) for (let c = 0; c < 7; c += 1) {
+      if (a === c) continue;
+      if (truth[a] * 2 === truth[c]) cands.push({ kind: "×", a, c, m: 2 });
+      if (difficulty === 3 && truth[a] * 3 === truth[c]) cands.push({ kind: "×", a, c, m: 3 });
+    }
+    if (cands.length < 3) continue;
+    const given = randomInt(0, 6);
+    let rels = null;
+    for (let t = 0; t < 40 && !rels; t += 1) {
+      const chosen = shuffle(cands).slice(0, 3);
+      const cover = new Set([given]);
+      chosen.forEach((r) => relLetters(r).forEach((x) => cover.add(x)));
+      const touchesGiven = chosen.some((r) => relLetters(r).includes(given));
+      if (cover.size === 7 && touchesGiven && chosen.some((r) => r.kind === "+")) rels = chosen;
+    }
+    if (!rels) continue;
+    const sols = relationSolutions(rels, given, truth[given]);
+    if (sols.length < 2 || sols.length > 40) continue;
+    const kind = difficulty === 1 ? "max" : pick(["max", "min"]);
+    let clue = null;
+    let answer = null;
+    for (const L of shuffle(range(0, 6).filter((i) => i !== given))) {
+      const values = sols.map((v) => v[L]);
+      const best = kind === "max" ? Math.max(...values) : Math.min(...values);
+      const kept = sols.filter((v) => v[L] === best);
+      if (kept.length === 1) { clue = L; answer = kept[0]; break; }
+    }
+    if (clue === null) continue;
+    const word = kind === "max" ? "가장 큰" : "가장 작은";
+    const rows = rels.map(relText);
+    const filled = LETTERS7.map((L, i) => `${L}=${answer[i]}`).join(", ");
+    return {
+      prompt: `${LETTERS7.join(", ")}은 1부터 9까지의 서로 다른 수를 나타냅니다. 다음 조건을 보고 표를 채우세요. 조건: ${LETTERS7[given]}=${truth[given]} · ${rows.join(" · ")} · 더하는 두 문자 중 왼쪽에 쓴 문자의 수가 더 큽니다. · ${LETTERS7[clue]}의 수는 될 수 있는 수 중 ${word} 수입니다.`,
+      visual: figs(tableSvg(LETTERS7, LETTERS7.map((_, i) => (i === given ? String(truth[given]) : "")))),
+      answer: filled,
+      solution: `${LETTERS7[given]}의 수가 들어간 식부터 될 수 있는 수를 적어 나가면, 서로 다른 수라는 조건까지 맞는 경우가 ${sols.length}가지입니다. 그중 ${LETTERS7[clue]}의 수가 ${word} 것은 한 가지뿐이라 ${filled}입니다.`,
+      meta: { family: "seven-letter-relations-b8", rels, given, gv: truth[given], clue, kind, answer, count: sols.length }
+    };
+  }
+  throw new Error("book08 seven-letter relations generation failed");
+}
+
+// ○ → □ → ◇ → ☆ 곱 사슬 + 「☆은 자리 숫자의 합이 몇인 두(세) 자리 수」 → ☆을 모두
+const digitSumOf = (n) => String(n).split("").reduce((s, d) => s + Number(d), 0);
+const CHAIN_FIRSTS = [
+  { text: (o) => `${o} × ${o}`, f: (v) => v * v },
+  { text: (o) => `${o} + ${o}`, f: (v) => v + v },
+  { text: (o) => `${o} + ${o} + ${o}`, f: (v) => 3 * v }
+];
+function productChainDigitSumB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const firstKind = randomInt(0, CHAIN_FIRSTS.length - 1);
+    const first = CHAIN_FIRSTS[firstKind];
+    const b = randomInt(2, difficulty === 3 ? 5 : 4);
+    const a = randomInt(2, difficulty === 3 ? 5 : 4);
+    const cands = [];
+    for (let o = 1; o <= 9; o += 1) {
+      const sq = first.f(o);
+      if (sq > 9 || sq === o) continue;
+      const di = sq * b;
+      cands.push({ o, sq, di, st: di * a });
+    }
+    if (cands.length < 2) continue;
+    const groups = new Map();
+    cands.forEach((c) => {
+      const key = `${String(c.st).length}:${digitSumOf(c.st)}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(c);
+    });
+    const ok = [...groups.entries()].filter(([key, list]) => {
+      const len = Number(key.split(":")[0]);
+      const sameLen = cands.filter((c) => String(c.st).length === len).length;
+      return (len === 2 || len === 3) && list.length <= 3 && sameLen > list.length && (difficulty === 1 ? list.length === 1 : true);
+    });
+    if (!ok.length) continue;
+    const [key, list] = pick(ok);
+    const [len, ds] = key.split(":").map(Number);
+    const o = SHAPES[0].ch;
+    const sq = SHAPES[2].ch;
+    const di = SHAPES[3].ch;
+    const st = SHAPES[4].ch;
+    const answers = list.map((c) => c.st).sort((x, y) => x - y);
+    const lenWord = len === 2 ? "두" : "세";
+    return {
+      prompt: `다음 조건을 모두 만족할 때 ${st}이 나타내는 수를 모두 구하세요. 조건: ${o}와 ${sq}는 서로 다른 한 자리 수입니다. · ${st}은 각 자리 숫자의 합이 ${ds}인 ${lenWord} 자리 수입니다. · ${st} = ${di} × ${a}, ${di} = ${sq} × ${b}, ${sq} = ${first.text(o)}`,
+      answer: answers.join(", "),
+      solution: `${o}에 1부터 9까지 넣어 ${sq}가 ${o}와 다른 한 자리 수가 되는 것만 남기고 차례로 곱합니다: ${cands.map((c) => `${o}=${c.o} → ${sq}=${c.sq} → ${di}=${c.di} → ${st}=${c.st}`).join(", ")}. 이 중 ${lenWord} 자리 수이고 자리 숫자의 합이 ${ds}인 것은 ${answers.join(", ")}입니다.`,
+      meta: { family: "product-chain-digit-sum-b8", firstKind, a, b, len, ds, answers }
+    };
+  }
+  throw new Error("book08 product chain generation failed");
+}
+
+// ── 2단원 섞인 복면산 ─────────────
+// 숫자 하나를 모양으로 정하면 그 숫자가 나오는 칸은 모두 그 모양(보이는 숫자와 모양의 값은 겹치지 않는다).
+// 답이 하나인지는 「보이는 숫자와 같은 숫자도 모양이 될 수 있다」고 보고 센다(문제에 그런 조건이 없으므로).
+function maskedCryptOnce({ makeNums, k, accept, tries = 4000 }) {
+  for (let attempt = 0; attempt < tries; attempt += 1) {
+    const nums = makeNums();
+    if (!nums) continue;
+    const total = nums.reduce((s, x) => s + x, 0);
+    const words = [...nums.map(digitsOf), digitsOf(total)];
+    const present = [...new Set(words.flat())];
+    if (present.length < k + 1) continue;
+    const chosen = shuffle(present).slice(0, k);
+    const tok = (w) => w.map((d) => (chosen.includes(d) ? chosen.indexOf(d) : d));
+    const addends = words.slice(0, -1).map(tok);
+    const result = tok(words[words.length - 1]);
+    if (!accept(addends, result)) continue;
+    const sols = cryptSolutions(addends, result, k, 2);
+    if (sols.length !== 1) continue;
+    return { addends, result, k, vals: chosen.map(Number), nums, total };
+  }
+  return null;
+}
+const countTok = (words, s) => words.flat().filter((t) => t === s).length;
+const knownCount = (words) => words.flat().filter((t) => typeof t !== "number").length;
+
+function mixedCryptParts(parts) {
+  const sets = shuffle(SHAPE_POOL);
+  const shs = parts.map((p, i) => sets.slice(i * 3, i * 3 + p.k));
+  const tag = (i) => (parts.length > 1 ? `(${i + 1}) ` : "");
+  const list = (p, sh) => range(0, p.k - 1).map((s) => `${SHAPES[sh[s]].ch}=${p.vals[s]}`).join(", ");
+  return {
+    visual: figs(...parts.map((p, i) => cryptSvg(p.addends, p.result, shs[i]))),
+    answer: parts.map((p, i) => `${tag(i)}${list(p, shs[i])}`).join(" · "),
+    shs,
+    tag,
+    list
+  };
+}
+const CRYPT_PROMPT = "다음 계산식에서 같은 모양은 같은 숫자를, 다른 모양은 다른 숫자를 나타냅니다. 각 모양이 나타내는 숫자를 구하세요.";
+const partsMeta = (parts) => parts.map(({ addends, result, k, vals }) => ({ addends, result, k, vals }));
+
+// 활동 1-3·연습 5 — 두 자리 + 두 자리 = 같은 모양 둘 + 숫자(11□), 더하는 두 수에 같은 모양이 한 칸씩
+function repdigitResultOnce() {
+  return maskedCryptOnce({
+    k: 2,
+    makeNums: () => {
+      const s = randomInt(110, 118);
+      if (s === 111) return null;
+      const a = randomInt(Math.max(11, s - 99), 99);
+      const b = s - a;
+      return b >= 10 && b <= 99 ? [a, b] : null;
+    },
+    accept: (addends, result) => {
+      if (typeof result[0] !== "number" || result[0] !== result[1] || typeof result[2] === "number") return false;
+      const other = 1 - result[0];
+      return addends.every((w) => w.filter((t) => t === other).length === 1) && !result.includes(other) && knownCount(addends) >= 2;
+    }
+  });
+}
+function mixedRepdigitResultB8({ difficulty = 2 }) {
+  const parts = [];
+  for (let i = 0; i < 40 && parts.length < 2; i += 1) {
+    const m = repdigitResultOnce();
+    if (m && !parts.some((p) => JSON.stringify(p.addends) === JSON.stringify(m.addends))) parts.push(m);
+  }
+  if (parts.length !== 2) throw new Error("book08 repdigit result cryptarithm generation failed");
+  const made = mixedCryptParts(parts);
+  const hint = difficulty === 1 ? " 두 자리 수 두 개의 합은 200보다 작다는 것부터 생각해 보세요." : "";
+  return {
+    prompt: `${CRYPT_PROMPT}${hint}`,
+    visual: made.visual,
+    answer: made.answer,
+    solution: parts.map((p, i) => {
+      const lead = SHAPES[made.shs[i][p.result[0]]].ch;
+      return `${made.tag(i)}두 자리 수 두 개의 합은 200보다 작으니 맨 앞의 ${lead}=1이고, 결과의 십의 자리도 1입니다. 일의 자리부터 받아올림을 따져 넣으면 ${p.nums.join("+")}=${p.total}이므로 ${made.list(p, made.shs[i])}입니다.`;
+    }).join(" "),
+    meta: { family: "masked-crypt-b8", variant: "repdigit-result", parts: partsMeta(parts) }
+  };
+}
+
+// 확인 2-1·연습 17 — 세 자리 + 두 자리 = 세 자리, 더하는 수에 한 모양이 두세 칸, 결과에 다른 모양 한 칸
+function mixedThreeTwoB8({ difficulty = 2 }) {
+  const need = difficulty === 1 ? 2 : 3;
+  let m = null;
+  for (let i = 0; i < 6 && !m; i += 1) {
+    m = maskedCryptOnce({
+      k: 2,
+      makeNums: () => [randomInt(100, 899), randomInt(10, 99)],
+      accept: (addends, result) => {
+        if (result.length !== 3) return false;
+        const hereA = countTok(addends, 0) === need && addends.every((w) => w.includes(0)) && !result.includes(0);
+        const hereB = countTok(addends, 1) === 0 && result.filter((t) => t === 1).length === 1;
+        return hereA && hereB && knownCount([result]) >= 1 && knownCount(addends) >= 2;
+      }
+    });
+  }
+  if (!m) throw new Error("book08 mixed three-two cryptarithm generation failed");
+  const made = mixedCryptParts([m]);
+  const ch = (s) => SHAPES[made.shs[0][s]].ch;
+  return {
+    prompt: CRYPT_PROMPT,
+    visual: made.visual,
+    answer: made.answer,
+    solution: `${shapeIga(made.shs[0][0])} 들어간 자리마다 보이는 숫자와 받아올림을 따져 될 수 있는 숫자를 넣어 봅니다. 모든 자리가 맞는 것은 ${m.nums.join("+")}=${m.total}뿐이므로 ${made.list(m, made.shs[0])}입니다.`,
+    meta: { family: "masked-crypt-b8", variant: "three-two", parts: partsMeta([m]) }
+  };
+}
+
+// 연습 6 — (1) 같은 두 자리 모양 수를 두세 번 더해 같은 모양이 되풀이되는 세 자리 (2) 세 자리 + 세 자리, 모양 셋이 섞인 식
+function repeatedAddendRepdigitOnce(difficulty) {
+  for (let attempt = 0; attempt < 3000; attempt += 1) {
+    const m = difficulty === 1 ? 2 : pick([2, 3]);
+    const a = randomInt(1, 9);
+    const b = randomInt(0, 9);
+    if (a === b) continue;
+    const total = m * (10 * a + b);
+    const rd = digitsOf(total);
+    if (rd.length !== 3) continue;
+    const counts = {};
+    rd.forEach((d) => { counts[d] = (counts[d] || 0) + 1; });
+    let k = 2;
+    const newShape = {};
+    const result = rd.map((d) => {
+      if (Number(d) === a) return 0;
+      if (Number(d) === b) return 1;
+      if (counts[d] >= 2) { if (newShape[d] === undefined) { newShape[d] = k; k += 1; } return newShape[d]; }
+      return d;
+    });
+    if (k !== 3) continue;
+    const addends = Array.from({ length: m }, () => [0, 1]);
+    const sols = cryptSolutions(addends, result, k, 2);
+    if (sols.length !== 1) continue;
+    return { addends, result, k, vals: sols[0], nums: addends.map(() => 10 * a + b), total };
+  }
+  return null;
+}
+function threeThreeMixedOnce() {
+  return maskedCryptOnce({
+    k: 3,
+    makeNums: () => [randomInt(100, 899), randomInt(100, 899)],
+    accept: (addends, result) => {
+      if (result.length !== 3) return false;
+      const shapeCells = 9 - knownCount([...addends, result]);
+      const inAdd = [0, 1, 2].every((s) => countTok(addends, s) > 0);
+      const inRes = result.some((t) => typeof t === "number");
+      return shapeCells >= 5 && inAdd && inRes && knownCount([result]) >= 1 && knownCount(addends) >= 1;
+    }
+  });
+}
+function repeatedAndMixedCryptB8({ difficulty = 2 }) {
+  const p1 = repeatedAddendRepdigitOnce(difficulty);
+  let p2 = null;
+  for (let i = 0; i < 6 && !p2; i += 1) p2 = threeThreeMixedOnce();
+  if (!p1 || !p2) throw new Error("book08 repeated and mixed cryptarithm generation failed");
+  const parts = [p1, p2];
+  const made = mixedCryptParts(parts);
+  return {
+    prompt: CRYPT_PROMPT,
+    visual: made.visual,
+    answer: made.answer,
+    solution: `(1) 같은 두 자리 수를 ${p1.addends.length}번 더했으므로 결과는 그 수의 ${p1.addends.length}배입니다. 끝자리부터 맞춰 보면 ${p1.nums.join("+")}=${p1.total}이므로 ${made.list(p1, made.shs[0])}입니다. (2) 일의 자리에서 모양끼리의 합과 끝자리를 따지고 받아올림을 넘기면 ${p2.nums.join("+")}=${p2.total}이므로 ${made.list(p2, made.shs[1])}입니다.`,
+    meta: { family: "masked-crypt-b8", variant: "repeated-and-mixed", parts: partsMeta(parts) }
+  };
+}
+
+// 연습 11 — 같은 두 자리 모양 수를 여러 번 더한 결과, 두 모양 사이의 관계식이 함께 주어짐 → 한 모양
+const ADDEND_RELATIONS = [
+  { text: (o, d) => `${o}+${o}=${d}`, ok: (o, d) => d === 2 * o },
+  { text: (o, d) => `${o}+${o}+${o}=${d}`, ok: (o, d) => d === 3 * o },
+  { text: (o, d, c) => `${d}−${o}=${c}`, ok: (o, d, c) => d - o === c },
+  { text: (o, d, c) => `${o}−${d}=${c}`, ok: (o, d, c) => o - d === c }
+];
+const ADDEND_PATTERNS = [[2, 0], [2, 1], [0, 2], [1, 2]];
+function relationMatches(relIndex, c, m, pattern) {
+  const rel = ADDEND_RELATIONS[relIndex];
+  const matches = [];
+  for (let o = 1; o <= 9; o += 1) for (let d = 0; d <= 9; d += 1) {
+    if (o === d || !rel.ok(o, d, c)) continue;
+    const total = m * (10 * o + d);
+    if (total < 10 || total > 99) continue;
+    const td = digitsOf(total).map(Number);
+    const val = [o, d];
+    if (!pattern.every((p, pos) => p === 2 || val[p] === td[pos])) continue;
+    const s = td[pattern.indexOf(2)];
+    if (s === o || s === d) continue;
+    matches.push({ o, d, s, total });
+  }
+  return matches;
+}
+function repeatedAddendRelationB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 1500; attempt += 1) {
+    const relIndex = randomInt(0, ADDEND_RELATIONS.length - 1);
+    const c = randomInt(1, 6);
+    const m = difficulty === 1 ? pick([2, 3]) : pick([3, 4, 5]);
+    const pattern = pick(ADDEND_PATTERNS);
+    const matches = relationMatches(relIndex, c, m, pattern);
+    if (matches.length !== 1) continue;
+    const hit = matches[0];
+    const sh = pickShapes(3);
+    const ch = (i) => SHAPES[sh[i]].ch;
+    const relLine = ADDEND_RELATIONS[relIndex].text(ch(0), ch(1), c);
+    const addends = Array.from({ length: m }, () => [0, 1]);
+    return {
+      prompt: `다음 식에서 ${relLine}이고, 같은 모양은 같은 숫자를, 다른 모양은 다른 숫자를 나타냅니다. ${shapeIga(sh[2])} 나타내는 숫자를 구하세요.`,
+      visual: figs(cryptSvg(addends, pattern, sh)),
+      answer: String(hit.s),
+      solution: `${relLine}에 맞는 두 숫자를 차례로 넣어 두 자리 수 ${ch(0)}${shapeEul(sh[1])} ${m}번 더해 봅니다. 결과가 두 자리이고 모양 자리가 맞는 것은 ${hit.o}${hit.d}×${m}=${hit.total}뿐이므로 ${ch(2)}=${hit.s}입니다.`,
+      meta: { family: "repeated-addend-relation-b8", relIndex, c, m, pattern, o: hit.o, d: hit.d, s: hit.s }
+    };
+  }
+  throw new Error("book08 repeated addend relation generation failed");
+}
+
+// 연습 12 — 모양 두 가지로 만든 줄(한 자리·두 자리)을 더하면 같은 모양 세 개(같은 숫자 세 자리)
+function threeRowRepdigitB8({ difficulty = 2 }) {
+  const layouts = difficulty === 1 ? [[1, 2, 2], [2, 1, 2]] : [[1, 2, 2], [2, 1, 2], [2, 2, 2], [1, 1, 2, 2]];
+  for (let attempt = 0; attempt < 6000; attempt += 1) {
+    const lens = pick(layouts);
+    const addends = lens.map((len) => Array.from({ length: len }, () => randomInt(0, 1)));
+    const flat = addends.flat();
+    if (!flat.includes(0) || !flat.includes(1)) continue;
+    const result = [2, 2, 2];
+    const sols = cryptSolutions(addends, result, 3, 2);
+    if (sols.length !== 1) continue;
+    const vals = sols[0];
+    const sh = pickShapes(3);
+    const ch = (s) => SHAPES[sh[s]].ch;
+    const num = (w) => w.map((s) => vals[s]).join("");
+    const list = range(0, 2).map((s) => `${ch(s)}=${vals[s]}`).join(", ");
+    return {
+      prompt: "다음 계산식에서 같은 모양은 같은 숫자를, 다른 모양은 다른 숫자를 나타냅니다. 각 모양에 알맞은 숫자를 구하세요.",
+      visual: figs(cryptSvg(addends, result, sh)),
+      answer: list,
+      solution: `${ch(2)} 세 개로 된 세 자리 수는 111, 222처럼 같은 숫자 세 개이고, 더하는 수가 크지 않아 ${ch(2)}=${vals[2]}입니다. 일의 자리부터 끝자리와 받아올림을 맞추면 ${addends.map(num).join("+")}=${num(result)}이므로 ${list}입니다.`,
+      meta: { family: "three-row-repdigit-b8", addends, result, k: 3, vals }
+    };
+  }
+  throw new Error("book08 three-row repdigit generation failed");
+}
+
+// 도전 3 — 0부터 8까지 숫자를 한 번씩 써서 만든 세 자리 + 세 자리 = 세 자리, 보이는 숫자 몇 개 → ㉠
+let zeroEightCache = null;
+function zeroEightEquations() {
+  if (zeroEightCache) return zeroEightCache;
+  const out = [];
+  for (let a = 100; a < 1000; a += 1) for (let b = 100; b < 1000; b += 1) {
+    const t = a + b;
+    if (t > 999) break;
+    const s = `${a}${b}${t}`;
+    if (!s.includes("9") && new Set(s).size === 9) out.push(s.split("").map(Number));
+  }
+  zeroEightCache = out;
+  return out;
+}
+function zeroToEightOnceB8({ difficulty = 2 }) {
+  const all = zeroEightEquations();
+  const shownCount = difficulty === 1 ? 4 : 3;
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const truth = pick(all);
+    const shown = shuffle(range(0, 8)).slice(0, shownCount).sort((a, b) => a - b);
+    const matches = all.filter((eq) => shown.every((i) => eq[i] === truth[i]));
+    const hidden = range(0, 8).filter((i) => !shown.includes(i));
+    const fixed = hidden.filter((i) => new Set(matches.map((eq) => eq[i])).size === 1);
+    if (difficulty !== 3 && matches.length !== 1) continue;
+    if (difficulty === 3 && matches.length < 2) continue;
+    if (!fixed.length) continue;
+    const mark = pick(fixed);
+    const slot = (i) => (shown.includes(i) ? String(truth[i]) : i);
+    const addends = [[slot(0), slot(1), slot(2)], [slot(3), slot(4), slot(5)]];
+    const result = [slot(6), slot(7), slot(8)];
+    const look = range(0, 8).map((i) => (i === mark ? { mark: "㉠" } : "box"));
+    const eqText = `${truth.slice(0, 3).join("")}+${truth.slice(3, 6).join("")}=${truth.slice(6).join("")}`;
+    return {
+      prompt: "다음은 0부터 8까지의 숫자를 한 번씩만 써서 만든 덧셈식입니다. ㉠에 알맞은 숫자를 구하세요.",
+      visual: { kind: "fig", html: `<div style="display:flex;flex-direction:column;gap:10px;align-items:center">${cardsSvg(range(0, 8))}${cryptSvg(addends, result, look)}</div>` },
+      answer: String(truth[mark]),
+      solution: `0부터 8까지 모두 더하면 36입니다. 받아올림이 한 번 있을 때마다 결과의 숫자 합이 9씩 줄어드니, (더하는 두 수의 숫자 합) = (결과의 숫자 합) + 9 × (받아올림 수)로 받아올림이 몇 번인지부터 따집니다. 보이는 숫자를 지우고 남은 숫자로 일의 자리부터 맞추면 ${matches.length === 1 ? eqText : `맞는 식이 ${matches.length}가지지만 ㉠ 자리는 모두 같고, 그중 하나는 ${eqText}`}입니다. 따라서 ㉠=${truth[mark]}입니다.`,
+      meta: { family: "zero-to-eight-once-b8", truth, shown, mark, matchCount: matches.length }
+    };
+  }
+  throw new Error("book08 zero-to-eight cryptarithm generation failed");
+}
+
+// 도전 5 — 같은 모양을 쓰는 덧셈 복면산과 뺄셈 복면산을 함께 보고 한 모양 찾기
+const wordVal = (w, v) => Number(w.map((t) => (typeof t === "number" ? v[t] : t)).join(""));
+const leadOk = (words, v) => words.every((w) => !(w.length > 1 && typeof w[0] === "number" && v[w[0]] === 0));
+const eqValue = (e, v) => (e.op === "+" ? e.rows.reduce((s, w) => s + wordVal(w, v), 0) : wordVal(e.rows[0], v) - wordVal(e.rows[1], v));
+function linkedAssignments(eqs, k) {
+  const out = [];
+  const vals = new Array(k);
+  const used = new Set();
+  const visit = (i) => {
+    if (i === k) {
+      if (eqs.every((e) => leadOk([...e.rows, e.res], vals) && eqValue(e, vals) === wordVal(e.res, vals))) out.push([...vals]);
+      return;
+    }
+    for (let d = 0; d <= 9; d += 1) { if (used.has(d)) continue; used.add(d); vals[i] = d; visit(i + 1); used.delete(d); }
+  };
+  visit(0);
+  return out;
+}
+function linkedAddSubtractB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 4000; attempt += 1) {
+    const vals = shuffle(range(0, 9)).slice(0, 3);
+    const knownPool = range(0, 9).filter((d) => !vals.includes(d));
+    const cell = (lead) => {
+      if (Math.random() < 0.72) {
+        const s = randomInt(0, 2);
+        if (!(lead && vals[s] === 0)) return s;
+      }
+      return String(pick(lead ? knownPool.filter((d) => d) : knownPool));
+    };
+    const word = (len) => Array.from({ length: len }, (_, i) => cell(i === 0));
+    const toTokens = (n) => digitsOf(n).map((d) => (vals.includes(Number(d)) ? vals.indexOf(Number(d)) : d));
+    const addRows = difficulty === 3 ? [word(2), word(2), word(2)] : [word(2), word(2)];
+    const addTotal = addRows.reduce((s, w) => s + wordVal(w, vals), 0);
+    const P = word(2);
+    const Q = word(2);
+    const diff = wordVal(P, vals) - wordVal(Q, vals);
+    if (diff < 10) continue;
+    const eqs = [
+      { op: "+", rows: addRows, res: toTokens(addTotal) },
+      { op: "−", rows: [P, Q], res: toTokens(diff) }
+    ];
+    const usedIn = (e) => new Set([...e.rows, e.res].flat().filter((t) => typeof t === "number"));
+    const u0 = usedIn(eqs[0]);
+    const u1 = usedIn(eqs[1]);
+    if (u0.size < 2 || u1.size < 2 || new Set([...u0, ...u1]).size !== 3) continue;
+    if (eqs.some((e) => knownCount([...e.rows, e.res]) > 3)) continue;
+    const both = [0, 1, 2].filter((s) => u0.has(s) && u1.has(s));
+    if (!both.length) continue;
+    const sols = linkedAssignments(eqs, 3);
+    if (sols.length !== 1) continue;
+    const ask = pick(both);
+    const alone = eqs.map((e) => new Set(linkedAssignments([e], 3).map((v) => v[ask])).size);
+    if (alone.some((n) => n < 2)) continue;
+    const sh = pickShapes(3);
+    const ch = (s) => SHAPES[sh[s]].ch;
+    const show = (w) => w.map((t) => (typeof t === "number" ? vals[t] : t)).join("");
+    return {
+      prompt: `다음 두 복면산에서 같은 모양은 같은 숫자를, 다른 모양은 다른 숫자를 나타냅니다. ${shapeIga(sh[ask])} 나타내는 숫자를 구하세요.`,
+      visual: figs(cryptSvg(eqs[0].rows, eqs[0].res, sh, "+"), cryptSvg(eqs[1].rows, eqs[1].res, sh, "−")),
+      answer: String(vals[ask]),
+      solution: `한 식만 보면 ${ch(ask)}에 들어갈 수 있는 숫자가 여러 가지입니다(덧셈식 ${alone[0]}가지, 뺄셈식 ${alone[1]}가지). 같은 모양은 두 식에서 같은 숫자여야 하므로 두 식을 함께 맞추면 ${eqs[0].rows.map(show).join("+")}=${show(eqs[0].res)}, ${show(P)}−${show(Q)}=${show(eqs[1].res)}뿐입니다. 따라서 ${ch(ask)}=${vals[ask]}입니다.`,
+      meta: { family: "linked-add-subtract-b8", eqs, vals, ask }
+    };
+  }
+  throw new Error("book08 linked add-subtract generation failed");
+}
+
+// 도전 6 — 몇에서 서로 다른 한 자리 수 두(세) 개를 빼서 같은 숫자로 된 두 자리 수가 됨 → 그 수
+function subtractToRepdigitB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 800; attempt += 1) {
+    const k = difficulty === 3 ? pick([2, 3]) : 2;
+    const minS = k === 2 ? 3 : 6;
+    const maxS = k === 2 ? 17 : 24;
+    const N = randomInt(difficulty === 1 ? 30 : 40, difficulty === 3 ? 118 : 99);
+    if (N % 11 === 0 && N < 100) continue;
+    const reps = range(1, 9).map((d) => 11 * d).filter((r) => r >= N - maxS && r <= N - minS);
+    if (reps.length !== 1) continue;
+    const R = reps[0];
+    const sh = pickShapes(k + 1);
+    const tokens = [String(N)];
+    for (let i = 0; i < k; i += 1) tokens.push("−", i);
+    tokens.push("=", k, k);
+    const names = range(0, k - 1).map((i) => SHAPES[sh[i]].ch);
+    const ss = `${SHAPES[sh[k]].ch}${SHAPES[sh[k]].ch}`;
+    return {
+      prompt: `${N}에서 서로 다른 한 자리 수 ${names.slice(0, -1).join(", ")}, ${shapeEul(sh[k - 1])} 뺐더니 십의 자리 숫자와 일의 자리 숫자가 같은 두 자리 수 ${ss}${shapeBatchim(sh[k]) ? "이" : "가"} 되었습니다. ${ss}${shapeBatchim(sh[k]) ? "은" : "는"} 얼마인지 구하세요.`,
+      visual: figs(equationsSvg([tokens], sh, "뺄셈식")),
+      answer: String(R),
+      solution: `서로 다른 한 자리 수 ${k}개의 합은 가장 작으면 ${minS}, 가장 크면 ${maxS}입니다. 그래서 ${ss}는 ${N}−${maxS}=${N - maxS}부터 ${N}−${minS}=${N - minS}까지의 수입니다. 이 안에서 두 숫자가 같은 두 자리 수는 ${R}뿐입니다.`,
+      meta: { family: "subtract-to-repdigit-b8", N, k, minS, maxS, R }
+    };
+  }
+  throw new Error("book08 subtract to repdigit generation failed");
+}
+
+// ── 3단원 도전 — 세 사람이 나누어 가진 수, 「모두 주면 몇 배(몇 개 더 많음)」와 「몇 개 주면 같아짐」 ─────
+function threeShareTwoMovesB8({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 1500; attempt += 1) {
+    const names = shuffle(NAMES).slice(0, 3);
+    const hi = difficulty === 1 ? 8 : difficulty === 2 ? 12 : 18;
+    const v = [randomInt(1, hi), randomInt(1, hi), randomInt(1, hi)];
+    const T = v[0] + v[1] + v[2];
+    const [x, y, z] = shuffle([0, 1, 2]);
+    const firstKind = difficulty === 1 ? "times" : pick(["times", "more"]);
+    const [thing, unit] = pick([["카드", "장"], ["구슬", "개"], ["사탕", "개"]]);
+    const n = (count) => `${count}${unit}`;
+    const ul = unit === "장" ? "을" : "를";
+    const un = unit === "장" ? "은" : "는";
+    let c1;
+    if (firstKind === "times") {
+      if ((v[y] + v[x]) % v[z]) continue;
+      const k = (v[y] + v[x]) / v[z];
+      if (k < 2 || k > 6) continue;
+      c1 = { kind: "times", k, ok: (w) => w[y] + w[x] === k * w[z], text: `${iga(names[x])} 가진 ${eulreul(thing)} 모두 ${names[y]}에게 주면 ${iga(names[y])} 가진 ${eunneun(thing)} ${names[z]}의 ${k}배가 됩니다.` };
+    } else {
+      const m = v[y] + v[x] - v[z];
+      if (m < 1) continue;
+      c1 = { kind: "more", m, ok: (w) => w[y] + w[x] === w[z] + m, text: `${iga(names[x])} 가진 ${eulreul(thing)} 모두 ${names[y]}에게 주면 ${iga(names[y])} ${names[z]}보다 ${n(m)} 더 많아집니다.` };
+    }
+    const [p, q] = shuffle([0, 1, 2]).slice(0, 2);
+    const d = (v[p] - v[q]) / 2;
+    if (!Number.isInteger(d) || d < 1) continue;
+    const c2 = { ok: (w) => w[p] - d === w[q] + d, text: `${iga(names[p])} ${names[q]}에게 ${n(d)}${ul} 주면 두 사람이 가진 ${eunneun(thing)} 같아집니다.` };
+    const sols = [];
+    for (let a = 1; a < T; a += 1) for (let b = 1; a + b < T; b += 1) {
+      const w = [a, b, T - a - b];
+      if (c1.ok(w) && c2.ok(w)) sols.push(w);
+    }
+    if (sols.length !== 1) continue;
+    const ans = names.map((nm, i) => `${nm} ${n(v[i])}`).join(", ");
+    const zLine = c1.kind === "times"
+      ? `${wa(names[x])} ${names[y]}의 합은 ${names[z]}의 ${c1.k}배이므로, 세 사람의 합 ${n(T)}${un} ${names[z]}의 ${c1.k + 1}배이고 ${eunneun(names[z])} ${T}÷${c1.k + 1}=${n(v[z])}입니다.`
+      : `${wa(names[x])} ${names[y]}의 합은 ${names[z]}보다 ${n(c1.m)} 많으므로 ${eunneun(names[z])} (${T}−${c1.m})÷2=${n(v[z])}입니다.`;
+    return {
+      prompt: `${names.join(", ")} 세 사람이 ${thing} ${n(T)}${ul} 나누어 가졌습니다. 다음을 보고 세 사람이 처음에 가진 ${thing} 수를 각각 구하세요. ${c1.text} ${c2.text}`,
+      answer: ans,
+      solution: `${zLine} ${iga(names[p])} ${n(d)}${ul} 주어 같아졌으니 ${eunneun(names[p])} ${names[q]}보다 ${d}×2=${n(2 * d)} 많습니다. 남은 사람들의 합과 차로 하나씩 구하면 ${ans}입니다.`,
+      meta: { family: "three-share-two-moves-b8", T, values: v, c1: { kind: c1.kind, x, y, z, k: c1.k ?? null, m: c1.m ?? null }, c2: { p, q, d } }
+    };
+  }
+  throw new Error("book08 three share two moves generation failed");
+}
+
 export const BOOK08_STRUCTURE_GENERATORS = {
+  twoShapeScalesB8,
+  pairScalesWeightsB8,
+  vennShapesSumB8,
+  sevenLetterRelationsB8,
+  productChainDigitSumB8,
+  mixedRepdigitResultB8,
+  mixedThreeTwoB8,
+  repeatedAndMixedCryptB8,
+  repeatedAddendRelationB8,
+  threeRowRepdigitB8,
+  zeroToEightOnceB8,
+  linkedAddSubtractB8,
+  subtractToRepdigitB8,
+  threeShareTwoMovesB8,
   reverseGiveReceiveSplitB8,
   circleFractionMarblesB8,
   sequentialFractionChainB8,
@@ -1818,6 +2594,20 @@ export const BOOK08_STRUCTURE_SOLVERS = { bruteSolutions, propagate, cryptSoluti
 const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, middle, label, generator, searchAliases: aliases });
 
 export const BOOK08_STRUCTURE_TYPE_ROWS = [
+  row("two-shape-scales-b8", "number", "묶음수와 매트릭스", "두 모양이 섞인 저울 둘로 한 모양의 무게 구하기", "twoShapeScalesB8", ["저울", "두 모양", "같은 개수 지우기"]),
+  row("pair-scales-weights-b8", "number", "묶음수와 매트릭스", "두 모양씩 올린 저울 셋으로 전체와 하나씩의 무게 구하기", "pairScalesWeightsB8", ["저울", "두 개씩 합", "두 번 센 합"]),
+  row("venn-shapes-sum-b8", "number", "묶음수와 매트릭스", "겹친 두 원 안의 모양 합으로 한 모양의 수 구하기", "vennShapesSumB8", ["겹친 원", "모양의 합", "두 합의 차"]),
+  row("seven-letter-relations-b8", "logic", "도형이 나타내는 수", "일곱 문자의 관계와 가장 큰(작은) 수 조건으로 표 채우기", "sevenLetterRelationsB8", ["문자 관계", "서로 다른 수", "가장 큰 수"]),
+  row("product-chain-digit-sum-b8", "logic", "도형이 나타내는 수", "모양 곱 사슬과 자리 숫자의 합 조건으로 수 모두 찾기", "productChainDigitSumB8", ["곱 사슬", "자리 숫자의 합", "모두 찾기"]),
+  row("mixed-repdigit-result-b8", "number", "복면산", "두 자리 수 둘을 더한 결과가 같은 모양 둘로 시작하는 복면산", "mixedRepdigitResultB8", ["복면산", "숫자와 모양", "맨 앞은 1"]),
+  row("mixed-three-two-b8", "number", "복면산", "세 자리 + 두 자리에서 되풀이되는 모양과 결과의 모양 찾기", "mixedThreeTwoB8", ["복면산", "숫자와 모양", "받아올림"]),
+  row("repeated-and-mixed-crypt-b8", "number", "복면산", "같은 모양 수 거듭 더하기와 세 자리 섞인 복면산", "repeatedAndMixedCryptB8", ["복면산", "같은 수 여러 번", "세 자리 덧셈"]),
+  row("repeated-addend-relation-b8", "number", "복면산", "두 모양의 관계식이 있는 거듭 더하기 복면산", "repeatedAddendRelationB8", ["복면산", "관계식", "여러 번 더하기"]),
+  row("three-row-repdigit-b8", "number", "복면산", "여러 줄을 더해 같은 숫자 세 자리가 되는 모양 복면산", "threeRowRepdigitB8", ["복면산", "같은 숫자 세 자리", "여러 줄 덧셈"]),
+  row("zero-to-eight-once-b8", "number", "복면산", "0부터 8까지 한 번씩 쓴 세 자리 덧셈식의 빈칸", "zeroToEightOnceB8", ["숫자 한 번씩", "0부터 8까지", "덧셈식 빈칸"]),
+  row("linked-add-subtract-b8", "number", "복면산", "덧셈과 뺄셈 두 복면산을 함께 보고 모양 찾기", "linkedAddSubtractB8", ["두 복면산", "뺄셈 복면산", "같은 모양"]),
+  row("subtract-to-repdigit-b8", "number", "복면산", "몇에서 서로 다른 한 자리 수를 빼 같은 숫자 두 자리 수 찾기", "subtractToRepdigitB8", ["범위 좁히기", "같은 숫자 두 자리"]),
+  row("three-share-two-moves-b8", "number", "합차와 배수", "세 사람이 나눈 수를 두 가지 주기 조건으로 구하기", "threeShareTwoMovesB8", ["세 사람", "모두 주기", "같아지게 주기"]),
   row("reverse-give-receive-split-b8", "logic", "거꾸로 생각하기", "주고받기와 동생과 똑같이 나누기를 거꾸로 풀기", "reverseGiveReceiveSplitB8", ["거꾸로 생각하기", "똑같이 나누기"]),
   row("circle-fraction-marbles-b8", "number", "그림 그려 해결하기", "원 그림의 색칠한 분수만큼 구슬 수 구하기", "circleFractionMarblesB8", ["분수", "원 나누기", "분수만큼"]),
   row("sequential-fraction-chain-b8", "logic", "거꾸로 생각하기", "여러 사람이 남은 것의 분수만큼 차례로 먹은 처음 수", "sequentialFractionChainB8", ["거꾸로 생각하기", "남은 것의 분수"]),
@@ -1859,6 +2649,20 @@ export const BOOK08_STRUCTURE_TYPE_ROWS = [
 ];
 
 export const BOOK08_STRUCTURE_GUIDES = {
+  "two-shape-scales-b8": "두 저울에 한 모양의 개수를 같게 맞추면(필요하면 한 저울을 여러 번 놓고) 무게의 차가 다른 모양 몇 개의 무게입니다.",
+  "pair-scales-weights-b8": "두 개씩 올린 저울을 모두 더하면 모양마다 두 번씩 올라간 무게이니, 반으로 나누어 전체를 구하고 두 개의 무게를 뺍니다.",
+  "venn-shapes-sum-b8": "겹친 부분은 두 원에 모두 들어갑니다. 원마다 모양 개수를 세어 같은 개수인 모양을 지우고 두 합의 차를 봅니다.",
+  "seven-letter-relations-b8": "주어진 수가 들어간 식부터 될 수 있는 수를 적고, 서로 다른 수 조건과 가장 큰(작은) 수 조건으로 한 가지만 남깁니다.",
+  "product-chain-digit-sum-b8": "맨 처음 모양에 한 자리 수를 차례로 넣어 사슬을 따라 계산하고, 자리 숫자의 합 조건에 맞는 것만 모두 고릅니다.",
+  "mixed-repdigit-result-b8": "두 자리 수 둘의 합은 200보다 작으니 결과 맨 앞 모양은 1이고, 일의 자리부터 받아올림을 따져 나머지 모양을 찾습니다.",
+  "mixed-three-two-b8": "되풀이되는 모양이 들어간 자리마다 보이는 숫자와 받아올림을 맞춰 보고, 모든 자리가 맞는 숫자 하나를 고릅니다.",
+  "repeated-and-mixed-crypt-b8": "같은 수를 여러 번 더하면 그 수의 몇 배입니다. 섞인 식은 일의 자리부터 같은 모양끼리의 합과 받아올림을 따집니다.",
+  "repeated-addend-relation-b8": "관계식에 맞는 두 숫자를 먼저 적고, 그 두 자리 수를 여러 번 더한 결과가 모양 자리에 맞는지 하나씩 확인합니다.",
+  "three-row-repdigit-b8": "같은 모양 셋으로 된 세 자리 수는 111, 222처럼 같은 숫자 세 개이니 더하는 수의 크기로 먼저 정합니다.",
+  "zero-to-eight-once-b8": "받아올림이 한 번 있을 때마다 결과의 숫자 합이 9씩 줄어드니, 숫자 합으로 받아올림 수를 정하고 일의 자리부터 채웁니다.",
+  "linked-add-subtract-b8": "한 식만으로는 여러 가지가 되니, 두 식에 함께 쓰인 모양에 같은 숫자를 넣어 두 식이 모두 맞는 경우를 찾습니다.",
+  "subtract-to-repdigit-b8": "뺀 한 자리 수들의 합이 될 수 있는 가장 작은 값과 가장 큰 값으로 결과의 범위를 정하고, 그 안의 같은 숫자 두 자리 수를 찾습니다.",
+  "three-share-two-moves-b8": "모두 준 뒤의 몇 배(몇 개 더 많음) 관계로 한 사람을 먼저 구하고, 주어 같아진 두 사람은 준 수의 두 배만큼 차이 납니다.",
   "reverse-give-receive-split-b8": "끝에서부터 거꾸로 갑니다. 똑같이 나눈 것은 두 배, 받은 것은 빼고, 준 것은 더합니다.",
   "circle-fraction-marbles-b8": "색칠한 칸 수가 분자, 나눈 칸 수가 분모입니다. 전체를 분모만큼 묶어 한 묶음을 구하고 분자만큼 곱합니다.",
   "sequential-fraction-chain-b8": "남은 것을 똑같이 나눈 칸 수로 생각합니다. 마지막 사람부터 거꾸로 먹기 전 수를 구합니다.",
@@ -1900,6 +2704,23 @@ export const BOOK08_STRUCTURE_GUIDES = {
 };
 
 export const BOOK08_STRUCTURE_REMAPS = [
+  // (4차) 1~3단원 남은 번호
+  ["book-08", 1, "practice", 1, [1], "two-shape-scales-b8"],
+  ["book-08", 1, "advanced", 1, [5], "pair-scales-weights-b8"],
+  ["book-08", 1, "practice", 1, [2], "venn-shapes-sum-b8"],
+  ["book-08", 1, "practice", 1, [18], "seven-letter-relations-b8"],
+  ["book-08", 1, "practice", 1, [19], "product-chain-digit-sum-b8"],
+  ["book-08", 2, "activity", 1, [3], "mixed-repdigit-result-b8"],
+  ["book-08", 2, "practice", 1, [5], "mixed-repdigit-result-b8"],
+  ["book-08", 2, "check", 2, [1], "mixed-three-two-b8"],
+  ["book-08", 2, "practice", 1, [17], "mixed-three-two-b8"],
+  ["book-08", 2, "practice", 1, [6], "repeated-and-mixed-crypt-b8"],
+  ["book-08", 2, "practice", 1, [11], "repeated-addend-relation-b8"],
+  ["book-08", 2, "practice", 1, [12], "three-row-repdigit-b8"],
+  ["book-08", 2, "advanced", 1, [3], "zero-to-eight-once-b8"],
+  ["book-08", 2, "advanced", 1, [5], "linked-add-subtract-b8"],
+  ["book-08", 2, "advanced", 1, [6], "subtract-to-repdigit-b8"],
+  ["book-08", 3, "advanced", 1, [6], "three-share-two-moves-b8"],
   // (3차) 4단원 — 주고받기·똑같이 나누기 두 차례, 원 그림 분수, 다섯 단계 분수 먹기
   ["book-08", 4, "activity", 1, [4], "reverse-give-receive-split-b8"],
   ["book-08", 4, "practice", 1, [6], "reverse-give-receive-split-b8"],
