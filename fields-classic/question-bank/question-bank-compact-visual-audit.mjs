@@ -47,7 +47,7 @@ const omittedReferences = new Set();
 for (const viewport of [{ name: "desktop", width: 1440, height: 1000 }, { name: "mobile", width: 390, height: 844 }]) {
   const page = await browser.newPage({ viewport: { width: viewport.width, height: viewport.height } });
   for (const exam of exams) {
-    await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=exam&exam=${exam.id}`, {
+    await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=exam&exam=${exam.id}`, {
       waitUntil: "networkidle",
       timeout: 30000
     });

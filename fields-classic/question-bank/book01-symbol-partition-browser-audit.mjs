@@ -9,7 +9,7 @@ const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const browser = await chromium.launch({ headless: true });
 
 async function buildWorksheet(page) {
-  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=SYMBOL-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=SYMBOL-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
   await page.locator('#curriculumStageChoices button[data-stage="practice"]').click();
   const type = page.locator('.curriculum-type[data-preview-type="symbol-balanced-congruent-partition"]').first();
   assert.equal(await type.count(), 1, "symbol partition curriculum type missing");

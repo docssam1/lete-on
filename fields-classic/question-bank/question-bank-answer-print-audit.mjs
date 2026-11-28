@@ -13,7 +13,7 @@ const { PDFDocument } = createRequire(import.meta.url)(path.join(modules, "pdf-l
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const answerBookId = process.env.FIELDS_ANSWER_BOOK_ID || "";
 const mode = answerBookId ? "curriculum" : "type";
-const url = `${base}/fields-classic/question-bank/?student=DEMO&mode=${mode}`;
+const url = `${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=${mode}`;
 const output = process.env.FIELDS_CAPTURE_DIR || path.join(os.tmpdir(), "fields-answer-print-audit");
 await fs.mkdir(output, { recursive: true });
 

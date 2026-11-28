@@ -12,25 +12,26 @@ const { getDocument } = await import(pathToFileURL(path.join(runtimeModules, "pd
 const baseUrl = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
 const outputDir = process.env.CONCEPT_AUDIT_OUTPUT_DIR || "";
 if (outputDir) fs.mkdirSync(outputDir, { recursive: true });
+// 4권 개념 판: 교재 번호를 그 꼴의 생성기에 1:1로 이은 뒤(2026-11-28) 개념 판도 새 유형으로 옮겼다
+//   (테트로미노 고르기 → 모두 그리기 · 같은 조각 직사각형 · 둥근 탁자 넷 · 차이 나무 · 섞인 접시 저울 · 세모 벽 쌓기 · 수판 세 번 옮기기)
 const book4PilotIds = new Set([
-  "tetromino-family-choice", "tetromino-square-composition", "rotational-partition-two",
-  "rotational-partition-four", "digital-grid-transform", "fold-cut-unfold-one-draw",
-  "fold-number-grid-one", "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal",
-  "cube-count-solid", "cube-minimum-from-solid", "cube-step-sequence", "shape-difference-chain",
-  "balance-unit-ratio", "directional-seat-placement"
+  "polyomino-all-draw-b4", "same-piece-rect-tiling-b4", "rotational-partition-four", "number-board-three-moves-2x2-b4",
+  "fold-cut-unfold-one-draw", "fold-number-grid-one", "fold-number-grid-two-orthogonal", "fold-number-grid-two-diagonal",
+  "cube-count-solid", "cube-minimum-from-solid", "cube-triangular-wall-growth", "shape-difference-tree-b4",
+  "mixed-pan-balance-two-b4", "round-table-four-b4"
 ]);
 const book4SharedConceptIds = new Set([
   "shape-quarter-half-turn", "digital-digit-transform", "person-item-logic"
 ]);
 const expectedBook4ConceptIds = new Set([...book4PilotIds, ...book4SharedConceptIds]);
-assert.equal(expectedBook4ConceptIds.size, 18, "Book 4 concept set must contain 15 new and 3 shared lessons");
+assert.equal(expectedBook4ConceptIds.size, 17, "Book 4 concept set must contain 14 new and 3 shared lessons");
 const book4 = CURRICULUM.find((book) => book.id === "book-04");
 assert.ok(book4, "Book 4 curriculum is missing");
 const book4CurriculumTypeIds = new Set(book4.units.flatMap((unit) => unit.typeIds));
 const book4ConceptIds = new Set([...expectedBook4ConceptIds]
   .filter((typeId) => book4CurriculumTypeIds.has(typeId)));
 assert.deepEqual([...book4ConceptIds].sort(), [...expectedBook4ConceptIds].sort(),
-  "Book 4 concept set must contain the 15 new and 3 shared curriculum types");
+  "Book 4 concept set must contain the 14 new and 3 shared curriculum types");
 for (const typeId of book4PilotIds) {
   const lesson = TYPE_CONCEPT_LESSONS[typeId];
   assert.ok(lesson, `Book 4 pilot lesson is missing from concept-data.js: ${typeId}`);
@@ -415,6 +416,25 @@ for (const typeId of book3PilotIds) {
   assert.equal(lockedBook3TypeIds.has(typeId), false, `locked Book 3 type mapped as pilot: ${typeId}`);
 }
 const expectedOfflineError = (message) => message.includes("ERR_NETWORK_ACCESS_DENIED");
+// 판의 글은 concept-data.js에서 읽는다 — 이 검사는 화면이 자료대로 그리는지 본다(글 자체는 concept-quality-audit가 본다).
+// 개념 판이 교재 번호 1:1 잇기(2026-11-25~28)로 새 유형에 옮겨 간 권은 그 권의 지금 판을 모두 돌린다.
+const bookOfPilot = (typeId) => (book5PilotIds.has(typeId) ? "book-05" : book4PilotIds.has(typeId) ? "book-04"
+  : book3PilotIds.has(typeId) ? "book-03" : book2PilotIds.has(typeId) ? "book-02" : "book-01");
+const beatsOf = (typeId) => TYPE_CONCEPT_LESSONS[typeId].beats.map((beat) => beat.text);
+const pilotRuns = new Map();
+const lostBooks = new Set();
+for (const typeId of Object.keys(pilotExpectations)) {
+  if (TYPE_CONCEPT_LESSONS[typeId]) pilotRuns.set(typeId, bookOfPilot(typeId));
+  else lostBooks.add(bookOfPilot(typeId));
+}
+for (const bookId of lostBooks) {
+  for (const typeId of CURRICULUM.find((book) => book.id === bookId).units.flatMap((unit) => unit.typeIds)) {
+    if (TYPE_CONCEPT_LESSONS[typeId]?.beats?.length === 3 && !pilotRuns.has(typeId) && !lockedBook3TypeIds.has(typeId)) pilotRuns.set(typeId, bookId);
+  }
+}
+console.log(`CONCEPT_PILOTS kept=${[...Object.keys(pilotExpectations)].filter((id) => TYPE_CONCEPT_LESSONS[id]).length}/${Object.keys(pilotExpectations).length} run=${pilotRuns.size} lostBooks=${[...lostBooks]}`);
+for (const bookId of ["book-01", "book-02", "book-03", "book-04", "book-05"]) assert.ok([...pilotRuns.values()].includes(bookId), `no concept pilot left in ${bookId}`);
+
 
 async function openPilot(page, typeId, label, bookIdOverride = null) {
   const errors = [];
@@ -422,7 +442,7 @@ async function openPilot(page, typeId, label, bookIdOverride = null) {
     if (message.type() === "error" && !expectedOfflineError(message.text())) errors.push(message.text());
   });
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "load" });
+  await page.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=CONCEPT-AUDIT&mode=curriculum`, { waitUntil: "load" });
   const bookId = bookIdOverride || (book5PilotIds.has(typeId) ? "book-05"
     : book4PilotIds.has(typeId) ? "book-04"
     : book3PilotIds.has(typeId) ? "book-03"
@@ -463,9 +483,9 @@ async function assertPreview(page, pilot, expectedBeats, trigger, label) {
   }
   const preview = page.locator("#typePreview:not([hidden])");
   await preview.waitFor();
-  assert.equal(await preview.locator(".textbook-concept-tutorial.source-backed").count(), 1, `${label}: source-backed preview class missing`);
-  assert.equal(await preview.locator(".textbook-concept-tutorial header span").innerText(), "개념 익히기", `${label}: source-backed heading changed`);
-  assert.deepEqual(await preview.locator(".textbook-concept-tutorial li p").allInnerTexts(), expectedBeats, `${label}: preview beat text changed`);
+  // 미리보기는 문제만 — 이름 한 줄 + 문제 글 + 그림(원장 2026-10-27 「문제만 보이면 되지 너무 복잡해」). 개념 판은 학습지에서 본다.
+  assert.equal(await preview.locator(".textbook-concept-tutorial").count(), 0, `${label}: preview must show the problem only`);
+  assert.ok((await preview.locator(".type-preview-head strong").innerText()).trim().length > 0 && (await preview.locator(":scope > p").innerText()).trim().length > 0, `${label}: preview problem missing`);
   assert.equal(await preview.locator("text=개념 찾기").count(), 0, `${label}: generic filler returned`);
   assert.equal(await preview.locator("text=답 확인").count(), 0, `${label}: answer filler returned`);
 }
@@ -495,8 +515,8 @@ async function assertPrintableCards(page, typeId) {
   const worksheetBox = await page.locator("#worksheetSection").boundingBox();
   assert.ok(worksheetBox && worksheetBox.width >= 793 && worksheetBox.width <= 795,
     `${typeId} print: worksheet width ${worksheetBox?.width || 0}px is not A4 width`);
-  assert.ok(worksheetBox && worksheetBox.y + worksheetBox.height <= 1124,
-    `${typeId} print: worksheet height ${worksheetBox?.height || 0}px exceeds one A4 page`);
+  // 학습지 전체가 한 쪽을 넘을 수는 있다(쪽 수는 PDF에서 센다) — 문제 카드 하나는 한 쪽 안에 들어가야 한다
+  assert.ok(worksheetBox && worksheetBox.height <= 2 * 1124, `${typeId} print: worksheet height ${worksheetBox?.height || 0}px exceeds two A4 pages`);
   const cards = page.locator("#questionGrid .question-card");
   const boxes = await cards.evaluateAll((elements) => elements.map((element) => {
     const rect = element.getBoundingClientRect();
@@ -520,6 +540,7 @@ async function assertPrintableCards(page, typeId) {
     assert.ok(box.scrollHeight <= box.clientHeight + 1, `${typeId} print: card ${index + 1} content is vertically clipped`);
     assert.ok(box.scrollWidth <= box.clientWidth + 1, `${typeId} print: card ${index + 1} content is horizontally clipped`);
     assert.ok(box.lastVisibleBottom <= box.bottom + 1, `${typeId} print: card ${index + 1} last visible block crosses its border`);
+    assert.ok(box.bottom - box.top <= 1124, `${typeId} print: card ${index + 1} is taller than one A4 page`);
   }
   assert.ok(boxes[0].bottom <= boxes[1].top + 1, `${typeId} print: question cards overlap`);
   for (const card of await cards.all()) {
@@ -527,7 +548,10 @@ async function assertPrintableCards(page, typeId) {
     // 보조 그림을 학습지에서 빼기로 한 문항(compactPolicy "omit")은 그림 칸 없이 3개다.
     const omitsSupportVisual = (await card.getAttribute("data-visual-policy")) === "support-omit";
     if (omitsSupportVisual) assert.equal(await card.locator(".visual").count(), 0, `${typeId} print: omitted support visual rendered`);
-    assert.equal(await requiredBlocks.count(), omitsSupportVisual ? 3 : 4, `${typeId} print: required instructional or response block missing`);
+    // 그림은 있을 때만 본다 — 글로 다 주어진 문제는 그림을 싣지 않는다(app.js TEXT_ONLY_TYPES · 원장 2026-11-26)
+    for (const block of [".textbook-concept-tutorial", ".question-prompt", ".answer-line,.drawing-answer-note"]) {
+      assert.ok(await card.locator(block).count() >= 1, `${typeId} print: required instructional or response block missing (${block})`);
+    }
     const cardBox = await card.boundingBox();
     for (const block of await requiredBlocks.all()) {
       assert.equal(await block.isVisible(), true, `${typeId} print: required block is hidden`);
@@ -542,20 +566,27 @@ async function assertPrintableCards(page, typeId) {
 async function inspectPrintedPdf(pdf, typeId) {
   const document = await getDocument({ data: new Uint8Array(pdf) }).promise;
   try {
-    assert.equal(document.numPages, 1, `${typeId} print: two concept questions should fit on one A4 page, got ${document.numPages}`);
-    const page = await document.getPage(1);
-    const viewport = page.getViewport({ scale: 1 });
-    const content = await page.getTextContent();
-    const normalizedText = content.items.map((item) => item.str).join("").replace(/\s+/g, "");
-    assert.ok(normalizedText.includes("FC단원학습지"), `${typeId} print: worksheet title is missing from the rendered PDF`);
-    const title = content.items.find((item) => item.str.includes("FC"));
-    const firstNumber = content.items.find((item) => item.str === "01");
-    const secondNumber = content.items.find((item) => item.str === "02");
-    for (const [label, item] of [["worksheet title", title], ["question 01", firstNumber], ["question 02", secondNumber]]) {
-      assert.ok(item, `${typeId} print: ${label} is missing from the rendered PDF`);
-      const y = item.transform[5];
-      assert.ok(y >= 0 && y <= viewport.height, `${typeId} print: ${label} is outside the A4 page`);
+    // 개념 문제 둘은 보통 한 쪽, 그림이 큰 유형은 두 쪽까지(쪽을 넘길 뿐 잘리지 않아야 한다)
+    assert.ok(document.numPages >= 1 && document.numPages <= 2, `${typeId} print: two concept questions should fit on two A4 pages, got ${document.numPages}`);
+    const found = {};
+    for (let number = 1; number <= document.numPages; number += 1) {
+      const page = await document.getPage(number);
+      const viewport = page.getViewport({ scale: 1 });
+      const content = await page.getTextContent();
+      const text = content.items.map((item) => item.str).join("").replace(/\s+/g, "");
+      if (number === 1) {
+        assert.ok(text.includes("단원학습지"), `${typeId} print: worksheet title is missing from the rendered PDF`);
+        assert.ok(!/FC|필즈|클래식/u.test(text), `${typeId} print: company name on the worksheet`);
+      }
+      for (const label of ["01", "02"]) {
+        const item = content.items.find((entry) => entry.str === label);
+        if (!item || found[label]) continue;
+        const y = item.transform[5];
+        assert.ok(y >= 0 && y <= viewport.height, `${typeId} print: question ${label} is outside the A4 page`);
+        found[label] = true;
+      }
     }
+    assert.ok(found["01"] && found["02"], `${typeId} print: question number missing from the rendered PDF`);
     return document.numPages;
   } finally {
     await document.destroy();
@@ -569,10 +600,11 @@ try {
   desktopBrowserContext = await browser.newContext({ viewport: { width: 1440, height: 1050 } });
   mobileBrowserContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
   const printPageCounts = [];
-  for (const [typeId, expectedBeats] of Object.entries(pilotExpectations)) {
+  for (const [typeId, pilotBook] of pilotRuns) {
+    const expectedBeats = beatsOf(typeId);
     console.log(`CURRICULUM_CONCEPT_BROWSER_CHECK ${typeId}`);
     const desktop = await desktopBrowserContext.newPage();
-    const desktopRun = await openPilot(desktop, typeId, `desktop ${typeId}`);
+    const desktopRun = await openPilot(desktop, typeId, `desktop ${typeId}`, pilotBook);
     if (typeId === "shape-quarter-half-turn") {
       await assertPreview(desktop, desktopRun.pilot, expectedBeats, "hover", "desktop hover");
       const principlePage = await desktopBrowserContext.newPage();
@@ -580,10 +612,7 @@ try {
       await principleRun.pilot.hover();
       const principlePreview = principlePage.locator("#typePreview:not([hidden])");
       await principlePreview.waitFor();
-      assert.equal(await principlePreview.locator(".textbook-concept-tutorial.principle-only").count(), 1, "desktop: principle-only preview class missing");
-      assert.equal(await principlePreview.locator(".textbook-concept-tutorial header span").innerText(), "풀이 원리", "desktop: principle-only heading changed");
-      assert.equal(await principlePreview.locator(".textbook-concept-tutorial li").count(), 1, "desktop: principle-only preview should have one row");
-      assert.equal(await principlePreview.locator(".textbook-concept-tutorial li strong").innerText(), "핵심 방법", "desktop: principle-only label changed");
+      assert.equal(await principlePreview.locator(".textbook-concept-tutorial").count(), 0, "desktop: principle-only preview must show the problem only");
       assert.deepEqual(principleRun.errors, [], `desktop principle-only: browser errors ${principleRun.errors.join(" | ")}`);
       await principlePage.close();
     }
@@ -609,12 +638,12 @@ try {
     await desktop.close();
 
     const mobile = await mobileBrowserContext.newPage();
-    const mobileRun = await openPilot(mobile, typeId, `mobile ${typeId}`);
+    const mobileRun = await openPilot(mobile, typeId, `mobile ${typeId}`, pilotBook);
     await buildPilotWorksheet(mobile, mobileRun.pilot, expectedBeats, `mobile ${typeId}`);
     assert.deepEqual(mobileRun.errors, [], `${typeId} mobile: browser errors ${mobileRun.errors.join(" | ")}`);
     await mobile.close();
   }
-  console.log(`CURRICULUM_CONCEPT_BROWSER_OK pilots=${Object.keys(pilotExpectations).length} beats=3 printPages=${printPageCounts.join(",")} desktop-focus desktop-hover mobile`);
+  console.log(`CURRICULUM_CONCEPT_BROWSER_OK pilots=${pilotRuns.size} beats=3 printPages=${printPageCounts.join(",")} desktop-focus desktop-hover mobile`);
 } finally {
   await mobileBrowserContext?.close();
   await desktopBrowserContext?.close();

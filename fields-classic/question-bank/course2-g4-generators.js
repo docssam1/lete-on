@@ -271,7 +271,7 @@ export const COURSE2_G4_TYPE_ROWS = [
   ["c2-special-angle", "geometry", "각", "정사각형·정삼각형과 같은 길이로 되살리는 각", "c2SpecialAngle"],
   ["c2-set-square-side", "geometry", "삼각자", "30°와 마주 보는 변은 빗변의 반", "c2SetSquareSide"],
   ["c2-fold-tape-angle", "geometry", "색종이 접기", "접은 종이 띠의 각", "c2FoldTapeAngle"],
-  ["c2-rectilinear-perimeter", "geometry", "둘레", "직각으로 꺾인 도형의 둘레", "c2RectilinearPerimeter"],
+  ["c2-rectilinear-perimeter", "geometry", "둘레", "꺾인 변을 옮겨 직사각형 둘레로", "c2RectilinearPerimeter"],
   ["c2-rect-parts-perimeter", "geometry", "둘레", "넷으로 나눈 직사각형의 둘레", "c2RectPartsPerimeter"]
 ];
 export const COURSE2_G4_GUIDES = Object.freeze({

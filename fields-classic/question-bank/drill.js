@@ -4,10 +4,10 @@
 //  · 세 단계: 연습(난이도 1) → 실전(2) → 도전(3). 단계마다 세 문제, 차시에 붙인 유형을 번갈아 낸다(drill-recipes.js).
 //  · 숫자판으로 답을 쓴다(요일·이름·자리처럼 낱말 답은 보기 단추로 고르고, 가쿠로는 칸에 수 카드를 놓는다). 한 번 틀리면 풀이의 첫 걸음을 귀띔하고, 두 번 틀리면 풀이와 답을 보여 주고 넘어간다.
 //  · 처음에 바로 맞히면 별 하나. 다 마치면 덱에 「끝」을 알린다(postMessage type "fc-drill").
-import { typeById } from "./source-data.js?v=20261128f";
-import { GENERATORS } from "./generators.js?v=20261128f";
+import { typeById } from "./source-data.js?v=20261128g";
+import { GENERATORS } from "./generators.js?v=20261128g";
 import { DRILL_TYPES } from "./drill-generators.js?v=20261124f";
-import { DRILL_RECIPES } from "./drill-recipes.js?v=20261122h";
+import { DRILL_RECIPES } from "./drill-recipes.js?v=20261128g";
 import { jo } from "./concept-board-kit.js?v=20261124f";
 import { mathText } from "./math-markup.js?v=20261122w";
 import * as B2 from "./book02-visuals.js?v=20261027b";
@@ -55,6 +55,10 @@ export function answerShape(answer) {
   const a = plain(answer);
   let m;
   if (/^-?\d+$/.test(a)) return { kind: "int", values: [Number(a)], unit: "" };
+  // 세 자리마다 쉼표를 찍은 큰 수(12,321)는 수 하나다 — 띄어 쓴 「1, 4, 5」만 여러 수. 숫자판에 넣기 힘든 아주 큰 수는 받지 않는다
+  if ((m = a.match(/^(\d{1,3}(?:,\d{3})+)\s*([^\d\s,][^\d\s,]{0,3})?$/u))) { const n = Number(m[1].replaceAll(",", "")); return n < 1e7 ? { kind: "int", values: [n], unit: m[2] || "" } : null; }
+  // 「14년 뒤」「3일 전」 — 수 + 기간 낱말 + 뒤/전/후
+  if ((m = a.match(/^(\d+)((?:년|일|달|개월|주|시간|분) (?:뒤|전|후))$/u))) return { kind: "int", values: [Number(m[1])], unit: m[2] };
   if ((m = a.match(/^(\d+)(시간?) (\d+)분$/u))) return { kind: "pair", values: [Number(m[1]), Number(m[3])], units: [m[2], "분"] };
   if ((m = a.match(/^([일월화수목금토])요일$/u))) return { kind: "weekday", values: [DAYS.indexOf(m[1])] };
   if ((m = a.match(/^(\d+)\/(\d+)$/u))) return { kind: "frac", values: [Number(m[1]), Number(m[2])] };
@@ -151,7 +155,7 @@ async function main() {
     const typeId = types[(level * PER_LEVEL + index) % types.length], type = DRILL_TYPES[typeId] || typeById(typeId), gen = drillGenerator(type);
     for (let t = 0; t < 200; t++) {
       const p = gen({ max: 30, difficulty: LEVELS[level].difficulty }, t);   // 문제은행과 같은 부르기(조건이 안 맞으면 null — 다시 뽑는다)
-      if (!p) continue;
+      if (!p || (p.visual && !visualOf(p.visual))) continue;   // 그릴 수 없는 그림의 문제는 그림 없이 내지 않는다
       const shape = answerShape(p.answer) || choiceShape(p) || gridShape(p);
       if (shape) return { ...p, shape, type, typeId };
     }
