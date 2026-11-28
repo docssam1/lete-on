@@ -1242,7 +1242,7 @@ function polyominoAllDraw({ difficulty = 2 } = {}) {
   const shelf = given.length
     ? `<div style="${FONT};font-size:13px;color:#2f3a40;margin-bottom:4px">이미 그린 모양</div><div style="display:flex;flex-wrap:wrap;gap:10px 16px;align-items:flex-end;justify-content:center;padding:8px 12px;border:1px solid #b7d6de;border-radius:10px;margin-bottom:10px">${given.map((g) => pieceSvg(g.cells, { cell: 15, fill: "#dcedf2" })).join("")}</div>`
     : "";
-  const grid = blankGridSvg(size === 4 ? 5 : 7, size === 4 ? 12 : 16, { cell: 18 });
+  const grid = blankGridSvg(size === 4 ? 5 : 7, size === 4 ? 12 : 16, { cell: 28 });
   const prompt = `작은 정사각형 ${size}칸을 변끼리 이어 붙인 모양을 ${word}라고 합니다. 돌리거나 뒤집어서 꼭 겹쳐지는 모양은 같은 것으로 봅니다. 서로 다른 ${word}는 모두 몇 가지인지 쓰고, ${given.length ? "이미 그린 모양을 뺀 나머지를" : "서로 다른 모양을 모두"} 모눈에 그리세요.`;
   const solution = size === 4
     ? `가장 긴 줄의 칸 수로 나누어 찾습니다. 네 칸이 한 줄(1가지), 세 칸 줄의 끝이나 가운데에 한 칸을 붙인 모양(2가지), 두 칸씩 두 줄로 나란히 붙이거나 엇갈려 붙인 모양(2가지)을 더하면 모두 5가지입니다.${given.length ? " 이미 그린 모양을 빼고 나머지를 그립니다." : ""}`
@@ -1291,7 +1291,7 @@ function samePieceRectTiling({ difficulty = 2 } = {}) {
       prompt: `같은 모양의 조각 ${k}개를 빈틈없이 붙여 ${shapeWord}을 만들려고 합니다. 조각은 돌리거나 뒤집어 놓아도 됩니다. 같은 조각 ${k}개로 이 모양을 만들 수 없는 조각을 모두 고르세요.`,
       answer,
       solution: `칸 수는 ${rows * cols}칸이므로 ${spec.size}칸 조각이 ${k}개 필요합니다. 모서리 칸부터 조각을 하나씩 놓아 보면 ${can.map((o) => circled(o.option)).join(", ")} 조각은 그림처럼 빈틈없이 덮을 수 있지만, ${cannot.map((o) => circled(o.option)).join(", ")} 조각은 어떻게 놓아도 덮이지 않는 칸이 남습니다. 따라서 답은 ${answer}입니다.`,
-      visual: { kind: "fig", html: `<div style="display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:center;padding:10px 12px;border:1px solid #b7d6de;border-radius:12px;margin-bottom:10px">${optionHtml}</div>${rowWrap([blankGridSvg(rows, cols), blankGridSvg(rows, cols)])}` },
+      visual: { kind: "fig", html: `<div style="display:flex;flex-wrap:wrap;gap:10px 20px;align-items:flex-end;justify-content:center;padding:10px 12px;border:1px solid #b7d6de;border-radius:12px;margin-bottom:10px">${optionHtml}</div>${rowWrap([blankGridSvg(rows, cols, { cell: 26 }), blankGridSvg(rows, cols, { cell: 26 })])}` },
       answerVisual: { kind: "fig", html: rowWrap(answerFigs) },
       meta: { family: "same-piece-rect-tiling-b4", size: spec.size, rows, cols, options: options.map((o) => ({ option: o.option, id: o.id, cells: o.cells })), cannot: cannot.map((o) => o.option) }
     };
