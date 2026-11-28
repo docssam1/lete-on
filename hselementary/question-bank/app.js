@@ -110,6 +110,11 @@
     return owner && owner !== type && owner.sourceRelationship === "same-source-compound-owner"
       && owner.rawSourceItemId && owner.rawSourceItemId === type.rawSourceItemId ? owner : null;
   }
+  // 같은 원문 한 문제를 나눈 유형(6-2-u3-e4-mission-3-1·3-2)은 선택 상태를 원문 유형 하나로 본다.
+  function isTypeSelected(type) {
+    const target = sourceQuestionType(type);
+    return Boolean(target) && state.selected.has(target.id);
+  }
   function selectedQuestionTypes() {
     return [...new Map([...state.selected].map(id => sourceQuestionType(typeById.get(id))).filter(Boolean).map(type => [type.id, type])).values()];
   }
@@ -208,7 +213,7 @@
     const ready = Boolean(type.generator) && !type.reviewLocked;
     const commonType = commonQuestionType(type);
     const linked = !ready && Boolean(commonType?.generator && !commonType.reviewLocked);
-    const selected = state.selected.has(type.id);
+    const selected = isTypeSelected(type);
     const number = String(type.typeNumber || type.number).padStart(2, "0");
     const sourceLabel = type.creativePractice ? "창작 연습 · " : type.sourceItemLabel ? "원문 " + escapeHtml(type.sourceItemLabel) + " · " : "";
     const alternativeHint = !ready && !linked && availableAlternative(type) ? '<span class="tree-alternative-hint">유사문항 있음 · 눌러서 선택</span>' : '';
@@ -225,7 +230,7 @@
   function groupCheckbox(scope, id, groupTypes, label) {
     const ready = groupTypes.filter(isReadyType);
     if (!ready.length) return "";
-    const count = ready.filter(type => state.selected.has(type.id)).length;
+    const count = ready.filter(isTypeSelected).length;
     return '<input type="checkbox" class="tree-group-check" data-select-scope="' + scope + '" data-select-id="' + id + '" aria-label="' + escapeHtml(label) + ' 전체 선택"' + (count === ready.length ? " checked" : "") + (count > 0 && count < ready.length ? ' data-indeterminate="true"' : "") + '>';
   }
   function renderSemesterPicker() {
@@ -248,7 +253,7 @@
       if (!unitTypes.length) return "";
       const isOpen = !state.collapsedUnits.has(unit.id);
       const readyCount = new Set(unitTypes.flatMap(type => {
-        if (type.generator && !type.reviewLocked) return [type.id];
+        if (type.generator && !type.reviewLocked) return [(sourceQuestionType(type) || type).id];
         const commonType = commonQuestionType(type);
         return commonType?.generator && !commonType.reviewLocked ? [commonType.id] : [];
       })).size;
