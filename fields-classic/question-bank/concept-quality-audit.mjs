@@ -21,8 +21,8 @@ const domainSummary = new Map(DOMAINS.map((domain) => [domain.id, (middle) => {
   return templates[domain.id];
 }]));
 
-assert(curriculumTypeIds.size === 850, `expected 850 unique curriculum types, got ${curriculumTypeIds.size}`);
-assert(typePlacements.length === 920, `expected 920 curriculum placements, got ${typePlacements.length}`);
+assert(curriculumTypeIds.size === 872, `expected 872 unique curriculum types, got ${curriculumTypeIds.size}`);
+assert(typePlacements.length === 942, `expected 942 curriculum placements, got ${typePlacements.length}`);
 assert(CONCEPT_DEFINITIONS.length === 65, `expected 65 explicit concept definitions, got ${CONCEPT_DEFINITIONS.length}`);
 assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 79, `expected 79 concept links, got ${Object.keys(TYPE_CONCEPT_LESSONS).length}`);
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
@@ -552,7 +552,7 @@ for (const typeId of curriculumTypeIds) {
 }
 
 assert(sourceBackedCount === 79, `expected 79 source-backed types, got ${sourceBackedCount}`);
-assert(principleOnlyCount === 771, `expected 771 principle-only types, got ${principleOnlyCount}`);
+assert(principleOnlyCount === 793, `expected 793 principle-only types, got ${principleOnlyCount}`);
 assert(REPRESENTATIVE_CONCEPTS.length >= 142, `expected at least 142 actual concept nodes, got ${REPRESENTATIVE_CONCEPTS.length}`);
 const maxFanout = Math.max(...conceptFanout.values());
 
