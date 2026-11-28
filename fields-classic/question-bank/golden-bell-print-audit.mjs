@@ -128,7 +128,7 @@ try {
     const cover = page.locator('.gold-print-page[data-print-part="cover"]');
     assert.equal(await cover.count(), 1, `${bookId}: book print needs exactly one cover`);
     assert.equal(await page.locator(".gold-print-page").first().getAttribute("data-print-part"), "cover", `${bookId}: cover is not the first page`);
-    assert.equal(await cover.locator(".gold-print-cover-concepts li").count(), book.lessons.length, `${bookId}: cover concept index is incomplete`);
+    assert.equal(await cover.locator(".gold-print-cover-concepts li[data-cover-lesson]").count(), book.lessons.length, `${bookId}: cover concept index is incomplete`);   // 표지 게임 줄(printCoverGamesMarkup)은 세지 않는다
     // 2026-10-03(#282) 표지의 「학습 순서」 네 칸을 「학습 범위」(단원 목록)로 바꿨다.
     assert.equal(await cover.locator(".gold-print-cover-range p").count(), 1, `${bookId}: cover learning range is missing`);
     assert.ok((await cover.locator(".gold-print-cover-range p").innerText()).trim().length > 0, `${bookId}: cover learning range is empty`);
@@ -141,7 +141,7 @@ try {
       assert.equal(await content.locator(".gold-print-story .gold-print-item").count(), expectedStories, `${bookId}/${lesson.id}: an answer area is missing`);
       assert.equal(await content.locator(".gold-print-story .gold-print-item > span:not(.gold-print-answer,.gold-print-part-answers,.gold-print-options)").count(), 0, "Duplicated story prompt");
       const expectedSources = lesson.original.visual?.kind === "book03-six-original" ? 0 : lesson.original.items.length;
-      assert.equal(await content.locator(".gold-print-source-item").count(), expectedSources, `${bookId}/${lesson.id}: source exercise lost`);
+      assert.equal(await content.locator(".gold-print-source-item:not(.tb-section-start)").count(), expectedSources, `${bookId}/${lesson.id}: source exercise lost`);
       assert.deepEqual(await content.locator(".gold-print-source-item [data-print-part-id]").evaluateAll((nodes) => nodes.map((node) => node.dataset.printPartId)), lesson.original.items.flatMap((item) => (item.parts || []).map((part) => part.id)), `${bookId}/${lesson.id}: multipart answer order changed`);
     }
     assert.equal(await page.locator('.gold-print-page:not([data-watermark])').count(), 0, `${bookId}: print watermark missing`);

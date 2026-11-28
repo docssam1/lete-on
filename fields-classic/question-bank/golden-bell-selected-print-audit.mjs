@@ -57,7 +57,7 @@ try {
     assert.equal(await dialog.locator("[data-print-unit]:checked").count(), 1);
     await dialog.locator("#printUnitsNone").click();
     assert.equal(await dialog.locator("#printSelectionApply").isDisabled(), true);
-    assert.match(await dialog.locator("#printSelectionStatus").innerText(), /선택한 단원이 없습니다/u);
+    assert.match(await dialog.locator("#printSelectionStatus").innerText(), /고른 단원이 없어요/u);
     assert.equal(await page.evaluate(() => window.fcPrintCalls || 0), 0);
     await dialog.locator("#printUnitsAll").click();
     assert.equal(await dialog.locator("[data-print-unit]:checked").count(), 4);
@@ -136,7 +136,7 @@ try {
         };
       });
       await dialog.locator("#printSelectionApply").click();
-      await page.waitForFunction(() => document.getElementById("printStatus").textContent.includes("준비하지 못했습니다"));
+      await page.waitForFunction(() => document.getElementById("printStatus").textContent.includes("준비하지 못했어요"));
       assert.equal(await page.evaluate(() => window.fcPrintCalls), calls, "Failed image preparation must not print");
       assert.equal(await page.locator("#goldPrintRoot > article").count(), 0);
       assert.equal(await dialog.isVisible(), true);
@@ -157,7 +157,7 @@ try {
   await locked.locator("#printSelectedButton").click();
   await locked.locator("#printIncludeAnswers").check();
   assert.equal(await locked.locator("#printSelectionApply").isDisabled(), true);
-  assert.match(await locked.locator("#printSelectionStatus").innerText(), /불러온 뒤/u);
+  assert.match(await locked.locator("#printSelectionStatus").innerText(), /불러오면/u);
   assert.equal(await locked.locator("#goldPrintRoot").innerText(), "");
   await locked.locator("#printIncludeAnswers").uncheck();
   assert.equal(await locked.locator("#printSelectionApply").isDisabled(), false);

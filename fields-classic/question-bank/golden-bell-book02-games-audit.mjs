@@ -85,6 +85,8 @@ console.log("BOOK02_GAMES_MODEL_OK games=4 levels=12 seeds=25");
 if (process.argv.includes("--model")) process.exit(0);
 
 const { chromium } = await import(process.env.FIELDS_PLAYWRIGHT || "playwright-core");
+// 로그인 안 한 화면을 흉내 내려고 이 검사가 일부러 401을 돌려준다 — 그 응답에 브라우저가 남기는 「Failed to load resource」 한 줄만 오류로 세지 않는다
+const SELF_401 = /^Failed to load resource: the server responded with a status of 401 \(Unauthorized\)$/u;
 const base = `${process.env.FIELDS_BASE_URL || "http://127.0.0.1:8797"}/fields-classic/question-bank`;
 const browser = await chromium.launch({ executablePath: process.env.FIELDS_CHROMIUM || "/opt/pw-browsers/chromium-1194/chrome-linux/chrome" });
 
@@ -177,7 +179,7 @@ try {
     const page = await browser.newPage({ viewport: { width, height: 900 }, reducedMotion: "reduce", hasTouch: width < 500 });
     const errors = [];
     page.on("pageerror", (e) => errors.push(e.message));
-    page.on("console", (m) => m.type() === "error" && errors.push(m.text()));
+    page.on("console", (m) => m.type() === "error" && !SELF_401.test(m.text()) && errors.push(m.text()));
     await page.route("**/functions/v1/**", (r) => r.fulfill({ status: 401, contentType: "application/json", body: '{"error":"login_required"}' }));
     await page.goto(`${base}/golden-bell.html?student=B2-QA&book=book-02`, { waitUntil: "networkidle" });
     const before = await page.evaluate(() => localStorage.getItem("fields-classic-golden-bell:B2-QA"));
