@@ -1,5 +1,5 @@
 import { frac } from "./math-markup.js?v=20261122w";
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261128i";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261128k";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261101m";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
@@ -2392,7 +2392,9 @@ new MutationObserver(scheduleScreenFit).observe($("lessonContent"), { childList:
 window.addEventListener("resize", scheduleScreenFit);
 
 $("studentName").textContent = student;
-$("courseSelect").innerHTML = '<option value="" disabled>과정 선택</option>' + COURSE_CATALOG.map((course, index) => `<option value="${course.id}">${index + 1}과정${index ? " · 검토본" : ""}</option>`).join("");
+// 워밍업이 하나도 없는 과정(시범 권을 뺀 2·3과정)은 고르기에 두지 않는다
+const COURSES_WITH_WARMUP = COURSE_CATALOG.filter((course) => course.books.some((book) => goldenBellBookById(book.id)?.lessons?.length));
+$("courseSelect").innerHTML = '<option value="" disabled>과정 선택</option>' + COURSES_WITH_WARMUP.map((course) => `<option value="${course.id}">${COURSE_CATALOG.indexOf(course) + 1}과정${COURSE_CATALOG.indexOf(course) ? " · 검토본" : ""}</option>`).join("");
 $("courseSelect").addEventListener("change", (event) => {
   if (printPreparing) return;
   const course = COURSE_CATALOG.find((item) => item.id === event.currentTarget.value);
