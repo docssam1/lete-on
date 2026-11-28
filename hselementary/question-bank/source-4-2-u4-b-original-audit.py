@@ -241,17 +241,19 @@ def t68(g, b):
 R['4-2-u4-t6-8'] = [f'{t68(*p)}°' for p in [(110, 40), (105, 38), (112, 36)]]
 
 # ---- t6-9 ----
+# 책 조건(생각하는 황소 4-2 심화 51쪽 Mission 4): 변 ㄱㄹ = 변 ㄹㄷ(등변사다리꼴이 아님), 각 ㄱㅁㅂ = a, 각 ㄹㄷㄴ = c.
+# 20261128: 앱이 "변 ㄱㄴ = 변 ㄹㄷ"으로 옮겨 답이 108°였던 것을 책 조건으로 되돌림(책 답 107°).
 def t69(a, c):
-    def build(T):
+    def build(T):  # T = 변 ㄴㄷ의 길이(변 ㄹㄷ = 1로 고정), y-up
         h = math.sin(math.radians(c)); k = math.cos(math.radians(c))
-        N = (0, 0); G = (k, h); Rr = (k+T, h); Dd = (2*k+T, 0)
+        N = (0, 0); Dd = (T, 0); Rr = (T-k, h); G = (T-k-1, h)
         mid = lambda p, q: mul(add(p, q), 0.5)
         return G, N, Dd, Rr, mid(G, Rr), mid(G, N), mid(N, Dd), mid(Rr, Dd)
-    T = solve(lambda T: ang(build(T)[4], build(T)[0], build(T)[5])-a, 0.01, 50)
+    T = solve(lambda T: ang(build(T)[4], build(T)[0], build(T)[5])-a, 1.0, 50)
     G, N, Dd, Rr, M, B, S, O = build(T)
-    assert abs(dist(G, N)-dist(Rr, Dd)) < 1e-12 and abs(ang(Dd, N, Rr)-c) < 1e-9
+    assert abs(dist(G, Rr)-dist(Rr, Dd)) < 1e-12 and abs(ang(Dd, N, Rr)-c) < 1e-9 and G[0] > N[0]
     return deg(ang(S, B, O))
-R['4-2-u4-t6-9'] = [f'{t69(*p)}°' for p in [(36, 74), (34, 72), (38, 76)]]
+R['4-2-u4-t6-9'] = [f'{t69(*p)}°' for p in [(36, 74), (34, 72), (40, 76)]]
 
 # ---- t6-10 ----
 def t610(Ssum):

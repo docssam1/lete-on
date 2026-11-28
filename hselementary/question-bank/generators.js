@@ -12170,22 +12170,31 @@
         ];
         const values = profiles[level];
         const startingStickers = int(rng, 5, 8);
-        const changes = values.slice(1).map((value, index) => value < values[index] ? 2 : -1);
+        // 책 예제 1-2: 줄어든 달은 0.5초당 2장을 받고, 늘어난 달은 0.5초당 1장을 잃습니다.
+        const changes = values.slice(1).map((value, index) => {
+          const halfSeconds = Math.round(Math.abs(value - values[index]) / 0.5);
+          return value < values[index] ? 2 * halfSeconds : -halfSeconds;
+        });
         const answer = startingStickers + changes.reduce((sum, value) => sum + value, 0);
         const minValue = Math.min(...values) - 0.5;
         const chart = lineChartSvg({ labels: ["3월", "4월", "5월", "6월", "7월", "8월"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "월", minValue });
         const changeExpression = changes.map(value => value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`).join(" ");
-        return result(`달리기 기록이 전달보다 0.5초 줄어든 달에는 붙임딱지 2장을 받고, 그렇지 않은 달에는 1장을 잃습니다. 3월에 ${startingStickers}장을 가지고 있었다면 8월까지 붙임딱지는 몇 장입니까?${chart}${sourceEvidence("4-2-u5-e1-example-1-2", values, `data-source42-start="${startingStickers}" data-source42-changes="${changes.join(",")}"`)}`, answer, `4월부터 기록 변화를 차례로 보면 붙임딱지 변화는 ${changes.map(value => value > 0 ? `+${value}` : value).join(", ")}장입니다. ${startingStickers} ${changeExpression} = ${answer}장이므로 답은 ${answer}장입니다.`);
+        return result(`달리기 기록을 월별로 나타낸 꺾은선그래프입니다. 4월부터 기록이 전달보다 줄어든 달에는 줄어든 0.5초마다 붙임딱지 2장을 받고, 기록이 늘어난 달에는 늘어난 0.5초마다 붙임딱지 1장을 잃습니다. 3월에 붙임딱지 ${startingStickers}장을 가지고 있었다면 8월까지 붙임딱지는 몇 장이 됩니까?${chart}${sourceEvidence("4-2-u5-e1-example-1-2", values, `data-source42-start="${startingStickers}" data-source42-changes="${changes.join(",")}"`)}`, answer, `4월부터 전달과 비교한 기록 변화는 ${values.slice(1).map((value, index) => `${value < values[index] ? "-" : "+"}${Math.abs(value - values[index])}초`).join(", ")}입니다. 0.5초마다 줄면 2장, 늘면 1장씩 세면 붙임딱지 변화는 ${changes.map(value => value > 0 ? `+${value}` : value).join(", ")}장입니다. ${startingStickers} ${changeExpression} = ${answer}장이므로 답은 ${answer}장입니다.`);
       }
       if (variant === 3) {
+        // 책 예제 1-3처럼 꺾은선그래프의 7~9월은 가리고, 7월은 막대그래프의 나에서 읽습니다(두 그래프의 7월 값은 같음).
         const july = [20000, 17500, 12500];
-        const values = [15000, 13000, 16000, 15000, 14000];
+        const values = [14500, 13000, 17500, 16500, 15500];
+        if (july[1] !== values[2]) throw new Error("막대그래프와 꺾은선그래프의 나 7월 입장객 수가 다릅니다.");
+        const hidden = [2, 3, 4];
         const total = values.reduce((sum, value) => sum + value, 0);
         const decrease = values[3] - values[4];
+        const knownSum = values[0] + values[1] + july[1];
+        const answer = (total - knownSum - decrease) / 2;
+        if (answer !== values[4]) throw new Error("9월 입장객 수 계산이 그래프 값과 다릅니다.");
         const bar = barChartSvg({ labels: ["가", "나", "다"], values: july, step: 2500, unit: "명" });
-        const line = lineChartSvg({ labels: ["5월", "6월", "7월", "8월", "9월"], series: [{ name: "나 입장객", values }], step: 1000, unit: "명", xAxis: "월", minValue: 10000 });
-        const answer = values[4];
-        return result(`왼쪽은 세 물놀이장의 7월 입장객 수이고, 오른쪽은 나 물놀이장의 5월부터 9월까지 입장객 수입니다. 나 물놀이장의 다섯 달 입장객 수의 합은 ${total.toLocaleString()}명이고, 9월은 8월보다 ${decrease.toLocaleString()}명 줄었습니다. 나 물놀이장의 9월 입장객 수를 구하세요.${bar}${line}${sourceEvidence("4-2-u5-e1-example-1-3", values, `data-source42-total="${total}" data-source42-decrease="${decrease}"`)}`, answer, `오른쪽 그래프의 9월 점은 ${answer.toLocaleString()}명을 나타냅니다. 또한 8월 ${values[3].toLocaleString()}명보다 ${decrease.toLocaleString()}명 적고, 다섯 달의 합도 ${total.toLocaleString()}명으로 조건과 같습니다.`);
+        const line = lineChartSvg({ labels: ["5월", "6월", "7월", "8월", "9월"], series: [{ name: "나 입장객", values, hidden }], step: 500, unit: "명", xAxis: "월", minValue: 12000, maxValue: 18000 }); // 세로축 끝이 가린 7월 값(17500)과 같아 보이지 않게 18000까지
+        return result(`왼쪽은 세 물놀이장의 7월 입장객 수를 나타낸 막대그래프이고, 오른쪽은 나 물놀이장의 5월부터 9월까지 입장객 수를 나타낸 꺾은선그래프입니다. 오른쪽 그래프의 7월, 8월, 9월은 가려져 있습니다. 나 물놀이장의 5월부터 9월까지 입장객 수의 합은 ${total.toLocaleString()}명이고, 9월은 8월보다 ${decrease.toLocaleString()}명 줄었습니다. 나 물놀이장의 9월 입장객 수를 구하세요.${bar}${line}${sourceEvidence("4-2-u5-e1-example-1-3", values, `data-source42-total="${total}" data-source42-decrease="${decrease}" data-source42-hidden="${hidden.join(",")}" data-source42-bar="${july.join(",")}"`)}`, answer, `오른쪽 그래프에서 5월은 ${values[0].toLocaleString()}명, 6월은 ${values[1].toLocaleString()}명이고, 7월은 왼쪽 막대그래프의 나에서 ${july[1].toLocaleString()}명입니다. 8월과 9월의 합은 ${total.toLocaleString()} - (${values[0].toLocaleString()} + ${values[1].toLocaleString()} + ${july[1].toLocaleString()}) = ${(total - knownSum).toLocaleString()}명입니다. 9월은 8월보다 ${decrease.toLocaleString()}명 적으므로 9월은 (${(total - knownSum).toLocaleString()} - ${decrease.toLocaleString()}) ÷ 2 = ${answer.toLocaleString()}명입니다.`);
       }
       if (variant === 4) {
         const labels = ["1년", "2년", "3년", "4년", "5년", "6년"];
@@ -12242,10 +12251,12 @@
         ];
         const values = profiles[level];
         const startHours = 2;
-        const slowerDays = values.slice(1).filter((value, index) => value > values[index]).length;
+        // 2일~4일 기록이 느려지면 그다음 날(3일~5일) 연습이 늘어납니다. 5일 기록은 6일 연습에만 영향을 줍니다.
+        const slowerDayNumbers = values.slice(1, 4).map((value, index) => value > values[index] ? index + 2 : 0).filter(Boolean);
+        const slowerDays = slowerDayNumbers.length;
         const answer = startHours + slowerDays;
         const chart = lineChartSvg({ labels: ["1일", "2일", "3일", "4일", "5일"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "날짜", minValue: Math.min(...values) - 0.5 });
-        return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `기록의 초가 커진 날은 ${slowerDays}번이므로 연습 시간도 ${slowerDays}번 늘어납니다. ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
+        return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `5일 연습 시간에 영향을 주는 것은 2일부터 4일까지의 기록입니다. 이 중 전날보다 초가 커진(느려진) 날은 ${slowerDayNumbers.length ? slowerDayNumbers.map(day => `${day}일`).join(", ") : "없으"}${slowerDayNumbers.length ? "이므로" : "므로"} 그다음 날 연습 시간이 ${slowerDays}번 늘어납니다. 5일 기록은 6일 연습 시간에 반영됩니다. 따라서 5일 연습 시간은 ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
       }
       if (variant === 9) {
         const labels = ["6", "8", "10", "12"];
@@ -13437,7 +13448,7 @@
         const firstMissingDenominator = firstDenominator + (firstMissingIndex - 1) * denominatorStep;
         const shownDenominator = firstDenominator + (secondMissingIndex - 1) * denominatorStep;
         const answer = `ㄱ=${firstMissingDenominator}, ㄴ=${secondMissingIndex}`;
-        const preview = Array.from({ length: 4 }, (_, index) => fractionMarkup(index + 1, firstDenominator + index * denominatorStep));
+        const preview = Array.from({ length: 4 }, (_, index) => symbolicFractionMarkup(index + 1, firstDenominator + index * denominatorStep));
         const evidence = fraction42Evidence("fraction-5-mission-4", [firstDenominator, denominatorStep, firstMissingIndex, shownDenominator], answer);
         return result(`분자는 1씩, 분모는 ${denominatorStep}씩 커지는 규칙입니다.<div class="sequence">${preview.join(", ")}, …, ${symbolicFractionMarkup(firstMissingIndex, "ㄱ")}, …, ${symbolicFractionMarkup("ㄴ", shownDenominator)}</div>ㄱ과 ㄴ을 각각 구하세요.${evidence}`, answer, `${firstMissingIndex}번째 분모는 ${firstDenominator}+${firstMissingIndex - 1}×${denominatorStep}=${firstMissingDenominator}이므로 ㄱ=${firstMissingDenominator}입니다. 분모가 ${shownDenominator}인 수는 ${secondMissingIndex}번째이므로 ㄴ=${secondMissingIndex}입니다.`);
       }
@@ -13476,9 +13487,11 @@
       }
       if (kind === 1) {
         const denominator = pick(rng, [[8, 10], [10, 12], [12, 14]][tier]);
-        const outer = denominator * int(rng, 4, 6 + tier);
+        const outerWhole = int(rng, 4, 6 + tier);
+        const outer = denominator * outerWhole;
         const blank = denominator * int(rng, 2, 4 + tier) + int(rng, 1, denominator - 1);
-        const right = denominator * int(rng, 2, 4 + tier) + int(rng, 1, denominator - 1);
+        // 결과가 바깥 수보다 작아야 중괄호 값이 양수가 됩니다(책: 5-{…}=3 5/12).
+        const right = denominator * int(rng, 2, Math.min(4 + tier, outerWhole - 1)) + int(rng, 1, denominator - 1);
         const innerLeft = denominator * int(rng, Math.floor(outer / denominator), Math.floor(outer / denominator) + 2 + tier) + int(rng, 1, denominator - 1);
         const innerRight = right + blank - outer + innerLeft;
         const answer = mixedFraction(blank, denominator);
@@ -13796,7 +13809,8 @@
       if (kind === 0) {
         const base = int(rng, 8, 12);
         const outerEqual = int(rng, base + 2, base + 8 + level * 2);
-        const innerEqual = int(rng, Math.floor(base / 2) + 2, base + 3 + level);
+        // 같은 밑변 위에서 안쪽 삼각형이 큰 삼각형 안에 들어가려면 같은 변이 더 짧아야 합니다.
+        const innerEqual = int(rng, Math.floor(base / 2) + 2, outerEqual - 2);
         const outerPerimeter = outerEqual * 2 + base;
         const innerPerimeter = innerEqual * 2 + base;
         const answer = outerPerimeter + innerPerimeter - base * 2;
@@ -13916,7 +13930,7 @@
         const labels = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"].slice(0, values.length);
         const answer = labels.map((label, index) => ({ label, distance: Math.abs(values[index] - target) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
         const evidence = decimal42Evidence("nearest-order", [target, ...values], answer);
-        return result(`다음 소수들을 ${fixedDecimal(target, 2)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${fixedDecimal(target, 2)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
+        return result(`다음 소수들을 ${plainDecimal(target, 3)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${plainDecimal(target, 3)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
       }
       if (kind === 1) {
         const start = int(rng, 0, 12);
@@ -13963,7 +13977,7 @@
         const differenceScaled = steps * Math.abs(firstStride - secondStride);
         const answer = plainDecimal(differenceScaled, 6);
         const evidence = decimal42Evidence("opposite-walk-distance", [circumferenceKm, firstStride, secondStride], answer);
-        return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 서로 반대편에서 두 사람이 동시에 출발해 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${answer}km입니다.`);
+        return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 같은 곳에서 두 사람이 동시에 출발해 서로 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `같은 곳에서 반대 방향으로 걸으므로 두 사람이 걸은 거리의 합이 둘레 ${circumferenceKm}km=${circumferenceKm * 1000}m가 될 때 처음 만납니다. 두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${plainDecimal(differenceScaled, 3)}m=${answer}km입니다.`);
       }
       if (kind === 6) {
         const bonusChoices = level === 0 ? [50] : level === 1 ? [30, 50, 70] : [20, 30, 50, 70, 80];
@@ -14135,10 +14149,11 @@
         const lower = int(rng, 2050, 2180);
         const upper = int(rng, 2380, 2520);
         const candidates = [];
-        for (let value = lower + 1; value < upper; value += 1) if (Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) candidates.push(value);
+        // 셋째 자리 숫자가 0인 수(예: 2.110)는 소수 세 자리 수가 아니므로 세지 않습니다(책 Mission 3·4와 같은 기준).
+        for (let value = lower + 1; value < upper; value += 1) if (value % 10 !== 0 && Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) candidates.push(value);
         const answer = candidates.length;
         const evidence = decimal42Evidence("tenths-greater-count", [lower, upper], answer);
-        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리 숫자가 소수 둘째 자리 숫자보다 큰 수는 모두 몇 개입니까?${evidence}`, answer, `주어진 범위에서 소수 첫째 자리와 둘째 자리를 비교해 세면 ${answer}개입니다.`);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리 숫자가 소수 둘째 자리 숫자보다 큰 수는 모두 몇 개입니까?${evidence}`, answer, `소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수가 아니므로 뺍니다. 주어진 범위에서 소수 첫째 자리와 둘째 자리를 비교해 세면 ${answer}개입니다.`);
       }
       if (kind === 3) {
         const lower = int(rng, 2725, 2860);
@@ -14146,11 +14161,11 @@
         const candidates = [];
         for (let value = lower + 1; value < upper; value += 1) {
           const digits = [Math.floor(value / 1000), Math.floor(value / 100) % 10, Math.floor(value / 10) % 10, value % 10];
-          if (digits[1] === digits[2] * 2 && new Set(digits).size === 4) candidates.push(value);
+          if (digits[3] !== 0 && digits[1] === digits[2] * 2 && new Set(digits).size === 4) candidates.push(value); // 셋째 자리 0(예: 2.840)은 소수 세 자리 수가 아님
         }
         const answer = candidates.length;
         const evidence = decimal42Evidence("digit-ratio-count", [lower, upper], answer);
-        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리와 둘째 자리 숫자의 비가 2:1이고 네 자리 숫자가 모두 다른 수는 몇 개입니까?${evidence}`, answer, `범위 안의 수를 전부 확인해 두 자리의 비와 서로 다른 숫자 조건을 함께 만족하는 경우를 세면 ${answer}개입니다.`);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리와 둘째 자리 숫자의 비가 2:1이고 네 자리 숫자가 모두 다른 수는 몇 개입니까?${evidence}`, answer, `소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수가 아니므로 뺍니다. 범위 안의 수를 전부 확인해 두 자리의 비와 서로 다른 숫자 조건을 함께 만족하는 경우를 세면 ${answer}개입니다.`);
       }
       if (kind === 4) {
         const cards = shuffle(rng, [1, 2, 3, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
