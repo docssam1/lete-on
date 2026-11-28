@@ -12,6 +12,10 @@ require("./source-5-2-u3-page24-example14-original.js");
 require("./source-5-2-u3-page25-mission14-originals.js");
 require("./source-5-2-u3-page27-originals.js");
 require("./source-5-2-congruence-page87-practice.js");
+const m5Synthetic = require("./source-5-2-u3-page25-mission5-synthetic.js");
+const e14Synthetic = require("./source-5-2-u3-page24-example14-synthetic.js");
+const m6Synthetic = require("./source-5-2-u3-page25-mission6-synthetic.js");
+require("./source-5-2-u3-p86-q16-clarified-similar.js");
 
 const api = window.HSE_GENERATORS;
 const semester = window.HSE_CURRICULUM.semesters.find(s => s.id === "5-2");
@@ -82,6 +86,36 @@ for (const [id, answer, mustHave, mustNot] of expected) {
     assert(compact(q.solution).includes(compact(answer)), `${id}: 풀이에 답이 있어야 합니다`);
     for (const word of mustHave) assert(sol.includes(word), `${id}: 풀이에 「${word}」`);
     for (const word of mustNot) assert(!all.includes(word), `${id}: 「${word}」가 남아 있으면 안 됩니다`);
+    checks++;
+  }
+}
+// 목록 밖 유사문항 4개도 같은 기준(초등 합동 조건)으로: 세 변형 × 세 난이도.
+{
+  const marks = ["①", "②", "③", "④", "⑤", "⑥"];
+  const sets = [
+    ["5-2-u3-e1-mission-5", m5Synthetic, [0, 3]],          // 변 ㄱㄴ(SSS), 각 ㄴㄷㄱ(SAS). 각 ㄴㄱㄷ(SSA)은 뺌
+    ["5-2-u3-e1-example-4", e14Synthetic, [0, 1, 3]],      // 변 ㄱㄴ, 대각선 ㄱㄷ, 각 ㄱㄹㄷ. 각 ㄴㄱㄹ(SSA)은 뺌
+    ["5-2-u3-e1-mission-6", m6Synthetic, [0]],             // 변 ㄷㄹ만. 각 ㄱㄹㄷ은 합동 조건으로 정할 수 없어 뺌
+  ];
+  for (const [id, mod, keep] of sets) {
+    const type = types.find(t => t.id === id);
+    for (let v = 0; v < 3; v++) for (const difficulty of [-1, 0, 1]) {
+      const q = api.generate(type, 3, difficulty, 1, v);
+      const expectedAnswer = mod.pools[v].order.map((x, n) => keep.includes(x) ? marks[n] : null).filter(Boolean).join(", ");
+      assert.equal(q.answer, expectedAnswer, `${id} v${v} d${difficulty}: 답`);
+      assert(text(q.prompt).includes("합동 조건"), `${id}: 문장이 합동 조건 기준`);
+      assert(!/항상 (한 가지|하나)로 정해지는지/.test(text(q.prompt)), `${id}: 옛 문장`);
+      assert(compact(q.solution).includes(compact(expectedAnswer)), `${id}: 풀이에 답`);
+      for (const word of ["한 점에서 만나", "가능한 교점은 한 개", "원과 한 점"]) assert(!text(q.solution).includes(word), `${id}: SSA 인정 문장 「${word}」`);
+      checks++;
+    }
+  }
+  const q16 = types.find(t => t.id === "5-2-u3-practice-16-clarified-similar");
+  for (const difficulty of [-1, 0, 1]) {
+    const q = api.generate(q16, 3, difficulty, 1, 0);
+    assert.equal(q.answer, "ㄱ, ㅁ, ㅂ");
+    assert(text(q.prompt).includes("합동 조건") && !text(q.prompt).includes("언제나"));
+    assert(!text(q.solution).includes("한 점에서 만납니다") && text(q.solution).includes("55°"));
     checks++;
   }
 }
