@@ -7,7 +7,7 @@ import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_R
 import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261127a";
 import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261128a";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125q";
-import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261127b";
+import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261128c";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
 import { BOOK10_STRUCTURE_TYPE_ROWS, BOOK10_STRUCTURE_GUIDES, BOOK10_STRUCTURE_REMAPS } from "./book10-structure-generators.js?v=20261125r";
 import { COURSE2_G1_TYPE_ROWS, COURSE2_G1_GUIDES } from "./course2-g1-generators.js?v=20261123c";
@@ -1160,6 +1160,36 @@ TYPES.push(...BOOK07_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, gener
 TYPES.push(...BOOK08_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 8권 · 교재 번호별 대조", ...rest })));
 TYPES.push(...BOOK09_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 9권 · 교재 번호별 대조", ...rest })));
 TYPES.push(...BOOK10_STRUCTURE_TYPE_ROWS.map(({ id, domain, middle, label, generator, ...rest }) => type(id, domain, middle, label, { generator, sourceMatched: true, textbookSource: "더클래식 1과정 10권 · 교재 번호별 대조", ...rest })));
+
+// 교재 번호별 새 복면산 유형도 연산으로 나눈다(cryptarithm-operation-audit: 넓은 「복면산」 묶음을 남기지 않음, 2026-11-28)
+setTypeTaxonomy([
+  "crypt-aa-plus-a-b3", "crypt-shape-digit-sum-b3", "crypt-aa-double-shape-b3", "crypt-single-thrice-b3", "crypt-ab-double-b3",
+  "crypt-three-mixed-plus-aa-b3", "crypt-two-one-three-b3", "crypt-two-one-two-b3", "crypt-two-two-three-b3", "crypt-three-two-shape-b3",
+  "crypt-three-two-four-b3", "crypt-relation-repeat-b3", "mixed-repdigit-result-b8", "mixed-three-two-b8", "repeated-and-mixed-crypt-b8",
+  "three-row-repdigit-b8", "zero-to-eight-once-b8", "digit-swap-add-b8", "card-sum-all-b8", "shape-pyramid-two-rows-b8",
+  "shape-pyramid-three-rows-b8", "shape-pyramid-same-shape-b8", "all-shape-cryptarithm-b8", "blank-digit-sum-both-b8", "cards-cryptarithm-b8",
+  "ordered-shape-two-digit-b8", "shape-result-cryptarithm-b8", "repeated-addend-all-b8", "multi-row-shape-b8"
+], {
+  middle: "덧셈 복면산",
+  operation: "addition",
+  operationLabel: "덧셈",
+  problemStructure: "shape-cryptarithm",
+  problemStructureLabel: "도형 복면산"
+});
+setTypeTaxonomy(["linked-add-subtract-b8", "repeated-addend-relation-b8"], {
+  middle: "덧셈·뺄셈 복면산",
+  operation: "add-subtract",
+  operationLabel: "덧셈·뺄셈",
+  problemStructure: "shape-cryptarithm",
+  problemStructureLabel: "도형 복면산"
+});
+setTypeTaxonomy(["subtract-to-repdigit-b8"], {
+  middle: "뺄셈 복면산",
+  operation: "subtraction",
+  operationLabel: "뺄셈",
+  problemStructure: "shape-cryptarithm",
+  problemStructureLabel: "도형 복면산"
+});
 
 // 2과정 G1 유형(course2-g1-generators.js). 문제은행 유형 고르기에도 「2과정 G1」 출처로 함께 보인다.
 TYPES.push(...COURSE2_G1_TYPE_ROWS.map(([id, domain, middle, label, generator]) => type(id, domain, middle, label, { generator, course: 2, sourceMatched: true, textbookSource: "2과정 G1 · 문제 번호별 대조" })));
