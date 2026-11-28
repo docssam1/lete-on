@@ -1126,7 +1126,7 @@ function incompleteProblem({ form, size, cells, maxCells, rounds, scale, fixed, 
     visual: { kind: "fig", html: made.svg },
     answerVisual: { kind: "fig", html: made.answerSvg },
     answer,
-    solution: `그림에서 가장 작은 조각 하나를 기준으로 빠진 선을 그으면 ${whole} 전체는 ${total}조각입니다.${turnNote ? ` ${turnNote}` : ""} 색칠한 부분은 ${sizes.length > 1 ? `${sizes.join(" + ")} = ${shadedCount}` : shadedCount}조각이므로 ${answer}입니다.`,
+    solution: `그림에서 가장 작은 조각 하나를 기준으로 빠진 선을 그으면 ${whole} 전체는 ${total}조각입니다.${turnNote ? ` ${turnNote}` : ""} 색칠한 부분은 ${sizes.length > 1 ? `${sizes.join(" + ")} = ${shadedCount}` : shadedCount}조각이므로 ${answer}입니다.${sameSizeNote(shadedCount, total)}`,
     meta: {
       family: "b3s-partition",
       form,
@@ -1241,6 +1241,13 @@ function partitionHexagram({ difficulty = 2 } = {}) {
 
 // ───────────── 1단원 — 다 나눈 도형 여러 개를 차례로(연습·활동의 한 줄 분수) ─────────────
 // 같은 도형을 조각 수가 늘어나는 차례로 그리고, 칸 몇 개를 색칠해 그림마다 분수로 쓰게 한다.
+
+// 약분되는 분수면 「같은 크기의 분수로 써도 맞습니다」 한마디(다르게 나눈 맞는 답을 채점할 때)
+const gcdB3 = (a, b) => (b ? gcdB3(b, a % b) : a);
+function sameSizeNote(top, bottom) {
+  const g = gcdB3(top, bottom);
+  return g > 1 ? ` 크기가 같은 분수 ${top / g}/${bottom / g} 등으로 써도 맞습니다.` : "";
+}
 
 function rowFractionProblem({ figures, prompt, whole, family, extra = {} }) {
   const svgs = [];
