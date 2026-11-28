@@ -267,7 +267,7 @@ function assertVariant(state, variant, key) {
     if (diagrams.length !== 6 || !diagrams.every(diagram => diagram.smallRects?.split(";").length === 4) || pairs.some(pair => pair.length !== 2 || pair.reduce((count, diagram) => count + diagram.regions.length, 0) < 3)) fail(`${key}: 개념탐구 두 배치의 합동 직사각형 4개와 색칠 영역이 모두 보이지 않습니다.`);
   }
   if (variant === 1) {
-    if (diagrams.length !== 3 || diagrams.some(diagram => diagram.kind !== "right-angle-outline" || diagram.targetSegment || !diagram.expected || diagram.hiddenSegments !== "9;10")) fail(`${key}: 예제 1-1의 숨은 두 길이 검사를 통과하지 못했습니다.`);
+    if (diagrams.length !== 3 || diagrams.some(diagram => diagram.kind !== "right-angle-outline" || diagram.targetSegment || !diagram.expected || diagram.hiddenSegments !== "3;10")) fail(`${key}: 예제 1-1의 숨은 두 길이 검사를 통과하지 못했습니다.`);
   }
   if (variant === 2 && (diagrams.length !== 3 || diagrams.some(diagram => diagram.squareCount !== "3" || diagram.overlapCount !== "2" || diagram.regions.filter(region => region.startsWith("overlap-")).length !== 2))) fail(`${key}: 예제 1-2의 세 정사각형과 두 겹침 색칠이 보이지 않습니다.`);
   if (variant === 3 && (diagrams.length !== 3 || diagrams.some(diagram => diagram.grid !== "3x4" || diagram.roles.filter(role => role === "division").length !== 5))) fail(`${key}: 예제 1-3의 3열×4행 안쪽 분할선이 맞지 않습니다.`);

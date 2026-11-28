@@ -87,7 +87,8 @@ function expected(type, prompt) {
     const candidates = range(0, 63).map(mask => mask.toString(2).padStart(6, "0").replaceAll("0", String(low)).replaceAll("1", String(high))).map(Number).filter(value => value % 3 === 0).sort((left, right) => right - left);
     return { contract, value: candidates[rank - 1] };
   }
-  if (!/두 자리 수 □□\d.*36의 배수/.test(text)) throw new Error("가장 큰 두 자리 빈칸 구조가 화면에 보이지 않습니다.");
+  // 2026-11-28 책 대조: 원문은 세 자리 수 ㉠㉡9(+107)이므로 "두 자리 수 □□9" 오기를 "세 자리 수 ㉠㉡9"로 바로잡았습니다.
+  if (!/세 자리 수 ㉠㉡\d.*36의 배수.*가장 큰 두 자리 수 ㉠㉡/.test(text)) throw new Error("가장 큰 두 자리 빈칸 구조가 화면에 보이지 않습니다.");
   const [last, addend] = values;
   return { contract, value: range(10, 99).filter(value => (Number(`${value}${last}`) + addend) % 36 === 0).at(-1) };
 }

@@ -140,16 +140,39 @@ const verifySpecialGeometry = (variant, models, evidence) => {
     const normalized = rectangles => rectangles.map(normalizedSides).sort().join(";");
     const firstPieceKinds = new Set(smallRectangles[0].map(normalizedSides));
     check(firstPieceKinds.size === 1 && normalized(smallRectangles[0]) === normalized(smallRectangles[1]), "①·②의 작은 직사각형 네 개가 서로 합동이 아닙니다.");
-    check(Number([...firstPieceKinds][0].split("x")[0]) === 6, "작은 직사각형의 짧은 변이 큰 직사각형의 가로와 세로의 차 6cm가 아닙니다.");
+    // 2026-11-28 책 대조: 원문 ①은 오른쪽 열과 아랫부분이 이어진 ㄱ자 색칠이라 둘레 차가 2×(가로-세로)=12로 조건만으로 정해집니다.
+    // 예전 그림(① 띠 모양)은 짧은 변이 6일 때만 12가 되어 이 검사가 짧은 변 6을 고정했으나, 이제는 ㄱ자 구조와 가로-세로=6을 확인합니다.
+    const [, outerWidth, outerHeight] = evidence.values;
+    check(outerWidth - outerHeight === 6, "큰 직사각형의 가로와 세로의 차가 6cm가 아닙니다.");
+    const firstColored = (attr(models[0].open, "data-colored-rects") || "").split(";").map(rectangle => rectangle.split(",").map(Number));
+    check(firstColored.some(([x, y, w, h]) => y === 0 && h === outerHeight && x + w === outerWidth && w > 0) && firstColored.some(([x, y, w, h]) => x === 0 && y + h === outerHeight && w > 0 && h > 0), "①의 색칠이 원문처럼 오른쪽 열과 아랫부분이 이어진 ㄱ자가 아닙니다.");
+    check(rectangleUnionPerimeter(firstColored) === 2 * (outerWidth + outerHeight), "①의 ㄱ자 색칠 둘레가 큰 직사각형 둘레와 다릅니다.");
     const colored = models.map(model => (attr(model.open, "data-colored-rects") || "").split(";").map(rectangle => rectangle.split(",").map(Number)));
     check(Math.abs(rectangleUnionPerimeter(colored[0]) - rectangleUnionPerimeter(colored[1])) === 12, "①·②의 실제 색칠 경계 둘레 차가 12cm가 아닙니다.");
   }
   if (variant === 1) {
     const model = models[0];
     check(model.segments.length === 12, "예제 1-1의 폐곡선은 12개 선분이어야 합니다.");
-    check(near(model.segments[11].length, 14), "예제 1-1의 12번째 닫는 선분이 14m가 아닙니다.");
+    // 2026-11-28 책 대조: 원문 그림 배치(아래 42m·오른쪽 24m·왼쪽 18m, 숨은 변은 왼쪽 윗변과 오른쪽 홈 오른쪽 벽)로 다시 그렸습니다.
+    const hidden = (attr(model.open, "data-hidden-segments") || "").split(";").map(Number);
+    check(hidden.length === 2 && hidden.join(";") === "3;10", "예제 1-1의 숨은 두 변 위치가 원문 배치와 다릅니다.");
     check(model.labels.filter(label => attr(label.markup, "data-label-segment") !== undefined).length === 10, "예제 1-1에는 알려진 길이 10개만 표시해야 합니다.");
-    check(!model.labels.some(label => ["9", "10"].includes(attr(label.markup, "data-label-segment"))), "예제 1-1의 숨은 11m·12m 선분이 표시되었습니다.");
+    check(!model.labels.some(label => hidden.map(String).includes(attr(label.markup, "data-label-segment"))), "예제 1-1의 숨은 두 선분이 표시되었습니다.");
+    const p = model.points;
+    const ys = p.map(point => point[1]);
+    const bottomY = Math.max(...ys);
+    check(near(p[0][1], bottomY) && near(p[1][1], bottomY) && near(model.segments[0].length, Math.max(...model.segments.filter(segment => near(p[segment.a][1], p[segment.b][1])).map(segment => segment.length))), "예제 1-1의 가장 긴 가로가 원문처럼 아래 변이 아닙니다.");
+    // 자기 교차 없음: 서로 이웃하지 않은 두 선분이 만나지 않아야 합니다.
+    const crosses = (s1, s2) => {
+      const [a, b, c, d] = [p[s1.a], p[s1.b], p[s2.a], p[s2.b]];
+      const horizontal1 = near(a[1], b[1]), horizontal2 = near(c[1], d[1]);
+      if (horizontal1 === horizontal2) return false;
+      const [h0, h1, v0, v1] = horizontal1 ? [a, b, c, d] : [c, d, a, b];
+      const x = v0[0], y = h0[1];
+      return x > Math.min(h0[0], h1[0]) + 1e-6 && x < Math.max(h0[0], h1[0]) - 1e-6 && y > Math.min(v0[1], v1[1]) + 1e-6 && y < Math.max(v0[1], v1[1]) - 1e-6;
+    };
+    const n = model.segments.length;
+    for (let i = 0; i < n; i += 1) for (let j = i + 2; j < n; j += 1) if (!(i === 0 && j === n - 1)) check(!crosses(model.segments[i], model.segments[j]), `예제 1-1 그림의 ${i}번·${j}번 선분이 서로 엇갈립니다.`);
     check(near(Number(attr(model.open, "data-closed-perimeter")), model.segments.reduce((sum, segment) => sum + segment.length, 0), 2e-3), "예제 1-1의 SVG 폐곡선 둘레가 선분 합과 다릅니다.");
   }
   if (variant === 2) {

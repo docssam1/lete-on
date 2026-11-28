@@ -79,9 +79,10 @@ function expectedFromPrompt(type, prompt) {
     return { contract: "single-value", value: candidates.at(-1) };
   }
   if (type.variant === 11) {
-    const [, productText, targetText] = matchOrThrow(text, /두 수의 곱은 (\d+)이고 최대공약수는 (\d+)/, "순서 있는 두 수 쌍");
-    const [product, target] = [productText, targetText].map(Number);
-    const candidates = divisors(product).filter(first => first > product / first && gcd(first, product / first) === target);
+    // 2026-11-28 책 대조: 원문 Mission 4는 "최대공약수가 5이고, 합이 100"(답 4쌍)이라 곱 조건에서 합 조건으로 되돌렸습니다.
+    const [, targetText, sumText] = matchOrThrow(text, /최대공약수가 (\d+)이고 합이 (\d+)인 두 수의 순서쌍/, "순서 있는 두 수 쌍");
+    const [target, sum] = [targetText, sumText].map(Number);
+    const candidates = range(1, sum - 1).filter(first => first > sum - first && gcd(first, sum - first) === target);
     return { contract: "single-value", value: candidates.length };
   }
   if (type.variant === 12) {
@@ -122,7 +123,7 @@ function verifyOriginalAnchors() {
     commonDivisors(72, 120).length,
     range(1, 199).filter(value => gcd(value, 24) === 1).length,
     range(100, 999).filter(value => gcd(value, 288) === 48).at(-1),
-    divisors(100).filter(first => first > 100 / first && gcd(first, 100 / first) === 5).length,
+    range(1, 99).filter(first => first > 100 - first && gcd(first, 100 - first) === 5).length,
     commonDivisors(137 - 2, 183 + 6).filter(value => value > 6),
     range(10, 99).filter(value => gcd(120, value) === 12).reduce((total, value) => total + value, 0)
   ];
@@ -130,7 +131,7 @@ function verifyOriginalAnchors() {
     [1, 2, 3, 4, 6, 8, 12, 24],
     [1, 2, 3, 4, 6, 9, 12, 18, 36],
     [1, 2, 3, 4, 5, 6, 10, 12, 15, 20, 30, 60],
-    [18, 54, 90], [6], 147, 4, 6, 8, 67, 912, 1, [9, 27], 132
+    [18, 54, 90], [6], 147, 4, 6, 8, 67, 912, 4, [9, 27], 132
   ];
   sourceAnswers.forEach((value, index) => {
     const okay = Array.isArray(expected[index]) ? sameSet(value, expected[index]) : value === expected[index];

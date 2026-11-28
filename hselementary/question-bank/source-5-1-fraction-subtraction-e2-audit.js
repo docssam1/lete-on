@@ -50,6 +50,31 @@ const pairs = values => {
   return output;
 };
 const mixed = (whole, numerator, denominator) => rational(whole * denominator + numerator, denominator);
+// 3×3 마방진: 가운데 수의 3배가 한 줄의 합입니다. 한 줄에 모르는 칸이 하나뿐이면 채우기를 반복합니다.
+const magicLines = [[0, 1, 2], [3, 4, 5], [6, 7, 8], [0, 3, 6], [1, 4, 7], [2, 5, 8], [0, 4, 8], [2, 4, 6]];
+const solveMagicFromVisible = visible => {
+  const cells = [...visible];
+  if (!cells[4]) throw new Error("가운데 칸이 보이지 않습니다.");
+  const common = multiply(cells[4], integer(3));
+  for (let round = 0; round < 9; round += 1) {
+    for (const line of magicLines) {
+      const unknown = line.filter(index => !cells[index]);
+      if (unknown.length === 1) cells[unknown[0]] = subtract(common, sum(line.filter(index => cells[index]).map(index => cells[index])));
+    }
+  }
+  if (cells.some(cell => !cell)) throw new Error("보이는 칸만으로 마방진을 채울 수 없습니다.");
+  if (magicLines.some(line => compare(sum(line.map(index => cells[index])), common) !== 0)) throw new Error("채운 마방진의 줄 합이 같지 않습니다.");
+  return cells;
+};
+const visibleMagicCells = prompt => {
+  const table = String(prompt).match(/<table class="problem-table fraction-magic">([\s\S]*?)<\/table>/);
+  if (!table) throw new Error("마방진 표가 없습니다.");
+  return [...table[1].matchAll(/<td>([\s\S]*?)<\/td>/g)].map(match => {
+    const fraction = match[1].match(/aria-label="(\d+)분의 (\d+)"/);
+    if (fraction) return { value: rational(Number(fraction[2]), Number(fraction[1])) };
+    return { label: match[1].trim() };
+  });
+};
 // Source values may be reducible before the shared renderer simplifies them.
 const proper = (numerator, denominator) => numerator > 0 && numerator < denominator;
 
@@ -69,7 +94,8 @@ const expected = [
   ["5-1-u5-e2-mission-2", "max-min-five-fractions", "single-value", "mission", 54, 55],
   ["5-1-u5-e2-mission-3", "empty-container-half-water", "single-value", "mission", 54, 55],
   ["5-1-u5-e2-mission-4", "blank-plus-a-minus-b", "single-value", "mission", 54, 55],
-  ["5-1-u5-e2-mission-5", "fraction-magic-three-labels", "single-value", "mission", 54, 55],
+  // 2026-11-28 책 대조: 원문 Mission 5는 칸 (가), (나), (다)의 수의 합(19/16)을 묻습니다. 분자 자리에 ㉠을 넣어 "㉠+㉡+㉢"이 분자 합이 되던 문장·답 불일치를 원문 배치로 되돌렸습니다.
+  ["5-1-u5-e2-mission-5", "fraction-magic-book-layout", "single-value", "mission", 54, 55],
   ["5-1-u5-e2-mission-6", "digit-card-max-mixed-difference", "maximum", "mission", 54, 55]
 ];
 
@@ -261,6 +287,18 @@ function independent(evidence) {
     check(value.numerator > 0, "빈칸 식의 답이 양수가 아닙니다.");
     return { value, candidates: [value] };
   }
+  if (kind === "fraction-magic-book-layout") {
+    check(values.length === 3 && values[0] > 0 && values[1] > 0 && values[2] >= 0, "분수 마방진 자료가 올바르지 않습니다.");
+    const [denominator, scale, offset] = values;
+    // 원문 배치: 왼쪽 위·오른쪽 위·가운데만 보이고 (나)=가운데 줄 왼쪽, (가)=아랫줄 가운데, (다)=오른쪽 아래.
+    const lo = [4, 9, 2, 3, 5, 7, 8, 1, 6];
+    const grid = lo.map(value => rational(value * scale + offset, denominator));
+    check(grid.every(value => value.numerator > 0 && value.numerator < value.denominator), "마방진의 수가 진분수 범위를 벗어났습니다.");
+    const solved = solveMagicFromVisible([grid[0], null, grid[2], null, grid[4], null, null, null, null]);
+    check(solved.every((value, index) => compare(value, grid[index]) === 0), "보이는 세 칸으로 푼 마방진이 자료와 다릅니다.");
+    const value = sum([solved[7], solved[3], solved[8]]);
+    return { value, candidates: [value], blanks: [solved[7], solved[3], solved[8]] };
+  }
   if (kind === "fraction-magic-three-labels") {
     check(values.length === 6 && values[0] > 0 && values[1] > 0, "분수 마방진 자료가 올바르지 않습니다.");
     const [denominator, scale, offset, firstBlank, secondBlank, thirdBlank] = values;
@@ -368,7 +406,15 @@ for (let index = 0; index < expected.length; index += 1) {
         if (expectedKind === "digit-card-max-mixed-difference") check(generated.prompt.includes("한 번씩 모두 사용") && generated.prompt.includes("가장 클 때"), `${context}: 여섯 카드 최댓값 조건이 분명하지 않습니다.`);
         if (expectedKind === "descending-mixed-sequence-blanks") check(generated.prompt.includes("차례로"), `${context}: 수열 두 답의 순서 조건이 없습니다.`);
         if (expectedKind === "leaky-tank-two-faucets") check(generated.prompt.includes("구멍") && generated.prompt.includes("두 수도꼭지"), `${context}: 물통·수도꼭지 조건이 분명하지 않습니다.`);
-        if (expectedKind === "fraction-magic-three-labels") check(generated.prompt.includes("가로, 세로, 대각선") && generated.prompt.includes("㉠+㉡+㉢"), `${context}: 마방진 조건 또는 빈칸 표시가 없습니다.`);
+        if (expectedKind === "fraction-magic-book-layout") {
+          check(generated.prompt.includes("가로, 세로, 대각선") && generated.prompt.includes("(가), (나), (다)의 합"), `${context}: 마방진 조건 또는 묻는 칸이 없습니다.`);
+          const cells = visibleMagicCells(generated.prompt);
+          check(cells.length === 9 && cells.filter(cell => cell.value).length === 3, `${context}: 원문처럼 세 칸만 수가 보여야 합니다.`);
+          check(["(가)", "(나)", "(다)"].every(label => cells.filter(cell => cell.label === label).length === 1) && !/㉠|㉡|㉢/.test(generated.prompt), `${context}: 칸 (가), (나), (다)가 칸 전체로 보이지 않습니다.`);
+          const solved = solveMagicFromVisible(cells.map(cell => cell.value || null));
+          const asked = sum(["(가)", "(나)", "(다)"].map(label => solved[cells.findIndex(cell => cell.label === label)]));
+          check(answerMatches(generated.answer, asked), `${context}: 보이는 표만으로 구한 (가)+(나)+(다) ${key(asked)}와 표시 답 ${generated.answer}가 다릅니다.`);
+        }
         prompts.add(visibleText(generated.prompt));
         answers.add(String(generated.answer));
         checked += 1;

@@ -18806,14 +18806,15 @@
         return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 세 자리 자연수 ㉠ 중 가장 큰 수를 구하세요.${hint("${target}의 세 자리 배수부터 찾아보세요.", "세 자리 수를 큰 수부터 확인하여 최대공약수 조건을 만족하는 첫 수를 찾으세요.")}${tag("largest-three-digit-gcd", [base, target], "single-value")}`, answer, `조건을 만족하는 세 자리 자연수 가운데 가장 큰 수는 ${answer}입니다.`);
       }
       if (variant === 11) {
-        const [product, target] = choose([[[100, 5], [200, 5], [400, 10]], [[100, 5], [175, 5], [900, 15]], [[1600, 20], [2500, 25], [3600, 30]]]);
-        const candidates = allDivisors(product).flatMap(a => {
-          const b = product / a;
+        // 원문 Mission 4(교재 p.17): 최대공약수가 5이고 합이 100인 두 수의 순서쌍 (㉠, ㉡)의 수, ㉠>㉡ → 4쌍.
+        const [sum, target] = choose([[[48, 4], [60, 5], [70, 7]], [[100, 5], [90, 6], [120, 8]], [[168, 8], [200, 8], [180, 6]]]);
+        const candidates = range(1, sum - 1).flatMap(a => {
+          const b = sum - a;
           return a > b && gcd(a, b) === target ? [[a, b]] : [];
         });
-        if (candidates.length !== 1) throw new Error("곱과 최대공약수 조건을 만족하는 순서쌍이 하나가 아닙니다.");
-        const [a, b] = candidates[0];
-        return result(`두 자연수 ㉠, ㉡에서 ㉠이 ㉡보다 큽니다. 두 수의 곱은 ${product}이고 최대공약수는 ${target}입니다. 순서 있는 두 수 쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요.${hint("${product}의 약수 짝을 써 보세요.", "약수 짝마다 최대공약수를 확인하여 조건을 만족하는 쌍을 빠뜨리지 마세요.")}${tag("ordered-pair-gcd-product-count", [product, target], "single-value")}`, candidates.length, `${product}의 약수 짝을 모두 확인하면 조건을 만족하는 쌍은 (${a}, ${b}) 하나입니다. 따라서 모두 ${candidates.length}개입니다.`);
+        if (candidates.length < 2) throw new Error("합과 최대공약수 조건을 만족하는 순서쌍이 둘 이상이어야 합니다.");
+        const pairText = candidates.map(([a, b]) => `(${a}, ${b})`).join(", ");
+        return result(`최대공약수가 ${target}이고, 합이 ${sum}인 두 수의 순서쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요. (단, ㉠>㉡)${tag("ordered-pair-gcd-sum-count", [sum, target], "single-value")}`, candidates.length, `두 수를 ${target}×□, ${target}×△로 놓으면 □+△=${sum / target}이고 □와 △의 공약수는 1뿐이어야 합니다. 조건을 만족하는 순서쌍은 ${pairText}이므로 모두 ${candidates.length}개입니다.`);
       }
       if (variant === 12) {
         const [first, remainder, second, short] = choose([[[50, 2, 58, 2], [93, 3, 105, 3], [100, 4, 116, 4]], [[137, 2, 183, 6], [100, 4, 116, 4], [155, 5, 175, 5]], [[222, 6, 246, 6], [200, 8, 232, 8], [250, 10, 290, 10]]]);
@@ -19152,7 +19153,7 @@
       const [last, addend] = choose([[[7, 73], [8, 88], [9, 107]], [[9, 107], [8, 124], [7, 145]], [[9, 179], [8, 196], [7, 217]]]);
       const candidates = range(10, 99).filter(value => (Number(`${value}${last}`) + addend) % 36 === 0);
       const answer = candidates.at(-1);
-      return result(`두 자리 수 □□${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 □□을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
+      return result(`세 자리 수 ㉠㉡${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 ㉠㉡을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
     },
     factorMultipleE5({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 13 || variant === 5 || variant === 13) throw new Error("약수와 배수 개념탐구 5의 답이 하나인 원문 분기만 생성할 수 있습니다.");
@@ -19551,7 +19552,30 @@
         const targetCode = caesar(target, shift);
         return result(`알파벳을 같은 칸 수만큼 뒤로 옮겨 암호를 만들었습니다. ${knownCode}를 풀면 ${known}입니다. 같은 규칙으로 ${targetCode}를 푸세요.${difficultyInstruction}${tag("caesar-decode", [targetCode.replaceAll(" ", "_"), shift])}`, target, `암호의 각 글자를 알파벳에서 ${shift}칸씩 앞으로 되돌리면 ${target}입니다.`);
       }
-      if (variant === 1 || variant === 5) {
+      if (variant === 5) {
+        // 원문 Mission 1(교재 p.33): 6→5, 8→9, 12→17, 25→43인 상자에 15를 넣으면 23. 예제 1-1과 다른 네 짝·빼는 규칙을 씁니다.
+        const [multiplier, subtrahend, inputs, target] = choose([
+          [[2, 1, [3, 5, 8, 12], 10], [3, 2, [2, 4, 6, 9], 7], [2, 3, [4, 6, 9, 15], 11]],
+          [[2, 7, [6, 8, 12, 25], 15], [3, 5, [4, 7, 10, 21], 13], [2, 9, [7, 10, 13, 28], 17]],
+          [[4, 9, [5, 8, 13, 27], 19], [3, 11, [6, 9, 14, 31], 22], [5, 8, [4, 7, 12, 26], 17]]
+        ]);
+        const samples = inputs.map(input => `${input}→${multiplier * input - subtrahend}`).join(", ");
+        const answer = multiplier * target - subtrahend;
+        return result(`어떤 상자에 수가 쓰인 공을 넣었더니 다음과 같이 규칙에 따라 수가 바뀐 공이 나왔습니다.<div class="equation">${samples}</div>상자 안에 ${target}${numberJosa.iGa(target)} 쓰인 공을 넣으면 어떤 수가 쓰인 공이 나오는지 구하세요.${difficultyInstruction}${tag("affine-rule", [multiplier, -subtrahend, target])}`, answer, `넣은 수에 ${multiplier}${numberJosa.eulReul(multiplier)} 곱한 뒤 ${subtrahend}${numberJosa.eulReul(subtrahend)} 빼는 규칙입니다. ${inputs[0]}×${multiplier}-${subtrahend}=${multiplier * inputs[0] - subtrahend}처럼 모든 짝이 맞습니다. 따라서 ${target}×${multiplier}-${subtrahend}=${answer}입니다.`);
+      }
+      if (variant === 6) {
+        // 원문 Mission 2(교재 p.33): 수연 16→경민 5, 32→7, 40→8일 때 72→12. 예제 1-2와 다른 이야기·수치를 씁니다.
+        const [divisor, addend, inputs, target] = choose([
+          [[4, 2, [8, 12, 20], 36], [5, 1, [10, 20, 35], 60], [6, 4, [12, 24, 30], 54]],
+          [[8, 3, [16, 32, 40], 72], [6, 5, [18, 30, 48], 96], [7, 2, [14, 35, 49], 91]],
+          [[12, 5, [24, 48, 84], 180], [9, 2, [27, 45, 72], 153], [15, 4, [30, 60, 105], 255]]
+        ]);
+        const said = value => `${value}${numberJosa.iGa(value) === "이" ? "이라고" : "라고"}`;
+        const replies = inputs.map(input => input / divisor + addend);
+        const answer = target / divisor + addend;
+        return result(`수연이와 경민이가 대응 관계를 만들어 답하고 있습니다. 수연이가 ${said(inputs[0])} 말하면 경민이는 ${said(replies[0])} 답하고, 수연이가 ${said(inputs[1])} 말하면 경민이는 ${said(replies[1])} 답합니다. 또, 수연이가 ${said(inputs[2])} 말하면 경민이는 ${said(replies[2])} 답합니다. 수연이가 ${said(target)} 말하면 경민이는 어떤 수를 답하겠는지 구하세요.${difficultyInstruction}${tag("divide-add-rule", [divisor, addend, target])}`, answer, `경민이가 답한 수는 수연이가 말한 수를 ${divisor}${numberJosa.ro(divisor)} 나눈 뒤 ${addend}${numberJosa.eulReul(addend)} 더한 수입니다. ${inputs[0]}÷${divisor}+${addend}=${replies[0]}처럼 모든 짝이 맞습니다. 따라서 ${target}÷${divisor}+${addend}=${answer}입니다.`);
+      }
+      if (variant === 1) {
         const multiplier = int(rng, [2, 4, 7][level], [5, 9, 13][level]);
         const addend = int(rng, [1, -7, -18][level], [8, 11, 19][level]);
         const target = int(rng, [12, 30, 55][level], [36, 78, 140][level]);
@@ -19559,7 +19583,7 @@
         const answer = multiplier * target + addend;
         return result(`수 상자는 ${samples}처럼 수를 바꿉니다. ${target}을 넣으면 나오는 수를 구하세요.${difficultyInstruction}${tag("affine-rule", [multiplier, addend, target])}`, answer, `들어간 수에 ${multiplier}을 곱한 뒤 ${addend >= 0 ? `${addend}을 더하는` : `${Math.abs(addend)}을 빼는`} 규칙입니다. 따라서 ${target}은 ${answer}로 바뀝니다.`);
       }
-      if (variant === 2 || variant === 6) {
+      if (variant === 2) {
         const divisor = pick(rng, [[2, 3, 4, 5], [4, 5, 6, 8, 9], [6, 8, 9, 12, 15]][level]);
         const addend = int(rng, [0, -2, -6][level], [5, 7, 11][level]);
         const sampleStart = Math.max(2, 1 - addend);
@@ -19627,7 +19651,24 @@
         const value = multiplier * target + addend;
         return result(`두 양의 짝이 ${table}입니다. 첫째 양을 □, 둘째 양을 △라 할 때 관계식을 쓰고, □=${target}일 때 △를 구하세요.${difficultyInstruction}${tag("affine-table", [multiplier, addend, target])}`, `△=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}, ${value}`, `표에서 □가 1 늘 때 △는 ${multiplier}씩 늘어납니다. 관계식은 △=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}이고, □=${target}을 넣으면 △=${value}입니다.`);
       }
-      if (variant === 2 || variant === 5) {
+      if (variant === 2) {
+        // 원문 예제 2-2(교재 p.34): □ 3~8, ○=□-2, △=(□-2)×(□-1)÷2-1. 빈칸이 있는 세 줄 대응표에서 □와 △의 관계식을 씁니다.
+        const [shift, minus] = choose([[[1, 0], [2, 0], [1, 1]], [[2, 1], [3, 1], [3, 0]], [[4, 1], [5, 1], [6, 1]]]);
+        const squares = Array.from({ length: 6 }, (_, index) => shift + 1 + index);
+        const circles = squares.map(square => square - shift);
+        const triangles = circles.map(circle => circle * (circle + 1) / 2 - minus);
+        const hiddenCircles = new Set([3, 5]);
+        const hiddenTriangles = new Set([2, 5]);
+        const factor = offset => offset === 0 ? "□" : `(□-${offset})`;
+        const relation = `△=${factor(shift)}×${factor(shift - 1)}÷2${minus ? `-${minus}` : ""}`;
+        const table = correspondenceTable([
+          ["□", ...squares],
+          ["○", ...circles.map((value, index) => hiddenCircles.has(index) ? "" : value)],
+          ["△", ...triangles.map((value, index) => hiddenTriangles.has(index) ? "" : value)]
+        ]);
+        return result(`다음은 □, ○, △ 사이의 대응 관계를 나타낸 표입니다. □와 △ 사이의 대응 관계를 식으로 나타내세요.${table}${difficultyInstruction}${tag("triangular-three-row-table", [shift, minus], "relation")}`, relation, `○=□-${shift}입니다. △는 ○가 1, 2, 3, …일 때 1부터 ○까지의 합${minus ? `에서 ${minus}${numberJosa.eulReul(minus)} 뺀 수` : ""}이므로 △=○×(○+1)÷2${minus ? `-${minus}` : ""}입니다. ○ 대신 □-${shift}${numberJosa.eulReul(shift)} 넣으면 ${relation}입니다.`);
+      }
+      if (variant === 5) {
         const [numerator, denominator, target] = choose([
           [[2, 3, 90], [3, 4, 80]],
           [[3, 4, 244], [5, 6, 318]],
@@ -19819,21 +19860,24 @@
         const answer = Number((speed * seconds).toFixed(1));
         return result(`소리는 기온이 0℃일 때 1초에 331m를 가고, 기온이 1℃ 오를 때마다 1초에 0.6m씩 더 갑니다. 기온이 ${temperature}℃인 날 번개가 보이고 ${seconds}초 뒤에 천둥소리가 들렸습니다. 번개 친 곳까지의 거리를 구하세요.${difficultyInstruction}${tag("sound-distance", [temperature, seconds])}`, `${answer}m`, `소리의 빠르기는 331+0.6×${temperature}=${speed}m입니다. ${seconds}초 동안 간 거리는 ${speed}×${seconds}=${answer}m입니다.`);
       }
+      // 원문 Mission 6(교재 p.39): 동전을 하나씩 올릴 때마다 1초에 다음 동전의 십의 자리 수만큼 1초씩 더 걸립니다(2~9개째 1초, 10~19개째 2초, 20~29개째 3초…).
+      // 오후 4시 27분부터 99개까지 쌓으면 548초가 걸려 리스본은 오후 3시 36분 8초입니다. 100개째부터는 원문 규칙이 정해지지 않아 99개 이하만 씁니다.
       const coinCount = pick(rng, [
-        [39, 49, 59],
+        [29, 39, 49],
         [79, 89, 99],
-        [129, 149, 179]
+        [91, 95, 99]
       ][level]);
       const startSeconds = pick(rng, [16 * 3600 + 7 * 60, 16 * 3600 + 27 * 60, 17 * 3600 + 12 * 60]);
       let elapsedSeconds = 0;
-      for (let coin = 2; coin <= coinCount; coin += 1) elapsedSeconds += String(coin).length;
+      for (let coin = 2; coin <= coinCount; coin += 1) elapsedSeconds += 1 + Math.floor(coin / 10);
       const lisbonSeconds = startSeconds - 3600 + elapsedSeconds;
       const second = lisbonSeconds % 60;
       const minute = Math.floor(lisbonSeconds / 60) % 60;
       const hour24 = Math.floor(lisbonSeconds / 3600) % 24;
       const hour = hour24 % 12 || 12;
       const answer = `${hour24 < 12 ? "오전" : "오후"} ${hour}시 ${minute}분 ${second}초`;
-      return result(`서울이 낮 12시일 때 카이로는 오전 5시이고, 리스본이 낮 12시일 때 서울은 오후 8시입니다. 카이로에서 ${clockText(Math.floor(startSeconds / 60))}부터 동전을 ${coinCount}개까지 쌓았습니다. 맨 아래 동전은 세지 않고, 2~9번째는 1초씩, 10~99번째는 2초씩, 100번째부터는 3초씩 걸립니다. 모두 쌓았을 때 리스본 시각을 구하세요.${difficultyInstruction}${tag("coin-stack-city-time", [coinCount, startSeconds, elapsedSeconds, lisbonSeconds])}`, answer, `카이로는 리스본보다 1시간 빠릅니다. 동전을 쌓는 데 ${elapsedSeconds}초가 걸리므로, 카이로 시작 시각보다 1시간 이른 리스본 시각에 ${elapsedSeconds}초를 더하면 ${answer}입니다.`);
+      const lastTens = Math.floor(coinCount / 10);
+      return result(`서울의 시각이 낮 12시일 때 카이로의 시각은 오전 5시입니다. 리스본의 시각이 낮 12시일 때 서울의 시각은 오후 8시입니다. 카이로에서 ${clockText(Math.floor(startSeconds / 60))}부터 동전 쌓기를 시작하여 다음 조건과 같이 동전을 ${coinCount}개까지 쌓았을 때 리스본의 시각은 몇 시 몇 분 몇 초인지 구하세요.<ul class="condition-list"><li>가장 아래에 동전을 놓는 시간은 계산하지 않습니다.</li><li>동전을 하나씩 올릴 때마다 1초가 걸리며 다음 동전의 십의 자리 수만큼 1초씩 더 걸립니다.<br>예) 2~9개째를 올릴 때는 각각 1초, 10~19개째를 올릴 때는 각각 2초, 20~29개째를 올릴 때는 각각 3초가 걸립니다.</li></ul>${difficultyInstruction}${tag("coin-stack-city-time", [coinCount, startSeconds, elapsedSeconds, lisbonSeconds])}`, answer, `카이로는 리스본보다 1시간 빠릅니다. 2~9개째는 8×1=8초, 10~19개째부터 ${lastTens * 10}~${coinCount}개째까지는 십의 자리 수에 1을 더한 시간씩 걸려 모두 ${elapsedSeconds}초가 걸립니다. 카이로 시작 시각보다 1시간 이른 리스본 시각에 ${elapsedSeconds}초를 더하면 ${answer}입니다.`);
     },
     ruleCorrespondenceAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
@@ -19973,16 +20017,18 @@
         return result(`어떤 분수의 분모에 ${addToDenominator}를 더하면 ${first}과 크기가 같고, 분모에서 ${subtractFromDenominator}를 빼면 ${second}과 크기가 같습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("denominator-plus-minus", [numerator, denominator, addToDenominator, subtractFromDenominator])}`, fraction(numerator, denominator), `두 조건에 맞는 같은 분자를 찾아 분모를 되돌리면 처음 분수는 ${fractionMarkup(numerator, denominator)}입니다. 두 조건에 다시 넣어도 각각 ${first}, ${second}이 됩니다.`);
       }
       if (variant === 4) {
+        // 원문 예제 1-4(교재 p.42): 분모에서 16, 분자에서 52를 빼도 크기가 같고 가와 나의 최소공배수가 572 → 가=143, 나=44.
         const [reducedNumerator, reducedDenominator, common, removedScale] = choose([
-          [[7, 3, 60, 2], [9, 4, 84, 3], [11, 5, 96, 4]],
-          [[13, 4, 572, 4], [17, 6, 420, 5], [19, 7, 360, 6]],
-          [[23, 8, 840, 7], [29, 11, 990, 8], [31, 12, 1260, 9]]
+          [[7, 3, 4, 2], [9, 4, 5, 2], [11, 5, 3, 2]],
+          [[13, 4, 11, 4], [17, 6, 7, 5], [19, 7, 6, 4]],
+          [[23, 8, 9, 7], [29, 11, 10, 8], [31, 12, 11, 9]]
         ]);
         const numerator = reducedNumerator * common;
         const denominator = reducedDenominator * common;
+        const least = reducedNumerator * reducedDenominator * common;
         const removeNumerator = reducedNumerator * removedScale;
         const removeDenominator = reducedDenominator * removedScale;
-        return result(`분수 ${symbolicFractionMarkup("가", "나")}는 분모에서 ${removeDenominator}, 분자에서 ${removeNumerator}를 빼도 크기가 변하지 않습니다. 가와 나의 최대공약수가 ${common}일 때 가와 나를 각각 구하세요.${difficultyInstruction}${tag("unchanged-after-subtraction", [reducedNumerator, reducedDenominator, common, removedScale], "ordered")}`, `${numerator}, ${denominator}`, `빼는 두 수의 비가 ${reducedNumerator}:${reducedDenominator}이므로 가:나는 ${reducedNumerator}:${reducedDenominator}입니다. 두 수의 최대공약수가 ${common}이므로 가=${reducedNumerator}×${common}=${numerator}, 나는 ${reducedDenominator}×${common}=${denominator}입니다.`);
+        return result(`분수 ${symbolicFractionMarkup("가", "나")}는 분모에서 ${removeDenominator}, 분자에서 ${removeNumerator}${numberJosa.eulReul(removeNumerator)} 빼도 그 크기가 변하지 않습니다. 가와 나의 최소공배수가 ${least}일 때, 자연수 가, 나를 각각 구하세요.${difficultyInstruction}${tag("unchanged-after-subtraction-lcm", [reducedNumerator, reducedDenominator, least, removedScale], "ordered")}`, `${numerator}, ${denominator}`, `빼는 두 수의 비가 ${removeNumerator}:${removeDenominator}=${reducedNumerator}:${reducedDenominator}이므로 가=${reducedNumerator}×□, 나=${reducedDenominator}×□로 놓을 수 있습니다. ${reducedNumerator}${/[013678]$/.test(String(reducedNumerator)) ? "과" : "와"} ${reducedDenominator}의 공약수는 1뿐이므로 가와 나의 최소공배수는 ${reducedNumerator}×${reducedDenominator}×□=${reducedNumerator * reducedDenominator}×□입니다. ${reducedNumerator * reducedDenominator}×□=${least}에서 □=${common}이므로 가=${numerator}, 나=${denominator}입니다.`);
       }
       if (variant === 5) {
         const [numerator, denominator, added] = choose([
@@ -20022,7 +20068,8 @@
       ]);
       const targetNumerator = targetIndex;
       const targetDenominator = sum - targetIndex;
-      return result(`다음과 같이 분자는 1씩 커지고 분모는 1씩 작아지는 분수를 나열합니다.<div class="sequence">${fractionMarkup(1, sum - 1)}, ${fractionMarkup(2, sum - 2)}, ${fractionMarkup(3, sum - 3)}, ${fractionMarkup(4, sum - 4)}, …</div>${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수는 몇 번째인지 구하세요.${difficultyInstruction}${tag("constant-sum-sequence", [sum, targetIndex])}`, `${targetIndex}번째`, `n번째 분수는 ${symbolicFractionMarkup("n", `${sum}-n`)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 n을 구하면 ${targetIndex}이므로 ${targetIndex}번째입니다.`);
+      // 원문 Mission 5(교재 p.43)는 1/87, 2/86, 3/85, 4/84, …를 약분하지 않고 보입니다. 약분하면 분자·분모 규칙이 사라지므로 symbolicFractionMarkup을 씁니다.
+      return result(`다음과 같은 규칙으로 분수들을 나열할 때, ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수는 몇 번째인지 구하세요.<div class="sequence">${symbolicFractionMarkup(1, sum - 1)}, ${symbolicFractionMarkup(2, sum - 2)}, ${symbolicFractionMarkup(3, sum - 3)}, ${symbolicFractionMarkup(4, sum - 4)}, …</div>${difficultyInstruction}${tag("constant-sum-sequence", [sum, targetIndex])}`, `${targetIndex}번째`, `n번째 분수는 ${symbolicFractionMarkup("n", `${sum}-n`)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 n을 구하면 ${targetIndex}이므로 ${targetIndex}번째입니다.`);
     },
     irreducibleFractionE2({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("약분과 기약분수 개념탐구 2의 원문 분기는 0부터 10까지여야 합니다.");
@@ -20657,7 +20704,8 @@
         const total = rationalOperation(addAll(terms), rationalValue(extraOnes), "+");
         const groups = Array.from({ length: lastDenominator - 1 }, (_, index) => {
           const denominator = index + 2;
-          return Array.from({ length: denominator - 1 }, (__, numerator) => fractionMarkup(numerator + 1, denominator)).join(" + ");
+          // 원문(예제 1-1-3, Mission 6)은 2/4, 3/6처럼 약분하지 않고 분모별로 적습니다. 약분하면 묶음 규칙이 사라지므로 symbolicFractionMarkup을 씁니다.
+          return Array.from({ length: denominator - 1 }, (__, numerator) => symbolicFractionMarkup(numerator + 1, denominator)).join(" + ");
         });
         const shown = groups.map((group, index) => {
           const prefix = variant === 15
@@ -20666,7 +20714,7 @@
           const suffix = variant === 15 && index === groups.length - 1 ? " + 1" : "";
           return `<span class="fraction-series-group">${prefix}${group}${suffix}</span>`;
         }).join("");
-        return result(`분모별로 묶어 규칙을 찾아 다음 합을 구하세요.<div class="equation fraction-series-equation">${shown}<span class="fraction-series-result">= □</span></div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : ""} 더하면 ${markup(total)}입니다.`);
+        return result(`다음을 계산하세요.<div class="equation fraction-series-equation">${shown}<span class="fraction-series-result">= □</span></div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : "을"} 더하면 ${markup(total)}입니다.`);
       }
       if (variant === 5) {
         const cards = choose([
@@ -21019,16 +21067,23 @@
         return result(`빈칸에 알맞은 수를 구하세요.<div class="equation">□ + ${markup(a)} - ${markup(b)} = ${markup(c)}</div>${tag("blank-plus-a-minus-b", [aw, an, ad, bw, bn, bd, cw, cn, cd])}`, display(answer), `양변에서 ${markup(a)}를 빼고 ${markup(b)}를 더하면 □=${markup(c)}-${markup(a)}+${markup(b)}=${markup(answer)}입니다.`);
       }
       if (variant === 15) {
+        // 원문 Mission 5(교재 p.55): 7/16, 5/16, 1/2만 보이는 표에서 칸 (가), (나), (다)에 들어갈 세 수의 합 19/16을 묻습니다.
+        // 묻는 대상이 칸 전체의 수이므로 칸 자리에 (가), (나), (다)를 그대로 놓습니다(분자 자리에 기호를 넣지 않습니다).
         const [denominator, scale, offset] = choose([
-          [16, 1, 0], [18, 1, 1], [20, 1, 2], [24, 2, 1], [28, 2, 2], [30, 2, 3], [36, 3, 1], [40, 3, 2], [45, 3, 4]
+          [12, 1, 0], [16, 1, 3], [18, 1, 1], [16, 1, 3], [20, 1, 2], [24, 2, 1], [28, 2, 2], [30, 2, 3], [36, 3, 1]
         ]);
-        const base = [8, 1, 6, 3, 5, 7, 4, 9, 2];
+        const base = [4, 9, 2, 3, 5, 7, 8, 1, 6];
         const values = base.map(value => rationalValue(value * scale + offset, denominator));
-        const blanks = [0, 4, 8];
-        const cells = values.map((value, index) => blanks.includes(index) ? symbolicFractionMarkup(`㉠㉡㉢`[blanks.indexOf(index)], denominator) : fractionMarkup(value.numerator, value.denominator));
+        const shownIndexes = [0, 2, 4];
+        const labelIndexes = [7, 3, 8];
+        const labelNames = ["(가)", "(나)", "(다)"];
+        const cells = values.map((value, index) => shownIndexes.includes(index)
+          ? fractionMarkup(value.numerator, value.denominator)
+          : labelIndexes.includes(index) ? labelNames[labelIndexes.indexOf(index)] : "");
         const table = `<table class="problem-table fraction-magic"><tbody>${[0, 1, 2].map(row => `<tr>${cells.slice(row * 3, row * 3 + 3).map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-        const answer = add(add(values[0], values[4]), values[8]);
-        return result(`다음 표에서 가로, 세로, 대각선에 있는 세 수의 합이 모두 같을 때 ㉠+㉡+㉢을 구하세요.${table}${tag("fraction-magic-three-labels", [denominator, scale, offset, ...blanks])}`, display(answer), `가로·세로·대각선의 공통 합을 비교하면 ㉠=${markup(values[0])}, ㉡=${markup(values[4])}, ㉢=${markup(values[8])}입니다. 세 수의 합은 ${markup(answer)}입니다.`);
+        const common = add(add(values[0], values[4]), values[8]);
+        const answer = add(add(values[7], values[3]), values[8]);
+        return result(`다음 표에서 가로, 세로, 대각선의 어떤 세 수를 더해도 그 합이 같습니다. 세 수 (가), (나), (다)의 합을 구하세요.${table}${tag("fraction-magic-book-layout", [denominator, scale, offset])}`, display(answer), `가운데 수가 ${markup(values[4])}이므로 한 줄의 합은 ${markup(values[4])}×3=${markup(common)}입니다. 맨 윗줄 가운데 수는 ${markup(values[1])}, (가)=${markup(values[7])}, (다)=${markup(values[8])}, 맨 아랫줄 왼쪽 수는 ${markup(values[6])}, (나)=${markup(values[3])}입니다. 따라서 (가)+(나)+(다)=${markup(answer)}입니다.`);
       }
       if (variant === 16) {
         const cards = choose([
@@ -29944,32 +29999,49 @@
       };
 
       if (variant === 0) {
-        const smallShort = 6;
-        const smallLong = [12, 15, 18][dataVariant];
+        // 원문 개념탐구 1(교재 p.62): ①은 작은 직사각형 4개를 세로로 나란히 왼쪽 위에 놓아 남은 ㄱ자(오른쪽 열+아랫부분)를 색칠하고,
+        // ②는 위 왼쪽에 가로로 2개, 아래 오른쪽에 세로로 2개를 놓아 남은 두 직사각형을 색칠합니다.
+        // ① 둘레=(가로+세로)×2, ② 둘레 합=세로×4이므로 차는 (가로-세로)×2=12cm로 작은 직사각형의 크기와 관계없이 정해집니다.
+        const difference = 6;
+        const [smallShort, smallLong] = [[4, 16], [5, 16], [5, 18]][dataVariant];
         const width = smallLong + 2 * smallShort;
-        const height = smallLong + smallShort;
-        const short = width - height, answer = 2 * short;
-        const smallOne = [[0, 0, smallShort, smallLong], [smallShort, 0, smallShort, smallLong], [2 * smallShort, 0, smallShort, smallLong], [3 * smallShort, 0, smallShort, smallLong]];
-        const colorOne = [[4 * smallShort, 0, width - 4 * smallShort, smallLong], [0, smallLong, width, smallShort]].filter(([, , w, h]) => w > 0 && h > 0);
-        const smallTwo = [[0, 0, smallLong, smallShort], [0, smallShort, smallLong, smallShort], [width - 2 * smallShort, smallShort, smallShort, smallLong], [width - smallShort, smallShort, smallShort, smallLong]];
-        const colorTwo = [[smallLong, 0, width - smallLong, smallShort], [0, 2 * smallShort, smallLong, height - 2 * smallShort]];
-        const differenceGiven = given(short, "cm", "3×2");
-        return fixedResult(`모양과 크기가 같은 작은 직사각형 4개를 같은 큰 직사각형 안에 ①, ②처럼 다르게 놓고 남은 부분을 색칠했습니다. 큰 직사각형의 가로는 세로보다 ${differenceGiven} 더 깁니다. 두 색칠한 부분의 둘레 차를 구하세요.${support("①의 둘레에서 ②의 둘레를 뺄 때 같은 짧은 변이 몇 번 빠지는지 확인하세요.")}<div class="diagram-pair"><figure><figcaption>①</figcaption>${rectangleModel("two-layout-first", width, height, smallOne, colorOne, answer, "작은 직사각형 네 개를 세로로 모아 놓은 첫 번째 배치")}</figure><figure><figcaption>②</figcaption>${rectangleModel("two-layout-second", width, height, smallTwo, colorTwo, answer, "작은 직사각형 네 개를 가로와 세로로 나누어 놓은 두 번째 배치")}</figure></div>${tag("two-layout-perimeter-difference", [short, width, height, answer])}`, answer, `두 배치의 경계를 같은 부분끼리 지우면 짧은 변 ${short}cm가 두 번 남습니다. 따라서 둘레 차는 ${short}×2=${answer}cm입니다.`);
+        const height = width - difference;
+        if (!(height > smallLong && smallLong > 2 * smallShort && height > 2 * smallShort)) throw new Error("개념탐구 1 배치가 원문 그림 구조와 맞지 않습니다.");
+        const answer = 2 * difference;
+        const smallOne = [0, 1, 2, 3].map(index => [index * smallShort, 0, smallShort, smallLong]);
+        const colorOne = [[4 * smallShort, 0, width - 4 * smallShort, height], [0, smallLong, 4 * smallShort, height - smallLong]];
+        const smallTwo = [[0, 0, smallLong, smallShort], [0, smallShort, smallLong, smallShort], [smallLong, height - smallLong, smallShort, smallLong], [smallLong + smallShort, height - smallLong, smallShort, smallLong]];
+        const colorTwo = [[smallLong, 0, width - smallLong, height - smallLong], [0, 2 * smallShort, smallLong, height - 2 * smallShort]];
+        const differenceGiven = given(difference, "cm", "3×2");
+        return fixedResult(`모양과 크기가 같은 작은 직사각형 4개를 같은 큰 직사각형 안에 ①, ②처럼 다르게 놓고 남은 부분을 색칠했습니다. 큰 직사각형의 가로는 세로보다 ${differenceGiven} 더 깁니다. 두 색칠한 부분의 둘레 차를 구하세요.${support("①과 ②의 색칠한 부분의 둘레를 각각 큰 직사각형의 가로와 세로로 나타내 보세요.")}<div class="diagram-pair"><figure><figcaption>①</figcaption>${rectangleModel("two-layout-first", width, height, smallOne, colorOne, answer, "작은 직사각형 네 개를 왼쪽 위에 세로로 나란히 놓고 오른쪽과 아래쪽의 ㄱ자 부분을 색칠한 첫 번째 배치")}</figure><figure><figcaption>②</figcaption>${rectangleModel("two-layout-second", width, height, smallTwo, colorTwo, answer, "작은 직사각형 두 개는 왼쪽 위에 가로로, 두 개는 오른쪽 아래에 세로로 놓고 남은 두 부분을 색칠한 두 번째 배치")}</figure></div>${tag("two-layout-perimeter-difference", [difference, width, height, answer])}`, answer, `①의 색칠한 부분은 큰 직사각형의 한 귀퉁이를 떼어 낸 모양이므로 둘레가 (가로+세로)×2입니다. ②의 두 색칠한 직사각형의 둘레를 더하면 세로의 4배입니다. 따라서 둘레의 차는 (가로+세로)×2-세로×4=(가로-세로)×2=${difference}×2=${answer}cm입니다.`);
       }
 
       if (variant === 1) {
-        const values = [
-          [42, 18, 8, 24, 10, 18, 6, 9, 6, 11, 12, 14],
-          [44, 19, 9, 25, 10, 17, 7, 8, 6, 11, 12, 14],
-          [40, 17, 7, 23, 9, 19, 6, 10, 6, 11, 12, 14]
+        // 원문 예제 1-1(교재 p.62) 그림 배치: 아래 42m, 오른쪽 24m, 오른쪽 위 6m, 오른쪽 홈 바닥 6m, 가운데 기둥 오른쪽 14m·위 10m·왼쪽 18m,
+        // 왼쪽 홈 바닥 8m·왼쪽 벽 9m, 왼쪽 18m. 표시되지 않은 두 변은 왼쪽 윗변 12m와 오른쪽 홈의 오른쪽 벽 11m입니다.
+        const data = [
+          { bottom: 42, right: 24, topRight: 6, notchRight: 6, towerRight: 14, towerTop: 10, towerLeft: 18, notchLeft: 8, notchLeftWall: 9, left: 18 },
+          { bottom: 44, right: 25, topRight: 7, notchRight: 6, towerRight: 15, towerTop: 10, towerLeft: 19, notchLeft: 9, notchLeftWall: 9, left: 19 },
+          { bottom: 40, right: 23, topRight: 6, notchRight: 5, towerRight: 13, towerTop: 9, towerLeft: 17, notchLeft: 8, notchLeftWall: 8, left: 17 }
         ][dataVariant];
-        const [outer, downOne, leftOne, upOne, leftTwo, downTwo, leftThree, upTwo, leftFour, downThree, leftFive] = values;
-        const points = [[0, 0], [outer, 0], [outer, downOne], [outer - leftOne, downOne], [outer - leftOne, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo + downThree], [outer - leftOne - leftTwo - leftThree - leftFour - leftFive, downOne - upOne + downTwo - upTwo + downThree]];
+        const leftNotchFloor = data.left - data.notchLeftWall;
+        const towerHeight = leftNotchFloor + data.towerLeft;
+        const rightNotchFloor = towerHeight - data.towerRight;
+        const hiddenTop = data.bottom - data.topRight - data.notchRight - data.towerTop - data.notchLeft;
+        const hiddenWall = data.right - rightNotchFloor;
+        if (!(towerHeight > data.right && rightNotchFloor > 0 && leftNotchFloor > 0 && leftNotchFloor < data.left && hiddenTop > 0 && hiddenWall > 0)) throw new Error("예제 1-1 그림이 원문 배치로 닫히지 않습니다.");
+        const up = y => towerHeight - y;
+        const xs = [0, hiddenTop, hiddenTop + data.notchLeft, hiddenTop + data.notchLeft + data.towerTop, hiddenTop + data.notchLeft + data.towerTop + data.notchRight, data.bottom];
+        const points = [
+          [0, up(0)], [data.bottom, up(0)], [data.bottom, up(data.right)], [xs[4], up(data.right)], [xs[4], up(rightNotchFloor)], [xs[3], up(rightNotchFloor)],
+          [xs[3], up(towerHeight)], [xs[2], up(towerHeight)], [xs[2], up(leftNotchFloor)], [xs[1], up(leftNotchFloor)], [xs[1], up(data.left)], [0, up(data.left)]
+        ];
         const segments = points.map((_, index) => ({ a: index, b: (index + 1) % points.length, role: "outer" }));
-        const known = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11];
-        const labels = known.map(index => ({ segment: index, actual: values[index], text: index === 0 && level === 2 ? "21m×2" : `${values[index]}m`, offset: index % 2 ? 14 : -14 }));
+        const lengths = segments.map(segment => distance(points[segment.a], points[segment.b]));
+        const hiddenSegments = [3, 10];
+        const labels = segments.map((_, index) => index).filter(index => !hiddenSegments.includes(index)).map(index => ({ segment: index, actual: lengths[index], text: index === 0 && level === 2 ? `${data.bottom / 2}m×2` : `${lengths[index]}m`, offset: [4, 7, 8, 9].includes(index) ? -13 : 13 }));
         const perimeterM = closedLength(points), answer = perimeterM * 100;
-        return fixedResult(`그림의 모든 이웃한 변은 직각이고 가장 긴 가로는 ${given(outer, "m", `${outer / 2}×2`)}입니다. 표시되지 않은 두 길이를 찾아 도형의 둘레를 cm로 구하세요.${support("가로 방향과 세로 방향의 길이 합을 각각 맞춘 뒤 둘레를 더하세요.")}${renderModel({ kind: "right-angle-outline", points, segments, labels, expected: answer, aria: "알려진 열 개 길이만 표시된 직각으로 꺾인 도형", attributes: { "data-closed-perimeter": perimeterM.toFixed(4), "data-hidden-segments": "9;10" } })}${tag("right-angle-outline-to-centimeters", [...values, perimeterM, answer])}`, format(answer), `표시되지 않은 두 변은 각각 ${downThree}m와 ${leftFive}m입니다. 실제 폐곡선의 열두 변을 더하면 ${perimeterM}m이고, ${perimeterM}m=${format(answer)}cm입니다.`);
+        return fixedResult(`그림의 모든 이웃한 변은 직각이고 가장 긴 가로는 ${given(data.bottom, "m", `${data.bottom / 2}×2`)}입니다. 표시되지 않은 두 길이를 찾아 도형의 둘레를 cm로 구하세요.${support("가로 방향과 세로 방향의 길이 합을 각각 맞춘 뒤 둘레를 더하세요.")}${renderModel({ kind: "right-angle-outline", points, segments, labels, expected: answer, aria: "아래 42m 쪽이 가장 긴 가로이고 위쪽에 두 홈과 기둥이 있는 직각으로 꺾인 도형, 알려진 열 개 길이만 표시", attributes: { "data-closed-perimeter": perimeterM.toFixed(4), "data-hidden-segments": hiddenSegments.join(";") } })}${tag("right-angle-outline-to-centimeters", [...lengths, perimeterM, answer])}`, format(answer), `왼쪽 홈 바닥은 아래에서 ${data.left}-${data.notchLeftWall}=${leftNotchFloor}m, 가운데 기둥 윗변은 ${leftNotchFloor}+${data.towerLeft}=${towerHeight}m, 오른쪽 홈 바닥은 ${towerHeight}-${data.towerRight}=${rightNotchFloor}m 높이에 있으므로 오른쪽 홈의 오른쪽 벽은 ${data.right}-${rightNotchFloor}=${hiddenWall}m입니다. 왼쪽 윗변은 ${data.bottom}-${data.topRight}-${data.notchRight}-${data.towerTop}-${data.notchLeft}=${hiddenTop}m입니다. 가로 길이의 합은 ${data.bottom}×2=${data.bottom * 2}m, 세로 길이의 합은 ${lengths.filter((_, index) => index % 2 === 1).join("+")}=${lengths.filter((_, index) => index % 2 === 1).reduce((total, value) => total + value, 0)}m이므로 둘레는 ${perimeterM}m=${format(answer)}cm입니다.`);
       }
 
       if (variant === 2) {
@@ -30405,7 +30477,7 @@
       const miniRun = slantRun * miniatureScale;
       const miniBase = data.base * miniatureScale;
       const miniHeight = data.height * miniatureScale;
-      const miniLeft = [414, 40];
+      const miniLeft = [396, 40];
       const miniRight = [miniLeft[0] + miniBase, miniLeft[1]];
       const miniBottomRight = [miniRight[0] + miniRun, miniRight[1] + miniHeight];
       const miniBottomLeft = [miniLeft[0] + miniRun, miniLeft[1] + miniHeight];
@@ -30414,17 +30486,19 @@
         <g class="source51-e3-tile-array-grid" data-layout-role="tile-array">${tileMarkup(solved)}</g>
         <g class="source51-e3-tile-sample" data-layout-role="sample-tile">
           <polygon points="${miniLeft.join(",")} ${miniRight.join(",")} ${miniBottomRight.join(",")} ${miniBottomLeft.join(",")}"/>
-          <line class="source51-e3-tile-height" x1="${miniRight[0]}" y1="${miniRight[1]}" x2="${miniRight[0]}" y2="${miniBottomRight[1]}"/>
-          <path class="source51-e3-tile-right-angle" d="M ${miniRight[0]} ${miniBottomRight[1] - 12} H ${miniRight[0] + 12} V ${miniBottomRight[1]}"/>
+          <line class="source51-e3-tile-height" data-height-guide="top-extension" x1="${miniRight[0]}" y1="${miniRight[1]}" x2="${miniBottomRight[0]}" y2="${miniRight[1]}"/>
+          <line class="source51-e3-tile-height" x1="${miniBottomRight[0]}" y1="${miniRight[1]}" x2="${miniBottomRight[0]}" y2="${miniBottomRight[1]}"/>
+          <path class="source51-e3-tile-right-angle" d="M ${miniBottomRight[0] - 10} ${miniRight[1]} V ${miniRight[1] + 10} H ${miniBottomRight[0]}"/>
           <text class="source51-e3-tile-measure is-base" x="${(miniBottomLeft[0] + miniBottomRight[0]) / 2}" y="${miniBottomRight[1] + 22}">${data.base} cm</text>
-          <text class="source51-e3-tile-measure is-height" x="${miniRight[0] - 8}" y="${(miniRight[1] + miniBottomRight[1]) / 2}" text-anchor="end">${data.height} cm</text>
+          <text class="source51-e3-tile-measure is-height" style="text-anchor:start" data-label-side="outside-right" x="${miniBottomRight[0] + 8}" y="${(miniRight[1] + miniBottomRight[1]) / 2}" text-anchor="start">${data.height} cm</text>
           <text class="source51-e3-tile-measure is-side" x="${miniLeft[0] - 8}" y="${(miniLeft[1] + miniBottomLeft[1]) / 2}" text-anchor="end">${data.side} cm</text>
         </g>
         ${solved ? `<text class="source51-e3-tile-answer" x="270" y="300">${data.base}×${data.height}×${tileCount} = ${answer} cm²</text>` : ""}
       </svg>`;
-      const countText = isHard ? `${data.rows}줄에 ${data.columns}개씩 놓인` : `${tileCount}개의`;
+      // 2026-11-28 책 대조: "18개의 이어 붙여" 오타를 바로잡았습니다. 원문 그림의 높이 10cm는 다른 변 8cm보다 길어 모순이므로 앱 수치(밑변·높이·빗변)를 유지합니다.
+      const countText = isHard ? `조각을 한 줄에 ${data.columns}개씩 ${data.rows}줄로` : `조각 ${tileCount}개를`;
       const cue = isEasy ? `<p class="source51-e4-problem-cue">먼저 평행사변형 한 조각의 넓이를 구하세요.</p>` : "";
-      const prompt = `오른쪽 평행사변형 조각과 같은 조각을 ${countText} 이어 붙여 도형을 만들었습니다. 만든 도형의 넓이는 몇 cm²인지 구하세요.${cue}${diagram(false)}`;
+      const prompt = `오른쪽 평행사변형 조각과 같은 ${countText} 이어 붙여 도형을 만들었습니다. 만든 도형의 넓이는 몇 cm²인지 구하세요.${cue}${diagram(false)}`;
       const solution = `평행사변형 한 조각의 넓이는 ${data.base}×${data.height}=${tileArea}cm²입니다. 조각은 ${data.rows}×${data.columns}=${tileCount}개이므로 전체 넓이는 ${tileArea}×${tileCount}=${answer}cm²입니다. 빗변 ${data.side}cm는 넓이를 구할 때 사용하지 않습니다.`;
       return result(prompt, `${answer}cm²`, solution, {
         answerVisual: `<div class="verified-answer-diagram source51-e3-tile-array-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">전체 넓이 = ${answer}cm²</div></div>`,
