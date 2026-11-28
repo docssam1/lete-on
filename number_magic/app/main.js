@@ -641,19 +641,30 @@ if(membership&&guardianAuth){
 /* 동의서 갱신 안내(2026-10-22) — 번호는 있지만 현재 동의서 버전에 동의하지 않은 보호자에게
    맨 위 배너로 알린다. 갱신 전에는 체험 밖 학습과 기록 저장이 멈추므로 이유를 숨기지 않는다.
    양식이 이미 보이는 보호자 화면·옷장에서는 배너를 내린다. */
+/* 맨 위 띠(동의 갱신·휴대폰 등록)의 높이만큼 #app을 내린다(2026-11-18) — 띠가 position:fixed라 자리를 비우지 않으면
+   휴대폰에서 화면 머리줄(길 로드맵의 「← 진단 결과로」 등)이 띠 밑에 깔려 누를 수 없었다.
+   --nm-banner-h = 띠 높이(#app 위 여백), --nm-consent-h = 띠 높이 + 12(음악 단추 자리). 띠가 없으면 둘 다 지운다. */
+function syncTopBannerSpace(){
+  const root=document.documentElement.style;
+  const bar=document.getElementById('nmConsentBanner')||document.getElementById('nmNotifyBanner');
+  const h=bar?bar.offsetHeight:0;
+  if(!h){root.removeProperty('--nm-consent-h');root.removeProperty('--nm-banner-h');return;}
+  root.setProperty('--nm-consent-h',(h+12)+'px');root.setProperty('--nm-banner-h',h+'px');
+}
+window.addEventListener('resize',syncTopBannerSpace);
 function renderConsentBanner(){
   const old=document.getElementById('nmConsentBanner');
   const contact=membership&&membership.snapshot().contact;
   const need=!REVIEW&&booted&&!!membership&&!!guardianAuth?.peek()&&!(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())
     &&contact?.registered===true&&!membership.contactReady()&&!guardianEntry&&S.view!=='closet';
-  if(!need){if(old)old.remove();document.documentElement.style.removeProperty('--nm-consent-h');return;}
+  if(!need){if(old)old.remove();syncTopBannerSpace();return;}
   const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
   const bar=old||document.createElement('div');
   bar.id='nmConsentBanner';bar.className='nm-consent-banner';bar.setAttribute('role','region');
   bar.setAttribute('aria-label',lk('개인정보 동의 갱신 안내','Privacy consent renewal','个人信息同意更新提示'));
   bar.innerHTML=`<p>${lk('개인정보 동의서가 새로 바뀌었어요. 동의를 갱신해야 학습 기록이 저장돼요.','The personal data notice has changed. Renew consent to keep saving learning records.','个人信息同意书已更新。更新同意后才能保存学习记录。')}</p><button type="button" class="nm-btn" id="nmConsentRenew">${lk('동의 갱신하기','Renew consent','更新同意')}</button>`;
   if(!old)document.body.appendChild(bar);
-  document.documentElement.style.setProperty('--nm-consent-h',(bar.offsetHeight+12)+'px');
+  syncTopBannerSpace();
   bar.querySelector('#nmConsentRenew').onclick=()=>{
     guardianContactEditing=false;S.view='closet';save();render();
     const details=$('.nm-closet-settings');if(details)details.open=true;
@@ -672,7 +683,7 @@ function renderNotifyBanner(){
   const need=!REVIEW&&booted&&!!membership&&!!guardianAuth?.peek()&&!(guardianAuth.requiresPassword&&guardianAuth.requiresPassword())
     &&!registered&&!guardianEntry&&S.view!=='closet'&&!document.getElementById('nmConsentBanner')&&(Date.now()-later>7*86400000)
     &&!signupUnfinished(); // 가입 도중이면 위 줄 「가입 마저 하기」가 같은 일을 한다(띠가 위 줄을 가리지 않게)
-  if(!need){if(old){old.remove();if(!document.getElementById('nmConsentBanner'))document.documentElement.style.removeProperty('--nm-consent-h');}return;}
+  if(!need){if(old){old.remove();syncTopBannerSpace();}return;}
   const lk=(k,e,z)=>S.lang==='ko'?k:S.lang==='en'?e:z;
   const hasPhone=!!(contact&&contact.registered);
   const bar=old||document.createElement('div');
@@ -682,7 +693,7 @@ function renderNotifyBanner(){
     ?lk('문자 수신에 동의하면 매주 학습지 링크를 문자로 보내 드려요.','Allow texts to get the weekly worksheet link by message.','同意接收短信后，每周会以短信发送学习单链接。')
     :lk('보호자 휴대폰을 등록하면 매주 학습지 링크를 문자로 보내 드려요.','Register a parent phone to get the weekly worksheet link by text.','登记家长手机号后，每周会以短信发送学习单链接。')}</p><button type="button" class="nm-btn" id="nmNotifyBannerGo">${hasPhone?lk('문자 동의','Allow texts','同意短信'):lk('휴대폰 등록','Register phone','登记手机号')}</button><button type="button" class="nm-btn ghost" id="nmNotifyBannerLater">${lk('나중에','Later','以后再说')}</button>`;
   if(!old)document.body.appendChild(bar);
-  document.documentElement.style.setProperty('--nm-consent-h',(bar.offsetHeight+12)+'px');
+  syncTopBannerSpace();
   bar.querySelector('#nmNotifyBannerGo').onclick=()=>{
     guardianContactEditing=true;S.view='closet';save();render();
     const details=$('.nm-closet-settings');if(details)details.open=true;
