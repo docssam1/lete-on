@@ -124,7 +124,7 @@ assert(new Set(book05MultiplicationTypes.map((typeId) => typeById(typeId).genera
 
 const precisionBookTypeCounts = new Map([
   ["book-05", 86],
-  ["book-06", 94],
+  ["book-06", 115],
   ["book-07", 113],
   ["book-08", 108],
   ["book-09", 88],

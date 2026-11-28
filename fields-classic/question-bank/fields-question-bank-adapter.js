@@ -14,7 +14,7 @@ import {
   questionClassificationForType,
   representativeConceptForType,
   textbookGuideForType
-} from "./source-data.js?v=20261127e";
+} from "./source-data.js?v=20261128a";
 import { defineQuestionBankAdapter } from "./question-bank-adapter.js?v=20260918a";
 
 export const FIELDS_QUESTION_BANK_ADAPTER = defineQuestionBankAdapter({
