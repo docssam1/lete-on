@@ -977,6 +977,90 @@ function seatOk(n, seat, c) {
   return false;
 }
 
+// ── (2차) 칸 도형 검산 — 생성기와 따로, 화면 좌표(소수)로 돌리고 뒤집어 비교한다 ──
+const SCREEN_OF = { sq: ([x, y]) => [x, y], tet: ([x, y]) => [x / 2, y / 2], tri: ([a, b]) => [a + b / 2, (b * Math.sqrt(3)) / 2] };
+const TURNS_OF = { sq: 4, tet: 4, tri: 6 };
+const r3 = (v) => { const r = Math.round(v * 1000) / 1000; return r === 0 ? 0 : r; };
+const vkey = ([x, y]) => `${r3(x)},${r3(y)}`;
+function screenCells(lat, cells) { return cells.map((c) => c.map(SCREEN_OF[lat])); }
+function figureForms(lat, cells) {
+  const sc = screenCells(lat, cells);
+  const k = TURNS_OF[lat];
+  const forms = [];
+  for (let flip = 0; flip < 2; flip += 1) for (let r = 0; r < k; r += 1) {
+    const ang = (2 * Math.PI * r) / k;
+    const move = ([x, y]) => { const X = flip ? -x : x; return [X * Math.cos(ang) - y * Math.sin(ang), X * Math.sin(ang) + y * Math.cos(ang)]; };
+    const m = sc.map((c) => c.map(move));
+    const mx = Math.min(...m.flat().map((p) => p[0]));
+    const my = Math.min(...m.flat().map((p) => p[1]));
+    forms.push(m.map((c) => c.map(([x, y]) => [x - mx, y - my])));
+  }
+  return forms;
+}
+const formKey = (form) => form.map((c) => c.map(vkey).sort().join("|")).sort().join(";");
+const figureSig = (lat, cells) => figureForms(lat, cells).map(formKey).sort()[0];
+function figureConnected(lat, cells) {
+  const sc = screenCells(lat, cells).map((c) => c.map(vkey));
+  const edgeSets = sc.map((c) => c.map((v, i) => [v, c[(i + 1) % c.length]].sort().join("~")));
+  const seen = new Set([0]);
+  const queue = [0];
+  while (queue.length) {
+    const i = queue.pop();
+    edgeSets.forEach((es, j) => { if (!seen.has(j) && es.some((e) => edgeSets[i].includes(e))) { seen.add(j); queue.push(j); } });
+  }
+  return seen.size === cells.length;
+}
+// 나눈 조각들이 도형을 빠짐없이 한 번씩 덮는지, 조각마다 이어져 있는지
+function piecesCover(meta, pieces, count) {
+  const all = pieces.flat();
+  if (pieces.length !== count || all.length !== meta.cells.length || new Set(all).size !== all.length) return false;
+  if (all.some((v) => v < 0 || v >= meta.cells.length)) return false;
+  return pieces.every((p) => figureConnected(meta.lat, p.map((v) => meta.cells[v])));
+}
+const piecesSigs = (meta, pieces) => pieces.map((p) => figureSig(meta.lat, p.map((v) => meta.cells[v])));
+// 모양(칸 목록)으로 도형을 덮는 방법의 수 — keep으로 놓을 자리를 거를 수 있다
+function countCoverings(meta, shapeCells, keep = null, limit = 5) {
+  const region = screenCells(meta.lat, meta.cells).map((c) => c.map(vkey).sort().join("|"));
+  const index = new Map(region.map((k, i) => [k, i]));
+  const vertices = [...new Set(screenCells(meta.lat, meta.cells).flat().map(vkey))].map((k) => k.split(",").map(Number));
+  const placements = new Map();
+  figureForms(meta.lat, shapeCells).forEach((form) => {
+    const anchor = form[0][0];
+    vertices.forEach(([vx, vy]) => {
+      const ids = [];
+      for (const c of form) {
+        const id = index.get(c.map(([x, y]) => vkey([x - anchor[0] + vx, y - anchor[1] + vy])).sort().join("|"));
+        if (id === undefined) return;
+        ids.push(id);
+      }
+      ids.sort((a, b) => a - b);
+      if (!keep || keep(ids)) placements.set(ids.join(","), ids);
+    });
+  });
+  const list = [...placements.values()];
+  const used = new Set();
+  let found = 0;
+  const go = () => {
+    if (found >= limit) return;
+    let first = -1;
+    for (let i = 0; i < meta.cells.length; i += 1) if (!used.has(i)) { first = i; break; }
+    if (first < 0) { found += 1; return; }
+    list.forEach((p) => {
+      if (!p.includes(first) || p.some((v) => used.has(v))) return;
+      p.forEach((v) => used.add(v));
+      go();
+      p.forEach((v) => used.delete(v));
+    });
+  };
+  go();
+  return found;
+}
+const hmMax = (map) => map.map((r) => Math.max(...r));
+const hmFront = (map) => map[0].map((_, c) => Math.max(...map.map((r) => r[c])));
+const hmRight = (map) => hmMax(map).reverse();
+const hmFoot = (map) => map.map((r) => r.map((v) => (v > 0 ? 1 : 0)));
+const hmStep = (map) => map.every((r, i) => r.every((v, j) => (i === 0 || v <= map[i - 1][j]) && (j === 0 || v <= r[j - 1])));
+
 function validateStructure(problem, id, difficulty) {
   assert(problem && typeof problem.prompt === "string" && problem.prompt.length >= 12, id, difficulty, "지문 없음");
   assert((problem.prompt.match(/\?/g) || []).length <= 1, id, difficulty, "지문 물음표 중복");
@@ -1134,6 +1218,304 @@ function validateStructure(problem, id, difficulty) {
       if (meta.ask === "fill") assert(sols.length === 1, id, difficulty, "자리가 하나로 정해지지 않음");
       if (meta.ask === "between") assert(problem.answer.split(", ").sort().join(",") === [...answers][0], id, difficulty, "사이 답 오류");
       else if (meta.ask !== "fill") assert(problem.answer === [...answers][0], id, difficulty, "자리 답 오류");
+      return;
+    }
+    // ── (2차) 1단원 나누어 그리기 ──
+    case "partition-two-ways-b9": {
+      const n = meta.cells.length;
+      const xs = meta.cells.map((c) => Math.min(...c.map((p) => p[0])));
+      const ys = meta.cells.map((c) => Math.min(...c.map((p) => p[1])));
+      assert((Math.max(...xs) - Math.min(...xs) + 1) * (Math.max(...ys) - Math.min(...ys) + 1) !== n, id, difficulty, "직사각형 도형");
+      assert(figureConnected(meta.lat, meta.cells), id, difficulty, "도형이 이어져 있지 않음");
+      [[meta.splitK, meta.k], [meta.splitM, meta.m]].forEach(([pieces, k]) => {
+        assert(piecesCover(meta, pieces, k), id, difficulty, `${k}조각이 도형을 나누지 못함`);
+        assert(new Set(piecesSigs(meta, pieces)).size === 1, id, difficulty, `${k}조각의 모양이 다름`);
+      });
+      assert(problem.responseKind === "drawing" && problem.answerVisual, id, difficulty, "그리기 답 그림 없음");
+      return;
+    }
+    case "rep-tile-b9": {
+      assert(piecesCover(meta, meta.pieces, 4), id, difficulty, "4조각이 도형을 나누지 못함");
+      const small = figureSig(meta.lat, meta.smallCells);
+      assert(piecesSigs(meta, meta.pieces).every((sig) => sig === small), id, difficulty, "조각이 처음 도형과 모양이 다름");
+      // 처음 도형 = 작은 도형을 두 배로 늘린 모양
+      const doubled = meta.smallCells.map((c) => c.map(([x, y]) => [2 * x, 2 * y]));
+      const area = (lat, cells) => screenCells(lat, cells).reduce((acc, c) => acc + Math.abs(c.reduce((s, [x, y], i) => { const [nx, ny] = c[(i + 1) % c.length]; return s + x * ny - nx * y; }, 0)) / 2, 0);
+      assert(Math.abs(area(meta.lat, meta.cells) - area(meta.lat, doubled) * 1) < 1e-6 && Math.abs(area(meta.lat, meta.cells) - 4 * area(meta.lat, meta.smallCells)) < 1e-6, id, difficulty, "넓이가 4배가 아님");
+      if (meta.stars) {
+        const star = new Set(meta.markers);
+        assert(meta.markers.length === 4 && meta.pieces.every((p) => p.filter((v) => star.has(v)).length === 1), id, difficulty, "★이 조각마다 하나가 아님");
+        const fits = countCoverings(meta, meta.smallCells, (ids) => ids.filter((v) => star.has(v)).length === 1);
+        assert(fits === 1, id, difficulty, `★ 조건으로 나누는 방법이 하나가 아님 ${fits}`);
+      } else {
+        assert(countCoverings(meta, meta.smallCells) >= 1, id, difficulty, "작은 같은 모양으로 덮을 수 없음");
+      }
+      return;
+    }
+    case "partition-other-way-b9": {
+      assert(piecesCover(meta, meta.example, 4), id, difficulty, "보기가 4조각이 아님");
+      const exampleSig = piecesSigs(meta, meta.example);
+      assert(new Set(exampleSig).size === 1, id, difficulty, "보기 조각 모양이 다름");
+      assert(meta.answers.length === meta.need && meta.need >= 1, id, difficulty, "답 수 오류");
+      const answerSigs = meta.answers.map((pieces) => {
+        assert(piecesCover(meta, pieces, 4), id, difficulty, "답이 4조각이 아님");
+        const sigs = new Set(piecesSigs(meta, pieces));
+        assert(sigs.size === 1, id, difficulty, "답 조각 모양이 다름");
+        return [...sigs][0];
+      });
+      assert(answerSigs.every((sig) => sig !== exampleSig[0]) && new Set(answerSigs).size === answerSigs.length, id, difficulty, "보기와 같거나 서로 같은 모양");
+      assert(problem.prompt.includes(meta.need > 1 ? "두 가지" : "4조각으로 나누세요"), id, difficulty, "찾을 가짓수 안내 오류");
+      return;
+    }
+    case "two-fences-b9": {
+      // 울타리 선을 벽으로 두고 잘게 나눈 칸을 칠해 나가며, 원숭이마다 다른 칸에 있는지 본다
+      const { G, c, a, r, animals } = meta;
+      const segs = [];
+      const sq = [[c - a, c - a], [c + a, c - a], [c + a, c + a], [c - a, c + a]];
+      const dia = [[c, c - r], [c + r, c], [c, c + r], [c - r, c]];
+      [sq, dia].forEach((poly) => poly.forEach((p, i) => segs.push([p, poly[(i + 1) % 4]])));
+      const step = 0.1;
+      const lo = -2;
+      const size = Math.round((G + 4) / step) + 1;
+      const near = (x, y) => segs.some(([[x1, y1], [x2, y2]]) => {
+        const dx = x2 - x1, dy = y2 - y1;
+        const t = Math.max(0, Math.min(1, ((x - x1) * dx + (y - y1) * dy) / (dx * dx + dy * dy)));
+        return Math.hypot(x - x1 - t * dx, y - y1 - t * dy) < 0.08;
+      });
+      const label = new Int32Array(size * size).fill(-1);
+      const wall = new Uint8Array(size * size);
+      for (let i = 0; i < size; i += 1) for (let j = 0; j < size; j += 1) if (near(lo + i * step, lo + j * step)) wall[i * size + j] = 1;
+      let next = 0;
+      for (let start = 0; start < size * size; start += 1) {
+        if (wall[start] || label[start] >= 0) continue;
+        const stack = [start];
+        label[start] = next;
+        while (stack.length) {
+          const v = stack.pop();
+          const i = Math.floor(v / size), j = v % size;
+          [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([di, dj]) => {
+            const a2 = i + di, b2 = j + dj;
+            if (a2 < 0 || b2 < 0 || a2 >= size || b2 >= size) return;
+            const w = a2 * size + b2;
+            if (!wall[w] && label[w] < 0) { label[w] = next; stack.push(w); }
+          });
+        }
+        next += 1;
+      }
+      const ids = animals.map(([x, y]) => label[Math.round((x - lo) / step) * size + Math.round((y - lo) / step)]);
+      assert(ids.every((v) => v >= 0) && new Set(ids).size === animals.length, id, difficulty, "울타리로 동물이 모두 떼어지지 않음");
+      assert(next === 10, id, difficulty, `울타리 칸 수 오류 ${next}`);
+      assert(problem.prompt.includes(`${animals.length}마리`) && problem.responseKind === "drawing", id, difficulty, "동물 수 안내 오류");
+      return;
+    }
+    case "cover-piece-b9": {
+      const star = new Set(meta.markers);
+      assert(piecesCover(meta, meta.pieces, 4), id, difficulty, "4조각이 도형을 나누지 못함");
+      const pieceSig = figureSig("sq", meta.piece);
+      assert(piecesSigs(meta, meta.pieces).every((sig) => sig === pieceSig), id, difficulty, "조각이 주어진 모양과 다름");
+      assert(meta.pieces.every((p) => p.filter((v) => star.has(v)).length === 1), id, difficulty, "★이 조각마다 하나가 아님");
+      assert(countCoverings(meta, meta.piece, (ids) => ids.filter((v) => star.has(v)).length === 1) === 1, id, difficulty, "★ 조건으로 나누는 방법이 하나가 아님");
+      assert(problem.prompt.includes(`정사각형 ${meta.piece.length}개`), id, difficulty, "조각 칸 수 안내 오류");
+      return;
+    }
+    // ── (2차) 2단원 쌓기나무 ──
+    case "cube-model-all-b9": {
+      const sign = (m) => JSON.stringify([hmFoot(m), hmFront(m), hmRight(m)]);
+      const want = JSON.stringify([meta.top, meta.front, meta.side]);
+      const labels = ["①", "②", "③", "④", "⑤"];
+      const right = meta.options.map((o, i) => (sign(o.map) === want ? labels[i] : null)).filter(Boolean);
+      assert(meta.options.length === 4 && new Set(meta.options.map((o) => JSON.stringify(o.map))).size === 4, id, difficulty, "보기 수·중복 오류");
+      assert(meta.options.every((o) => hmStep(o.map)), id, difficulty, "가려진 칸이 있는 보기");
+      assert(right.length >= 2 && right.length <= 3 && problem.answer === right.join(", "), id, difficulty, `모두 고르기 답 오류 ${right}`);
+      assert(problem.visual.options.length === 4, id, difficulty, "그림 보기 수 오류");
+      return;
+    }
+    case "cube-fill-cube-b9": {
+      const { n, top, front, side } = meta;
+      assert(top.length === n && top[0].length === n && Math.max(...front, ...side) === n, id, difficulty, "정육면체 크기 오류");
+      // 칸마다 앞·옆 층수보다 높을 수 없으므로 가장 많을 때 = 칸마다 작은 수. 그 모양이 세 방향 모양과 맞는지 확인
+      const most = top.map((r, i) => r.map((v, j) => (v ? Math.min(front[j], side[n - 1 - i]) : 0)));
+      assert(same(hmFront(most), front) && same(hmRight(most), side) && same(hmFoot(most), top), id, difficulty, "가장 많은 모양이 세 방향과 맞지 않음");
+      assert(same(hmFront(meta.map), front) && same(hmRight(meta.map), side), id, difficulty, "원래 모양과 세 방향이 다름");
+      assert(numeric === n ** 3 - sum(most.flat()) && numeric > 0, id, difficulty, "더 필요한 개수 오류");
+      return;
+    }
+    case "cube-checker-b9": {
+      let even = 0;
+      for (let i = 0; i < meta.a; i += 1) for (let j = 0; j < meta.b; j += 1) for (let k = 0; k < meta.c; k += 1) if ((i + j + k) % 2 === 0) even += 1;
+      const odd = meta.a * meta.b * meta.c - even;
+      assert(numeric === Math.min(even, odd), id, difficulty, "검은색 최소 개수 오류");
+      assert(same(problem.visual.map, Array.from({ length: meta.b }, () => Array(meta.a).fill(meta.c))), id, difficulty, "직육면체 그림 오류");
+      return;
+    }
+    // ── (2차) 3단원 수 배열 ──
+    case "chain-circles-b9": {
+      const c = meta.c;
+      const regions = 2 * c - 1;
+      const circles = Array.from({ length: c }, (_, i) => [2 * i - 1, 2 * i, 2 * i + 1].filter((v) => v >= 0 && v < regions));
+      assert(same(circles, meta.sets) && meta.values.length === regions, id, difficulty, "원·영역 구성 오류");
+      const keys = new Set();
+      permutations(meta.values).forEach((p) => {
+        const sums = circles.map((s) => sum(s.map((i) => p[i])));
+        if (sums.every((v) => v === sums[0])) keys.add([p.join(","), [...p].reverse().join(",")].sort()[0]);
+      });
+      const given = new Set(meta.ways.map((p) => [p.join(","), [...p].reverse().join(",")].sort()[0]));
+      assert(keys.size === given.size && [...keys].every((k) => given.has(k)), id, difficulty, `경우 수 오류 ${keys.size}/${given.size}`);
+      assert(problem.prompt.includes(given.size === 1 ? "한 가지" : `${given.size}가지`), id, difficulty, "가짓수 안내 오류");
+      return;
+    }
+    case "wheel-line-ring-b9": {
+      const k = meta.k;
+      const found = new Set();
+      permutations(meta.values).forEach(([c, ...ring]) => {
+        const S = sum(ring);
+        if (Array.from({ length: k }, (_, i) => c + ring[i] + ring[i + k]).every((v) => v === S)) found.add(`${c}:${Array.from({ length: k }, (_, i) => [ring[i], ring[i + k]].sort((a, b) => a - b).join("+")).sort().join(",")}`);
+      });
+      assert(found.size === 1, id, difficulty, `답이 하나가 아님 ${found.size}`);
+      assert(sum(meta.ring) === meta.S && Array.from({ length: k }, (_, i) => meta.center + meta.ring[i] + meta.ring[i + k]).every((v) => v === meta.S), id, difficulty, "답 배치 오류");
+      assert(problem.answer.startsWith(`가운데 ${meta.center},`), id, difficulty, "가운데 수 답 오류");
+      return;
+    }
+    case "cross-grid-b9": {
+      const cells = [1, 3, 4, 5, 7];
+      const mids = new Set();
+      permutations(meta.cards).forEach((p) => {
+        const g = [meta.corners[0], 0, meta.corners[1], 0, 0, 0, meta.corners[2], 0, meta.corners[3]];
+        cells.forEach((cell, i) => { g[cell] = p[i]; });
+        const rowsOk = [0, 1, 2].every((r) => g[r * 3] + g[r * 3 + 1] + g[r * 3 + 2] === g[r] + g[r + 3] + g[r + 6]);
+        if (rowsOk) mids.add(g[3] + g[4] + g[5]);
+      });
+      const list = [...mids].sort((a, b) => a - b);
+      assert(list.length >= 2 && same(list, meta.mids), id, difficulty, "㉡ 후보 오류");
+      assert(numeric === (meta.want === "min" ? list[0] : list.at(-1)), id, difficulty, "가장 작은·큰 ㉡ 오류");
+      assert(meta.corners.every((v) => !meta.cards.includes(v)), id, difficulty, "모퉁이 수가 카드와 겹침");
+      return;
+    }
+    case "rings-sum-b9": {
+      const { c, values, T, givens, truth } = meta;
+      const regions = 2 * c - 1;
+      const circleSums = (p) => Array.from({ length: c }, (_, i) => sum([2 * i - 1, 2 * i, 2 * i + 1].filter((v) => v >= 0 && v < regions).map((j) => p[j])));
+      assert(circleSums(truth).every((v) => v === T) && same([...truth].sort((a, b) => a - b), values), id, difficulty, "답이 조건과 맞지 않음");
+      let count = 0;
+      const cur = Array(regions).fill(0);
+      const left = new Set(values);
+      const fill = (pos) => {
+        if (count > 1) return;
+        if (pos === regions) { if (circleSums(cur).every((v) => v === T)) count += 1; return; }
+        const options = givens.includes(pos) ? [truth[pos]] : [...left];
+        options.forEach((v) => {
+          if (!left.has(v)) return;
+          cur[pos] = v;
+          left.delete(v);
+          // 원이 끝나는 자리마다 합을 본다(원 i는 영역 2i+1에서 끝남, 마지막 원은 마지막 영역)
+          const done = pos % 2 === 1 ? (pos - 1) / 2 : pos === regions - 1 ? c - 1 : -1;
+          const ok = done < 0 || sum([2 * done - 1, 2 * done, 2 * done + 1].filter((j) => j >= 0 && j < regions).map((j) => cur[j])) === T;
+          if (ok) fill(pos + 1);
+          left.add(v);
+        });
+      };
+      fill(0);
+      assert(count === 1, id, difficulty, `답이 하나가 아님 ${count}`);
+      assert(problem.answer === `왼쪽부터 ${truth.join(", ")}`, id, difficulty, "답 글 오류");
+      return;
+    }
+    case "triangle-seven-b9": {
+      const sets = [[0, 1, 2], [3, 4, 5], [0, 3, 6], [1, 4, 6], [2, 5, 6]];
+      const ok = (p) => sets.every((s) => sum(s.map((i) => p[i])) === sum(sets[0].map((i) => p[i])));
+      assert(ok(meta.truth), id, difficulty, "답이 조건과 맞지 않음");
+      const mirror = [meta.truth[0], meta.truth[2], meta.truth[1], meta.truth[3], meta.truth[5], meta.truth[4], meta.truth[6]].join(",");
+      const sols = permutations(meta.values).filter((p) => p[0] === meta.truth[0] && ok(p)).map((p) => p.join(","));
+      assert(sols.length >= 1 && sols.every((p) => p === meta.truth.join(",") || p === mirror), id, difficulty, "맨 위 수로 답이 정해지지 않음");
+      assert(meta.truth[6] === meta.O && meta.S === 3 * meta.O && problem.answer.includes(`가운데 ${meta.O}`), id, difficulty, "가운데·합 오류");
+      return;
+    }
+    case "wheel-centers-b9": {
+      const canPair = (list, target) => {
+        if (!list.length) return true;
+        const [a, ...rest] = list;
+        return rest.some((b, i) => a + b === target && canPair(rest.filter((_, j) => j !== i), target));
+      };
+      const centers = meta.values.filter((c) => { const rest = meta.values.filter((v) => v !== c); const t = (2 * sum(rest)) / rest.length; return Number.isInteger(t) && canPair(rest, t); });
+      assert(same(centers, meta.centers) && centers.length === 3, id, difficulty, `가운데 후보 오류 ${centers}`);
+      meta.fills.forEach((f) => {
+        const lines = Array.from({ length: meta.k }, (_, i) => f.c + f.ring[i] + f.ring[i + meta.k]);
+        assert(lines.every((v) => v === lines[0]) && same([f.c, ...f.ring].sort((a, b) => a - b), meta.values), id, difficulty, "완성한 원형진 오류");
+      });
+      return;
+    }
+    case "bent-path-b9": {
+      const segs = [];
+      let start = 0;
+      meta.lens.forEach((len) => { segs.push(Array.from({ length: len }, (_, i) => start + i)); start += len - 1; });
+      const ok = (p) => segs.every((s) => sum(s.map((i) => p[i])) === sum(segs[0].map((i) => p[i])));
+      assert(ok(meta.truth) && sum(segs[0].map((i) => meta.truth[i])) === meta.S, id, difficulty, "답이 조건과 맞지 않음");
+      const corners = segs.slice(1).map((s) => s[0]);
+      const palin = meta.lens.join() === [...meta.lens].reverse().join();
+      const cornerKeys = new Set(permutations(meta.values).filter(ok).map((p) => {
+        const fwd = corners.map((i) => p[i]).join(",");
+        return palin ? [fwd, corners.map((i) => p[i]).reverse().join(",")].sort()[0] : fwd;
+      }));
+      assert(cornerKeys.size === 1, id, difficulty, `꺾이는 원의 수가 하나로 정해지지 않음 ${cornerKeys.size}`);
+      return;
+    }
+    // ── (2차) 4단원 말로 된 단서 ──
+    case "race-talk-b9": {
+      const holds = (rank, c) => ({
+        overtake: () => rank[c.x] === c.from - c.n,
+        fell: () => rank[c.x] === 5,
+        lucky: () => rank[c.y] < rank[c.x],
+        beat2: () => rank[c.x] < rank[c.y] && rank[c.x] < rank[c.z],
+        justAhead: () => rank[c.y] + 1 === rank[c.x],
+        behind: () => 5 - rank[c.x] === c.n,
+        not: () => rank[c.y] !== c.r
+      })[c.kind]();
+      const sols = permutations([1, 2, 3, 4, 5]).filter((rk) => meta.clues.every((c) => holds(rk, c)));
+      assert(sols.length === 1 && same(sols[0], meta.rank), id, difficulty, `등수가 하나로 정해지지 않음 ${sols.length}`);
+      const order = [1, 2, 3, 4, 5].map((r) => meta.names[sols[0].indexOf(r)]);
+      assert(problem.answer === order.join(", "), id, difficulty, "등수 답 오류");
+      assert(meta.clues.every((c) => meta.clues.filter((d) => d.x === c.x).length === 1), id, difficulty, "한 사람이 두 번 말함");
+      return;
+    }
+    case "sibling-seat-b9": {
+      const { seatOf } = meta;
+      const holds = (ord, c) => {
+        const seat = (p) => seatOf[ord[p]];
+        const near = (p, q) => [1, 4].includes(Math.abs(seat(p) - seat(q)));
+        const at = (k) => ord.indexOf(k);
+        switch (c.kind) {
+          case "youngest": return ord[c.x] === 4;
+          case "eldest": return ord[c.x] === 0;
+          case "olderCount": return ord[c.x] === c.n;
+          case "oneYounger": return ord.filter((o) => o > ord[c.x]).length === 1;
+          case "nextYear": return ord[c.x] - ord[c.y] === 1;
+          case "nextTo": return near(c.x, c.y);
+          case "notNextTo": return !near(c.x, c.y);
+          case "nextToYoungest": return near(c.x, at(4));
+          default: return [0, 1, 2, 3, 4].filter((p) => p !== c.x && near(c.x, p)).every((p) => ord[p] < ord[c.x]);
+        }
+      };
+      const sols = permutations([0, 1, 2, 3, 4]).filter((o) => meta.clues.every((c) => holds(o, c)));
+      assert(sols.length === 1 && same(sols[0], meta.ord), id, difficulty, `형제 자리가 하나로 정해지지 않음 ${sols.length}`);
+      return;
+    }
+    case "desk-if-b9": {
+      const { bans, cond, truth, target } = meta;
+      const okBans = (seat) => bans.every((b) => !b.seats.includes(seat[b.x]));
+      const okIf = (seat) => !(seat[cond.x] !== cond.a && seat[cond.y] === cond.b);
+      const all = permutations([0, 1, 2, 3, 4]);
+      const before = all.filter(okBans);
+      const after = before.filter(okIf);
+      assert(before.length >= 2 && after.length === 1 && same(after[0], truth), id, difficulty, `책상 자리가 하나로 정해지지 않음 ${before.length}/${after.length}`);
+      assert(new Set(before.map((s) => s[target])).size > 1, id, difficulty, "조건 문장 없이도 답이 정해짐");
+      assert(problem.answer === `${["①", "②", "③", "④", "⑤"][truth[target]]}번`, id, difficulty, "책상 답 오류");
+      return;
+    }
+    case "job-clues-b9": {
+      const holds = (as, c) => (c.kind === "act" ? as[c.x] === c.j : c.kind === "friends" ? ![c.j1, c.j2].includes(as[c.x]) : as[c.x] !== c.j);
+      const sols = permutations([0, 1, 2, 3]).filter((as) => meta.clues.every((c) => holds(as, c)));
+      assert(sols.length === 1 && same(sols[0], meta.as), id, difficulty, `직업이 하나로 정해지지 않음 ${sols.length}`);
+      assert(problem.answer === meta.names[sols[0].indexOf(meta.targetJob)], id, difficulty, "직업 답 오류");
+      assert(meta.clues.filter((c) => c.kind === "act").length <= 1 && !meta.clues.some((c) => c.kind === "act" && c.j === meta.targetJob), id, difficulty, "묻는 직업을 바로 알려 줌");
       return;
     }
     default:
