@@ -1184,7 +1184,14 @@ function hasAnswer(value) {
 }
 
 function approvedAnswer(item) {
-  return Array.isArray(item.answer) ? item.answer[0] : item.answer;
+  const approved = Array.isArray(item.answer) ? item.answer : [item.answer];
+  // 보기 단추가 있는 문항은 받아 주는 표기 중 보기에 있는 것을 쓴다 — 「정답 보기」를 눌렀을 때 그 단추가 골라져 보이게
+  // (받아 주는 첫 표기가 단추에 없는 글이면 아무 단추도 골라지지 않던 문항이 있었다)
+  if (item.options?.length) {
+    const onButton = approved.find((value) => item.options.some((option) => String(option) === String(value)));
+    if (onButton !== undefined) return onButton;
+  }
+  return approved[0];
 }
 
 function canCheckAnswer(item) {

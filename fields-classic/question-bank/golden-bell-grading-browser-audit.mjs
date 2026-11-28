@@ -73,7 +73,8 @@ try {
           await page.waitForFunction(() => !document.querySelector(".protected-answer-notice"));
           assert.equal(await input.inputValue(), "9", "Loading must preserve the child's answer");
         }
-        if (["valid", "delayed"].includes(mode)) {
+        // 2026-10-27 「모두에게 열기」: 로그인 안 한 손님도 정답을 받아 채점된다(서버를 잠근 경우는 "unauthorized"가 본다)
+        if (["valid", "delayed", "guest"].includes(mode)) {
           assert.equal(await check.isEnabled(), true);
           await input.fill("8");
           await check.click();
@@ -100,7 +101,6 @@ try {
           assert.equal(await originalCheck.isDisabled(), true, "Original-question inputs must preserve the same lock");
           await originalCheck.dispatchEvent("click");
           assert.deepEqual(await page.evaluate(key => JSON.parse(localStorage.getItem(key)), storageKey), progressSeed);
-          if (mode === "guest") assert.equal(answerRequests, 0, "Do not request answers without an authorized session");
         }
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1), false);
         assert.deepEqual(errors, []);

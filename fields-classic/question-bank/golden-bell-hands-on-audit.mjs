@@ -301,6 +301,8 @@ try {
     await page.close();
   }
   const guest = await browser.newPage({ viewport: { width: 390, height: 900 } });
+  // 정답 서버를 잠근 경우(서버 함수 OPEN_ACCESS = false — 2026-10-27 「모두에게 열기」 이후 기본은 열림)를 흉내 낸다
+  await guest.route("**/functions/v1/**", (route) => route.fulfill({ status: 401, contentType: "application/json", body: '{"error":"login_required"}' }));
   await guest.goto(`${base}/fields-classic/question-bank/golden-bell.html?student=GUEST&book=book-01`, { waitUntil: "networkidle" });
   await guest.locator(".protected-answer-notice").waitFor();
   await guest.locator('.gold-hands-on [data-hand-open="turn-clock"]').click();

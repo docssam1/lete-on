@@ -121,6 +121,8 @@ async function context(authorized, viewport, reducedMotion = "no-preference") {
   await ctx.route("**/functions/v1/fields-auth", (route) => route.fulfill({ json: { ok: true }, headers: { "Access-Control-Allow-Origin": new URL(base).origin } }));
   await ctx.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ json: { answers: privateBank.books[route.request().postDataJSON().bookId] }, headers: { "Access-Control-Allow-Origin": new URL(base).origin } }));
   if (authorized) await ctx.addInitScript(() => sessionStorage.setItem("gfield_fields_session", "source-animation-ui-fixture"));
+  // 잠긴 경우는 정답 서버를 잠근 상태(OPEN_ACCESS = false)로 흉내 낸다 — 2026-10-27 「모두에게 열기」 이후 기본은 손님에게도 열림
+  else await ctx.route("**/functions/v1/golden-bell-answers", (route) => route.fulfill({ status: 401, json: { error: "login_required" }, headers: { "Access-Control-Allow-Origin": new URL(base).origin } }));
   return ctx;
 }
 
