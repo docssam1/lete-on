@@ -127,7 +127,7 @@ const precisionBookTypeCounts = new Map([
   ["book-06", 115],
   ["book-07", 113],
   ["book-08", 122],
-  ["book-09", 88],
+  ["book-09", 108],
   ["book-10", 93]
 ]);
 for (const [bookId, expectedCount] of precisionBookTypeCounts) {
