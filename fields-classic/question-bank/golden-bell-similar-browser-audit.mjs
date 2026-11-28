@@ -54,9 +54,9 @@ async function auditViewport(browser, viewport, label) {
       await page.locator(`.lesson-button[data-lesson="${lesson.id}"]`).click();
       if (book.id === "book-05" && lesson.id === "path-number-grid") {
         await page.locator('.stage-step[data-phase="original"]').click();
-        const sourceVisual = await page.locator(".item-quiz-visual .book05-visual").evaluate((node) => ({
+        const sourceVisual = await page.locator(".item-quiz-visual .book05-visual").first().evaluate((node) => ({
           width: node.getBoundingClientRect().width,
-          pathWidth: node.querySelector(".b5-path-grid")?.getBoundingClientRect().width || 0,
+          pathWidth: node.querySelector(".b5-path-grid,.b5-src-table")?.getBoundingClientRect().width || 0,   // 5권 원본 대조(10월) 뒤 원본 수 배열은 표(b5-src-table)로 그린다
           calendars: node.querySelectorAll(".b5-calendar,.torn-calendar").length
         }));
         assert.ok(sourceVisual.width > 240 && sourceVisual.pathWidth > 180, `${label}/book-05/path-number-grid: source number array collapsed: ${JSON.stringify(sourceVisual)}`);
@@ -66,7 +66,7 @@ async function auditViewport(browser, viewport, label) {
       assert.equal(await extensionStep.isDisabled(), false, `${label}/${book.id}/${lesson.id}: additional learning is locked`);
       await extensionStep.click();
       const items = [lesson.extension, ...(lesson.similarPractice || [])];
-      const workloadPattern = new RegExp(`${items.length}문제 중 1번째[\\s\\S]*이 권 ${book.dailyPractice.problemCount}문제[\\s\\S]*약 ${book.dailyPractice.estimatedMinutes}분`, "u");
+      const workloadPattern = new RegExp(`${items.length}문제 중 1번째[\\s\\S]*추가 학습 ${book.dailyPractice.problemCount}문제[\\s\\S]*약 ${book.dailyPractice.estimatedMinutes}분`, "u");
       assert.match(await page.locator(".daily-quiz-head aside").innerText(), workloadPattern, `${label}/${book.id}/${lesson.id}: daily workload label missing`);
       for (let itemIndex = 0; itemIndex < items.length; itemIndex += 1) {
         assert.equal(await page.locator(".daily-quiz-head aside strong").innerText(), `${items.length}문제 중 ${itemIndex + 1}번째`, `${label}/${book.id}/${lesson.id}: additional problem did not open`);
@@ -80,7 +80,8 @@ async function auditViewport(browser, viewport, label) {
             overflow: node.scrollWidth > node.clientWidth + 1
           };
         });
-        assert.ok(visual.width > 120 && visual.height > 40 && visual.contentLength > 0, `${label}/${book.id}/${lesson.id}: similar visual is blank: ${JSON.stringify(visual)}`);
+        // 글로 다 주어진 문제(그림 없음)는 그림 칸을 비워 둔다 — 그림이 있는 문제만 빈 그림을 잡는다
+        if (items[itemIndex].visual) assert.ok(visual.width > 120 && visual.height > 40 && visual.contentLength > 0, `${label}/${book.id}/${lesson.id}: similar visual is blank: ${JSON.stringify(visual)}`);
         assert.equal(visual.overflow, false, `${label}/${book.id}/${lesson.id}: similar visual overflows its panel`);
         await page.locator("[data-extension-answer]").click();
         assert.match(await page.locator(".extension-solution").innerText(), /풀이[\s\S]*답/u, `${label}/${book.id}/${lesson.id}: worked solution or answer missing`);
