@@ -906,8 +906,186 @@
     return `<svg class="geometry-diagram source41-exterior-polygon" viewBox="0 0 360 240" data-exterior-angles="${exteriorAngles.join(",")}" aria-label="다섯 바깥각이 표시된 오각형"><polygon points="${source41PointsText(points)}"/>${extensions}${labels}</svg>`;
   };
   const source41FiveTargetSvg = ({ apex, leftGiven, bottomGiven, rightGiven }) => `<svg class="geometry-diagram source41-five-target" viewBox="0 0 360 240" data-givens="${apex},${leftGiven},${bottomGiven},${rightGiven}" aria-label="세 직선과 삼각형 안팎의 다섯 표시각"><polygon points="180,42 70,188 292,188"/><line class="source41-extension-line" x1="92" y1="42" x2="270" y2="42"/><line class="source41-extension-line" x1="24" y1="148" x2="124" y2="220"/><line class="source41-extension-line" x1="238" y1="220" x2="338" y2="148"/><line x1="70" y1="188" x2="292" y2="188"/><line x1="211" y1="188" x2="292" y2="151"/><text class="source41-given-label" x="180" y="68">${apex}°</text><text class="source41-given-label" x="46" y="154">${leftGiven}°</text><text class="source41-given-label" x="77" y="216">${bottomGiven}°</text><text class="source41-given-label" x="316" y="158">${rightGiven}°</text><text class="source41-target-label" data-target-index="1" x="143" y="35">㉠</text><text class="source41-target-label" data-target-index="2" x="219" y="35">㉡</text><text class="source41-target-label" data-target-index="3" x="91" y="177">㉢</text><text class="source41-target-label" data-target-index="4" x="267" y="179">㉣</text><text class="source41-target-label" data-target-index="5" x="278" y="207">㉤</text></svg>`;
-  const source41TwoTurnOctagonSvg = (knownAngles, targetLabel = "㉠") => `<svg class="geometry-diagram source41-two-turn-octagon" viewBox="0 0 360 240" data-known-angles="${knownAngles.join(",")}" aria-label="안으로 두 번 꺾이고 선이 교차하는 팔각형"><polygon points="46,158 62,70 137,25 270,40 318,105 280,205 177,94 125,126"/><line x1="177" y1="94" x2="280" y2="205"/><line x1="125" y1="126" x2="270" y2="40"/>${knownAngles.map((angle, index) => { const positions = [[44,176],[47,62],[137,16],[278,35],[328,105],[289,218],[195,82]]; return `<text class="source41-given-label" data-known-index="${index}" x="${positions[index][0]}" y="${positions[index][1]}">${angle}°</text>`; }).join("")}<text class="source41-target-label" x="124" y="145">${targetLabel}</text></svg>`;
-  const source41FourTriangleCrossSvg = givenAngle => `<svg class="geometry-diagram source41-four-triangle-cross" viewBox="0 0 360 250" data-given-angle="${givenAngle}" data-target-count="8" aria-label="가운데에서 선이 교차하는 네 삼각형과 바깥쪽 표시각 여덟 개"><polygon data-triangle="1" points="151,116 38,53 42,177"/><polygon data-triangle="2" points="177,91 112,20 260,28"/><polygon data-triangle="3" points="215,121 322,62 326,184"/><polygon data-triangle="4" points="181,158 103,226 263,230"/><line x1="151" y1="116" x2="215" y2="121"/><line x1="177" y1="91" x2="181" y2="158"/><text class="source41-given-label" x="183" y="128">${givenAngle}°</text>${[[50,67],[51,160],[126,31],[243,38],[310,78],[311,167],[120,214],[247,217]].map((point, index) => `<text class="source41-target-label" data-target-index="${index + 1}" x="${point[0]}" y="${point[1]}">•</text>`).join("")}</svg>`;
+  // 4-1 심화 p.23 Mission 5·6 그림을 책 구조대로 실제 각도에 맞춰 그린다(그림만으로 각의 위치를 알 수 있게 호와 함께 표시).
+  const source41ScreenAngle = (vertex, point) => source41AngleFiveNormalize(Math.atan2(vertex[1] - point[1], point[0] - vertex[0]) * 180 / Math.PI);
+  const source41VertexAngleSpec = (vertex, firstPoint, secondPoint, arcRadius = 15) => {
+    const first = source41ScreenAngle(vertex, firstPoint);
+    const second = source41ScreenAngle(vertex, secondPoint);
+    let start = first;
+    let span = source41AngleFiveNormalize(second - first);
+    if (span > 180) { start = second; span = 360 - span; }
+    const labelRadius = Math.min(64, Math.max(arcRadius + 15, 9 / Math.sin(span * Math.PI / 360) + 4));
+    return { start, span, labelRadius, labelPoint: source41AngleFivePoint(vertex, start + span / 2, labelRadius) };
+  };
+  const source41VertexAngleMark = (vertex, firstPoint, secondPoint, label, { target = false, role = "", arcRadius = 15, attributes = "" } = {}) => {
+    const { start, span, labelRadius } = source41VertexAngleSpec(vertex, firstPoint, secondPoint, arcRadius);
+    return `<g ${attributes}>${geometryAngleMarkSvg({ classPrefix: "source41", role, origin: vertex, start, span: Number(span.toFixed(3)), value: label, label, target, arcRadius, labelRadius })}</g>`;
+  };
+  // 두 선분이 엇갈리는 도형의 각 표시 순서: knownAngles 0..6, 마지막은 ㉠.
+  const source41TwoTurnMarkSpecs = ({ top, upperRight, lowerRight, firstTipPoint, secondTipPoint, lowerLeft, left, upperLeft }) => [
+    [top, upperLeft, upperRight, 15],
+    [upperLeft, left, top, 15],
+    [left, lowerLeft, upperLeft, 15],
+    [lowerLeft, secondTipPoint, left, 15],
+    [upperRight, top, lowerRight, 15],
+    [firstTipPoint, lowerRight, secondTipPoint, 13],
+    [secondTipPoint, firstTipPoint, lowerLeft, 13],
+    [lowerRight, upperRight, firstTipPoint, 17]
+  ];
+  const source41SegmentsCross = (firstA, secondA, firstB, secondB) => {
+    const orientation = (p, q, r) => (q[0] - p[0]) * (r[1] - p[1]) - (q[1] - p[1]) * (r[0] - p[0]);
+    const d1 = orientation(firstB, secondB, firstA);
+    const d2 = orientation(firstB, secondB, secondA);
+    const d3 = orientation(firstA, secondA, firstB);
+    const d4 = orientation(firstA, secondA, secondB);
+    return d1 * d2 < 0 && d3 * d4 < 0;
+  };
+  const source41PointInPolygon = (point, polygon) => {
+    let inside = false;
+    for (let index = 0, previous = polygon.length - 1; index < polygon.length; previous = index, index += 1) {
+      const [xi, yi] = polygon[index];
+      const [xj, yj] = polygon[previous];
+      if ((yi > point[1]) !== (yj > point[1]) && point[0] < (xj - xi) * (point[1] - yi) / (yj - yi) + xi) inside = !inside;
+    }
+    return inside;
+  };
+  // knownAngles 순서: [위, 왼쪽 위, 왼쪽, 왼쪽 아래(엇갈린 선분 쪽), 오른쪽 위, 엇갈린 선분 끝 둘(위쪽 끝, 오른쪽 끝)]. ㉠은 오른쪽 아래 꼭짓점.
+  const source41TwoTurnGeometry = (knownAngles, targetAngle) => {
+    const [top, upperLeft, left, lowerLeft, upperRight, firstTip, secondTip] = knownAngles;
+    const tipSum = firstTip + secondTip;
+    const crossAngle = 180 - tipSum;
+    const sine = degrees => Math.sin(degrees * Math.PI / 180);
+    let best = null;
+    // 육각형의 각 변을 안쪽 원에서 조금씩 다르게 떨어뜨려(각은 그대로) 엇갈린 선분이 들어갈 자리를 찾는다.
+    const offsetPatterns = [[1, 1, 1, 1, 1, 1], [0.9, 1, 1.15, 1.2, 1.1, 1], [0.85, 1.05, 1.3, 1.3, 1.15, 1], [0.9, 1.15, 1.2, 1.05, 1, 1.1], [0.9, 1, 1.05, 1.2, 1.25, 1], [0.8, 1.1, 1.35, 1.4, 1.3, 1.05]];
+    for (const share of [0.5, 0.42, 0.58, 0.34, 0.66, 0.26, 0.74]) for (const offsets of offsetPatterns) {
+      const atLowerRight = Math.round(tipSum * share);
+      const atLowerLeft = tipSum - atLowerRight;
+      if (atLowerRight < 8 || atLowerLeft < 8) continue;
+      // 바깥 육각형: 왼쪽 아래 → 오른쪽 아래 → 오른쪽 위 → 위 → 왼쪽 위 → 왼쪽 (수학 좌표, 시계 반대 방향)
+      const interior = [lowerLeft + atLowerLeft, targetAngle + atLowerRight, upperRight, top, upperLeft, left];
+      if (interior.some(value => value > 166 || value < 45)) continue;
+      const exterior = interior.map(value => 180 - value);
+      const normals = [];
+      exterior.forEach((value, index) => normals.push(index === 0 ? -100 : normals[index - 1] + value));
+      const hexagon = normals.map((normal, index) => {
+        const previous = index === 0 ? normals[normals.length - 1] - 360 : normals[index - 1];
+        const a = previous * Math.PI / 180;
+        const b = normal * Math.PI / 180;
+        const determinant = Math.cos(a) * Math.sin(b) - Math.sin(a) * Math.cos(b);
+        const previousOffset = offsets[(index + offsets.length - 1) % offsets.length] * 100;
+        const offset = offsets[index] * 100;
+        return [(previousOffset * Math.sin(b) - offset * Math.sin(a)) / determinant, -(offset * Math.cos(a) - previousOffset * Math.cos(b)) / determinant];
+      });
+      if (hexagon.some((point, index) => source41Distance(point, hexagon[(index + 1) % hexagon.length]) < 20)) continue;
+      const signedArea = hexagon.reduce((sum, point, index) => { const next = hexagon[(index + 1) % hexagon.length]; return sum + point[0] * next[1] - next[0] * point[1]; }, 0);
+      const edgeDirectionsOk = hexagon.every((point, index) => {
+        const next = hexagon[(index + 1) % hexagon.length];
+        const expected = source41AngleFiveNormalize(normals[index] + 90);
+        const actual = source41ScreenAngle(point, next);
+        return Math.abs(source41AngleFiveNormalize(actual - expected + 180) - 180) < 1;
+      });
+      if (!edgeDirectionsOk || signedArea === 0) continue;
+      const [lowerLeftPoint, lowerRightPoint, upperRightPoint, , , leftPoint] = hexagon;
+      const rayFromLowerRight = source41ScreenAngle(lowerRightPoint, upperRightPoint) + targetAngle;
+      const rayFromLowerLeft = source41ScreenAngle(lowerLeftPoint, leftPoint) - lowerLeft;
+      const cross = source41LineIntersection(lowerRightPoint, rayFromLowerRight, lowerLeftPoint, rayFromLowerLeft);
+      if (!cross) continue;
+      for (const scale of [1.5, 1.35, 1.2, 1.05, 0.9, 0.75, 0.6]) {
+        const base = Math.min(source41Distance(cross, lowerRightPoint), source41Distance(cross, lowerLeftPoint)) * scale;
+        const largest = Math.max(sine(firstTip), sine(secondTip), sine(crossAngle));
+        const firstTipPoint = source41AngleFivePoint(cross, rayFromLowerRight, base * sine(secondTip) / largest);
+        const secondTipPoint = source41AngleFivePoint(cross, rayFromLowerLeft, base * sine(firstTip) / largest);
+        const fitted = source41FitPoints([...hexagon, cross, firstTipPoint, secondTipPoint], 360, 240, 26);
+        const [fLL, fLR, fUR, fT, fUL, fL, fCross, fFirstTip, fSecondTip] = fitted;
+        const shape = [fT, fUR, fLR, fFirstTip, fSecondTip, fLL, fL, fUL];
+        const outline = [fLL, fLR, fUR, fT, fUL, fL];
+        const minimumEdge = Math.min(...shape.map((point, index) => source41Distance(point, shape[(index + 1) % shape.length])));
+        const clearance = point => Math.min(...outline.map((corner, index) => {
+          const next = outline[(index + 1) % outline.length];
+          const along = [next[0] - corner[0], next[1] - corner[1]];
+          return Math.abs(along[0] * (point[1] - corner[1]) - along[1] * (point[0] - corner[0])) / (Math.hypot(...along) || 1);
+        }));
+        const inside = [fCross, fFirstTip, fSecondTip].every(point => source41PointInPolygon(point, outline));
+        const tipGap = source41Distance(fFirstTip, fSecondTip);
+        const crossArm = Math.min(source41Distance(fCross, fFirstTip), source41Distance(fCross, fSecondTip));
+        const cornerGap = Math.min(...[fFirstTip, fSecondTip].flatMap(point => outline.map(corner => source41Distance(point, corner))));
+        if (!inside || clearance(fFirstTip) < 26 || clearance(fSecondTip) < 26 || cornerGap < 46 || minimumEdge < 34 || tipGap < 96 || crossArm < 58) continue;
+        const labels = source41TwoTurnMarkSpecs({ top: fT, upperRight: fUR, lowerRight: fLR, firstTipPoint: fFirstTip, secondTipPoint: fSecondTip, lowerLeft: fLL, left: fL, upperLeft: fUL })
+          .map(([vertex, first, second, radius]) => source41VertexAngleSpec(vertex, first, second, radius).labelPoint);
+        // 글자 상자(약 32×16)가 서로 겹치지 않게 한다.
+        const labelsOverlap = labels.some((point, index) => labels.slice(index + 1).some(other => Math.abs(point[0] - other[0]) < 34 && Math.abs(point[1] - other[1]) < 17));
+        if (labelsOverlap) continue;
+        const score = Math.min(tipGap, crossArm * 1.6) + Math.min(clearance(fFirstTip), clearance(fSecondTip), 40) - Math.abs(share - 0.5) * 40;
+        if (!best || score > best.score) best = { score, shape, outline, cross: fCross, firstTipPoint: fFirstTip, secondTipPoint: fSecondTip, lowerLeft: fLL, lowerRight: fLR, upperRight: fUR, top: fT, upperLeft: fUL, left: fL, atLowerRight, atLowerLeft };
+      }
+    }
+    return best;
+  };
+  const source41TwoTurnOctagonSvg = (knownAngles, targetAngle, targetLabel = "㉠") => {
+    const geometry = source41TwoTurnGeometry(knownAngles, targetAngle);
+    if (!geometry) throw new Error("두 선분이 엇갈리는 도형을 그리지 못했습니다.");
+    const { shape } = geometry;
+    const specs = source41TwoTurnMarkSpecs(geometry);
+    const marks = specs.slice(0, 7).map(([vertex, first, second, arcRadius], index) => source41VertexAngleMark(vertex, first, second, `${knownAngles[index]}°`, { role: `known-${index}`, arcRadius, attributes: `data-known-index="${index}"` })).join("");
+    const [targetVertex, targetFirst, targetSecond, targetRadius] = specs[7];
+    const target = source41VertexAngleMark(targetVertex, targetFirst, targetSecond, targetLabel, { target: true, role: "target", arcRadius: targetRadius });
+    return `<svg class="geometry-diagram source41-two-turn-octagon" viewBox="0 0 360 240" data-known-angles="${knownAngles.join(",")}" data-target-angle="${targetAngle}" data-crossing-segments="1" aria-label="두 선분이 엇갈려 지나는 도형"><polygon points="${source41PointsText(shape)}"/>${marks}${target}</svg>`;
+  };
+  // 4-1 심화 p.23 Mission 6: 네 직선과 네 짧은 선분이 삼각형 넷을 만들고, 두 직선 사이 각 하나만 주어진다.
+  const source41FourTriangleCrossGeometry = (givenAngle, shift = 0) => {
+    const sine = degrees => Math.sin(degrees * Math.PI / 180);
+    const firstDirection = 36 - givenAngle / 2;
+    const secondDirection = 36 + givenAngle / 2;
+    const center = [0, 0];
+    const remain = 180 - givenAngle;
+    const leftTip = remain / 2 - 5 + shift;
+    const lowerTip = remain - leftTip;
+    const upperTip = remain / 2 + 4 - shift;
+    const rightTip = remain - upperTip;
+    const leftCross = source41AngleFivePoint(center, firstDirection + 180, 100 * sine(lowerTip));
+    const lowerCross = source41AngleFivePoint(center, secondDirection + 180, 100 * sine(leftTip));
+    const rightCross = source41AngleFivePoint(center, firstDirection, 62 * sine(upperTip));
+    const upperCross = source41AngleFivePoint(center, secondDirection, 62 * sine(rightTip));
+    const away = (from, through, length) => {
+      const direction = source41Direction(from, through);
+      return [through[0] + direction[0] * length, through[1] + direction[1] * length];
+    };
+    const leg = 92;
+    // 삼각형마다 [안쪽 꼭짓점, 첫째 직선 위 끝, 둘째 직선 위 끝]
+    const triangles = [
+      [leftCross, away(rightCross, leftCross, leg), away(lowerCross, leftCross, leg * 1.1)],
+      [upperCross, away(lowerCross, upperCross, leg * 0.95), away(rightCross, upperCross, leg * 0.85)],
+      [rightCross, away(leftCross, rightCross, leg * 0.75), away(upperCross, rightCross, leg * 0.8)],
+      [lowerCross, away(upperCross, lowerCross, leg * 0.95), away(leftCross, lowerCross, leg * 0.9)]
+    ];
+    return { center, triangles, tips: [leftTip, upperTip, rightTip, lowerTip] };
+  };
+  const source41FourTriangleCrossSvg = givenAngle => {
+    for (const shift of [0, -4, 4, -8, 8]) {
+      const raw = source41FourTriangleCrossGeometry(givenAngle, shift);
+      if (Math.min(...raw.tips) < 30) continue;
+      const fitted = source41FitPoints([raw.center, ...raw.triangles.flat()], 360, 250, 22);
+      const center = fitted[0];
+      const triangles = [0, 1, 2, 3].map(index => fitted.slice(1 + index * 3, 4 + index * 3));
+      const [left, upper, right, lower] = triangles;
+      const lines = [[left[1], right[1]], [lower[1], upper[1]], [upper[2], right[2]], [left[2], lower[2]]];
+      const sides = triangles.map(([, first, second]) => [first, second]);
+      const crossesBadly = sides.some(side => lines.some(line => source41SegmentsCross(side[0], side[1], line[0], line[1])))
+        || sides.some((side, index) => sides.some((other, otherIndex) => otherIndex > index && source41SegmentsCross(side[0], side[1], other[0], other[1])))
+        || source41SegmentsCross(lines[2][0], lines[2][1], lines[3][0], lines[3][1]);
+      if (crossesBadly || Math.min(...sides.map(side => source41Distance(side[0], side[1]))) < 30) continue;
+      const segmentMarkup = (segment, attribute) => `<line ${attribute} x1="${segment[0][0].toFixed(1)}" y1="${segment[0][1].toFixed(1)}" x2="${segment[1][0].toFixed(1)}" y2="${segment[1][1].toFixed(1)}"/>`;
+      const polygons = triangles.map((triangle, index) => `<polygon data-triangle="${index + 1}" points="${source41PointsText(triangle)}"/>`).join("");
+      const outerMarks = triangles.flatMap((triangle, index) => [
+        source41VertexAngleMark(triangle[1], triangle[0], triangle[2], "", { role: `outer-${index * 2 + 1}`, arcRadius: 11, attributes: `data-target-index="${index * 2 + 1}"` }),
+        source41VertexAngleMark(triangle[2], triangle[1], triangle[0], "", { role: `outer-${index * 2 + 2}`, arcRadius: 11, attributes: `data-target-index="${index * 2 + 2}"` })
+      ]).join("");
+      const given = source41VertexAngleMark(center, left[0], lower[0], `${givenAngle}°`, { role: "given", arcRadius: 13 });
+      return `<svg class="geometry-diagram source41-four-triangle-cross" viewBox="0 0 360 250" data-given-angle="${givenAngle}" data-target-count="8" data-tip-angles="${raw.tips.join(",")}" aria-label="네 직선과 네 선분이 만든 삼각형 넷과 표시된 각">${polygons}${lines.map((line, index) => segmentMarkup(line, `data-straight-line="${index + 1}"`)).join("")}${sides.map((side, index) => segmentMarkup(side, `data-short-side="${index + 1}"`)).join("")}${outerMarks}${given}</svg>`;
+    }
+    throw new Error("네 삼각형이 이어진 그림을 그리지 못했습니다.");
+  };
   const source41ThreeApexBisectorsSvg = data => {
     const rawLeft = [0, 0];
     const rawRight = [280, 0];
@@ -5340,7 +5518,7 @@
         const unitRules = namedUnits.map((unit, index) => index === 0
           ? `천을 10묶음 모은 값을 <b>${unit}</b>`
           : `${namedUnits[index - 1]}을 10묶음 모은 값을 <b>${unit}</b>`).join(", ");
-        const prompt = `<div class="source-exploration"><ol class="source-parts"><li>${unitRules}(이)라고 부르기로 했습니다. ${source41FormatInteger(customNumber)}을 새 단위로 읽으세요.</li><li>보기에서 이 방법의 장점과 단점을 차례로 고르세요.<ul class="choice-list">${statements.map(statement => `<li><b>${statement.label}</b> ${statement.text}</li>`).join("")}</ul></li><li>${source41FormatInteger(comparisonNumber)}을 우리말과 영어로 각각 읽고, 오른쪽부터 몇 자리씩 묶는지도 쓰세요.</li><li>${storyPlace}에는 ${storyReading}개의 ${storyThing}이 있습니다. 이 큰 수 이야기에 나온 수를 숫자로 쓰세요.</li></ol></div>${evidence}`;
+        const prompt = `<div class="source-exploration"><ol class="source-parts"><li>${unitRules}${(namedUnits.at(-1).charCodeAt(namedUnits.at(-1).length - 1) - 0xac00) % 28 ? "이라고" : "라고"} 부르기로 했습니다. ${source41FormatInteger(customNumber)}을 새 단위로 읽으세요.</li><li>보기에서 이 방법의 장점과 단점을 차례로 고르세요.<ul class="choice-list">${statements.map(statement => `<li><b>${statement.label}</b> ${statement.text}</li>`).join("")}</ul></li><li>${source41FormatInteger(comparisonNumber)}을 우리말과 영어로 각각 읽고, 오른쪽부터 몇 자리씩 묶는지도 쓰세요.</li><li>${storyPlace}에는 ${storyReading}개의 ${storyThing}${(storyThing.charCodeAt(storyThing.length - 1) - 0xac00) % 28 ? "이" : "가"} 있습니다. 이 큰 수 이야기에 나온 수를 숫자로 쓰세요.</li></ol></div>${evidence}`;
         const solution = `(1) 각 숫자를 그 자리의 새 이름과 짝지으면 ${customReading}입니다. (2) 자리값을 바로 살피는 설명은 ${advantage}, 새 이름을 계속 외워야 한다는 설명은 ${disadvantage}입니다. (3) 우리말로 ${koreanReading}, 영어로 ${englishReading}입니다. 우리말은 오른쪽부터 네 자리씩, 영어는 세 자리씩 묶습니다. (4) ${storyReading}을 네 자리씩 나누어 쓰면 ${source41FormatInteger(storyNumber)}입니다.`;
         return result(prompt, answer, solution);
       }
@@ -5984,12 +6162,13 @@
         const wrongFinal = BigInt(int(rng, 30, 900)) * wrongFinalUnit;
         const start = wrongFinal + BigInt(jumpCount) * wrongStep;
         const correctFinal = start - BigInt(jumpCount) * correctStep;
-        const demonstrationStart = start + correctStep * BigInt(int(rng, 2, 8));
+        // 보기 뛰어 세기는 방법만 보여 주므로, 실제 처음 수(어떤 수)가 보기 줄에 섞여 나오지 않게 한다.
+        const demonstrationStart = start + correctStep * BigInt(int(rng, 5, 9));
         const demonstration = Array.from({ length: 5 }, (_, index) => demonstrationStart - BigInt(index) * correctStep);
         const answer = format(correctFinal);
         const payload = { variant, level, correctStep: String(correctStep), wrongStep: String(wrongStep), jumpCount, wrongFinal: String(wrongFinal), start: String(start), demonstration: demonstration.map(String), complexity: String(wrongStep).length };
         const evidence = source41Evidence("correct-decreasing-skip-error", payload, answer);
-        const prompt = `어떤 수에서 다음과 같은 방법으로 ${jumpCount}번 작게 뛰어 세어야 했습니다.${sequenceMarkup(demonstration)}그런데 잘못하여 ${format(wrongStep)}씩 ${jumpCount}번 작게 뛰어 세었더니 ${format(wrongFinal)}이 되었습니다. 바르게 뛰어 센 마지막 수를 구하세요.${evidence}`;
+        const prompt = `어떤 수에서 아래의 뛰어 세기와 같은 방법으로 ${jumpCount}번 뛰어 세어야 하는데 잘못하여 ${format(wrongStep)}씩 ${jumpCount}번 작게 뛰어 세었더니 ${format(wrongFinal)}이 되었습니다. 바르게 뛰어 센 마지막 수를 구하세요.${sequenceMarkup(demonstration)}${evidence}`;
         const solution = `잘못 뛰기 전의 수는 ${format(wrongFinal)}에 ${format(wrongStep)}을 ${jumpCount}번 더한 ${format(start)}입니다. 바른 규칙은 한 번에 ${format(correctStep)}씩 작아지므로 ${format(start)}에서 ${format(correctStep)}을 ${jumpCount}번 빼면 ${answer}입니다.`;
         return result(prompt, answer, solution);
       }
@@ -7190,9 +7369,32 @@
         const details = selected.map(item => `${source41CircledNumbers[item.index]} ${source41AngleStatementText(item.statement)}`).join(", ");
         return `각 종류에 알맞은 수를 여러 가지 넣어 확인합니다. 조건을 언제나 만족하는지 따져 보면 ${details}입니다. 따라서 답은 ${answer}입니다.`;
       };
-      const chooseClearRaySet = (rayCount, kind, rightPairMode) => {
+      const chooseClearRaySet = (rayCount, kind, rightPairMode, rightMarginOverride = null) => {
         const minimumGap = [18, 10, 8][level];
-        const rightMargin = [10, 6, 4][level];
+        const rightMargin = rightMarginOverride ?? [10, 6, 4][level];
+        if (rightMarginOverride !== null && rightPairMode === "baseline") {
+          // 넓은 여유각에서는 무작위 추출로 찾기 어려우므로, 조건을 지키며 반직선을 하나씩 더하는 되짚기 탐색으로 고른다.
+          const allowedRightPairs = [[0, 90], [90, 180]];
+          const fits = (chosen, angle) => chosen.every(other => {
+            const difference = Math.abs(other - angle);
+            if (difference < minimumGap) return false;
+            const pair = [Math.min(other, angle), Math.max(other, angle)];
+            const marked = allowedRightPairs.some(item => item[0] === pair[0] && item[1] === pair[1]);
+            return marked || Math.abs(difference - 90) > rightMargin;
+          });
+          const extend = chosen => {
+            if (chosen.length === rayCount) return source41CountAnglePairs([...chosen].sort((left, right) => left - right), kind) >= 2 ? chosen : null;
+            for (const angle of shuffle(rng, Array.from({ length: 35 }, (_, index) => (index + 1) * 5).filter(value => !chosen.includes(value)))) {
+              if (!fits(chosen, angle)) continue;
+              const found = extend([...chosen, angle]);
+              if (found) return found;
+            }
+            return null;
+          };
+          const found = extend([0, 90, 180]);
+          if (!found) throw new Error("직각과 충분히 떨어진 반직선 배치를 찾지 못했습니다.");
+          return { angles: [...found].sort((left, right) => left - right), rightPairs: [[0, 90]], allowedRightPairs };
+        }
         for (let attempt = 0; attempt < 500; attempt += 1) {
           const markedPair = rightPairMode === "baseline"
             ? [0, 90]
@@ -7291,11 +7493,13 @@
       if (variant === 2 || variant === 6) {
         const kind = variant === 2 ? "obtuse" : "acute";
         const rayCount = chooseFromBand(variant === 2 ? [[5, 6], [7], [8]] : [[5], [6], [7, 8]]);
-        const raySet = chooseClearRaySet(rayCount, kind, variant === 2 ? "baseline" : "interior");
+        // variant 2(예제 1-2)는 각도 글자가 없는 그림이라 표시 없는 각이 직각과 15° 이상 벌어져야 눈으로 예각·둔각을 가릴 수 있다(손글씨 대조 2026-11-28: 80°가 직각처럼 보임).
+        const rightMargin = variant === 2 ? 15 : [10, 6, 4][level];
+        const raySet = chooseClearRaySet(rayCount, kind, variant === 2 ? "baseline" : "interior", variant === 2 ? rightMargin : null);
         const { angles, rightPairs, allowedRightPairs } = raySet;
         const answer = String(source41CountAnglePairs(angles, kind));
         const evidenceKind = variant === 2 ? "fixed-ray-obtuse-count" : "marked-ray-acute-count";
-        const payload = { variant, level, angles, rightPairs, allowedRightPairs, requestedKind: kind, rightSafetyMargin: [10, 6, 4][level], answer: Number(answer), complexity: rayCount * rayCount + level * 20 };
+        const payload = { variant, level, angles, rightPairs, allowedRightPairs, requestedKind: kind, rightSafetyMargin: rightMargin, answer: Number(answer), complexity: rayCount * rayCount + level * 20 };
         const evidence = source41Evidence(evidenceKind, payload, answer);
         const prompt = `직각 표시가 있는 다음 그림에서 반직선 두 개를 골라 만들 수 있는 ${source41AngleName[kind]}은 모두 몇 개인가요?${source41AngleRaySvg({ angles, rightPairs })}${evidence}`;
         const solution = `직각으로 표시된 두 반직선을 기준으로 나머지 반직선도 두 개씩 빠짐없이 짝 지어 봅니다. 90°보다 ${kind === "acute" ? "작은" : "크고 180°보다 작은"} 각만 세면 ${answer}개입니다. 표시되지 않은 각은 직각과 충분히 떨어지도록 그려 하나로 판단할 수 있습니다.`;
@@ -7904,26 +8108,33 @@
           const knownSum = knownAngles.reduce((sum, value) => sum + value, 0);
           const answerNumber = 720 - knownSum;
           if (answerNumber < 20 || answerNumber > 80) continue;
+          // 책 그림처럼 실제 각도로 그릴 수 있는 조합만 쓴다(엇갈린 두 선분이 도형 안에 들어가야 함).
+          if (!source41TwoTurnGeometry(knownAngles, answerNumber)) continue;
           selected = { knownAngles, knownSum, answerNumber };
         }
         if (!selected) throw new Error("두 번 꺾인 도형의 남은 각 문제를 만들지 못했습니다.");
         const answer = String(selected.answerNumber);
-        const payload = { variant, level, ...selected, complexity: (level + 1) * 1000 + selected.knownSum };
+        const [topAngle, upperLeftAngle, leftAngle, lowerLeftAngle, upperRightAngle, firstTip, secondTip] = selected.knownAngles;
+        const largeSum = topAngle + upperLeftAngle + leftAngle + lowerLeftAngle + upperRightAngle;
+        const payload = { variant, level, ...selected, largeSum, tipSum: firstTip + secondTip, complexity: (level + 1) * 1000 + selected.knownSum };
         const evidence = source41Evidence("two-turn-octagon-final-angle", payload, answer);
-        const prompt = `안으로 두 번 꺾이고 선이 교차하는 도형에서 ㉠의 크기를 구하세요. 그림은 각의 위치를 나타냅니다.${source41TwoTurnOctagonSvg(selected.knownAngles)}${evidence}`;
-        const solution = `도형의 둘레를 따라 표시한 여덟 각의 크기를 모두 더하면 720°입니다. 따라서 ㉠=720-${selected.knownAngles.join("-")}=${answer}°입니다.`;
+        const prompt = `다음 도형에서 ㉠은 몇 도인지 구하세요.${source41TwoTurnOctagonSvg(selected.knownAngles, selected.answerNumber)}${evidence}`;
+        const solution = `엇갈린 두 선분이 만나는 점의 위아래에 삼각형이 두 개 생깁니다. 두 삼각형에서 만나는 점의 각은 서로 마주 보아 크기가 같으므로, 아래쪽 삼각형의 나머지 두 각의 합은 위쪽 삼각형의 ${firstTip}°와 ${secondTip}°의 합인 ${firstTip + secondTip}°와 같습니다. 왼쪽 아래와 오른쪽 아래 꼭짓점을 이으면 육각형이 되고, 육각형의 여섯 각의 합은 (6-2)×180=720°입니다. 따라서 ㉠=720-${topAngle}-${upperLeftAngle}-${leftAngle}-${lowerLeftAngle}-${upperRightAngle}-${firstTip + secondTip}=${answer}°입니다.`;
         return result(prompt, answer, solution);
       }
 
       const step = [5, 2, 1][level];
       const givenAngle = gridPick([20, 20, 20][level], [75, 75, 75][level], step);
-      const innerTipSum = 360 - givenAngle;
+      // 4-1 심화 p.23 Mission 6 구조: 주어진 각을 낀 작은 삼각형 두 개(왼쪽 아래·오른쪽 위)에서 남은 두 각의 합이 각각 180-주어진 각이고,
+      // 그 네 각이 네 삼각형의 안쪽 꼭짓각과 마주 보아 같다. 따라서 여덟 각의 합 = 720-2×(180-주어진 각) = 360+2×주어진 각(책 40° → 440°).
+      const tipPairSum = 180 - givenAngle;
+      const innerTipSum = tipPairSum * 2;
       const answerNumber = 720 - innerTipSum;
       const answer = String(answerNumber);
-      const payload = { variant, level, givenAngle, triangleCount: 4, totalTriangleAngles: 720, innerTipSum, answerNumber, complexity: (level + 1) * 1000 + givenAngle };
+      const payload = { variant, level, givenAngle, triangleCount: 4, totalTriangleAngles: 720, tipPairSum, innerTipSum, answerNumber, complexity: (level + 1) * 1000 + givenAngle };
       const evidence = source41Evidence("four-crossed-triangles-eight-angle-sum", payload, answer);
-      const prompt = `그림의 선은 같은 방향으로 곧게 이어져 있습니다. 가운데의 ${givenAngle}°를 제외하고, 네 삼각형 바깥쪽에 표시된 여덟 각의 크기를 모두 더하면 몇 도인가요?${source41FourTriangleCrossSvg(givenAngle)}${evidence}`;
-      const solution = `네 삼각형의 안쪽 각의 합은 180×4=720°입니다. 가운데에 모인 네 꼭짓각의 합은 360-${givenAngle}=${innerTipSum}°이므로, 바깥쪽 여덟 각의 합은 720-${innerTipSum}=${answer}°입니다.`;
+      const prompt = `다음 그림에서 표시된 ${givenAngle}°를 제외한 8개의 각의 크기의 합은 몇 도인가요?${source41FourTriangleCrossSvg(givenAngle)}${evidence}`;
+      const solution = `${givenAngle}°를 낀 작은 삼각형(왼쪽 아래)에서 나머지 두 각의 합은 180-${givenAngle}=${tipPairSum}°입니다. ${givenAngle}°와 마주 보는 각을 낀 작은 삼각형(오른쪽 위)에서도 나머지 두 각의 합은 ${tipPairSum}°입니다. 이 네 각은 네 삼각형의 안쪽 꼭짓각과 각각 마주 보아 크기가 같으므로 네 꼭짓각의 합은 ${tipPairSum}×2=${innerTipSum}°입니다. 네 삼각형의 세 각의 합은 180×4=720°이므로 표시된 여덟 각의 합은 720-${innerTipSum}=${answer}°입니다.`;
       return result(prompt, answer, solution);
     },
     source41AngleFour({ rng, level, variant = 0 }) {
@@ -10259,14 +10470,16 @@
         return result(`다음과 같이 같은 수만큼 커지는 수들을 모두 더한 값을 구하세요.<div class="sequence">${start}+${start + step}+${start + 2 * step}+…+${last}</div>`, answer, `항은 ${count}개이고 처음 수와 마지막 수의 합은 ${start + last}입니다. 합은 ${count}×${start + last}÷2=${answer}입니다.`);
       }
       if (variant === 3) {
+        // 원문(심화 p.67 Mission 4)처럼 더한 날짜의 요일을 알려 주어야 요일이 하나로 정해진다.
         const februaryDays = 28;
-        const februaryFirst = int(rng, 0, 6);
-        const marchTarget = int(rng, 8, 24);
-        const marchFirst = (februaryFirst + februaryDays) % 7;
-        const answer = weekdays[(marchFirst + marchTarget - 1) % 7];
+        const firstMarked = int(rng, 1, 7);
         const markedWeekday = int(rng, 0, 6);
-        const markedDates = Array.from({ length: februaryDays }, (_, index) => index + 1).filter(date => (februaryFirst + date - 1) % 7 === markedWeekday);
-        return result(`2월은 28일까지 있고, 달력에서 같은 요일인 날짜 ${markedDates.join(", ")}를 표시했습니다. 표시한 날짜의 합은 ${markedDates.reduce((sum, date) => sum + date, 0)}입니다. 같은 해 3월 ${marchTarget}일은 무슨 요일인가요?`, answer, `2월은 28일이므로 3월 1일은 2월 1일과 같은 요일입니다. 달력 칸을 ${marchTarget - 1}칸 옮기면 ${answer}입니다.`);
+        const marchTarget = int(rng, 8, 24 + level * 3);
+        const markedDates = [0, 1, 2, 3].map(index => firstMarked + index * 7);
+        const markedSum = markedDates.reduce((sum, date) => sum + date, 0);
+        const offset = marchTarget - firstMarked;
+        const answer = weekdays[(markedWeekday + offset) % 7];
+        return result(`2월은 28일까지 있습니다. 어느 해 2월 달력에서 ${weekdays[markedWeekday]}인 날짜를 모두 더했더니 ${markedSum}이었습니다. 같은 해 3월 ${marchTarget}일은 무슨 요일인가요?`, answer, `2월의 ${weekdays[markedWeekday]}은 4번 있고 날짜가 7씩 커집니다. 가장 앞 날짜를 □라 하면 □×4+7+14+21=${markedSum}이므로 □=(${markedSum}-42)÷4=${firstMarked}입니다. 따라서 ${weekdays[markedWeekday]}인 날짜는 ${markedDates.join(", ")}일입니다. 2월은 28일(4주)이므로 3월 ${firstMarked}일도 ${weekdays[markedWeekday]}이고, 3월 ${marchTarget}일은 그보다 ${offset}일 뒤이므로 ${answer}입니다.`);
       }
       if (variant === 4) {
         const width = 8;
@@ -10309,13 +10522,16 @@
         return result(`세로줄 번호와 가로줄 번호를 곱해 표를 채웠습니다. 오른쪽 아래 수는 ${corner}이고 표의 모든 수의 합은 ${total}입니다. 가로줄 수와 세로줄 수를 작은 수부터 쓰세요.`, [rows, columns].sort((a, b) => a - b).join(", "), `오른쪽 아래 수는 가로줄 수×세로줄 수이고, 전체 합은 (1부터 가로줄 수의 합)×(1부터 세로줄 수의 합)입니다. 조건을 만족하는 수는 ${rows}, ${columns}입니다.`);
       }
       if (variant === 8) {
+        // 원문처럼 색칠한 날짜가 무슨 요일인지 알려 주어야 마지막 날의 요일이 하나로 정해진다.
         const monthDays = pick(rng, [28, 29, 30, 31]);
         const firstWeekday = int(rng, 0, 6);
         const markedWeekday = int(rng, 0, 6);
         const dates = Array.from({ length: monthDays }, (_, index) => index + 1).filter(date => (firstWeekday + date - 1) % 7 === markedWeekday);
         const sum = dates.reduce((total, date) => total + date, 0);
         const answer = weekdays[(firstWeekday + monthDays - 1) % 7];
-        return result(`${monthDays}일까지 있는 달력에서 같은 요일의 날짜들을 색칠했더니 합이 ${sum}이었습니다. 색칠한 날짜는 ${dates.length}개입니다. 이달의 마지막 날은 무슨 요일인가요?`, answer, `색칠한 날짜는 ${dates.join(", ")}이고 달의 첫날부터 ${monthDays - 1}칸 이동한 마지막 날은 ${answer}입니다.`);
+        const stepSum = dates.reduce((total, _, index) => total + index * 7, 0);
+        const lastOffset = monthDays - dates.at(-1);
+        return result(`${monthDays}일까지 있는 달의 달력에서 ${weekdays[markedWeekday]}인 날짜들을 모두 색칠했더니 색칠한 날짜는 ${dates.length}개이고 합이 ${sum}이었습니다. 이달의 마지막 날은 무슨 요일인가요?`, answer, `같은 요일의 날짜는 7씩 커집니다. 가장 앞 날짜를 □라 하면 □×${dates.length}+${stepSum}=${sum}이므로 □=(${sum}-${stepSum})÷${dates.length}=${dates[0]}입니다. 색칠한 날짜는 ${dates.join(", ")}일이고 모두 ${weekdays[markedWeekday]}입니다. 마지막 날 ${monthDays}일은 ${dates.at(-1)}일보다 ${lastOffset}일 뒤이므로 ${answer}입니다.`);
       }
       if (variant === 9) {
         const count = int(rng, 10 + level * 6, 24 + level * 8) * 2;
@@ -10324,11 +10540,17 @@
         const sum = count * (first + last) / 2;
         return result(`${sum}을 연속한 ${count}개의 짝수의 합으로 나타냈습니다. 가장 작은 짝수와 가장 큰 짝수를 차례로 구하세요.`, `${first}, ${last}`, `가운데 두 수의 평균은 ${sum}÷${count}=${sum / count}입니다. 2씩 벌어진 ${count}개 수이므로 처음은 ${first}, 마지막은 ${last}입니다.`);
       }
-      const count = int(rng, 15 + level * 8, 29 + level * 12) * 2 + 1;
-      const middle = int(rng, 120 + level * 50, 360 + level * 120);
-      const step = int(rng, 5, 20);
-      const total = count * middle;
-      return result(`물건 ${count}개를 한 줄로 놓았습니다. 가운데 물건에서 양끝으로 갈수록 가격이 ${step}원씩 달라지고 전체 가격의 합은 ${total}원입니다. 가운데 물건의 가격을 구하세요.`, middle, `가격은 가운데를 기준으로 같은 차이만큼 큰 값과 작은 값이 짝을 이룹니다. 평균은 가운데 가격과 같으므로 ${total}÷${count}=${middle}원입니다.`);
+      // 원문(심화 확인학습 39): 가운데가 가장 싸고 왼쪽 끝으로 ○원씩, 오른쪽 끝으로 △원씩 비싸진다(구슬 45개, 20원·15원, 10205원 → 30원).
+      const half = int(rng, 15 + level * 4, 22 + level * 6);
+      const count = half * 2 + 1;
+      const middle = int(rng, 2 + level, 12 + level * 6) * 10;
+      const steps = [5, 10, 15, 20, 25, 30];
+      const leftStep = pick(rng, steps);
+      const rightStep = pick(rng, steps.filter(value => value !== leftStep));
+      const sideTotal = half * (half + 1) / 2;
+      const extra = (leftStep + rightStep) * sideTotal;
+      const total = count * middle + extra;
+      return result(`물건 ${count}개를 한 줄로 늘어놓았습니다. 가격은 가운데 있는 물건이 가장 싸고, 가운데에서 왼쪽 끝으로 갈수록 ${leftStep}원씩 비싸지고 오른쪽 끝으로 갈수록 ${rightStep}원씩 비싸집니다. 물건 전체의 가격이 ${total}원일 때 가운데 물건의 가격은 얼마인가요?`, `${middle}원`, `가운데 물건의 양쪽에 ${half}개씩 있습니다. 왼쪽 물건들은 가운데보다 ${leftStep}원, ${leftStep * 2}원, …, ${leftStep * half}원 비싸므로 더 비싼 금액의 합은 ${leftStep}×(1+2+…+${half})=${leftStep}×${sideTotal}=${leftStep * sideTotal}원입니다. 오른쪽은 ${rightStep}×${sideTotal}=${rightStep * sideTotal}원입니다. 가운데 가격을 □원이라 하면 □×${count}+${leftStep * sideTotal}+${rightStep * sideTotal}=${total}이므로 □=(${total}-${extra})÷${count}=${middle}원입니다.`);
     },
     source41OperationRuleFour({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("연산의 규칙 원문 분기는 0부터 10까지여야 합니다.");
@@ -10368,7 +10590,8 @@
         return result(`보기에서 □는 두 수에 각각 1을 더해 곱하고, ○는 각각 1을 빼서 곱하는 약속입니다. (${a}○${b})□(${c}○${b + 1})을 계산하세요.${examples}`, answer, `${a}○${b}=${left}, ${c}○${b + 1}=${right}이므로 (${left}+1)×(${right}+1)=${answer}입니다.`);
       }
       if (variant === 3) {
-        const start = int(rng, 2 + level * 3, 18 + level * 5);
+        // 원문(예제 4-3)은 1~4, 5~8 다음에 9~12를 묻는다. 묻는 네 수가 보기(1~8)와 겹치지 않게 9부터 고른다.
+        const start = int(rng, [9, 9, 13][level], [16, 22, 28][level]);
         const values = [start, start + 1, start + 2, start + 3];
         const answer = (values[0] + values[1]) * (values[2] + values[3]);
         return result(`네 꼭짓점의 위 두 수의 합과 아래 두 수의 합을 곱해 가운데 수를 만들었습니다. 빈칸을 구하세요.<div class="source-rule-examples">${cornerBoard([1, 2, 3, 4], 21)}${cornerBoard([5, 6, 7, 8], 165)}</div>${cornerBoard(values, "□")}`, answer, `(${values[0]}+${values[1]})×(${values[2]}+${values[3]})=${answer}입니다.`);
@@ -11733,7 +11956,11 @@
         { values: [16, 20, 14, 10], total: 60, answer: 10 },
         { first: [7, 9, 5, 10, 7], second: [8, 7, 9, 7, 6], total: 75, answer: "5반 13명" }
       ][variant];
-      const expected = variant === 3 ? (level === 2 ? `${data.values[1]}명, ${data.answer}명` : `${data.answer}명`) : data.answer;
+      // variant 0·2는 시간(분)·거리(m) 답에 단위를 붙인다(손글씨 대조 2026-11-28: 답 단위 누락).
+      const expected = variant === 3 ? (level === 2 ? `${data.values[1]}명, ${data.answer}명` : `${data.answer}명`)
+        : variant === 0 ? `${data.answer}분`
+          : variant === 2 ? `${data.answer}${level === 0 ? "m" : "분"}`
+            : data.answer;
       const evidence = source41Evidence("4-1-u5-e2-bar-graph", { variant, level, source41Evidence: true, fixed, data }, expected);
       // 원문마다 눈금 읽기의 기준이 달라서, 그래프 크기에서 중간값을 계산하지 않는다.
       const sourceMajorTicks = [
@@ -11759,7 +11986,7 @@
           : level === 1
             ? `찬우는 ${data.values[0]}m를 ${data.travelMinutes}분에 가므로 100m를 ${data.per100}분에 갑니다. 다빈이 집에서 학교까지 ${data.values[3]}m, 학교에서 은수 집까지 ${data.values[1]}m이므로 모두 ${data.values[3] + data.values[1]}m입니다. 100m가 ${((data.values[3] + data.values[1]) / 100)}묶음이므로 ${data.answer}분입니다.`
             : `가장 먼 거리는 ${Math.max(...data.values)}m, 가장 가까운 거리는 ${Math.min(...data.values)}m입니다. 거리 차는 ${Math.max(...data.values) - Math.min(...data.values)}m이고 100m가 ${(Math.max(...data.values) - Math.min(...data.values)) / 100}묶음이므로 시간 차는 ${data.answer}분입니다.`;
-        return result(prompt, data.answer, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
+        return result(prompt, expected, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
       }
       if (variant === 1) {
         const visible = level === 0 ? [0, 1, 3] : [0, 3];
@@ -11787,7 +12014,7 @@
         const solution = level === 0
           ? `가장 높은 막대는 ${data.farthest}m이므로 답은 ${data.answer}m입니다.`
           : `${level === 2 ? `두 거리의 차는 ${data.farthest}-${data.nearest}=${target}m입니다.` : `가장 높은 막대는 ${data.farthest}m입니다.`} ${target}m는 ${data.perDistance}m가 ${target / data.perDistance}묶음이므로 ${target / data.perDistance}×${data.perMinutes}=${data.answer}분입니다.`;
-        return result(prompt, data.answer, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
+        return result(prompt, expected, `${solution}${vertical({ title: "확인한 집에서 학교까지의 거리", visible: [], complete: true, unit: "m", xAxis: "이름" })}`);
       }
       if (variant === 3) {
         const graph = vertical({ title: "색연필 색깔별 학생 수", visible: [0, 2, 3], unit: "명", xAxis: "색깔" });
@@ -11943,22 +12170,31 @@
         ];
         const values = profiles[level];
         const startingStickers = int(rng, 5, 8);
-        const changes = values.slice(1).map((value, index) => value < values[index] ? 2 : -1);
+        // 책 예제 1-2: 줄어든 달은 0.5초당 2장을 받고, 늘어난 달은 0.5초당 1장을 잃습니다.
+        const changes = values.slice(1).map((value, index) => {
+          const halfSeconds = Math.round(Math.abs(value - values[index]) / 0.5);
+          return value < values[index] ? 2 * halfSeconds : -halfSeconds;
+        });
         const answer = startingStickers + changes.reduce((sum, value) => sum + value, 0);
         const minValue = Math.min(...values) - 0.5;
         const chart = lineChartSvg({ labels: ["3월", "4월", "5월", "6월", "7월", "8월"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "월", minValue });
         const changeExpression = changes.map(value => value >= 0 ? `+ ${value}` : `- ${Math.abs(value)}`).join(" ");
-        return result(`달리기 기록이 전달보다 0.5초 줄어든 달에는 붙임딱지 2장을 받고, 그렇지 않은 달에는 1장을 잃습니다. 3월에 ${startingStickers}장을 가지고 있었다면 8월까지 붙임딱지는 몇 장입니까?${chart}${sourceEvidence("4-2-u5-e1-example-1-2", values, `data-source42-start="${startingStickers}" data-source42-changes="${changes.join(",")}"`)}`, answer, `4월부터 기록 변화를 차례로 보면 붙임딱지 변화는 ${changes.map(value => value > 0 ? `+${value}` : value).join(", ")}장입니다. ${startingStickers} ${changeExpression} = ${answer}장이므로 답은 ${answer}장입니다.`);
+        return result(`달리기 기록을 월별로 나타낸 꺾은선그래프입니다. 4월부터 기록이 전달보다 줄어든 달에는 줄어든 0.5초마다 붙임딱지 2장을 받고, 기록이 늘어난 달에는 늘어난 0.5초마다 붙임딱지 1장을 잃습니다. 3월에 붙임딱지 ${startingStickers}장을 가지고 있었다면 8월까지 붙임딱지는 몇 장이 됩니까?${chart}${sourceEvidence("4-2-u5-e1-example-1-2", values, `data-source42-start="${startingStickers}" data-source42-changes="${changes.join(",")}"`)}`, answer, `4월부터 전달과 비교한 기록 변화는 ${values.slice(1).map((value, index) => `${value < values[index] ? "-" : "+"}${Math.abs(value - values[index])}초`).join(", ")}입니다. 0.5초마다 줄면 2장, 늘면 1장씩 세면 붙임딱지 변화는 ${changes.map(value => value > 0 ? `+${value}` : value).join(", ")}장입니다. ${startingStickers} ${changeExpression} = ${answer}장이므로 답은 ${answer}장입니다.`);
       }
       if (variant === 3) {
+        // 책 예제 1-3처럼 꺾은선그래프의 7~9월은 가리고, 7월은 막대그래프의 나에서 읽습니다(두 그래프의 7월 값은 같음).
         const july = [20000, 17500, 12500];
-        const values = [15000, 13000, 16000, 15000, 14000];
+        const values = [14500, 13000, 17500, 16500, 15500];
+        if (july[1] !== values[2]) throw new Error("막대그래프와 꺾은선그래프의 나 7월 입장객 수가 다릅니다.");
+        const hidden = [2, 3, 4];
         const total = values.reduce((sum, value) => sum + value, 0);
         const decrease = values[3] - values[4];
+        const knownSum = values[0] + values[1] + july[1];
+        const answer = (total - knownSum - decrease) / 2;
+        if (answer !== values[4]) throw new Error("9월 입장객 수 계산이 그래프 값과 다릅니다.");
         const bar = barChartSvg({ labels: ["가", "나", "다"], values: july, step: 2500, unit: "명" });
-        const line = lineChartSvg({ labels: ["5월", "6월", "7월", "8월", "9월"], series: [{ name: "나 입장객", values }], step: 1000, unit: "명", xAxis: "월", minValue: 10000 });
-        const answer = values[4];
-        return result(`왼쪽은 세 물놀이장의 7월 입장객 수이고, 오른쪽은 나 물놀이장의 5월부터 9월까지 입장객 수입니다. 나 물놀이장의 다섯 달 입장객 수의 합은 ${total.toLocaleString()}명이고, 9월은 8월보다 ${decrease.toLocaleString()}명 줄었습니다. 나 물놀이장의 9월 입장객 수를 구하세요.${bar}${line}${sourceEvidence("4-2-u5-e1-example-1-3", values, `data-source42-total="${total}" data-source42-decrease="${decrease}"`)}`, answer, `오른쪽 그래프의 9월 점은 ${answer.toLocaleString()}명을 나타냅니다. 또한 8월 ${values[3].toLocaleString()}명보다 ${decrease.toLocaleString()}명 적고, 다섯 달의 합도 ${total.toLocaleString()}명으로 조건과 같습니다.`);
+        const line = lineChartSvg({ labels: ["5월", "6월", "7월", "8월", "9월"], series: [{ name: "나 입장객", values, hidden }], step: 500, unit: "명", xAxis: "월", minValue: 12000, maxValue: 18000 }); // 세로축 끝이 가린 7월 값(17500)과 같아 보이지 않게 18000까지
+        return result(`왼쪽은 세 물놀이장의 7월 입장객 수를 나타낸 막대그래프이고, 오른쪽은 나 물놀이장의 5월부터 9월까지 입장객 수를 나타낸 꺾은선그래프입니다. 오른쪽 그래프의 7월, 8월, 9월은 가려져 있습니다. 나 물놀이장의 5월부터 9월까지 입장객 수의 합은 ${total.toLocaleString()}명이고, 9월은 8월보다 ${decrease.toLocaleString()}명 줄었습니다. 나 물놀이장의 9월 입장객 수를 구하세요.${bar}${line}${sourceEvidence("4-2-u5-e1-example-1-3", values, `data-source42-total="${total}" data-source42-decrease="${decrease}" data-source42-hidden="${hidden.join(",")}" data-source42-bar="${july.join(",")}"`)}`, answer, `오른쪽 그래프에서 5월은 ${values[0].toLocaleString()}명, 6월은 ${values[1].toLocaleString()}명이고, 7월은 왼쪽 막대그래프의 나에서 ${july[1].toLocaleString()}명입니다. 8월과 9월의 합은 ${total.toLocaleString()} - (${values[0].toLocaleString()} + ${values[1].toLocaleString()} + ${july[1].toLocaleString()}) = ${(total - knownSum).toLocaleString()}명입니다. 9월은 8월보다 ${decrease.toLocaleString()}명 적으므로 9월은 (${(total - knownSum).toLocaleString()} - ${decrease.toLocaleString()}) ÷ 2 = ${answer.toLocaleString()}명입니다.`);
       }
       if (variant === 4) {
         const labels = ["1년", "2년", "3년", "4년", "5년", "6년"];
@@ -12015,10 +12251,12 @@
         ];
         const values = profiles[level];
         const startHours = 2;
-        const slowerDays = values.slice(1).filter((value, index) => value > values[index]).length;
+        // 2일~4일 기록이 느려지면 그다음 날(3일~5일) 연습이 늘어납니다. 5일 기록은 6일 연습에만 영향을 줍니다.
+        const slowerDayNumbers = values.slice(1, 4).map((value, index) => value > values[index] ? index + 2 : 0).filter(Boolean);
+        const slowerDays = slowerDayNumbers.length;
         const answer = startHours + slowerDays;
         const chart = lineChartSvg({ labels: ["1일", "2일", "3일", "4일", "5일"], series: [{ name: "기록", values }], step: 0.5, unit: "초", xAxis: "날짜", minValue: Math.min(...values) - 0.5 });
-        return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `기록의 초가 커진 날은 ${slowerDays}번이므로 연습 시간도 ${slowerDays}번 늘어납니다. ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
+        return result(`수영 기록이 전날보다 느려지면 다음 날 연습 시간을 1시간 늘리고, 같거나 빨라지면 그대로 둡니다. 1일에 ${startHours}시간 연습했다면 5일에는 몇 시간 연습해야 합니까?${chart}${sourceEvidence("4-2-u5-e1-mission-5", values, `data-source42-slower-days="${slowerDays}"`)}`, answer, `5일 연습 시간에 영향을 주는 것은 2일부터 4일까지의 기록입니다. 이 중 전날보다 초가 커진(느려진) 날은 ${slowerDayNumbers.length ? slowerDayNumbers.map(day => `${day}일`).join(", ") : "없으"}${slowerDayNumbers.length ? "이므로" : "므로"} 그다음 날 연습 시간이 ${slowerDays}번 늘어납니다. 5일 기록은 6일 연습 시간에 반영됩니다. 따라서 5일 연습 시간은 ${startHours} + ${slowerDays} = ${answer}시간입니다.`);
       }
       if (variant === 9) {
         const labels = ["6", "8", "10", "12"];
@@ -12307,9 +12545,11 @@
         const answerBottom = bottom.slice(5);
         if (answerTop.join("") !== "BCD" || answerBottom.join("") !== "CEF") throw new Error("두 줄 무늬의 빈칸이 다릅니다.");
         const payload = { variant, level, tiles, top, bottom, answerTop, answerBottom };
-        const evidence = source41Evidence("two-row-four-step-polyomino-pattern", payload, "위 B-C-D, 아래 C-E-F");
+        // 정답 글에 문제에 없는 기호(A~F)를 쓰지 않고 칸 번호로 말한다(손글씨 대조 2026-11-28).
+        const answerText = "위·아래 줄 모두 6, 7, 8번째 칸에 2, 3, 4번째 칸과 같은 모양";
+        const evidence = source41Evidence("two-row-four-step-polyomino-pattern", payload, answerText);
         const blanks = [[5, 0], [6, 0], [7, 0], [5, 1], [6, 1], [7, 1]];
-        return result(`각 칸의 꺾인 네 칸 모양이 네 번마다 되풀이됩니다. 앞의 다섯 칸을 보고 뒤의 빈칸 세 칸씩을 채우세요.${polyominoBoard({ kind: "e3-mission-3-pattern", top, bottom, tiles, blank: blanks, title: "2행 8열 꺾인 네 칸 무늬" })}${evidence}`, "위 B-C-D, 아래 C-E-F", `다섯 번째 모양이 첫 번째 모양과 같으므로 네 칸 주기입니다. 위쪽은 B-C-D, 아래쪽은 C-E-F입니다.${polyominoBoard({ kind: "e3-mission-3-solution", top, bottom, tiles, title: "완성한 2행 8열 무늬" })}`);
+        return result(`각 칸의 꺾인 네 칸 모양이 네 번마다 되풀이됩니다. 앞의 다섯 칸을 보고 뒤의 빈칸 세 칸씩을 채우세요.${polyominoBoard({ kind: "e3-mission-3-pattern", top, bottom, tiles, blank: blanks, title: "2행 8열 꺾인 네 칸 무늬" })}${evidence}`, answerText, `위·아래 줄 모두 다섯 번째 모양이 첫 번째 모양과 같으므로 모양이 네 칸마다 되풀이됩니다. 따라서 6, 7, 8번째 칸에는 각 줄의 2, 3, 4번째 칸과 같은 모양을 차례로 그립니다.${polyominoBoard({ kind: "e3-mission-3-solution", top, bottom, tiles, title: "완성한 2행 8열 무늬" })}`);
       }
 
       if (variant === 9) {
@@ -13208,7 +13448,7 @@
         const firstMissingDenominator = firstDenominator + (firstMissingIndex - 1) * denominatorStep;
         const shownDenominator = firstDenominator + (secondMissingIndex - 1) * denominatorStep;
         const answer = `ㄱ=${firstMissingDenominator}, ㄴ=${secondMissingIndex}`;
-        const preview = Array.from({ length: 4 }, (_, index) => fractionMarkup(index + 1, firstDenominator + index * denominatorStep));
+        const preview = Array.from({ length: 4 }, (_, index) => symbolicFractionMarkup(index + 1, firstDenominator + index * denominatorStep));
         const evidence = fraction42Evidence("fraction-5-mission-4", [firstDenominator, denominatorStep, firstMissingIndex, shownDenominator], answer);
         return result(`분자는 1씩, 분모는 ${denominatorStep}씩 커지는 규칙입니다.<div class="sequence">${preview.join(", ")}, …, ${symbolicFractionMarkup(firstMissingIndex, "ㄱ")}, …, ${symbolicFractionMarkup("ㄴ", shownDenominator)}</div>ㄱ과 ㄴ을 각각 구하세요.${evidence}`, answer, `${firstMissingIndex}번째 분모는 ${firstDenominator}+${firstMissingIndex - 1}×${denominatorStep}=${firstMissingDenominator}이므로 ㄱ=${firstMissingDenominator}입니다. 분모가 ${shownDenominator}인 수는 ${secondMissingIndex}번째이므로 ㄴ=${secondMissingIndex}입니다.`);
       }
@@ -13247,9 +13487,11 @@
       }
       if (kind === 1) {
         const denominator = pick(rng, [[8, 10], [10, 12], [12, 14]][tier]);
-        const outer = denominator * int(rng, 4, 6 + tier);
+        const outerWhole = int(rng, 4, 6 + tier);
+        const outer = denominator * outerWhole;
         const blank = denominator * int(rng, 2, 4 + tier) + int(rng, 1, denominator - 1);
-        const right = denominator * int(rng, 2, 4 + tier) + int(rng, 1, denominator - 1);
+        // 결과가 바깥 수보다 작아야 중괄호 값이 양수가 됩니다(책: 5-{…}=3 5/12).
+        const right = denominator * int(rng, 2, Math.min(4 + tier, outerWhole - 1)) + int(rng, 1, denominator - 1);
         const innerLeft = denominator * int(rng, Math.floor(outer / denominator), Math.floor(outer / denominator) + 2 + tier) + int(rng, 1, denominator - 1);
         const innerRight = right + blank - outer + innerLeft;
         const answer = mixedFraction(blank, denominator);
@@ -13567,7 +13809,8 @@
       if (kind === 0) {
         const base = int(rng, 8, 12);
         const outerEqual = int(rng, base + 2, base + 8 + level * 2);
-        const innerEqual = int(rng, Math.floor(base / 2) + 2, base + 3 + level);
+        // 같은 밑변 위에서 안쪽 삼각형이 큰 삼각형 안에 들어가려면 같은 변이 더 짧아야 합니다.
+        const innerEqual = int(rng, Math.floor(base / 2) + 2, outerEqual - 2);
         const outerPerimeter = outerEqual * 2 + base;
         const innerPerimeter = innerEqual * 2 + base;
         const answer = outerPerimeter + innerPerimeter - base * 2;
@@ -13687,7 +13930,7 @@
         const labels = ["㉠", "㉡", "㉢", "㉣", "㉤", "㉥"].slice(0, values.length);
         const answer = labels.map((label, index) => ({ label, distance: Math.abs(values[index] - target) })).sort((a, b) => a.distance - b.distance).map(item => item.label).join(", ");
         const evidence = decimal42Evidence("nearest-order", [target, ...values], answer);
-        return result(`다음 소수들을 ${fixedDecimal(target, 2)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${fixedDecimal(target, 2)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
+        return result(`다음 소수들을 ${plainDecimal(target, 3)}에 가까운 수부터 차례로 기호를 쓰세요.<div class="sequence">${values.map((value, index) => `${labels[index]} ${fixedDecimal(value, 3)}`).join("　")}</div>${evidence}`, answer, `각 수와 ${plainDecimal(target, 3)}의 차를 구해 작은 차부터 정리하면 ${answer}입니다.`);
       }
       if (kind === 1) {
         const start = int(rng, 0, 12);
@@ -13734,7 +13977,7 @@
         const differenceScaled = steps * Math.abs(firstStride - secondStride);
         const answer = plainDecimal(differenceScaled, 6);
         const evidence = decimal42Evidence("opposite-walk-distance", [circumferenceKm, firstStride, secondStride], answer);
-        return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 서로 반대편에서 두 사람이 동시에 출발해 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${answer}km입니다.`);
+        return result(`둘레가 ${circumferenceKm}km인 원 모양 길의 같은 곳에서 두 사람이 동시에 출발해 서로 반대 방향으로 걷습니다. 두 사람은 한 걸음에 각각 ${fixedDecimal(firstStride, 3)}m, ${fixedDecimal(secondStride, 3)}m를 걷고 걸음 수는 항상 같습니다. 처음 만났을 때 두 사람이 걸은 거리의 차는 몇 km입니까?${evidence}`, answer, `같은 곳에서 반대 방향으로 걸으므로 두 사람이 걸은 거리의 합이 둘레 ${circumferenceKm}km=${circumferenceKm * 1000}m가 될 때 처음 만납니다. 두 사람이 한 걸음씩 걸을 때 합은 1m이므로 ${circumferenceKm * 1000}걸음 뒤 처음 만납니다. 거리 차는 ${circumferenceKm * 1000}×${fixedDecimal(Math.abs(firstStride - secondStride), 3)}m=${plainDecimal(differenceScaled, 3)}m=${answer}km입니다.`);
       }
       if (kind === 6) {
         const bonusChoices = level === 0 ? [50] : level === 1 ? [30, 50, 70] : [20, 30, 50, 70, 80];
@@ -13906,10 +14149,11 @@
         const lower = int(rng, 2050, 2180);
         const upper = int(rng, 2380, 2520);
         const candidates = [];
-        for (let value = lower + 1; value < upper; value += 1) if (Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) candidates.push(value);
+        // 셋째 자리 숫자가 0인 수(예: 2.110)는 소수 세 자리 수가 아니므로 세지 않습니다(책 Mission 3·4와 같은 기준).
+        for (let value = lower + 1; value < upper; value += 1) if (value % 10 !== 0 && Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) candidates.push(value);
         const answer = candidates.length;
         const evidence = decimal42Evidence("tenths-greater-count", [lower, upper], answer);
-        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리 숫자가 소수 둘째 자리 숫자보다 큰 수는 모두 몇 개입니까?${evidence}`, answer, `주어진 범위에서 소수 첫째 자리와 둘째 자리를 비교해 세면 ${answer}개입니다.`);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리 숫자가 소수 둘째 자리 숫자보다 큰 수는 모두 몇 개입니까?${evidence}`, answer, `소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수가 아니므로 뺍니다. 주어진 범위에서 소수 첫째 자리와 둘째 자리를 비교해 세면 ${answer}개입니다.`);
       }
       if (kind === 3) {
         const lower = int(rng, 2725, 2860);
@@ -13917,11 +14161,11 @@
         const candidates = [];
         for (let value = lower + 1; value < upper; value += 1) {
           const digits = [Math.floor(value / 1000), Math.floor(value / 100) % 10, Math.floor(value / 10) % 10, value % 10];
-          if (digits[1] === digits[2] * 2 && new Set(digits).size === 4) candidates.push(value);
+          if (digits[3] !== 0 && digits[1] === digits[2] * 2 && new Set(digits).size === 4) candidates.push(value); // 셋째 자리 0(예: 2.840)은 소수 세 자리 수가 아님
         }
         const answer = candidates.length;
         const evidence = decimal42Evidence("digit-ratio-count", [lower, upper], answer);
-        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리와 둘째 자리 숫자의 비가 2:1이고 네 자리 숫자가 모두 다른 수는 몇 개입니까?${evidence}`, answer, `범위 안의 수를 전부 확인해 두 자리의 비와 서로 다른 숫자 조건을 함께 만족하는 경우를 세면 ${answer}개입니다.`);
+        return result(`${fixedDecimal(lower, 3)}보다 크고 ${fixedDecimal(upper, 3)}보다 작은 소수 세 자리 수 중 소수 첫째 자리와 둘째 자리 숫자의 비가 2:1이고 네 자리 숫자가 모두 다른 수는 몇 개입니까?${evidence}`, answer, `소수 셋째 자리 숫자가 0인 수는 소수 세 자리 수가 아니므로 뺍니다. 범위 안의 수를 전부 확인해 두 자리의 비와 서로 다른 숫자 조건을 함께 만족하는 경우를 세면 ${answer}개입니다.`);
       }
       if (kind === 4) {
         const cards = shuffle(rng, [1, 2, 3, 5, 6, 7, 8, 9]).slice(0, 4).sort((a, b) => a - b);
@@ -18806,14 +19050,15 @@
         return result(`두 수 ${base}, ㉠의 최대공약수는 ${target}입니다. 세 자리 자연수 ㉠ 중 가장 큰 수를 구하세요.${hint("${target}의 세 자리 배수부터 찾아보세요.", "세 자리 수를 큰 수부터 확인하여 최대공약수 조건을 만족하는 첫 수를 찾으세요.")}${tag("largest-three-digit-gcd", [base, target], "single-value")}`, answer, `조건을 만족하는 세 자리 자연수 가운데 가장 큰 수는 ${answer}입니다.`);
       }
       if (variant === 11) {
-        const [product, target] = choose([[[100, 5], [200, 5], [400, 10]], [[100, 5], [175, 5], [900, 15]], [[1600, 20], [2500, 25], [3600, 30]]]);
-        const candidates = allDivisors(product).flatMap(a => {
-          const b = product / a;
+        // 원문 Mission 4(교재 p.17): 최대공약수가 5이고 합이 100인 두 수의 순서쌍 (㉠, ㉡)의 수, ㉠>㉡ → 4쌍.
+        const [sum, target] = choose([[[48, 4], [60, 5], [70, 7]], [[100, 5], [90, 6], [120, 8]], [[168, 8], [200, 8], [180, 6]]]);
+        const candidates = range(1, sum - 1).flatMap(a => {
+          const b = sum - a;
           return a > b && gcd(a, b) === target ? [[a, b]] : [];
         });
-        if (candidates.length !== 1) throw new Error("곱과 최대공약수 조건을 만족하는 순서쌍이 하나가 아닙니다.");
-        const [a, b] = candidates[0];
-        return result(`두 자연수 ㉠, ㉡에서 ㉠이 ㉡보다 큽니다. 두 수의 곱은 ${product}이고 최대공약수는 ${target}입니다. 순서 있는 두 수 쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요.${hint("${product}의 약수 짝을 써 보세요.", "약수 짝마다 최대공약수를 확인하여 조건을 만족하는 쌍을 빠뜨리지 마세요.")}${tag("ordered-pair-gcd-product-count", [product, target], "single-value")}`, candidates.length, `${product}의 약수 짝을 모두 확인하면 조건을 만족하는 쌍은 (${a}, ${b}) 하나입니다. 따라서 모두 ${candidates.length}개입니다.`);
+        if (candidates.length < 2) throw new Error("합과 최대공약수 조건을 만족하는 순서쌍이 둘 이상이어야 합니다.");
+        const pairText = candidates.map(([a, b]) => `(${a}, ${b})`).join(", ");
+        return result(`최대공약수가 ${target}이고, 합이 ${sum}인 두 수의 순서쌍 (㉠, ㉡)은 모두 몇 개인지 구하세요. (단, ㉠>㉡)${tag("ordered-pair-gcd-sum-count", [sum, target], "single-value")}`, candidates.length, `두 수를 ${target}×□, ${target}×△로 놓으면 □+△=${sum / target}이고 □와 △의 공약수는 1뿐이어야 합니다. 조건을 만족하는 순서쌍은 ${pairText}이므로 모두 ${candidates.length}개입니다.`);
       }
       if (variant === 12) {
         const [first, remainder, second, short] = choose([[[50, 2, 58, 2], [93, 3, 105, 3], [100, 4, 116, 4]], [[137, 2, 183, 6], [100, 4, 116, 4], [155, 5, 175, 5]], [[222, 6, 246, 6], [200, 8, 232, 8], [250, 10, 290, 10]]]);
@@ -19152,7 +19397,7 @@
       const [last, addend] = choose([[[7, 73], [8, 88], [9, 107]], [[9, 107], [8, 124], [7, 145]], [[9, 179], [8, 196], [7, 217]]]);
       const candidates = range(10, 99).filter(value => (Number(`${value}${last}`) + addend) % 36 === 0);
       const answer = candidates.at(-1);
-      return result(`두 자리 수 □□${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 □□을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
+      return result(`세 자리 수 ㉠㉡${last}에 ${addend}을 더한 수가 36의 배수일 때, 가장 큰 두 자리 수 ㉠㉡을 구하세요.${tag("largest-two-digit-before-fixed-last", [last, addend], "single-value")}`, answer, `조건을 만족하는 두 자리 수는 ${setAnswer(candidates)}이고, 이 중 가장 큰 수는 ${answer}입니다.`);
     },
     factorMultipleE5({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 13 || variant === 5 || variant === 13) throw new Error("약수와 배수 개념탐구 5의 답이 하나인 원문 분기만 생성할 수 있습니다.");
@@ -19551,7 +19796,30 @@
         const targetCode = caesar(target, shift);
         return result(`알파벳을 같은 칸 수만큼 뒤로 옮겨 암호를 만들었습니다. ${knownCode}를 풀면 ${known}입니다. 같은 규칙으로 ${targetCode}를 푸세요.${difficultyInstruction}${tag("caesar-decode", [targetCode.replaceAll(" ", "_"), shift])}`, target, `암호의 각 글자를 알파벳에서 ${shift}칸씩 앞으로 되돌리면 ${target}입니다.`);
       }
-      if (variant === 1 || variant === 5) {
+      if (variant === 5) {
+        // 원문 Mission 1(교재 p.33): 6→5, 8→9, 12→17, 25→43인 상자에 15를 넣으면 23. 예제 1-1과 다른 네 짝·빼는 규칙을 씁니다.
+        const [multiplier, subtrahend, inputs, target] = choose([
+          [[2, 1, [3, 5, 8, 12], 10], [3, 2, [2, 4, 6, 9], 7], [2, 3, [4, 6, 9, 15], 11]],
+          [[2, 7, [6, 8, 12, 25], 15], [3, 5, [4, 7, 10, 21], 13], [2, 9, [7, 10, 13, 28], 17]],
+          [[4, 9, [5, 8, 13, 27], 19], [3, 11, [6, 9, 14, 31], 22], [5, 8, [4, 7, 12, 26], 17]]
+        ]);
+        const samples = inputs.map(input => `${input}→${multiplier * input - subtrahend}`).join(", ");
+        const answer = multiplier * target - subtrahend;
+        return result(`어떤 상자에 수가 쓰인 공을 넣었더니 다음과 같이 규칙에 따라 수가 바뀐 공이 나왔습니다.<div class="equation">${samples}</div>상자 안에 ${target}${numberJosa.iGa(target)} 쓰인 공을 넣으면 어떤 수가 쓰인 공이 나오는지 구하세요.${difficultyInstruction}${tag("affine-rule", [multiplier, -subtrahend, target])}`, answer, `넣은 수에 ${multiplier}${numberJosa.eulReul(multiplier)} 곱한 뒤 ${subtrahend}${numberJosa.eulReul(subtrahend)} 빼는 규칙입니다. ${inputs[0]}×${multiplier}-${subtrahend}=${multiplier * inputs[0] - subtrahend}처럼 모든 짝이 맞습니다. 따라서 ${target}×${multiplier}-${subtrahend}=${answer}입니다.`);
+      }
+      if (variant === 6) {
+        // 원문 Mission 2(교재 p.33): 수연 16→경민 5, 32→7, 40→8일 때 72→12. 예제 1-2와 다른 이야기·수치를 씁니다.
+        const [divisor, addend, inputs, target] = choose([
+          [[4, 2, [8, 12, 20], 36], [5, 1, [10, 20, 35], 60], [6, 4, [12, 24, 30], 54]],
+          [[8, 3, [16, 32, 40], 72], [6, 5, [18, 30, 48], 96], [7, 2, [14, 35, 49], 91]],
+          [[12, 5, [24, 48, 84], 180], [9, 2, [27, 45, 72], 153], [15, 4, [30, 60, 105], 255]]
+        ]);
+        const said = value => `${value}${numberJosa.iGa(value) === "이" ? "이라고" : "라고"}`;
+        const replies = inputs.map(input => input / divisor + addend);
+        const answer = target / divisor + addend;
+        return result(`수연이와 경민이가 대응 관계를 만들어 답하고 있습니다. 수연이가 ${said(inputs[0])} 말하면 경민이는 ${said(replies[0])} 답하고, 수연이가 ${said(inputs[1])} 말하면 경민이는 ${said(replies[1])} 답합니다. 또, 수연이가 ${said(inputs[2])} 말하면 경민이는 ${said(replies[2])} 답합니다. 수연이가 ${said(target)} 말하면 경민이는 어떤 수를 답하겠는지 구하세요.${difficultyInstruction}${tag("divide-add-rule", [divisor, addend, target])}`, answer, `경민이가 답한 수는 수연이가 말한 수를 ${divisor}${numberJosa.ro(divisor)} 나눈 뒤 ${addend}${numberJosa.eulReul(addend)} 더한 수입니다. ${inputs[0]}÷${divisor}+${addend}=${replies[0]}처럼 모든 짝이 맞습니다. 따라서 ${target}÷${divisor}+${addend}=${answer}입니다.`);
+      }
+      if (variant === 1) {
         const multiplier = int(rng, [2, 4, 7][level], [5, 9, 13][level]);
         const addend = int(rng, [1, -7, -18][level], [8, 11, 19][level]);
         const target = int(rng, [12, 30, 55][level], [36, 78, 140][level]);
@@ -19559,7 +19827,7 @@
         const answer = multiplier * target + addend;
         return result(`수 상자는 ${samples}처럼 수를 바꿉니다. ${target}을 넣으면 나오는 수를 구하세요.${difficultyInstruction}${tag("affine-rule", [multiplier, addend, target])}`, answer, `들어간 수에 ${multiplier}을 곱한 뒤 ${addend >= 0 ? `${addend}을 더하는` : `${Math.abs(addend)}을 빼는`} 규칙입니다. 따라서 ${target}은 ${answer}로 바뀝니다.`);
       }
-      if (variant === 2 || variant === 6) {
+      if (variant === 2) {
         const divisor = pick(rng, [[2, 3, 4, 5], [4, 5, 6, 8, 9], [6, 8, 9, 12, 15]][level]);
         const addend = int(rng, [0, -2, -6][level], [5, 7, 11][level]);
         const sampleStart = Math.max(2, 1 - addend);
@@ -19627,7 +19895,24 @@
         const value = multiplier * target + addend;
         return result(`두 양의 짝이 ${table}입니다. 첫째 양을 □, 둘째 양을 △라 할 때 관계식을 쓰고, □=${target}일 때 △를 구하세요.${difficultyInstruction}${tag("affine-table", [multiplier, addend, target])}`, `△=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}, ${value}`, `표에서 □가 1 늘 때 △는 ${multiplier}씩 늘어납니다. 관계식은 △=${multiplier}×□${addend >= 0 ? `+${addend}` : addend}이고, □=${target}을 넣으면 △=${value}입니다.`);
       }
-      if (variant === 2 || variant === 5) {
+      if (variant === 2) {
+        // 원문 예제 2-2(교재 p.34): □ 3~8, ○=□-2, △=(□-2)×(□-1)÷2-1. 빈칸이 있는 세 줄 대응표에서 □와 △의 관계식을 씁니다.
+        const [shift, minus] = choose([[[1, 0], [2, 0], [1, 1]], [[2, 1], [3, 1], [3, 0]], [[4, 1], [5, 1], [6, 1]]]);
+        const squares = Array.from({ length: 6 }, (_, index) => shift + 1 + index);
+        const circles = squares.map(square => square - shift);
+        const triangles = circles.map(circle => circle * (circle + 1) / 2 - minus);
+        const hiddenCircles = new Set([3, 5]);
+        const hiddenTriangles = new Set([2, 5]);
+        const factor = offset => offset === 0 ? "□" : `(□-${offset})`;
+        const relation = `△=${factor(shift)}×${factor(shift - 1)}÷2${minus ? `-${minus}` : ""}`;
+        const table = correspondenceTable([
+          ["□", ...squares],
+          ["○", ...circles.map((value, index) => hiddenCircles.has(index) ? "" : value)],
+          ["△", ...triangles.map((value, index) => hiddenTriangles.has(index) ? "" : value)]
+        ]);
+        return result(`다음은 □, ○, △ 사이의 대응 관계를 나타낸 표입니다. □와 △ 사이의 대응 관계를 식으로 나타내세요.${table}${difficultyInstruction}${tag("triangular-three-row-table", [shift, minus], "relation")}`, relation, `○=□-${shift}입니다. △는 ○가 1, 2, 3, …일 때 1부터 ○까지의 합${minus ? `에서 ${minus}${numberJosa.eulReul(minus)} 뺀 수` : ""}이므로 △=○×(○+1)÷2${minus ? `-${minus}` : ""}입니다. ○ 대신 □-${shift}${numberJosa.eulReul(shift)} 넣으면 ${relation}입니다.`);
+      }
+      if (variant === 5) {
         const [numerator, denominator, target] = choose([
           [[2, 3, 90], [3, 4, 80]],
           [[3, 4, 244], [5, 6, 318]],
@@ -19819,21 +20104,24 @@
         const answer = Number((speed * seconds).toFixed(1));
         return result(`소리는 기온이 0℃일 때 1초에 331m를 가고, 기온이 1℃ 오를 때마다 1초에 0.6m씩 더 갑니다. 기온이 ${temperature}℃인 날 번개가 보이고 ${seconds}초 뒤에 천둥소리가 들렸습니다. 번개 친 곳까지의 거리를 구하세요.${difficultyInstruction}${tag("sound-distance", [temperature, seconds])}`, `${answer}m`, `소리의 빠르기는 331+0.6×${temperature}=${speed}m입니다. ${seconds}초 동안 간 거리는 ${speed}×${seconds}=${answer}m입니다.`);
       }
+      // 원문 Mission 6(교재 p.39): 동전을 하나씩 올릴 때마다 1초에 다음 동전의 십의 자리 수만큼 1초씩 더 걸립니다(2~9개째 1초, 10~19개째 2초, 20~29개째 3초…).
+      // 오후 4시 27분부터 99개까지 쌓으면 548초가 걸려 리스본은 오후 3시 36분 8초입니다. 100개째부터는 원문 규칙이 정해지지 않아 99개 이하만 씁니다.
       const coinCount = pick(rng, [
-        [39, 49, 59],
+        [29, 39, 49],
         [79, 89, 99],
-        [129, 149, 179]
+        [91, 95, 99]
       ][level]);
       const startSeconds = pick(rng, [16 * 3600 + 7 * 60, 16 * 3600 + 27 * 60, 17 * 3600 + 12 * 60]);
       let elapsedSeconds = 0;
-      for (let coin = 2; coin <= coinCount; coin += 1) elapsedSeconds += String(coin).length;
+      for (let coin = 2; coin <= coinCount; coin += 1) elapsedSeconds += 1 + Math.floor(coin / 10);
       const lisbonSeconds = startSeconds - 3600 + elapsedSeconds;
       const second = lisbonSeconds % 60;
       const minute = Math.floor(lisbonSeconds / 60) % 60;
       const hour24 = Math.floor(lisbonSeconds / 3600) % 24;
       const hour = hour24 % 12 || 12;
       const answer = `${hour24 < 12 ? "오전" : "오후"} ${hour}시 ${minute}분 ${second}초`;
-      return result(`서울이 낮 12시일 때 카이로는 오전 5시이고, 리스본이 낮 12시일 때 서울은 오후 8시입니다. 카이로에서 ${clockText(Math.floor(startSeconds / 60))}부터 동전을 ${coinCount}개까지 쌓았습니다. 맨 아래 동전은 세지 않고, 2~9번째는 1초씩, 10~99번째는 2초씩, 100번째부터는 3초씩 걸립니다. 모두 쌓았을 때 리스본 시각을 구하세요.${difficultyInstruction}${tag("coin-stack-city-time", [coinCount, startSeconds, elapsedSeconds, lisbonSeconds])}`, answer, `카이로는 리스본보다 1시간 빠릅니다. 동전을 쌓는 데 ${elapsedSeconds}초가 걸리므로, 카이로 시작 시각보다 1시간 이른 리스본 시각에 ${elapsedSeconds}초를 더하면 ${answer}입니다.`);
+      const lastTens = Math.floor(coinCount / 10);
+      return result(`서울의 시각이 낮 12시일 때 카이로의 시각은 오전 5시입니다. 리스본의 시각이 낮 12시일 때 서울의 시각은 오후 8시입니다. 카이로에서 ${clockText(Math.floor(startSeconds / 60))}부터 동전 쌓기를 시작하여 다음 조건과 같이 동전을 ${coinCount}개까지 쌓았을 때 리스본의 시각은 몇 시 몇 분 몇 초인지 구하세요.<ul class="condition-list"><li>가장 아래에 동전을 놓는 시간은 계산하지 않습니다.</li><li>동전을 하나씩 올릴 때마다 1초가 걸리며 다음 동전의 십의 자리 수만큼 1초씩 더 걸립니다.<br>예) 2~9개째를 올릴 때는 각각 1초, 10~19개째를 올릴 때는 각각 2초, 20~29개째를 올릴 때는 각각 3초가 걸립니다.</li></ul>${difficultyInstruction}${tag("coin-stack-city-time", [coinCount, startSeconds, elapsedSeconds, lisbonSeconds])}`, answer, `카이로는 리스본보다 1시간 빠릅니다. 2~9개째는 8×1=8초, 10~19개째부터 ${lastTens * 10}~${coinCount}개째까지는 십의 자리 수에 1을 더한 시간씩 걸려 모두 ${elapsedSeconds}초가 걸립니다. 카이로 시작 시각보다 1시간 이른 리스본 시각에 ${elapsedSeconds}초를 더하면 ${answer}입니다.`);
     },
     ruleCorrespondenceAdvanced({ rng, level, variant = 0 }) {
       if (variant % 3 === 0) {
@@ -19973,16 +20261,18 @@
         return result(`어떤 분수의 분모에 ${addToDenominator}를 더하면 ${first}과 크기가 같고, 분모에서 ${subtractFromDenominator}를 빼면 ${second}과 크기가 같습니다. 처음 분수를 구하세요.${difficultyInstruction}${tag("denominator-plus-minus", [numerator, denominator, addToDenominator, subtractFromDenominator])}`, fraction(numerator, denominator), `두 조건에 맞는 같은 분자를 찾아 분모를 되돌리면 처음 분수는 ${fractionMarkup(numerator, denominator)}입니다. 두 조건에 다시 넣어도 각각 ${first}, ${second}이 됩니다.`);
       }
       if (variant === 4) {
+        // 원문 예제 1-4(교재 p.42): 분모에서 16, 분자에서 52를 빼도 크기가 같고 가와 나의 최소공배수가 572 → 가=143, 나=44.
         const [reducedNumerator, reducedDenominator, common, removedScale] = choose([
-          [[7, 3, 60, 2], [9, 4, 84, 3], [11, 5, 96, 4]],
-          [[13, 4, 572, 4], [17, 6, 420, 5], [19, 7, 360, 6]],
-          [[23, 8, 840, 7], [29, 11, 990, 8], [31, 12, 1260, 9]]
+          [[7, 3, 4, 2], [9, 4, 5, 2], [11, 5, 3, 2]],
+          [[13, 4, 11, 4], [17, 6, 7, 5], [19, 7, 6, 4]],
+          [[23, 8, 9, 7], [29, 11, 10, 8], [31, 12, 11, 9]]
         ]);
         const numerator = reducedNumerator * common;
         const denominator = reducedDenominator * common;
+        const least = reducedNumerator * reducedDenominator * common;
         const removeNumerator = reducedNumerator * removedScale;
         const removeDenominator = reducedDenominator * removedScale;
-        return result(`분수 ${symbolicFractionMarkup("가", "나")}는 분모에서 ${removeDenominator}, 분자에서 ${removeNumerator}를 빼도 크기가 변하지 않습니다. 가와 나의 최대공약수가 ${common}일 때 가와 나를 각각 구하세요.${difficultyInstruction}${tag("unchanged-after-subtraction", [reducedNumerator, reducedDenominator, common, removedScale], "ordered")}`, `${numerator}, ${denominator}`, `빼는 두 수의 비가 ${reducedNumerator}:${reducedDenominator}이므로 가:나는 ${reducedNumerator}:${reducedDenominator}입니다. 두 수의 최대공약수가 ${common}이므로 가=${reducedNumerator}×${common}=${numerator}, 나는 ${reducedDenominator}×${common}=${denominator}입니다.`);
+        return result(`분수 ${symbolicFractionMarkup("가", "나")}는 분모에서 ${removeDenominator}, 분자에서 ${removeNumerator}${numberJosa.eulReul(removeNumerator)} 빼도 그 크기가 변하지 않습니다. 가와 나의 최소공배수가 ${least}일 때, 자연수 가, 나를 각각 구하세요.${difficultyInstruction}${tag("unchanged-after-subtraction-lcm", [reducedNumerator, reducedDenominator, least, removedScale], "ordered")}`, `${numerator}, ${denominator}`, `빼는 두 수의 비가 ${removeNumerator}:${removeDenominator}=${reducedNumerator}:${reducedDenominator}이므로 가=${reducedNumerator}×□, 나=${reducedDenominator}×□로 놓을 수 있습니다. ${reducedNumerator}${/[013678]$/.test(String(reducedNumerator)) ? "과" : "와"} ${reducedDenominator}의 공약수는 1뿐이므로 가와 나의 최소공배수는 ${reducedNumerator}×${reducedDenominator}×□=${reducedNumerator * reducedDenominator}×□입니다. ${reducedNumerator * reducedDenominator}×□=${least}에서 □=${common}이므로 가=${numerator}, 나=${denominator}입니다.`);
       }
       if (variant === 5) {
         const [numerator, denominator, added] = choose([
@@ -20022,7 +20312,8 @@
       ]);
       const targetNumerator = targetIndex;
       const targetDenominator = sum - targetIndex;
-      return result(`다음과 같이 분자는 1씩 커지고 분모는 1씩 작아지는 분수를 나열합니다.<div class="sequence">${fractionMarkup(1, sum - 1)}, ${fractionMarkup(2, sum - 2)}, ${fractionMarkup(3, sum - 3)}, ${fractionMarkup(4, sum - 4)}, …</div>${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수는 몇 번째인지 구하세요.${difficultyInstruction}${tag("constant-sum-sequence", [sum, targetIndex])}`, `${targetIndex}번째`, `n번째 분수는 ${symbolicFractionMarkup("n", `${sum}-n`)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 n을 구하면 ${targetIndex}이므로 ${targetIndex}번째입니다.`);
+      // 원문 Mission 5(교재 p.43)는 1/87, 2/86, 3/85, 4/84, …를 약분하지 않고 보입니다. 약분하면 분자·분모 규칙이 사라지므로 symbolicFractionMarkup을 씁니다.
+      return result(`다음과 같은 규칙으로 분수들을 나열할 때, ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 분수는 몇 번째인지 구하세요.<div class="sequence">${symbolicFractionMarkup(1, sum - 1)}, ${symbolicFractionMarkup(2, sum - 2)}, ${symbolicFractionMarkup(3, sum - 3)}, ${symbolicFractionMarkup(4, sum - 4)}, …</div>${difficultyInstruction}${tag("constant-sum-sequence", [sum, targetIndex])}`, `${targetIndex}번째`, `n번째 분수는 ${symbolicFractionMarkup("n", `${sum}-n`)}입니다. ${fractionMarkup(targetNumerator, targetDenominator)}와 크기가 같은 n을 구하면 ${targetIndex}이므로 ${targetIndex}번째입니다.`);
     },
     irreducibleFractionE2({ rng, level, variant = 0 }) {
       if (!Number.isInteger(variant) || variant < 0 || variant > 10) throw new Error("약분과 기약분수 개념탐구 2의 원문 분기는 0부터 10까지여야 합니다.");
@@ -20657,7 +20948,8 @@
         const total = rationalOperation(addAll(terms), rationalValue(extraOnes), "+");
         const groups = Array.from({ length: lastDenominator - 1 }, (_, index) => {
           const denominator = index + 2;
-          return Array.from({ length: denominator - 1 }, (__, numerator) => fractionMarkup(numerator + 1, denominator)).join(" + ");
+          // 원문(예제 1-1-3, Mission 6)은 2/4, 3/6처럼 약분하지 않고 분모별로 적습니다. 약분하면 묶음 규칙이 사라지므로 symbolicFractionMarkup을 씁니다.
+          return Array.from({ length: denominator - 1 }, (__, numerator) => symbolicFractionMarkup(numerator + 1, denominator)).join(" + ");
         });
         const shown = groups.map((group, index) => {
           const prefix = variant === 15
@@ -20666,7 +20958,7 @@
           const suffix = variant === 15 && index === groups.length - 1 ? " + 1" : "";
           return `<span class="fraction-series-group">${prefix}${group}${suffix}</span>`;
         }).join("");
-        return result(`분모별로 묶어 규칙을 찾아 다음 합을 구하세요.<div class="equation fraction-series-equation">${shown}<span class="fraction-series-result">= □</span></div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : ""} 더하면 ${markup(total)}입니다.`);
+        return result(`다음을 계산하세요.<div class="equation fraction-series-equation">${shown}<span class="fraction-series-result">= □</span></div>${tag(variant === 4 ? "grouped-fraction-series" : "grouped-series-with-ones", [lastDenominator, extraOnes])}`, display(total), `분모가 n인 묶음은 ${symbolicFractionMarkup("1+2+…+(n-1)", "n")}=${symbolicFractionMarkup("n-1", "2")}입니다. 모든 묶음${extraOnes ? `과 자연수 1을 ${extraOnes}개` : "을"} 더하면 ${markup(total)}입니다.`);
       }
       if (variant === 5) {
         const cards = choose([
@@ -21019,16 +21311,23 @@
         return result(`빈칸에 알맞은 수를 구하세요.<div class="equation">□ + ${markup(a)} - ${markup(b)} = ${markup(c)}</div>${tag("blank-plus-a-minus-b", [aw, an, ad, bw, bn, bd, cw, cn, cd])}`, display(answer), `양변에서 ${markup(a)}를 빼고 ${markup(b)}를 더하면 □=${markup(c)}-${markup(a)}+${markup(b)}=${markup(answer)}입니다.`);
       }
       if (variant === 15) {
+        // 원문 Mission 5(교재 p.55): 7/16, 5/16, 1/2만 보이는 표에서 칸 (가), (나), (다)에 들어갈 세 수의 합 19/16을 묻습니다.
+        // 묻는 대상이 칸 전체의 수이므로 칸 자리에 (가), (나), (다)를 그대로 놓습니다(분자 자리에 기호를 넣지 않습니다).
         const [denominator, scale, offset] = choose([
-          [16, 1, 0], [18, 1, 1], [20, 1, 2], [24, 2, 1], [28, 2, 2], [30, 2, 3], [36, 3, 1], [40, 3, 2], [45, 3, 4]
+          [12, 1, 0], [16, 1, 3], [18, 1, 1], [16, 1, 3], [20, 1, 2], [24, 2, 1], [28, 2, 2], [30, 2, 3], [36, 3, 1]
         ]);
-        const base = [8, 1, 6, 3, 5, 7, 4, 9, 2];
+        const base = [4, 9, 2, 3, 5, 7, 8, 1, 6];
         const values = base.map(value => rationalValue(value * scale + offset, denominator));
-        const blanks = [0, 4, 8];
-        const cells = values.map((value, index) => blanks.includes(index) ? symbolicFractionMarkup(`㉠㉡㉢`[blanks.indexOf(index)], denominator) : fractionMarkup(value.numerator, value.denominator));
+        const shownIndexes = [0, 2, 4];
+        const labelIndexes = [7, 3, 8];
+        const labelNames = ["(가)", "(나)", "(다)"];
+        const cells = values.map((value, index) => shownIndexes.includes(index)
+          ? fractionMarkup(value.numerator, value.denominator)
+          : labelIndexes.includes(index) ? labelNames[labelIndexes.indexOf(index)] : "");
         const table = `<table class="problem-table fraction-magic"><tbody>${[0, 1, 2].map(row => `<tr>${cells.slice(row * 3, row * 3 + 3).map(cell => `<td>${cell}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
-        const answer = add(add(values[0], values[4]), values[8]);
-        return result(`다음 표에서 가로, 세로, 대각선에 있는 세 수의 합이 모두 같을 때 ㉠+㉡+㉢을 구하세요.${table}${tag("fraction-magic-three-labels", [denominator, scale, offset, ...blanks])}`, display(answer), `가로·세로·대각선의 공통 합을 비교하면 ㉠=${markup(values[0])}, ㉡=${markup(values[4])}, ㉢=${markup(values[8])}입니다. 세 수의 합은 ${markup(answer)}입니다.`);
+        const common = add(add(values[0], values[4]), values[8]);
+        const answer = add(add(values[7], values[3]), values[8]);
+        return result(`다음 표에서 가로, 세로, 대각선의 어떤 세 수를 더해도 그 합이 같습니다. 세 수 (가), (나), (다)의 합을 구하세요.${table}${tag("fraction-magic-book-layout", [denominator, scale, offset])}`, display(answer), `가운데 수가 ${markup(values[4])}이므로 한 줄의 합은 ${markup(values[4])}×3=${markup(common)}입니다. 맨 윗줄 가운데 수는 ${markup(values[1])}, (가)=${markup(values[7])}, (다)=${markup(values[8])}, 맨 아랫줄 왼쪽 수는 ${markup(values[6])}, (나)=${markup(values[3])}입니다. 따라서 (가)+(나)+(다)=${markup(answer)}입니다.`);
       }
       if (variant === 16) {
         const cards = choose([
@@ -29944,32 +30243,49 @@
       };
 
       if (variant === 0) {
-        const smallShort = 6;
-        const smallLong = [12, 15, 18][dataVariant];
+        // 원문 개념탐구 1(교재 p.62): ①은 작은 직사각형 4개를 세로로 나란히 왼쪽 위에 놓아 남은 ㄱ자(오른쪽 열+아랫부분)를 색칠하고,
+        // ②는 위 왼쪽에 가로로 2개, 아래 오른쪽에 세로로 2개를 놓아 남은 두 직사각형을 색칠합니다.
+        // ① 둘레=(가로+세로)×2, ② 둘레 합=세로×4이므로 차는 (가로-세로)×2=12cm로 작은 직사각형의 크기와 관계없이 정해집니다.
+        const difference = 6;
+        const [smallShort, smallLong] = [[4, 16], [5, 16], [5, 18]][dataVariant];
         const width = smallLong + 2 * smallShort;
-        const height = smallLong + smallShort;
-        const short = width - height, answer = 2 * short;
-        const smallOne = [[0, 0, smallShort, smallLong], [smallShort, 0, smallShort, smallLong], [2 * smallShort, 0, smallShort, smallLong], [3 * smallShort, 0, smallShort, smallLong]];
-        const colorOne = [[4 * smallShort, 0, width - 4 * smallShort, smallLong], [0, smallLong, width, smallShort]].filter(([, , w, h]) => w > 0 && h > 0);
-        const smallTwo = [[0, 0, smallLong, smallShort], [0, smallShort, smallLong, smallShort], [width - 2 * smallShort, smallShort, smallShort, smallLong], [width - smallShort, smallShort, smallShort, smallLong]];
-        const colorTwo = [[smallLong, 0, width - smallLong, smallShort], [0, 2 * smallShort, smallLong, height - 2 * smallShort]];
-        const differenceGiven = given(short, "cm", "3×2");
-        return fixedResult(`모양과 크기가 같은 작은 직사각형 4개를 같은 큰 직사각형 안에 ①, ②처럼 다르게 놓고 남은 부분을 색칠했습니다. 큰 직사각형의 가로는 세로보다 ${differenceGiven} 더 깁니다. 두 색칠한 부분의 둘레 차를 구하세요.${support("①의 둘레에서 ②의 둘레를 뺄 때 같은 짧은 변이 몇 번 빠지는지 확인하세요.")}<div class="diagram-pair"><figure><figcaption>①</figcaption>${rectangleModel("two-layout-first", width, height, smallOne, colorOne, answer, "작은 직사각형 네 개를 세로로 모아 놓은 첫 번째 배치")}</figure><figure><figcaption>②</figcaption>${rectangleModel("two-layout-second", width, height, smallTwo, colorTwo, answer, "작은 직사각형 네 개를 가로와 세로로 나누어 놓은 두 번째 배치")}</figure></div>${tag("two-layout-perimeter-difference", [short, width, height, answer])}`, answer, `두 배치의 경계를 같은 부분끼리 지우면 짧은 변 ${short}cm가 두 번 남습니다. 따라서 둘레 차는 ${short}×2=${answer}cm입니다.`);
+        const height = width - difference;
+        if (!(height > smallLong && smallLong > 2 * smallShort && height > 2 * smallShort)) throw new Error("개념탐구 1 배치가 원문 그림 구조와 맞지 않습니다.");
+        const answer = 2 * difference;
+        const smallOne = [0, 1, 2, 3].map(index => [index * smallShort, 0, smallShort, smallLong]);
+        const colorOne = [[4 * smallShort, 0, width - 4 * smallShort, height], [0, smallLong, 4 * smallShort, height - smallLong]];
+        const smallTwo = [[0, 0, smallLong, smallShort], [0, smallShort, smallLong, smallShort], [smallLong, height - smallLong, smallShort, smallLong], [smallLong + smallShort, height - smallLong, smallShort, smallLong]];
+        const colorTwo = [[smallLong, 0, width - smallLong, height - smallLong], [0, 2 * smallShort, smallLong, height - 2 * smallShort]];
+        const differenceGiven = given(difference, "cm", "3×2");
+        return fixedResult(`모양과 크기가 같은 작은 직사각형 4개를 같은 큰 직사각형 안에 ①, ②처럼 다르게 놓고 남은 부분을 색칠했습니다. 큰 직사각형의 가로는 세로보다 ${differenceGiven} 더 깁니다. 두 색칠한 부분의 둘레 차를 구하세요.${support("①과 ②의 색칠한 부분의 둘레를 각각 큰 직사각형의 가로와 세로로 나타내 보세요.")}<div class="diagram-pair"><figure><figcaption>①</figcaption>${rectangleModel("two-layout-first", width, height, smallOne, colorOne, answer, "작은 직사각형 네 개를 왼쪽 위에 세로로 나란히 놓고 오른쪽과 아래쪽의 ㄱ자 부분을 색칠한 첫 번째 배치")}</figure><figure><figcaption>②</figcaption>${rectangleModel("two-layout-second", width, height, smallTwo, colorTwo, answer, "작은 직사각형 두 개는 왼쪽 위에 가로로, 두 개는 오른쪽 아래에 세로로 놓고 남은 두 부분을 색칠한 두 번째 배치")}</figure></div>${tag("two-layout-perimeter-difference", [difference, width, height, answer])}`, answer, `①의 색칠한 부분은 큰 직사각형의 한 귀퉁이를 떼어 낸 모양이므로 둘레가 (가로+세로)×2입니다. ②의 두 색칠한 직사각형의 둘레를 더하면 세로의 4배입니다. 따라서 둘레의 차는 (가로+세로)×2-세로×4=(가로-세로)×2=${difference}×2=${answer}cm입니다.`);
       }
 
       if (variant === 1) {
-        const values = [
-          [42, 18, 8, 24, 10, 18, 6, 9, 6, 11, 12, 14],
-          [44, 19, 9, 25, 10, 17, 7, 8, 6, 11, 12, 14],
-          [40, 17, 7, 23, 9, 19, 6, 10, 6, 11, 12, 14]
+        // 원문 예제 1-1(교재 p.62) 그림 배치: 아래 42m, 오른쪽 24m, 오른쪽 위 6m, 오른쪽 홈 바닥 6m, 가운데 기둥 오른쪽 14m·위 10m·왼쪽 18m,
+        // 왼쪽 홈 바닥 8m·왼쪽 벽 9m, 왼쪽 18m. 표시되지 않은 두 변은 왼쪽 윗변 12m와 오른쪽 홈의 오른쪽 벽 11m입니다.
+        const data = [
+          { bottom: 42, right: 24, topRight: 6, notchRight: 6, towerRight: 14, towerTop: 10, towerLeft: 18, notchLeft: 8, notchLeftWall: 9, left: 18 },
+          { bottom: 44, right: 25, topRight: 7, notchRight: 6, towerRight: 15, towerTop: 10, towerLeft: 19, notchLeft: 9, notchLeftWall: 9, left: 19 },
+          { bottom: 40, right: 23, topRight: 6, notchRight: 5, towerRight: 13, towerTop: 9, towerLeft: 17, notchLeft: 8, notchLeftWall: 8, left: 17 }
         ][dataVariant];
-        const [outer, downOne, leftOne, upOne, leftTwo, downTwo, leftThree, upTwo, leftFour, downThree, leftFive] = values;
-        const points = [[0, 0], [outer, 0], [outer, downOne], [outer - leftOne, downOne], [outer - leftOne, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne], [outer - leftOne - leftTwo, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo], [outer - leftOne - leftTwo - leftThree, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo], [outer - leftOne - leftTwo - leftThree - leftFour, downOne - upOne + downTwo - upTwo + downThree], [outer - leftOne - leftTwo - leftThree - leftFour - leftFive, downOne - upOne + downTwo - upTwo + downThree]];
+        const leftNotchFloor = data.left - data.notchLeftWall;
+        const towerHeight = leftNotchFloor + data.towerLeft;
+        const rightNotchFloor = towerHeight - data.towerRight;
+        const hiddenTop = data.bottom - data.topRight - data.notchRight - data.towerTop - data.notchLeft;
+        const hiddenWall = data.right - rightNotchFloor;
+        if (!(towerHeight > data.right && rightNotchFloor > 0 && leftNotchFloor > 0 && leftNotchFloor < data.left && hiddenTop > 0 && hiddenWall > 0)) throw new Error("예제 1-1 그림이 원문 배치로 닫히지 않습니다.");
+        const up = y => towerHeight - y;
+        const xs = [0, hiddenTop, hiddenTop + data.notchLeft, hiddenTop + data.notchLeft + data.towerTop, hiddenTop + data.notchLeft + data.towerTop + data.notchRight, data.bottom];
+        const points = [
+          [0, up(0)], [data.bottom, up(0)], [data.bottom, up(data.right)], [xs[4], up(data.right)], [xs[4], up(rightNotchFloor)], [xs[3], up(rightNotchFloor)],
+          [xs[3], up(towerHeight)], [xs[2], up(towerHeight)], [xs[2], up(leftNotchFloor)], [xs[1], up(leftNotchFloor)], [xs[1], up(data.left)], [0, up(data.left)]
+        ];
         const segments = points.map((_, index) => ({ a: index, b: (index + 1) % points.length, role: "outer" }));
-        const known = [0, 1, 2, 3, 4, 5, 6, 7, 8, 11];
-        const labels = known.map(index => ({ segment: index, actual: values[index], text: index === 0 && level === 2 ? "21m×2" : `${values[index]}m`, offset: index % 2 ? 14 : -14 }));
+        const lengths = segments.map(segment => distance(points[segment.a], points[segment.b]));
+        const hiddenSegments = [3, 10];
+        const labels = segments.map((_, index) => index).filter(index => !hiddenSegments.includes(index)).map(index => ({ segment: index, actual: lengths[index], text: index === 0 && level === 2 ? `${data.bottom / 2}m×2` : `${lengths[index]}m`, offset: [4, 7, 8, 9].includes(index) ? -13 : 13 }));
         const perimeterM = closedLength(points), answer = perimeterM * 100;
-        return fixedResult(`그림의 모든 이웃한 변은 직각이고 가장 긴 가로는 ${given(outer, "m", `${outer / 2}×2`)}입니다. 표시되지 않은 두 길이를 찾아 도형의 둘레를 cm로 구하세요.${support("가로 방향과 세로 방향의 길이 합을 각각 맞춘 뒤 둘레를 더하세요.")}${renderModel({ kind: "right-angle-outline", points, segments, labels, expected: answer, aria: "알려진 열 개 길이만 표시된 직각으로 꺾인 도형", attributes: { "data-closed-perimeter": perimeterM.toFixed(4), "data-hidden-segments": "9;10" } })}${tag("right-angle-outline-to-centimeters", [...values, perimeterM, answer])}`, format(answer), `표시되지 않은 두 변은 각각 ${downThree}m와 ${leftFive}m입니다. 실제 폐곡선의 열두 변을 더하면 ${perimeterM}m이고, ${perimeterM}m=${format(answer)}cm입니다.`);
+        return fixedResult(`그림의 모든 이웃한 변은 직각이고 가장 긴 가로는 ${given(data.bottom, "m", `${data.bottom / 2}×2`)}입니다. 표시되지 않은 두 길이를 찾아 도형의 둘레를 cm로 구하세요.${support("가로 방향과 세로 방향의 길이 합을 각각 맞춘 뒤 둘레를 더하세요.")}${renderModel({ kind: "right-angle-outline", points, segments, labels, expected: answer, aria: "아래 42m 쪽이 가장 긴 가로이고 위쪽에 두 홈과 기둥이 있는 직각으로 꺾인 도형, 알려진 열 개 길이만 표시", attributes: { "data-closed-perimeter": perimeterM.toFixed(4), "data-hidden-segments": hiddenSegments.join(";") } })}${tag("right-angle-outline-to-centimeters", [...lengths, perimeterM, answer])}`, format(answer), `왼쪽 홈 바닥은 아래에서 ${data.left}-${data.notchLeftWall}=${leftNotchFloor}m, 가운데 기둥 윗변은 ${leftNotchFloor}+${data.towerLeft}=${towerHeight}m, 오른쪽 홈 바닥은 ${towerHeight}-${data.towerRight}=${rightNotchFloor}m 높이에 있으므로 오른쪽 홈의 오른쪽 벽은 ${data.right}-${rightNotchFloor}=${hiddenWall}m입니다. 왼쪽 윗변은 ${data.bottom}-${data.topRight}-${data.notchRight}-${data.towerTop}-${data.notchLeft}=${hiddenTop}m입니다. 가로 길이의 합은 ${data.bottom}×2=${data.bottom * 2}m, 세로 길이의 합은 ${lengths.filter((_, index) => index % 2 === 1).join("+")}=${lengths.filter((_, index) => index % 2 === 1).reduce((total, value) => total + value, 0)}m이므로 둘레는 ${perimeterM}m=${format(answer)}cm입니다.`);
       }
 
       if (variant === 2) {
@@ -30405,7 +30721,7 @@
       const miniRun = slantRun * miniatureScale;
       const miniBase = data.base * miniatureScale;
       const miniHeight = data.height * miniatureScale;
-      const miniLeft = [414, 40];
+      const miniLeft = [396, 40];
       const miniRight = [miniLeft[0] + miniBase, miniLeft[1]];
       const miniBottomRight = [miniRight[0] + miniRun, miniRight[1] + miniHeight];
       const miniBottomLeft = [miniLeft[0] + miniRun, miniLeft[1] + miniHeight];
@@ -30414,17 +30730,19 @@
         <g class="source51-e3-tile-array-grid" data-layout-role="tile-array">${tileMarkup(solved)}</g>
         <g class="source51-e3-tile-sample" data-layout-role="sample-tile">
           <polygon points="${miniLeft.join(",")} ${miniRight.join(",")} ${miniBottomRight.join(",")} ${miniBottomLeft.join(",")}"/>
-          <line class="source51-e3-tile-height" x1="${miniRight[0]}" y1="${miniRight[1]}" x2="${miniRight[0]}" y2="${miniBottomRight[1]}"/>
-          <path class="source51-e3-tile-right-angle" d="M ${miniRight[0]} ${miniBottomRight[1] - 12} H ${miniRight[0] + 12} V ${miniBottomRight[1]}"/>
+          <line class="source51-e3-tile-height" data-height-guide="top-extension" x1="${miniRight[0]}" y1="${miniRight[1]}" x2="${miniBottomRight[0]}" y2="${miniRight[1]}"/>
+          <line class="source51-e3-tile-height" x1="${miniBottomRight[0]}" y1="${miniRight[1]}" x2="${miniBottomRight[0]}" y2="${miniBottomRight[1]}"/>
+          <path class="source51-e3-tile-right-angle" d="M ${miniBottomRight[0] - 10} ${miniRight[1]} V ${miniRight[1] + 10} H ${miniBottomRight[0]}"/>
           <text class="source51-e3-tile-measure is-base" x="${(miniBottomLeft[0] + miniBottomRight[0]) / 2}" y="${miniBottomRight[1] + 22}">${data.base} cm</text>
-          <text class="source51-e3-tile-measure is-height" x="${miniRight[0] - 8}" y="${(miniRight[1] + miniBottomRight[1]) / 2}" text-anchor="end">${data.height} cm</text>
+          <text class="source51-e3-tile-measure is-height" style="text-anchor:start" data-label-side="outside-right" x="${miniBottomRight[0] + 8}" y="${(miniRight[1] + miniBottomRight[1]) / 2}" text-anchor="start">${data.height} cm</text>
           <text class="source51-e3-tile-measure is-side" x="${miniLeft[0] - 8}" y="${(miniLeft[1] + miniBottomLeft[1]) / 2}" text-anchor="end">${data.side} cm</text>
         </g>
         ${solved ? `<text class="source51-e3-tile-answer" x="270" y="300">${data.base}×${data.height}×${tileCount} = ${answer} cm²</text>` : ""}
       </svg>`;
-      const countText = isHard ? `${data.rows}줄에 ${data.columns}개씩 놓인` : `${tileCount}개의`;
+      // 2026-11-28 책 대조: "18개의 이어 붙여" 오타를 바로잡았습니다. 원문 그림의 높이 10cm는 다른 변 8cm보다 길어 모순이므로 앱 수치(밑변·높이·빗변)를 유지합니다.
+      const countText = isHard ? `조각을 한 줄에 ${data.columns}개씩 ${data.rows}줄로` : `조각 ${tileCount}개를`;
       const cue = isEasy ? `<p class="source51-e4-problem-cue">먼저 평행사변형 한 조각의 넓이를 구하세요.</p>` : "";
-      const prompt = `오른쪽 평행사변형 조각과 같은 조각을 ${countText} 이어 붙여 도형을 만들었습니다. 만든 도형의 넓이는 몇 cm²인지 구하세요.${cue}${diagram(false)}`;
+      const prompt = `오른쪽 평행사변형 조각과 같은 ${countText} 이어 붙여 도형을 만들었습니다. 만든 도형의 넓이는 몇 cm²인지 구하세요.${cue}${diagram(false)}`;
       const solution = `평행사변형 한 조각의 넓이는 ${data.base}×${data.height}=${tileArea}cm²입니다. 조각은 ${data.rows}×${data.columns}=${tileCount}개이므로 전체 넓이는 ${tileArea}×${tileCount}=${answer}cm²입니다. 빗변 ${data.side}cm는 넓이를 구할 때 사용하지 않습니다.`;
       return result(prompt, `${answer}cm²`, solution, {
         answerVisual: `<div class="verified-answer-diagram source51-e3-tile-array-answer" data-answer-source="${sourceItemId}" data-verified-pool-index="${poolIndex}">${diagram(true)}<div class="solution-answer-caption">전체 넓이 = ${answer}cm²</div></div>`,

@@ -19,9 +19,10 @@ const lockedIds = [
   "4-1-u5-e2-example-2-1", "4-1-u5-e2-example-2-2", "4-1-u5-e2-example-2-4", "4-1-u5-e2-mission-6"
 ];
 const sourceFixtures = [
-  { values: [1000, 700, 1200, 600], answer: "26" },
+  // 2026-11-28: variant 0·2 정답에 단위(분, m)를 붙였다.
+  { values: [1000, 700, 1200, 600], answer: "26분" },
   { values: [55, 70, 60, 40], answer: "40000" },
-  { values: [500, 600, 400, 300], answer: "12" },
+  { values: [500, 600, 400, 300], answer: "12분" },
   { values: [10, 13, 11, 9], answer: "13명" },
   { values: [20, 24, 28, 18], answer: "2000" },
   { values: [16, 20, 14, 10], answer: "10" },
@@ -44,9 +45,9 @@ const figures = text => text.match(/<figure class="source41-bar-graph[\s\S]*?<\/
 const rects = figure => figure.match(/<rect class="(?:source41-bar-column|source41-grouped-bar)[^"]*"[^>]*>/g) || [];
 
 function independentAnswer(variant, level, data) {
-  if (variant === 0) return String(level === 0 ? data.values[3] / 100 * data.per100 : level === 1 ? (data.values[3] + data.values[1]) / 100 * data.per100 : (Math.max(...data.values) - Math.min(...data.values)) / 100 * data.per100);
+  if (variant === 0) return `${level === 0 ? data.values[3] / 100 * data.per100 : level === 1 ? (data.values[3] + data.values[1]) / 100 * data.per100 : (Math.max(...data.values) - Math.min(...data.values)) / 100 * data.per100}분`;
   if (variant === 1) return String((data.values[2] - (level === 2 ? data.remaining : 0)) / data.pack * data.price);
-  if (variant === 2) return String(level === 0 ? data.farthest : (level === 2 ? data.farthest - data.nearest : data.farthest) / data.perDistance * data.perMinutes);
+  if (variant === 2) return level === 0 ? `${data.farthest}m` : `${(level === 2 ? data.farthest - data.nearest : data.farthest) / data.perDistance * data.perMinutes}분`;
   if (variant === 3) {
     const pink = data.groups.reduce((sum, count, index) => sum + count * (index + 1), 0) - data.values[0] - data.values[2] - data.values[3];
     return level === 2 ? `${pink}명, ${pink + data.values[3]}명` : `${pink}명`;

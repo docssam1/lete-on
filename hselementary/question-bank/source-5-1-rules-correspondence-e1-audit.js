@@ -142,7 +142,11 @@ function assertUniqueRule(prompt, kind) {
     if (candidates.length !== 1) throw new Error(`곱셈과 덧셈 규칙 후보가 ${candidates.length}개입니다.`);
   }
   if (kind === "divide-add-rule") {
-    const samples = [...prompt.matchAll(/(\d+)→(-?\d+)/g)].map(match => [Number(match[1]), Number(match[2])]);
+    // 2026-11-28 책 대조: Mission 2는 원문처럼 "수연이가 16이라고 말하면 경민이는 5라고 답하고" 이야기 문장으로 짝을 보입니다.
+    const arrowSamples = [...prompt.matchAll(/(\d+)→(-?\d+)/g)].map(match => [Number(match[1]), Number(match[2])]);
+    const storySamples = [...prompt.matchAll(/(\d+)(?:이라고|라고) 말하면 경민이는 (\d+)(?:이라고|라고) 답/g)].map(match => [Number(match[1]), Number(match[2])]);
+    const samples = arrowSamples.length ? arrowSamples : storySamples;
+    if (samples.length < 3) throw new Error("나누기와 덧셈 규칙의 짝이 셋 이상 보이지 않습니다.");
     const candidates = [];
     for (let divisor = 1; divisor <= 100; divisor += 1) for (let addend = -100; addend <= 100; addend += 1) {
       if (samples.every(([input, output]) => input % divisor === 0 && input / divisor + addend === output)) candidates.push([divisor, addend]);

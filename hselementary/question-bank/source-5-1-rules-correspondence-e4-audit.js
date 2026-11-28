@@ -197,7 +197,9 @@ function independentCalculation(kind, values) {
     const [coinCount, startSeconds, elapsedSeconds, lisbonSeconds] = values;
     if (coinCount < 2 || startSeconds < 0 || elapsedSeconds <= 0 || lisbonSeconds < 0) throw new Error("동전 쌓기 시각 조건이 올바르지 않습니다.");
     let expectedElapsed = 0;
-    for (let coin = 2; coin <= coinCount; coin += 1) expectedElapsed += String(coin).length;
+    // 2026-11-28 책 대조: 원문 규칙은 "1초 + 다음 동전의 십의 자리 수만큼 1초씩 더"(2~9개째 1초, 10~19개째 2초, 20~29개째 3초)입니다.
+    if (coinCount > 99) throw new Error("100개째부터는 원문 규칙이 정해지지 않습니다.");
+    for (let coin = 2; coin <= coinCount; coin += 1) expectedElapsed += 1 + Math.floor(coin / 10);
     candidates = enumerateNaturalCandidates(Math.max(3 * coinCount, expectedElapsed + 1), value => value === expectedElapsed);
     requireUnique(candidates, "동전 쌓기 시간 역문제");
     if (candidates[0] !== elapsedSeconds) throw new Error(`태그의 쌓기 시간 ${elapsedSeconds}과 역산값 ${candidates[0]}이 다릅니다.`);
@@ -222,7 +224,8 @@ function checkAnchors() {
     ["opposite-tree-circle", [2, 8, 3], "36m"],
     ["rounded-parking-fee", [32, 40], "3500원"],
     ["sound-distance", [5, 3], "1002m"],
-    ["coin-stack-city-time", [39, 58020, 68, 54488], "오후 3시 8분 8초"]
+    // 원문 앵커: 카이로 오후 4시 27분(59220초)부터 99개 → 548초, 리스본 오후 3시 36분 8초(56168초).
+    ["coin-stack-city-time", [99, 59220, 548, 56168], "오후 3시 36분 8초"]
   ];
   for (const [kind, values, expected] of anchors) {
     try {

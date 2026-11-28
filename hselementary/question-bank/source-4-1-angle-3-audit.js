@@ -142,8 +142,10 @@ function independentAnswer(kind, payload) {
     return numberAnswer(720 - payload.knownSum);
   }
   if (kind === "four-crossed-triangles-eight-angle-sum") {
-    const expected = 720 - (360 - payload.givenAngle);
-    assert(expected === 360 + payload.givenAngle, "네 삼각형의 가운데 각 계산이 다릅니다.");
+    // 2026-11-28 손글씨 대조: 책(심화 p.23 Mission 6)은 주어진 각을 낀 작은 삼각형 두 개에서 꼭짓각 넷의 합이 2×(180-주어진 각)이다.
+    // 예전 식 720-(360-주어진 각)은 꼭짓각 넷이 한 점에 모인 그림을 가정한 것이라 책 구조와 다르다.
+    const expected = 720 - 2 * (180 - payload.givenAngle);
+    assert(expected === 360 + 2 * payload.givenAngle && payload.innerTipSum === 2 * (180 - payload.givenAngle), "네 삼각형의 꼭짓각 계산이 다릅니다.");
     return numberAnswer(expected);
   }
   throw new Error(`알 수 없는 검산 구조 ${kind}입니다.`);
@@ -233,9 +235,10 @@ function auditSourceAnchors() {
     360 - (77 + 42 + 72 + 119),
     (180 - 46) + (180 - 95 - 20) + (180 - 82),
     720 - (110 + 136 + 124 + 95 + 130 + 22 + 55),
-    720 - (360 - 40)
+    720 - 2 * (180 - 40)
   ];
-  const expected = [1800, 126, 110, 263, 1620, 120, "㉠ 120°, ㉡ 100°", 50, 297, 48, 400];
+  // Mission 6 기준값은 책 그림 구조(40°를 낀 작은 삼각형 두 개)로 다시 계산해 400°에서 440°로 바꿨다(2026-11-28).
+  const expected = [1800, 126, 110, 263, 1620, 120, "㉠ 120°, ㉡ 100°", 50, 297, 48, 440];
   fixed.forEach((value, index) => check(value === expected[index], `원문 고정 기준 ${index}번이 ${value}로 계산되었습니다.`));
 
   const example32A = 87;
@@ -245,7 +248,7 @@ function auditSourceAnchors() {
   const secondTarget = 90 - example32B / 2;
   check(firstTarget + secondTarget === 110 && example32A + example32B / 2 === 110, "예제 3-2의 개별 목표각 재검산이 110°가 아닙니다.");
   check(3 * (20 + 20) === 120 && 180 - 2 * (20 + 20) === 100, "Mission 2의 두 목표각 재검산이 다릅니다.");
-  check(720 - (360 - 40) === 400, "Mission 6의 가운데 각 재검산이 400°가 아닙니다.");
+  check(720 - 2 * (180 - 40) === 440 && (180 - 40) * 2 === 280, "Mission 6의 꼭짓각 재검산이 440°가 아닙니다.");
 }
 
 auditSourceAnchors();
@@ -324,4 +327,4 @@ if (failures.length) {
 }
 
 console.log(`4-1 각도 개념탐구 3 전용 감사 통과: 원문 11항목 · 11구조 · ${generatedCount.toLocaleString()}회 독립 검산 · 정답/풀이/단일 계산/가시성 확인`);
-console.log("원문 기준 답: 1800° · 126° · 110° · 263° · 1620° · 120° · ㉠ 120°·㉡ 100° · 50° · 297° · 48° · 400°");
+console.log("원문 기준 답: 1800° · 126° · 110° · 263° · 1620° · 120° · ㉠ 120°·㉡ 100° · 50° · 297° · 48° · 440°");

@@ -61,7 +61,8 @@ const numbers = [10, 11, 12, 13];
       const diagram = await q13.locator('svg').getAttribute('aria-label');
       assert(diagram.includes('4cm') && diagram.includes('6cm') && diagram.includes('110도'));
       const explanation = await page.locator('#solutionView [data-source-answer="5-2-u3-practice-13-original"]').innerText();
-      assert(explanation.includes('변 ㄴㄷ') && explanation.includes('변 ㅁㅂ') && explanation.includes('변 ㅁㄹ'));
+      // 2026-11-28 hw-G4-5-2: 초등 합동 조건(SSS·SAS·ASA)으로 통일해 SSA(긴 변의 대각) 답을 뺐다. 책·선생님 채점 답과 같다.
+      assert(explanation.includes('변 ㄴㄷ') && explanation.includes('변 ㅁㅂ') && !explanation.includes('한 점에서만') && !explanation.includes('두 변 중 하나'));
       const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-p86-q13-${width}.pdf`);
       await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
       const info = execFileSync("pdfinfo", [file], { encoding: "utf8" });

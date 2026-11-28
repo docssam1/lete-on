@@ -49,7 +49,8 @@ const ids = ["5-2-u3-e1-mission-1-original", "5-2-u3-e1-mission-4-original", "5-
       assert.equal(await page.locator("#solutionView .p25steps-figure").count(),1);
       assert.equal(await page.locator("#solutionView .p25rhombus-answer").count(),1);
       const m5=data.problems.find(p=>p.id.endsWith("mission-5-original"));
-      assert.equal(m5.answer,"①, ②, ④");
+      // 2026-11-28 hw-G4-5-2: 초등 합동 조건(SSS·SAS·ASA)으로 통일해 SSA(긴 변의 대각) 답을 뺐다. 책·선생님 채점 답과 같다.
+      assert.equal(m5.answer,"①, ④");
       assert.equal(await page.locator("#problemView .p25m5-figure").count(),1);
       await page.emulateMedia({ media: "print" });
       for (const id of ids.slice(0, 1)) {

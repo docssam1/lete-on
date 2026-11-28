@@ -50,10 +50,14 @@ const ids = ["5-2-u3-e2-mission-1-original","5-2-u3-e2-mission-4-original","5-2-
         assert(p.answer && compact(data.solutions[i].text).includes(compact(p.answer)), `answer ${i + 1} matches ${p.id}`);
       });
       assert.equal(data.problems.find(p=>p.id===ids[2]).answer,"△ㄱㄹㄴ과 △ㅂㄹㄷ");
-      assert.equal(data.problems.find(p=>p.id===ids[3]).answer,"3쌍");
+      // 2026-11-28 hw-G4-5-2: 책처럼 그림 속 모든 삼각형(21개)의 합동 쌍을 센다. 선생님 채점 답 9쌍.
+      assert.equal(data.problems.find(p=>p.id===ids[3]).answer,"9쌍");
       assert.equal(await page.locator("#problemView .p27m5-figure").count(),1);
       assert.equal(await page.locator("#problemView .p27m6-figure").count(),1);
-      assert.match(await page.locator("#problemView [data-source-item-id='5-2-u3-e2-mission-6-scope']").innerText(),/6개의 삼각형 중에서/);
+      // 2026-11-28 hw-G4-5-2: 책 문장대로 범위를 좁히지 않는다(그림 속 모든 삼각형).
+      const m6Text = await page.locator("#problemView [data-source-item-id='5-2-u3-e2-mission-6-scope']").innerText();
+      assert.match(m6Text,/6개의 삼각형을 만들었다\. 합동인 삼각형은 모두 몇 쌍인가\?/);
+      assert.doesNotMatch(m6Text,/6개의 삼각형 중에서/);
       await page.emulateMedia({ media: "print" });
       for (const id of ids.slice(0, 1)) {
         const family = await page.locator(`[data-source-item-id="${id}"]`).first().evaluate(el => getComputedStyle(el).fontFamily);

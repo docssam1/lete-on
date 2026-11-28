@@ -88,14 +88,16 @@ const answerFor = (kind, values) => {
   }
   if (kind === "tenths-greater-count") {
     let count = 0;
-    for (let value = values[0] + 1; value < values[1]; value += 1) if (Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) count += 1;
+    // 20261128: 셋째 자리 숫자가 0인 수(예: 2.110)는 소수 세 자리 수가 아니므로 세지 않음(책 37쪽 Mission 3 답 102·Mission 4 답 31과 같은 기준).
+    for (let value = values[0] + 1; value < values[1]; value += 1) if (value % 10 !== 0 && Math.floor(value / 100) % 10 > Math.floor(value / 10) % 10) count += 1;
     return String(count);
   }
   if (kind === "digit-ratio-count") {
     let count = 0;
     for (let value = values[0] + 1; value < values[1]; value += 1) {
       const digits = [Math.floor(value / 1000), Math.floor(value / 100) % 10, Math.floor(value / 10) % 10, value % 10];
-      if (digits[1] === digits[2] * 2 && new Set(digits).size === 4) count += 1;
+      // 20261128: 셋째 자리 0(예: 2.840)은 소수 세 자리 수가 아니므로 제외(같은 단원 기준 통일).
+      if (digits[3] !== 0 && digits[1] === digits[2] * 2 && new Set(digits).size === 4) count += 1;
     }
     return String(count);
   }

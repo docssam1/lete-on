@@ -55,7 +55,8 @@ async function rendered(page, expected, difficulty) {
       const marker = item.querySelector(".source52-mission-question");
       if (!marker) return { error: "missing marker" };
       const id = marker.dataset.sourceItem, variant = Number(marker.dataset.poolIndex);
-      const q = window.HSE_SOURCE_52_RANGE_MISSIONS.getQuestion(id, variant, args.difficulty);
+      // 2026-11-28: 화면 문항은 number-josa.js가 숫자 뒤 조사를 보정한 결과이므로 같은 보정을 거친 문항과 비교한다.
+      const q = window.HSE_NUMBER_JOSA.fixQuestion(window.HSE_SOURCE_52_RANGE_MISSIONS.getQuestion(id, variant, args.difficulty));
       const type = window.HSE_CURRICULUM.semesters.flatMap(s => s.units.flatMap(u => u.subunits.flatMap(g => g.types))).find(t => t.id === id);
       const registered = window.HSE_GENERATORS.generate(type, 1, args.difficulty, 1, variant);
       return { id, variant, offset: Number(marker.dataset.difficultyOffset), answer: norm(q.answer), solution: plain(q.solution),

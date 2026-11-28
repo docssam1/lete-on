@@ -1806,3 +1806,5 @@ button{
 .segmented.is-mixed .segment.is-active{background:#2f7d8a;color:#fff;box-shadow:none}
 .segmented.is-mixed .segment.is-active::before{content:"✓ ";font-weight:900}
 @media print{.semester-chips,.count-range,.mix-toggle{display:none!important}}
+/* 4-1 심화 p.23 Mission 5·6: 각 위치를 호로 표시 (2026-11-28) */
+.source41-two-turn-octagon .source41-angle-arc,.source41-four-triangle-cross .source41-angle-arc{fill:none!important;stroke:#526b7d!important;stroke-width:1.5!important}.source41-two-turn-octagon .source41-angle-mark.is-target .source41-angle-arc{stroke:#c88408!important;stroke-width:2.2!important}
