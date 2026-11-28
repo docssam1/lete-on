@@ -61,7 +61,8 @@ const numbers = [9, 10, 11, 12];
       const diagram = await q10.locator('svg').getAttribute('aria-label');
       assert(diagram.includes('8cm') && diagram.includes('6cm'));
       const explanation = await page.locator('#solutionView [data-source-answer="5-2-u3-practice-10-original"]').innerText();
-      assert(explanation.includes('각 ㄴㄷㄱ') && explanation.includes('각 ㄷㄱㄴ'));
+      // 2026-11-28 hw-G4-5-2: 초등 합동 조건(SSS·SAS·ASA)으로 통일해 SSA(긴 변의 대각) 답을 뺐다. 책·선생님 채점 답과 같다.
+      assert(explanation.includes('각 ㄱㄷㄴ') && !explanation.includes('또는') && !explanation.includes('한 번만'));
       const file = path.join(process.env.MAC_CHECK_OUTPUT || os.tmpdir(), `hse-p86-q10-${width}.pdf`);
       await page.pdf({ path: file, format: "A4", printBackground: true, preferCSSPageSize: true });
       const info = execFileSync("pdfinfo", [file], { encoding: "utf8" });

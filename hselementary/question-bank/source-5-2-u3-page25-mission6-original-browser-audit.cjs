@@ -6,12 +6,14 @@ const angle = Math.PI / 6;
 const roots = [7 * Math.cos(angle) - Math.sqrt(16 - (7 * Math.sin(angle)) ** 2), 7 * Math.cos(angle) + Math.sqrt(16 - (7 * Math.sin(angle)) ** 2)];
 assert(roots[0] > 0 && roots[1] > roots[0]);
 for (const distance of roots) assert(Math.abs(Math.hypot(7 - distance * Math.cos(angle), distance * Math.sin(angle)) - 4) < 1e-10);
-// Independent coordinate counterexamples with the exact source dimensions.
-const { shape } = require("./source-5-2-u3-page25-mission6-synthetic.js");
-const exact = { L:4, a:3.5, b:2.5 }, cosine=Math.cos(80*Math.PI/180), sine=Math.sin(80*Math.PI/180);
-const pair = [0.45,8*cosine-0.45].map(t=>shape(exact,t));
-assert(Math.abs(pair[0].diagonalNR-pair[1].diagonalNR)<1e-9);
-const N={x:0,y:0}, D={x:4,y:0}, theta=65*Math.PI/180, G={x:3.5*Math.cos(theta),y:3.5*Math.sin(theta)};
+// Independent coordinate counterexample for ③·⑤ with the figure's own quadrilateral
+// (2026-11-28 hw-G4-5-2: 예전 ②⑥ 반례 0.45/0.94cm는 그림과 다른 사각형이라 해설에서 뺐다).
+const cosine=Math.cos(80*Math.PI/180), sine=Math.sin(80*Math.PI/180);
+const N={x:0,y:0}, D={x:4,y:0}, figureR={x:4-2*cosine,y:2*sine};
+// ㄱ: |ㄱㄴ|=3.5, |ㄱㄹ|=2.5 on the upper side, as drawn (ㄷㄹ=2cm).
+const nr=Math.hypot(figureR.x,figureR.y), along=(3.5**2-2.5**2+nr**2)/(2*nr), off=Math.sqrt(3.5**2-along**2);
+const G={x:(along*figureR.x-off*figureR.y)/nr,y:(along*figureR.y+off*figureR.x)/nr};
+assert(Math.abs(Math.hypot(G.x-figureR.x,G.y-figureR.y)-2.5)<1e-9 && G.y>0);
 const wx=4-G.x, wy=-G.y, proj=-cosine*wx+sine*wy, disc=proj**2-(wx**2+wy**2-2.5**2);
 assert(disc>0);
 const lengths=[-proj-Math.sqrt(disc),-proj+Math.sqrt(disc)];
@@ -20,7 +22,7 @@ for(const t of lengths){
   assert(Math.abs(Math.hypot(R.x-G.x,R.y-G.y)-2.5)<1e-9);
   assert(points.every((p,i)=>{const q=points[(i+1)%4],r=points[(i+2)%4];return (q.x-p.x)*(r.y-q.y)-(q.y-p.y)*(r.x-q.x)>0;}));
 }
-assert(lengths[1]-lengths[0]>3);
+assert(Math.abs(lengths[0]-2)<1e-6 && Math.abs(lengths[1]-5.14)<0.01, "figure ㄷㄹ 2cm and the other convex solution about 5.14cm");
 const origin = process.env.HSE_AUDIT_ORIGIN || "http://127.0.0.1:45756";
 const ids = ["5-2-u3-e1-mission-1-original", "5-2-u3-e1-mission-4-original", "5-2-u3-e1-mission-6-original", "5-2-u3-e1-mission-5-original"];
 (async () => {
@@ -64,10 +66,12 @@ const ids = ["5-2-u3-e1-mission-1-original", "5-2-u3-e1-mission-4-original", "5-
       assert.equal(await page.locator("#solutionView .p25steps-figure").count(),1);
       assert.equal(await page.locator("#solutionView .p25rhombus-answer").count(),1);
       const m5=data.problems.find(p=>p.id.endsWith("mission-5-original"));
-      assert.equal(m5.answer,"①, ②, ④");
+      // 2026-11-28 hw-G4-5-2: 초등 합동 조건(SSS·SAS·ASA)으로 통일해 SSA(긴 변의 대각) 답을 뺐다. 책·선생님 채점 답과 같다.
+      assert.equal(m5.answer,"①, ④");
       assert.equal(await page.locator("#problemView .p25m5-figure").count(),1);
       const m6=data.problems.find(p=>p.id.endsWith("mission-6-original"));
-      assert.equal(m6.answer,"①, ④");
+      // 2026-11-28 hw-G4-5-2: 책 쪽 아래 선생님 빨간 답 1(①). ②④⑥은 초등 합동 조건으로 삼각형을 정할 수 없어 뺐다.
+      assert.equal(m6.answer,"①");
       assert.equal(await page.locator("#problemView .p25m6-figure").count(),1);
       await page.emulateMedia({ media: "print" });
       for (const id of ids.slice(0, 1)) {
