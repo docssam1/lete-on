@@ -20,7 +20,7 @@ try {
   const page = await browser.newPage({ viewport: { width: viewportWidth, height: 1000 }, deviceScaleFactor: 1 });
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
-  await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=type`, { waitUntil: "networkidle", timeout: 30000 });
+  await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=type`, { waitUntil: "networkidle", timeout: 30000 });
   await page.locator('#builderTabs button[data-mode="type"]').click();
   await page.locator('#difficultyChoices button[data-level="advanced"]').click();
   await page.evaluate(() => {

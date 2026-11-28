@@ -811,7 +811,8 @@ function validateStructure(problem, id, difficulty) {
       }
       const list = [...new Set(found)].sort((x, y) => x - y);
       assert(list.length >= 1 && problem.answer === list.join(", "), id, difficulty, `곱 사슬 답 오류 ${list}`);
-      assert(!problem.visual, id, difficulty, "글로 다 주어진 문제에 그림");
+      // 그림은 없다 — 조건만 번호 줄로(book9 condition-list) 늘어놓는다
+      assert(problem.visual?.kind === "book9" && problem.visual.subtype === "condition-list" && problem.visual.conditions.length === 5 && !/조건:/.test(problem.prompt), id, difficulty, "조건 줄 없음");
       return;
     }
     case "masked-crypt-b8":

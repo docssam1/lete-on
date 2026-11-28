@@ -77,7 +77,7 @@ try {
   assert.deepEqual(mobileErrors.filter((message) => !isExpectedOfflineFontError(message)), [], `모바일 브라우저 오류: ${mobileErrors.join(" | ")}`);
   await mobile.screenshot({ path: path.join(screenshotDir, "fields-result-diagnosis-mobile.png"), fullPage: true });
 
-  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?student=AUDIT-MOBILE`, { waitUntil: "networkidle" });
+  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=AUDIT-MOBILE`, { waitUntil: "networkidle" });
   assert.equal(await mobile.locator("#resultDiagnosisLink").count(), 1, "문제은행에 시험 결과 진단 링크가 없음");
   assert.equal(await mobile.locator("#goldenBellLink").count(), 1, "골든벨 학습 링크가 사라짐");
   const bankOverflow = await mobile.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, clientWidth: document.documentElement.clientWidth }));

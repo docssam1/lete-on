@@ -10,7 +10,7 @@ const { chromium } = await import(pathToFileURL(path.join(modules, "playwright/i
 const { PDFDocument } = createRequire(import.meta.url)(path.join(modules, "pdf-lib"));
 
 const base = process.env.FIELDS_BASE_URL || "http://127.0.0.1:8794";
-const url = `${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum`;
+const url = `${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=curriculum`;
 const output = process.env.FIELDS_CAPTURE_DIR
   || path.join(os.tmpdir(), "fields-question-bank-layout-audit");
 const viewports = [{ name: "desktop", width: 1440, height: 900 }, { name: "mobile", width: 390, height: 900 }];

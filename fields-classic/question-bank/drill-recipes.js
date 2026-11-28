@@ -50,9 +50,9 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-g1/fold-region": ["c2-fold-region-find"],
   // 2과정 A1 — 마디·저울·비·간격(꾸러미 「해 보기」의 ["drill", …])
   "course-02-a1/period": ["c2-period-nth", "c2-period-number-sum"],
-  "course-02-a1/balance": ["balance-scale-three-objects", "g1-winter-three-balance-substitution"],
-  "course-02-a1/ratio": ["balance-ratio-book6", "c2-ratio-difference"],
-  "course-02-a1/fraction": ["c2-fraction-ratio-split", "c2-improper-fraction"],
+  "course-02-a1/balance": ["balance-given-unit-weight", "balance-difference-deduction-b8"],
+  "course-02-a1/ratio": ["balance-weight-ratio", "c2-ratio-difference"],
+  "course-02-a1/fraction": ["fraction-share-difference-b8", "c2-improper-fraction"],
   "course-02-a1/gaps": ["c2-road-trees", "c2-log-cut-time"],
   // 2과정 A2 — 10의 거듭제곱·복제수·사각수·달력·님게임·거꾸로 풀기
   "course-02-a2/powers": ["c2-power-ten-zeros", "c2-smart-regroup"],
@@ -68,9 +68,9 @@ export const DRILL_RECIPES = Object.freeze({
   "course-02-a3/digits": ["c2-digit-count", "c2-digit-position"],
   "course-02-a3/paths": ["shortest-path-rectangle", "digit-card-number-enumeration"],
   // 2과정 A4 — 마방진·복면산·약수와 배수·비와 가정
-  "course-02-a4/magic": ["magic-square-three-target", "circular-magic-seven-line-sum"],
-  "course-02-a4/crypt": ["two-digit-letter-cryptarithm", "cryptarithm-multi-symbol-carry"],
-  "course-02-a4/gcdlcm": ["c2-gcd-word", "c2-lcm-word", "c2-ratio-gcd-lcm"],
+  "course-02-a4/magic": ["magic-square-three-target", "circular-magic-maximum-b9"],
+  "course-02-a4/crypt": ["multi-symbol-cryptarithm-b8", "repeated-symbol-cryptarithm-b8"],
+  "course-02-a4/gcdlcm": ["c2-gcd-word", "c2-consecutive-multiples", "c2-ratio-gcd-lcm"],
   "course-02-a4/assume": ["c2-assume-solve", "c2-ratio-difference"],
   // 2과정 A5 — 소인수분해·크기가 같은 분수·포함과 배제·변하지 않는 것
   "course-02-a5/factor": ["c2-divisibility-digits", "c2-square-multiplier", "c2-factorial-zeros"],

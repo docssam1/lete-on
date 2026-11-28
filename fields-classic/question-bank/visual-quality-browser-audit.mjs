@@ -43,9 +43,11 @@ const defaultTypeIds = [
   "cube-shell-interior-b9",
   "three-fold-cut-line-book4"
 ];
-const typeIds = process.env.FIELDS_VISUAL_TYPES
+// 글로 다 주어진 문제(app.js TEXT_ONLY_TYPES)는 그림을 그리지 않는다 — 그림을 기대하지 않는다
+const textOnly = new Set(JSON.parse((await fs.readFile(new URL("./app.js", import.meta.url), "utf8")).match(/const TEXT_ONLY_TYPES = new Set\((\[[^\]]*\])\)/u)[1]));
+const typeIds = (process.env.FIELDS_VISUAL_TYPES
   ? process.env.FIELDS_VISUAL_TYPES.split(",").map((value) => value.trim()).filter(Boolean)
-  : defaultTypeIds;
+  : defaultTypeIds).filter((typeId) => !textOnly.has(typeId));
 const questionCount = Math.max(1, Number(process.env.FIELDS_VISUAL_COUNT || 1));
 const difficulty = process.env.FIELDS_VISUAL_DIFFICULTY || "";
 
@@ -57,7 +59,7 @@ try {
       const page = await browser.newPage({ viewport: { width, height: 1000 }, deviceScaleFactor: 1 });
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
-      await page.goto(`${base}/fields-classic/question-bank/?student=VISUAL-${width}-${index}-${Date.now()}&mode=type&types=${encodeURIComponent(typeId)}`, { waitUntil: "networkidle", timeout: 30000 });
+      await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=VISUAL-${width}-${index}-${Date.now()}&mode=type&types=${encodeURIComponent(typeId)}`, { waitUntil: "networkidle", timeout: 30000 });
       await page.locator('#builderTabs button[data-mode="type"]').click();
       if (difficulty) await page.locator(`#difficultyChoices button[data-level="${difficulty}"]`).click();
       await page.locator("#questionCount").fill(String(questionCount));

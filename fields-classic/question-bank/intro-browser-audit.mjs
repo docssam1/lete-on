@@ -13,7 +13,7 @@ const browser = await chromium.launch({ headless: true });
 
 async function captureProductImages(page) {
   fs.mkdirSync(assetDir, { recursive: true });
-  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=DEMO&mode=curriculum`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=DEMO&mode=curriculum`, { waitUntil: "networkidle" });
   await page.locator('#curriculumStageChoices button[data-stage="practice"]').click();
   const type = page.locator('.curriculum-type[data-preview-type="symbol-balanced-congruent-partition"]').first();
   await type.scrollIntoViewIfNeeded();
@@ -26,15 +26,14 @@ async function captureProductImages(page) {
   await page.locator("#worksheetSection").screenshot({ path: path.join(assetDir, "question-bank-sheet.webp"), type: "webp", quality: 86 });
 }
 
+// 소개 화면(intro.html)은 대문(home.html)으로 넘기는 자리만 남았다 — 넘어가며 student 같은 주소 꼬리를 지키는지 본다
 async function auditIntro(page, viewportName) {
   const errors = [];
   page.on("pageerror", (error) => errors.push(error.message));
   await page.goto(`${baseUrl}/fields-classic/question-bank/intro.html?student=DEMO`, { waitUntil: "networkidle" });
-  assert.equal(await page.locator("h1").innerText(), "FC\n사고력 문제은행", `${viewportName}: hero title mismatch`);
-  assert.equal(await page.locator(".cycle-list li").count(), 4, `${viewportName}: learning cycle mismatch`);
-  assert.equal(await page.locator(".difference-grid article").count(), 3, `${viewportName}: proof section mismatch`);
-  assert.equal(await page.locator('img').evaluateAll((images) => images.every((image) => image.complete && image.naturalWidth > 0)), true, `${viewportName}: product image missing`);
-  assert.equal(await page.locator('[data-preserve-student="bank"]').first().getAttribute("href").then((href) => new URL(href).searchParams.get("student")), "DEMO", `${viewportName}: student query not preserved`);
+  const landed = new URL(page.url());
+  assert.equal(landed.pathname.endsWith("/home.html"), true, `${viewportName}: intro did not hand over to home.html (${landed.pathname})`);
+  assert.equal(landed.searchParams.get("student"), "DEMO", `${viewportName}: student query not preserved`);
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, `${viewportName}: horizontal overflow`);
   assert.deepEqual(errors, [], `${viewportName}: browser errors: ${errors.join(" | ")}`);
 }
@@ -47,10 +46,10 @@ try {
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
   await auditIntro(mobile, "mobile");
   if (process.env.INTRO_MOBILE_SCREENSHOT) await mobile.screenshot({ path: process.env.INTRO_MOBILE_SCREENSHOT, fullPage: true });
-  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?student=DEMO`, { waitUntil: "networkidle" });
+  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=DEMO`, { waitUntil: "networkidle" });
   assert.equal(new URL(await mobile.locator("#introLink").getAttribute("href"), mobile.url()).searchParams.get("student"), "DEMO", "question bank intro link lost student query");
   assert.equal(await mobile.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1), false, "question bank header overflows on mobile");
-  console.log("QUESTION_BANK_INTRO_OK cycle=4 proof=3 images=2 desktop=1440 mobile=390");
+  console.log("QUESTION_BANK_INTRO_OK redirect=home.html desktop=1440 mobile=390");
 } finally {
   await browser.close();
 }

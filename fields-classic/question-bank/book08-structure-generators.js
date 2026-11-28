@@ -41,6 +41,8 @@ const FONT = "font-family:'Noto Sans KR','FC Sans',sans-serif";
 
 const svgOpen = (w, h, label) => `<svg width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" style="width:${w}px;max-width:100%;height:auto;flex:none" role="img" aria-label="${label}">`;
 const text = (x, y, value, size = 18, extra = "") => `<text x="${x}" y="${y}" text-anchor="middle" font-size="${size}" style="fill:${INK};${FONT}" ${extra}>${value}</text>`;
+// 조건이 여럿이면 글 한 줄에 「·」로 잇지 않고 번호 붙은 줄로 늘어놓는다(그림 위)
+const condListHtml = (lines) => `<ol style="margin:0 0 10px;padding:10px 16px 10px 34px;background:#f3efe4;border-radius:10px;line-height:1.8;${FONT};font-size:15px;color:#2f2a24;text-align:left;max-width:460px">${lines.map((l) => `<li style="white-space:nowrap">${l}</li>`).join("")}</ol>`;
 const figs = (...svgs) => ({ kind: "fig", html: svgs.length === 1 ? svgs[0] : `<div style="display:flex;flex-wrap:wrap;gap:18px;align-items:flex-start;justify-content:center">${svgs.join("")}</div>` });
 
 // ── 모양 ─────────────────────────────────────────────
@@ -2046,8 +2048,8 @@ function sevenLetterRelationsB8({ difficulty = 2 }) {
     const rows = rels.map(relText);
     const filled = LETTERS7.map((L, i) => `${L}=${answer[i]}`).join(", ");
     return {
-      prompt: `${LETTERS7.join(", ")}은 1부터 9까지의 서로 다른 수를 나타냅니다. 다음 조건을 보고 표를 채우세요. 조건: ${LETTERS7[given]}=${truth[given]} · ${rows.join(" · ")} · 더하는 두 문자 중 왼쪽에 쓴 문자의 수가 더 큽니다. · ${LETTERS7[clue]}의 수는 될 수 있는 수 중 ${word} 수입니다.`,
-      visual: figs(tableSvg(LETTERS7, LETTERS7.map((_, i) => (i === given ? String(truth[given]) : "")))),
+      prompt: `${LETTERS7.join(", ")}은 1부터 9까지의 서로 다른 수를 나타냅니다. 다음 조건을 보고 표를 채우세요.`,
+      visual: { kind: "fig", html: `<div style="display:flex;flex-direction:column;align-items:center">${condListHtml([`${LETTERS7[given]} = ${truth[given]}`, ...rows.map((r) => r.replace(/([=+×])/g, " $1 ")), "더하는 두 문자 중 왼쪽에 쓴 문자의 수가 더 큽니다.", `${LETTERS7[clue]}의 수는 될 수 있는 수 중 ${word} 수입니다.`].map((l) => l.replace(/ {2,}/g, " ")))}${tableSvg(LETTERS7, LETTERS7.map((_, i) => (i === given ? String(truth[given]) : "")))}</div>` },
       answer: filled,
       solution: `${LETTERS7[given]}의 수가 들어간 식부터 될 수 있는 수를 적어 나가면, 서로 다른 수라는 조건까지 맞는 경우가 ${sols.length}가지입니다. 그중 ${LETTERS7[clue]}의 수가 ${word} 것은 한 가지뿐이라 ${filled}입니다.`,
       meta: { family: "seven-letter-relations-b8", rels, given, gv: truth[given], clue, kind, answer, count: sols.length }
@@ -2098,7 +2100,8 @@ function productChainDigitSumB8({ difficulty = 2 }) {
     const answers = list.map((c) => c.st).sort((x, y) => x - y);
     const lenWord = len === 2 ? "두" : "세";
     return {
-      prompt: `다음 조건을 모두 만족할 때 ${st}이 나타내는 수를 모두 구하세요. 조건: ${o}와 ${sq}는 서로 다른 한 자리 수입니다. · ${st}은 각 자리 숫자의 합이 ${ds}인 ${lenWord} 자리 수입니다. · ${st} = ${di} × ${a}, ${di} = ${sq} × ${b}, ${sq} = ${first.text(o)}`,
+      prompt: `다음 조건을 모두 만족할 때 ${st}이 나타내는 수를 모두 구하세요.`,
+      visual: { kind: "book9", subtype: "condition-list", conditions: [`${o}와 ${sq}는 서로 다른 한 자리 수입니다.`, `${st}은 각 자리 숫자의 합이 ${ds}인 ${lenWord} 자리 수입니다.`, `${st} = ${di} × ${a}`, `${di} = ${sq} × ${b}`, `${sq} = ${first.text(o)}`] },
       answer: answers.join(", "),
       solution: `${o}에 1부터 9까지 넣어 ${sq}가 ${o}와 다른 한 자리 수가 되는 것만 남기고 차례로 곱합니다: ${cands.map((c) => `${o}=${c.o} → ${sq}=${c.sq} → ${di}=${c.di} → ${st}=${c.st}`).join(", ")}. 이 중 ${lenWord} 자리 수이고 자리 숫자의 합이 ${ds}인 것은 ${answers.join(", ")}입니다.`,
       meta: { family: "product-chain-digit-sum-b8", firstKind, a, b, len, ds, answers }

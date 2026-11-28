@@ -19,7 +19,7 @@ for (const f of ["../../geometry/shared/question-bank.js", "../../geometry/works
 
 const TRIES = 20, fails = [];
 // 답 꼴 읽기 자체부터(한 줄 뒤 주석이 return을 삼켜 목록 답이 다 빠졌던 적이 있다)
-const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", "parts", [3, 4], undefined], ["(1) 29, (2) 36", "parts", [29, 36], undefined], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null], ["3/6", "frac", [3, 6], undefined]];
+const SHAPES = [["7", "int", [7], ""], ["15개", "int", [15], "개"], ["12㎠", "int", [12], "㎠"], ["1, 4, 5", "list", [1, 4, 5], ""], ["3번 딸기", null], ["가=3, 나=4", "parts", [3, 4], undefined], ["(1) 29, (2) 36", "parts", [29, 36], undefined], ["11시 30분", "pair", [11, 30], undefined], ["2시간 5분", "pair", [2, 5], undefined], ["토요일", "weekday", [6], undefined], ["8월 1일 금요일", null], ["3/6", "frac", [3, 6], undefined], ["12,321", "int", [12321], ""], ["14년 뒤", "int", [14], "년 뒤"], ["12,345,678,987,654,321", null], ["3번 뒤", null], ["1,800원", "int", [1800], "원"]];
 for (const [text, kind, values, unit] of SHAPES) {
   const got = answerShape(text);
   if (kind === null ? got !== null : !got || got.kind !== kind || got.values.join() !== values.join() || got.unit !== unit) fails.push(`답 꼴 읽기: ${text} → ${JSON.stringify(got)}`);
@@ -35,6 +35,10 @@ for (const key of Object.keys((await import("./study-deck.js")).DECK_LESSONS)) l
 for (const [deckKey, parts] of Object.entries((await import("./course2-deck.js")).SESSION_CONCEPTS)) {
   const bookId = deckKey.split("/")[0];
   for (const items of parts) for (const [kind, id] of items) if (kind === "drill") lessonKeys.add(`${bookId}/${id}`);
+}
+// 2과정 개념 꾸러미의 「해 보기」 연습 게임(course2-concepts/<권>.js PACKS의 explore ["drill", 열쇠, 이름])
+for (const [bookId, packs] of Object.entries((await import("./course2-concepts/packs.js")).PACK_BOOKS)) {
+  for (const list of Object.values(packs)) for (const pack of list) for (const [kind, id] of pack.explore || []) if (kind === "drill") lessonKeys.add(`${bookId}/${id}`);
 }
 let checked = 0;
 for (const [key, types] of Object.entries(DRILL_RECIPES)) {

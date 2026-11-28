@@ -31,7 +31,7 @@ try {
       const errors = [];
       page.on("pageerror", (error) => errors.push(error.message));
       const student = `PATTERN-${width}-${caseIndex}-${Date.now()}`;
-      await page.goto(`${base}/fields-classic/question-bank/?student=${student}&mode=type`, { waitUntil: "networkidle", timeout: 30000 });
+      await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=${student}&mode=type`, { waitUntil: "networkidle", timeout: 30000 });
       await page.locator('#builderTabs button[data-mode="type"]').click();
       await page.locator('#difficultyChoices button[data-level="advanced"]').click();
       await page.evaluate((typeId) => {

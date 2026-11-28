@@ -15,7 +15,7 @@ try {
   page.on("console", (message) => {
     if (message.type() === "error" && !message.text().includes("ERR_NETWORK_ACCESS_DENIED")) errors.push(message.text());
   });
-  await page.goto(`${baseUrl}/fields-classic/question-bank/?student=PARTITION-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
+  await page.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=PARTITION-AUDIT&mode=curriculum`, { waitUntil: "networkidle" });
   await page.locator('#curriculumStageChoices button[data-stage="practice"]').click();
   for (const typeId of ["rotational-partition-two", "rotational-partition-four"]) {
     const type = page.locator(`.curriculum-type[data-preview-type="${typeId}"]`).first();
@@ -48,7 +48,7 @@ try {
   assert.deepEqual(errors, [], `browser errors: ${errors.join(" | ")}`);
 
   const mobile = await browser.newPage({ viewport: { width: 390, height: 844 } });
-  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?student=PARTITION-MOBILE&mode=curriculum`, { waitUntil: "networkidle" });
+  await mobile.goto(`${baseUrl}/fields-classic/question-bank/?audit=1&student=PARTITION-MOBILE&mode=curriculum`, { waitUntil: "networkidle" });
   await mobile.locator('#curriculumStageChoices button[data-stage="practice"]').click();
   for (const typeId of ["rotational-partition-two", "rotational-partition-four"]) {
     await mobile.locator(`.curriculum-type[data-preview-type="${typeId}"]`).first().locator("input").check();

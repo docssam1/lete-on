@@ -14,7 +14,8 @@ const templates = read("./print-templates.js");
 assert(CURRICULUM.length === 10, `expected 10 course books, found ${CURRICULUM.length}`);
 assert(TEXTBOOK_STAGES.length === 4, `expected 4 textbook stages, found ${TEXTBOOK_STAGES.length}`);
 assert(/class="curriculum-book-tabs"/.test(app), "book-first curriculum navigation missing");
-assert(/const bookModels = \(hasQuery \? CURRICULUM : \[activeBook\]\)/.test(app), "curriculum search does not span all books");
+// 검색은 이 화면에 보이는 권 전체에서(권한으로 거른 학부모 화면이면 열린 권만, 아니면 1·2과정 모든 권 — 2026-11-27)
+assert(/const bookModels = \(hasQuery \? SHOWN_BOOKS : \[activeBook\]\)/.test(app) && /const SHOWN_BOOKS = bankBooks \? ALL_BANK_BOOKS\.filter\(\(book\) => bankBooks\.has\(book\.id\)\) : ALL_BANK_BOOKS;/.test(app), "curriculum search does not span all books");
 assert(/function curriculumSearchModel/.test(app), "curriculum word and unit search model missing");
 assert(/function catalogEntries/.test(app), "catalog strategy grouping missing");
 assert(/class="curriculum-inline-stages"/.test(app), "inline concept/type/practice/advanced controls missing");

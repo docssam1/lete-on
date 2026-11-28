@@ -1,6 +1,6 @@
-import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261128f";
+import { FIELDS_QUESTION_BANK_ADAPTER } from "./fields-question-bank-adapter.js?v=20261128g";
 import { mathText } from "./math-markup.js?v=20261122w";
-import { GENERATORS } from "./generators.js?v=20261128f";
+import { GENERATORS } from "./generators.js?v=20261128g";
 import { saveRecord } from "./study-progress.js?v=20261117a";
 import { icon } from "./ui-icons.js?v=20261105b";
 import { learningMapForType, learningMapInlineLabel } from "./learning-map.js?v=20260821a";
@@ -58,7 +58,7 @@ const params = new URLSearchParams(location.search);
 // 주소에 문제 목록을 통째로 실으면 인쇄 주소가 8천 자를 넘어 서버가 「URI Too Long」으로 거절했다(원장 2026-11-11)
 if (params.has("session") && !params.has("picks")) {
   const [unitText, partText, kind] = params.get("session").split("~");
-  const { sessionSheetEntries } = await import("./study-deck.js?v=20261127b");
+  const { sessionSheetEntries } = await import("./study-deck.js?v=20261128g");
   const entries = sessionSheetEntries(bookById(params.get("book")), Number(unitText), Number(partText), kind);
   if (entries) { params.set("picks", entries.picks); if (!params.has("title")) params.set("title", entries.title); }
 }
@@ -67,7 +67,9 @@ if (params.has("session") && !params.has("picks")) {
 // 덱·유사문제·권별 테스트·입학 모의고사에서 이어지는 학습지 주소(아래 열쇠가 있는 주소)는 예전처럼 그대로 연다.
 const BANK_FLOW_KEYS = ["picks", "types", "build", "session", "as", "embed", "preview", "paper", "peek", "side", "testId", "only", "print", "week"];
 let bankBooks = null;   // null = 모든 권
-if (!BANK_FLOW_KEYS.some((key) => params.has(key))) {
+// 검사기용: 이 컴퓨터(localhost)에서 &audit=1로 열 때만 잠금을 건너뛴다 — 배포 주소에서는 듣지 않는다
+const LOCAL_AUDIT = params.has("audit") && /^(127\.0\.0\.1|localhost)$/u.test(location.hostname);
+if (!LOCAL_AUDIT && !BANK_FLOW_KEYS.some((key) => params.has(key))) {
   const { bankGate, lockBank } = await import("./fields-access.js?v=20261127a");
   const gate = await bankGate();
   if (!gate.ok) {
@@ -530,7 +532,7 @@ function initTypePreviews() {
 }
 
 function setMode(mode) {
-  if (mode === "exam") mode = "curriculum";   // 시험지별(모의고사) 숨김 — 원장 2026-10-28
+  if (mode === "exam" && !LOCAL_AUDIT) mode = "curriculum";   // 시험지별(모의고사) 숨김 — 원장 2026-10-28 (검사기만 localhost에서 연다)
   if (bankBooks && mode === "type") mode = "curriculum";   // 학부모(권별)는 교재 단원별만 — 유형별은 모든 권의 유형이 섞인다
   state.mode = mode;
   document.querySelectorAll("#builderTabs button").forEach((button) => button.classList.toggle("active", button.dataset.mode === mode));
@@ -2355,13 +2357,13 @@ function numberLineSixPointsMarkup(visual) {
     const x2 = xs[to];
     // 길이 표시 = 바깥 곡선 점선 + 끊은 자리 글자(스킬 gfield-textbook-design 4-3, 원장 2026-11-24)
     const target = className === "target";
-    return dimArc(x1, 78, x2, 78, (side === "top" ? -1 : 1) * height / 2, String(value), target ? { size: 17, color: "#c58a19", labelColor: "#9a670b", width: 1.6 } : { size: 14 });
+    return dimArc(x1, 78, x2, 78, (side === "top" ? -1 : 1) * height / 2, String(value), target ? { size: 17, color: "#c58a19", labelColor: "#9a670b", width: 1.6, halo: true } : { size: 14, halo: true });
   };
   const hints = visual.hints.map((hint) => `<span>${hint.from}${hint.to} = ${hint.value}</span>`).join("");
-  const targetArc = visual.target === "AF" ? arc("A", "F", "?", "top", 72, "target") : arc("E", "F", "?", "top", 30, "target");
-  return `<div class="six-point-line-work"><svg viewBox="0 0 466 180" role="img" aria-label="A부터 F까지 여섯 점과 겹쳐 표시한 거리">
+  const targetArc = visual.target === "AF" ? arc("A", "F", "?", "top", 116, "target") : arc("E", "F", "?", "top", 30, "target");
+  return `<div class="six-point-line-work"><svg viewBox="0 0 466 166" role="img" aria-label="A부터 F까지 여섯 점과 겹쳐 표시한 거리">
     <line class="number-line-base" x1="28" y1="78" x2="438" y2="78"/>
-    ${arc("A", "D", d.ad, "top", 60)}${arc("C", "E", d.ce, "top", 48)}${arc("A", "C", d.ac, "bottom", 40)}${arc("B", "D", d.bd, "bottom", 55)}${arc("B", "F", d.bf, "bottom", 87)}${targetArc}
+    ${arc("A", "D", d.ad, "top", 76)}${arc("C", "E", d.ce, "top", 40)}${arc("A", "C", d.ac, "bottom", 46)}${arc("B", "D", d.bd, "bottom", 88)}${arc("B", "F", d.bf, "bottom", 132)}${targetArc}
     ${Object.entries(xs).map(([label, x]) => `<circle cx="${x}" cy="78" r="4"/><text class="point-label" x="${x}" y="94">${label}</text>`).join("")}
   </svg>${hints ? `<div class="line-distance-hints"><b>도움</b>${hints}</div>` : ""}<strong>구할 거리: ${visual.target[0]}와 ${visual.target[1]}</strong></div>`;
 }
@@ -3840,7 +3842,7 @@ function printTemplateInfo(title) {
     subtitle: asStudent && studentTitle ? studentTitle : book ? `사고력 수학 · ${activeTextbookStage().label}` : `${state.questions.length}문항 맞춤 학습지`,
     volume: book ? String(book.label).replace(/[^0-9]/g, "") : "",
     bookLabel: book ? book.label : "",
-    footLabel: book ? `지필드 클래식 · ${book.label}` : `지필드 문제은행 · ${title}`,
+    footLabel: book ? `Gifted Math · ${book.label}` : `지필드 문제은행 · ${title}`,
     goal: `학습 내용 · ${middles.slice(0, 3).join(" · ")}${middles.length > 3 ? " 외" : ""}`,
     stats: `${state.questions.length}문항\n${middles.length}가지 학습 내용`
   };
@@ -3969,7 +3971,7 @@ renderAcademyStyleFilters();
 renderTypeTree();
 initControls();
 initTypePreviews();
-setMode(params.get("mode") === "type" ? "type" : "curriculum");
+setMode(params.get("mode") === "type" ? "type" : params.get("mode") === "exam" && LOCAL_AUDIT ? "exam" : "curriculum");
 
 // ?exam=<시험지 id> 로 들어오면 그 시험지에서 열려 있는 문항을 모두 골라 둔다.
 // 프로그램 페이지의 모의고사 카드에서 바로 넘어올 때 쓴다. 잠긴 문항은 건드리지 않으므로

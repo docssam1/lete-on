@@ -21,10 +21,10 @@ try {
       page.on("pageerror", (error) => errors.push(error.message));
       // 단원 목록에는 권별평가를 섞지 않는다(원장 「아래 단원별로 구분한 것만 살려」). 권별평가는 심화 옆 「권별평가」 칸에서
       // 따로 고르고(원장 2026-10-27), 주소 set=unit-test 는 그 칸을 연다 — 검토를 마친 번호만 담겨야 한다.
-      await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum&book=${bookId}`, { waitUntil: "networkidle" });
+      await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=curriculum&book=${bookId}`, { waitUntil: "networkidle" });
       assert.equal(await page.locator("input[data-unit-test-key]").count(), 0, "단원 목록에 권별평가 문항을 섞지 않는다");
       assert.equal(await page.locator("#curriculumTree button[data-curriculum-view=\"unit-test\"]").count(), 1, "심화 옆 권별평가 칸");
-      await page.goto(`${base}/fields-classic/question-bank/?student=DEMO&mode=curriculum&book=${bookId}&set=unit-test`, { waitUntil: "networkidle" });
+      await page.goto(`${base}/fields-classic/question-bank/?audit=1&student=DEMO&mode=curriculum&book=${bookId}&set=unit-test`, { waitUntil: "networkidle" });
       const expected = inventory.filter((entry) => entry.verified);
       assert.equal(await page.locator("input[data-unit-test-key]:checked").count(), expected.length, "권별평가 칸에 검토한 번호가 골라져 있다");
       assert.equal(await page.locator(".curriculum-unit").count(), 0, "권별평가 칸에서는 단원 목록을 숨긴다");
@@ -68,10 +68,12 @@ try {
       }
       if (bookId === "book-01") {
         const folding = page.locator(".fold-number-steps");
-        assert.equal(await folding.locator("figure").count(), 4);
-        const directions = await folding.evaluate((node) => ({ h: node.dataset.foldHorizontal, v: node.dataset.foldVertical }));
-        assert.match(await folding.locator("figcaption").nth(0).textContent(), directions.h === "up" ? /아래쪽을 위로/ : /위쪽을 아래로/);
-        assert.match(await folding.locator("figcaption").nth(1).textContent(), directions.v === "left" ? /오른쪽을 왼쪽으로/ : /왼쪽을 오른쪽으로/);
+        // 색종이 접기는 한 줄 흐름(처음 → 1번 접음 → 2번 접음 · 자르기)과 화살표로만 — 그림 속에 단계 설명 글을 쓰지 않는다(원장 2026-11-21)
+        const foldText = await folding.textContent();
+        assert.match(foldText, /처음/);
+        assert.equal((foldText.match(/번 접음/g) || []).length, 2);
+        assert.doesNotMatch(foldText, /쪽을 .{1,3}쪽?으로/);
+        assert.ok(["up", "down"].includes(await folding.getAttribute("data-fold-horizontal")) && ["left", "right"].includes(await folding.getAttribute("data-fold-vertical")));
         const card = (number) => cards.nth(number - 1);
         // 원본 구조: 두 문제·세 그림·접는 단계 수가 원본과 같아야 한다.
         assert.equal(await card(1).locator(".b1-ut-set>figure").count(), 2);
