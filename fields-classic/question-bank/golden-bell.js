@@ -1,10 +1,10 @@
 import { frac } from "./math-markup.js?v=20261122w";
-import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261119a";
+import { GOLDEN_BELL_BOOKS, COURSE_CATALOG, goldenBellBookById, goldenBellLocation, UNAVAILABLE_BOOK } from "./golden-bell-library.js?v=20261128i";
 import { courseConceptMarkup, courseConceptPrintPages, courseAnswerPrintPages } from "./golden-bell-course-concepts.js?v=20261101m";
 import { hasProtectedAnswer, hydrateProtectedAnswers, loadProtectedGoldenBellBook, ensureFieldsSession } from "./golden-bell-protected.js?v=20261117a";
 import { appendProtectedRecoveryItems } from "./golden-bell-recovery.js?v=20261028s";
 import { recordGoldenBellOutcome, summarizeGoldenBellLesson } from "./golden-bell-progress.js?v=20260901a";
-import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261124j";
+import { guidedConceptPrintSummary, guidedConceptVisual } from "./golden-bell-guided-experiences.js?v=20261128i";
 import { book01Markup } from "./book01-renderers.js?v=20261121d";
 import { book02Markup } from "./book02-renderers.js?v=20261101m";
 import { book03Markup } from "./book03-renderers.js?v=20261124j";
@@ -1636,7 +1636,7 @@ function printLessonExercises(lesson, lessonNumber, book) {
   if (sourcePrintPaged) {
     const groups = new Map();
     lesson.original.items.forEach((item) => {
-      const key = item.printGroup || groups.size + 1;
+      const key = item.printGroup ?? groups.size + 1;   // 0도 한 묶음이다(4권 두 차시는 0부터 센다)
       if (!groups.has(key)) groups.set(key, []);
       groups.get(key).push(item);
     });
