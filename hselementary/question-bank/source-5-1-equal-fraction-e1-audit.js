@@ -39,7 +39,8 @@ const kinds = [
   "shared-symbol-fraction",
   "grouped-fraction-position",
   "denominator-plus-minus",
-  "unchanged-after-subtraction",
+  // 2026-11-28 책 대조: 예제 1-4 원문은 "가와 나의 최소공배수가 572"(답 143, 44)라 최대공약수 조건에서 되돌렸습니다.
+  "unchanged-after-subtraction-lcm",
   "same-add-target",
   "sum-and-changed-fraction",
   "denominator-plus-minus",
@@ -112,13 +113,21 @@ function independent(tag) {
     if (candidates.length !== 1) throw new Error(`처음 분수 후보가 ${candidates.length}개입니다.`);
     return { mode: "fraction", answer: rationalText(numerator, denominator), candidates };
   }
-  if (kind === "unchanged-after-subtraction") {
-    const [reducedNumerator, reducedDenominator, common, removedScale] = values;
-    const numerator = reducedNumerator * common;
-    const denominator = reducedDenominator * common;
-    if (gcd(numerator, denominator) !== common) throw new Error("최대공약수 조건이 다릅니다.");
-    if ((numerator - reducedNumerator * removedScale) * denominator !== numerator * (denominator - reducedDenominator * removedScale)) throw new Error("수를 뺀 뒤 크기가 달라집니다.");
-    return { mode: "ordered", answer: [numerator, denominator], candidates: [[numerator, denominator]] };
+  if (kind === "unchanged-after-subtraction-lcm") {
+    const [reducedNumerator, reducedDenominator, least, removedScale] = values;
+    const removeNumerator = reducedNumerator * removedScale;
+    const removeDenominator = reducedDenominator * removedScale;
+    const candidates = [];
+    // 나를 1부터 최소공배수까지 전수 확인: 빼도 크기가 같고(가×(나-빼는 분모)=나×(가-빼는 분자)), 남는 분자·분모가 양수이며, 최소공배수가 주어진 값인 (가, 나).
+    for (let denominator = 1; denominator <= least; denominator += 1) {
+      if ((denominator * removeNumerator) % removeDenominator) continue;
+      const numerator = denominator * removeNumerator / removeDenominator;
+      if (numerator <= removeNumerator || denominator <= removeDenominator) continue;
+      if ((numerator - removeNumerator) * denominator !== numerator * (denominator - removeDenominator)) continue;
+      if (numerator * denominator / gcd(numerator, denominator) === least) candidates.push([numerator, denominator]);
+    }
+    if (candidates.length !== 1) throw new Error(`가, 나 후보가 ${candidates.length}개입니다.`);
+    return { mode: "ordered", answer: candidates[0], candidates };
   }
   if (kind === "same-add-target") {
     const [numerator, denominator, added] = values;
@@ -171,7 +180,7 @@ function checkAnchors() {
     [{ kind: "shared-symbol-fraction", values: [53, 40, 11, 17] }, "fraction", "40/53"],
     [{ kind: "grouped-fraction-position", values: [17, 33] }, "number", 545],
     [{ kind: "denominator-plus-minus", values: [18, 67, 5, 4] }, "fraction", "18/67"],
-    [{ kind: "unchanged-after-subtraction", values: [13, 4, 572, 4] }, "ordered", [7436, 2288]],
+    [{ kind: "unchanged-after-subtraction-lcm", values: [13, 4, 572, 4] }, "ordered", [143, 44]],
     [{ kind: "same-add-target", values: [4, 13, 50] }, "number", 50],
     [{ kind: "sum-and-changed-fraction", values: [48, 94, 6, 10] }, "literal-fraction", "48/94"],
     [{ kind: "denominator-plus-minus", values: [3, 17, 4, 2] }, "fraction", "3/17"],

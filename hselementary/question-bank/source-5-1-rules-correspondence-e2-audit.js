@@ -16,7 +16,8 @@ const readyIds = new Set([
 ]);
 const lockedIds = new Set(["5-1-u3-e2-exploration", "5-1-u3-e2-mission-5"]);
 const expectedKinds = new Map([
-  [1, "affine-table"], [2, "ratio-table"], [3, "win-step-table"],
+  // 2026-11-28 책 대조: 예제 2-2는 원문처럼 □, ○, △ 세 줄 표(△=(□-2)×(□-1)÷2-1)로 되돌렸습니다(이전에는 Mission 2와 같은 비례표).
+  [1, "affine-table"], [2, "triangular-three-row-table"], [3, "win-step-table"],
   [4, "affine-table"], [5, "ratio-table"], [6, "linked-three-row-table"],
   [7, "rectangle-wire-table"], [9, "work-payment-table"]
 ]);
@@ -30,6 +31,25 @@ const parseTag = prompt => {
   return { kind: match[1], values: match[2].split(",").map(Number), contract: match[3] };
 };
 const answerParts = answer => String(answer).split(",").map(item => item.trim());
+const triangularRelation = (shift, minus) => {
+  const factor = offset => offset === 0 ? "□" : `(□-${offset})`;
+  return `△=${factor(shift)}×${factor(shift - 1)}÷2${minus ? `-${minus}` : ""}`;
+};
+// 예제 2-2: 보이는 표의 □·○·△ 짝만으로 관계식이 맞는지 독립 확인합니다.
+function verifyTriangularTable(generated, shift, minus) {
+  const rows = [...generated.prompt.matchAll(/<tr><th>([^<]+)<\/th>((?:<td>[^<]*<\/td>)+)<\/tr>/g)].map(match => [match[1], [...match[2].matchAll(/<td>([^<]*)<\/td>/g)].map(cell => cell[1] === "" ? null : Number(cell[1]))]);
+  const table = new Map(rows);
+  const squares = table.get("□"), circles = table.get("○"), triangles = table.get("△");
+  if (!squares || !circles || !triangles || squares.length !== 6) throw new Error("□, ○, △ 세 줄 표가 보이지 않습니다.");
+  if (circles.filter(value => value === null).length !== 2 || triangles.filter(value => value === null).length !== 2) throw new Error("원문처럼 ○·△ 줄에 빈칸이 두 개씩 있어야 합니다.");
+  squares.forEach((square, index) => {
+    const circle = square - shift;
+    if (circles[index] !== null && circles[index] !== circle) throw new Error("○=□-이동 수 관계가 표와 다릅니다.");
+    const triangle = (square - shift) * (square - shift + 1) / 2 - minus;
+    if (triangles[index] !== null && triangles[index] !== triangle) throw new Error("△ 값이 관계식과 다릅니다.");
+  });
+  if (String(generated.answer).replace(/\s/g, "") !== triangularRelation(shift, minus)) throw new Error("정답 관계식이 표에서 구한 식과 다릅니다.");
+}
 const numericPart = text => Number(String(text).replace(/[^0-9-]/g, ""));
 
 function checkAnchor(variant, values, expected) {
@@ -39,7 +59,11 @@ function checkAnchor(variant, values, expected) {
     const [m, b, target] = values;
     relation = `△=${m}×□${b >= 0 ? `+${b}` : b}`;
     answer = m * target + b;
-  } else if (variant === 2 || variant === 5) {
+  } else if (variant === 2) {
+    const [shift, minus] = values;
+    relation = triangularRelation(shift, minus);
+    answer = null;
+  } else if (variant === 5) {
     const [numerator, denominator, target] = values;
     relation = `◆=△×${numerator}÷${denominator}`;
     answer = target * numerator / denominator;
@@ -67,7 +91,7 @@ function checkAnchor(variant, values, expected) {
 
 const anchors = [
   { variant: 1, values: [6, -2, 137], relation: "△=6×□-2", answer: 820 },
-  { variant: 2, values: [3, 4, 244], relation: "◆=△×3÷4", answer: 183 },
+  { variant: 2, values: [2, 1], relation: "△=(□-2)×(□-1)÷2-1", answer: null },
   { variant: 3, values: [20, 3, 1, 12], relation: "△=4×□-20", answer: 12 },
   { variant: 4, values: [4, -10, 50], relation: "△=4×□-10", answer: 190 },
   { variant: 5, values: [3, 4, 244], relation: "◆=△×3÷4", answer: 183 },
@@ -82,6 +106,12 @@ for (const anchor of anchors) {
 function verifyGenerated(type, generated) {
   if (!generated?.prompt || generated.answer === undefined || !generated.solution) throw new Error("문제·정답·풀이가 모두 있어야 합니다.");
   const tag = parseTag(generated.prompt);
+  if (type.variant === 2) {
+    if (tag.kind !== expectedKinds.get(2) || tag.contract !== "relation") throw new Error("유형 또는 답 계약이 원문 기준과 다릅니다.");
+    verifyTriangularTable(generated, tag.values[0], tag.values[1]);
+    if (/undefined|null|NaN|Infinity|순열|조합|제곱/.test(`${generated.prompt}${generated.solution}`)) throw new Error("화면 오류 또는 학년 밖 표현이 있습니다.");
+    return;
+  }
   if (tag.kind !== expectedKinds.get(type.variant) || tag.contract !== "ordered") throw new Error("유형 또는 답 계약이 원문 기준과 다릅니다.");
   const [first, second] = answerParts(generated.answer);
   const [a, b, c, d] = tag.values;
@@ -92,7 +122,7 @@ function verifyGenerated(type, generated) {
     relation = `△=${a}×□${b >= 0 ? `+${b}` : b}`;
     numeric = a * c + b;
     reverseCandidates = [numeric];
-  } else if (type.variant === 2 || type.variant === 5) {
+  } else if (type.variant === 5) {
     relation = `◆=△×${a}÷${b}`;
     numeric = c * a / b;
     reverseCandidates = [numeric];
