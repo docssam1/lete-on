@@ -15,6 +15,10 @@
 //   3단원 — 한 자리 수를 곱하는 네이피어·넓이 모형 · 곱하는 수의 합이 10·100·1000이 되게 묶기 · 9·99에 가까운 수
 //          · 1부터 n까지의 합 표 · 긴 덧셈의 빈칸
 //   4단원 — 범위마다 수의 개수와 숫자의 개수 표 · 1부터 N까지 숫자의 개수·들어 있는 수·빼고 남는 수
+//   (2차) 2단원 — 직사각형·평행사변형 둘레 네 가지 · 두 대각선과 삼각형 · 꿀벌 둘레 비교 · 조각 길이로 준 꺾인 도형 · 모눈 위 두 도형
+//          · 땅에 닿은 잔디밭 · 홈 두 개 · 변·모서리에서 정사각형 잘라 내기 · 한쪽에서 정사각형 두 개 · 모눈 조각 · 정사각형+정삼각형
+//   (2차) 3단원 — 숨은 「× 1」 · 긴 번갈아 식과 짝지어 빼기 · 짝수 개 연속수 · 신문지 한 장으로 마지막 쪽
+//   (2차) 4단원 — 부호만 바꾼 식의 값 표 · 줄어드는 수 ±(목표 여러 개) · 정해진 묶음 ± · 같은 숫자에 + 넣기
 
 import { dimOut, dimArc } from "./length-dim.js?v=20261124h";
 import { foldStepArrowSvg, foldArrowSvg, foldCaptionSvg, foldCreaseSvg, FOLD_CAPTION_SPACE } from "./fold-visuals.js?v=20261123a";
@@ -42,7 +46,7 @@ const lcm = (a, b) => (a / gcd(a, b)) * b;
 const gcdAll = (list) => list.reduce((g, v) => gcd(g, v), 0);
 
 // 수 뒤 받침: 끝자리 2·4·5·9는 받침 없음(이·사·오·구), 나머지(영·일·삼·육·칠·팔·십·백·천)는 받침 있음.
-const hasBatchim = (n) => ![2, 4, 5, 9].includes(Math.abs(n) % 10);
+const hasBatchim = (n) => ![2, 4, 5, 9].includes(Math.abs(Number(String(n).replaceAll(",", ""))) % 10);
 const josa = (n, withBatchim, without) => `${n}${hasBatchim(n) ? withBatchim : without}`;
 // 「으로/로」: 받침이 ㄹ(1·7·8)이거나 없으면 「로」
 const ro = (n) => `${n}${[1, 7, 8, 2, 4, 5, 9].includes(Math.abs(n) % 10) ? "로" : "으로"}`;
@@ -1256,6 +1260,1056 @@ function digitExcludeCountB6({ difficulty = 2 }) {
   };
 }
 
+// ══ (2차) 남은 번호 — 2단원 둘레 · 3단원 연속수 · 4단원 수 만들기 ══════════════
+
+// ── 2단원 공통: 1×1 칸으로 만든 도형 → 둘레 꼭짓점 ─────────────
+const cellKey = (x, y) => `${x}:${y}`;
+const cellSetOf = (cells) => new Set(cells.map(([x, y]) => cellKey(x, y)));
+
+function cellsConnected(cells) {
+  if (!cells.length) return false;
+  const set = cellSetOf(cells);
+  const seen = new Set([cellKey(...cells[0])]);
+  const stack = [cells[0]];
+  while (stack.length) {
+    const [x, y] = stack.pop();
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const k = cellKey(x + dx, y + dy);
+      if (set.has(k) && !seen.has(k)) { seen.add(k); stack.push([x + dx, y + dy]); }
+    }
+  }
+  return seen.size === cells.length;
+}
+
+// 구멍(둘러싸인 빈 칸)과 꼭짓점만 닿은 칸(두 칸이 대각선으로만 이어짐)이 없어야 둘레가 한 줄로 이어진다
+function cellsSimple(cells) {
+  const set = cellSetOf(cells);
+  const xs = cells.map(([x]) => x);
+  const ys = cells.map(([, y]) => y);
+  const [x0, x1, y0, y1] = [Math.min(...xs) - 1, Math.max(...xs) + 1, Math.min(...ys) - 1, Math.max(...ys) + 1];
+  const seen = new Set([cellKey(x0, y0)]);
+  const stack = [[x0, y0]];
+  while (stack.length) {
+    const [x, y] = stack.pop();
+    for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nx = x + dx;
+      const ny = y + dy;
+      if (nx < x0 || nx > x1 || ny < y0 || ny > y1) continue;
+      const k = cellKey(nx, ny);
+      if (set.has(k) || seen.has(k)) continue;
+      seen.add(k);
+      stack.push([nx, ny]);
+    }
+  }
+  if (seen.size + set.size !== (x1 - x0 + 1) * (y1 - y0 + 1)) return false;
+  for (let x = x0; x < x1; x += 1) for (let y = y0; y < y1; y += 1) {
+    const a = set.has(cellKey(x, y));
+    const b = set.has(cellKey(x + 1, y));
+    const c = set.has(cellKey(x, y + 1));
+    const d = set.has(cellKey(x + 1, y + 1));
+    if ((a && d && !b && !c) || (b && c && !a && !d)) return false;
+  }
+  return true;
+}
+
+// 바깥 둘레 꼭짓점(화면 좌표에서 시계 방향, 한 줄로 이어진 변은 합침)
+function cellsOutline(cells) {
+  const set = cellSetOf(cells);
+  const next = new Map();
+  for (const [x, y] of cells) {
+    if (!set.has(cellKey(x, y - 1))) next.set(cellKey(x, y), [x + 1, y]);
+    if (!set.has(cellKey(x + 1, y))) next.set(cellKey(x + 1, y), [x + 1, y + 1]);
+    if (!set.has(cellKey(x, y + 1))) next.set(cellKey(x + 1, y + 1), [x, y + 1]);
+    if (!set.has(cellKey(x - 1, y))) next.set(cellKey(x, y + 1), [x, y]);
+  }
+  const start = [...cells].sort((a, b) => a[1] - b[1] || a[0] - b[0])[0];
+  const pts = [[start[0], start[1]]];
+  let cur = next.get(cellKey(start[0], start[1]));
+  let guard = 0;
+  while (cur && (cur[0] !== start[0] || cur[1] !== start[1]) && guard < 4000) {
+    pts.push(cur);
+    cur = next.get(cellKey(cur[0], cur[1]));
+    guard += 1;
+  }
+  return pts.filter((p, i) => {
+    const a = pts[(i - 1 + pts.length) % pts.length];
+    const b = pts[(i + 1) % pts.length];
+    return !((a[0] === p[0] && p[0] === b[0]) || (a[1] === p[1] && p[1] === b[1]));
+  });
+}
+
+const outlineLength = (pts) => pts.reduce((t, [x, y], i) => { const [u, v] = pts[(i + 1) % pts.length]; return t + Math.abs(u - x) + Math.abs(v - y); }, 0);
+// 변 목록: a·b 끝점, 길이, 바깥쪽 방향(시계 방향이면 (dy, −dx))
+const outlineEdges = (pts) => pts.map((a, i) => {
+  const b = pts[(i + 1) % pts.length];
+  const L = Math.abs(b[0] - a[0]) + Math.abs(b[1] - a[1]);
+  return { a, b, len: L, n: [Math.sign(b[1] - a[1]), -Math.sign(b[0] - a[0])] };
+});
+const cellEdgeCount = (cells) => {
+  const set = cellSetOf(cells);
+  let t = 0;
+  for (const [x, y] of cells) for (const [dx, dy] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) if (!set.has(cellKey(x + dx, y + dy))) t += 1;
+  return t;
+};
+const rectCells = (W, H) => { const out = []; for (let y = 0; y < H; y += 1) for (let x = 0; x < W; x += 1) out.push([x, y]); return out; };
+const bboxOf = (cells) => ({ minX: Math.min(...cells.map(([x]) => x)), maxX: Math.max(...cells.map(([x]) => x)) + 1, minY: Math.min(...cells.map(([, y]) => y)), maxY: Math.max(...cells.map(([, y]) => y)) + 1 });
+
+function rowsColsContiguous(cells) {
+  const rows = new Map();
+  const cols = new Map();
+  for (const [x, y] of cells) {
+    if (!rows.has(y)) rows.set(y, []);
+    if (!cols.has(x)) cols.set(x, []);
+    rows.get(y).push(x);
+    cols.get(x).push(y);
+  }
+  const contiguous = (list) => Math.max(...list) - Math.min(...list) + 1 === list.length;
+  return [...rows.values()].every(contiguous) && [...cols.values()].every(contiguous);
+}
+
+// 직사각형 W×H의 모서리를 계단(한 칸 이상)으로 잘라 낸 도형 — 줄과 칸이 끊기지 않으면 둘레는 2 × (W + H)
+function splitInto(total, parts, min) {
+  if (total < parts * min) return null;
+  const cuts = shuffle(Array.from({ length: total - parts * min + parts - 1 }, (_, i) => i)).slice(0, parts - 1).sort((a, b) => a - b);
+  const out = [];
+  let prev = -1;
+  for (const c of [...cuts, total - parts * min + parts - 1]) { out.push(c - prev - 1 + min); prev = c; }
+  return out;
+}
+
+function staircaseCut(W, H, corner, steps, minPart, maxShareW = 0.6, maxShareH = 0.6) {
+  const A = randomInt(steps * minPart, Math.max(steps * minPart, Math.floor(W * maxShareW)));
+  const B = randomInt(steps * minPart, Math.max(steps * minPart, Math.floor(H * maxShareH)));
+  const wa = splitInto(A, steps, minPart);
+  const hb = splitInto(B, steps, minPart);
+  if (!wa || !hb) return null;
+  const cut = [];
+  let row = 0;
+  let width = A;
+  for (let k = 0; k < steps; k += 1) {
+    for (let y = row; y < row + hb[k]; y += 1) for (let x = 0; x < width; x += 1) cut.push([x, y]);
+    row += hb[k];
+    width -= wa[k];
+  }
+  const flipX = corner === "tr" || corner === "br";
+  const flipY = corner === "bl" || corner === "br";
+  return cut.map(([x, y]) => [flipX ? W - 1 - x : x, flipY ? H - 1 - y : y]);
+}
+
+function orthoConvexCells(W, H, { corners = 2, maxSteps = 2, minPart = 1, share = 0.6 } = {}) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const chosen = shuffle(["tl", "tr", "bl", "br"]).slice(0, corners);
+    const cut = new Set();
+    let bad = false;
+    for (const c of chosen) {
+      const part = staircaseCut(W, H, c, randomInt(1, maxSteps), minPart, share, share);
+      if (!part) { bad = true; break; }
+      part.forEach(([x, y]) => cut.add(cellKey(x, y)));
+    }
+    if (bad) continue;
+    const cells = rectCells(W, H).filter(([x, y]) => !cut.has(cellKey(x, y)));
+    const box = bboxOf(cells);
+    if (box.minX !== 0 || box.minY !== 0 || box.maxX !== W || box.maxY !== H) continue;
+    if (!cellsConnected(cells) || !rowsColsContiguous(cells) || !cellsSimple(cells)) continue;
+    // 자른 계단의 마디가 minPart보다 짧게 남지 않게(글자가 들어갈 자리)
+    if (outlineEdges(cellsOutline(cells)).some((e) => e.len < minPart)) continue;
+    return cells;
+  }
+  return null;
+}
+
+// 칸 도형 그리기 — T: 칸 좌표 → 화면 좌표
+const scaler = (pad, px, ox = 0, oy = 0) => ([x, y]) => [ox + pad + x * px, oy + pad + y * px];
+const outlinePoly = (pts, T, fill = FILL, stroke = LINE, extra = "") => poly(pts.map(T), fill, stroke, extra);
+// 변 하나에 길이 표시(호는 바깥쪽 n 방향으로)
+function edgeLabel(edge, T, label, { off = 11, size = 13 } = {}) {
+  const a = T(edge.a);
+  const b = T(edge.b);
+  const m = [(a[0] + b[0]) / 2, (a[1] + b[1]) / 2];
+  return len(a, b, [m[0] - edge.n[0] * 10, m[1] - edge.n[1] * 10], label, { off, size });
+}
+const shapeName = (x, y, value, size = 15) => text(x, y, value, size, 'font-weight="700"');
+function innerPoint(cells, T, px) {
+  const cx = sum(cells.map(([x]) => x + 0.5)) / cells.length;
+  const cy = sum(cells.map(([, y]) => y + 0.5)) / cells.length;
+  const best = [...cells].sort((p, q) => Math.hypot(p[0] + 0.5 - cx, p[1] + 0.5 - cy) - Math.hypot(q[0] + 0.5 - cx, q[1] + 0.5 - cy))[0];
+  const [x, y] = T(best);
+  return [x + px / 2, y + px / 2];
+}
+const partWrap = (parts) => `<div style="display:flex;flex-wrap:wrap;gap:12px 22px;align-items:flex-end">${parts.map((p, i) => `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:2px"><b style="font-size:15px;${FONT}">${PARTS[i]}</b>${p}</div>`).join("")}</div>`;
+const caption = (value) => `<div style="${FONT};font-size:15px;color:${INK};padding-left:6px">${value}</div>`;
+
+// ── 2단원: 직사각형·평행사변형의 둘레 네 가지(둘레 · 모르는 변) ───────
+
+function quadPart(kind, a, b, ask) {
+  // a = 가로(밑변), b = 세로(비스듬한 변)
+  const px = Math.min(130 / (a + (kind === "para" ? b * 0.5 : 0)), 90 / (kind === "para" ? b * 0.87 : b), 14);
+  const x0 = 66;
+  const y0 = 26;
+  const perimeter = 2 * (a + b);
+  let pts;
+  if (kind === "rect") pts = [[x0, y0], [x0 + a * px, y0], [x0 + a * px, y0 + b * px], [x0, y0 + b * px]];
+  else {
+    const dx = b * px * 0.5;
+    const dy = b * px * 0.866;
+    pts = [[x0 + dx, y0], [x0 + dx + a * px, y0], [x0 + a * px, y0 + dy], [x0, y0 + dy]];
+  }
+  const c = [sum(pts.map((p) => p[0])) / 4, sum(pts.map((p) => p[1])) / 4];
+  let body = poly(pts, FILL, LINE);
+  body += len(pts[0], pts[1], c, ask === "a" ? "?" : `${a}cm`, { off: 11, size: 13 });
+  body += len(pts[3], pts[0], c, ask === "b" ? "?" : `${b}cm`, { off: 11, size: 13 });
+  const W = Math.max(...pts.map((p) => p[0])) + 16;
+  const H = Math.max(...pts.map((p) => p[1])) + 10;
+  const svg = `${svgOpen(W, H, kind === "rect" ? "직사각형" : "평행사변형")}${body}</svg>`;
+  const name = kind === "rect" ? "직사각형" : "평행사변형";
+  const answer = ask === "perimeter" ? perimeter : ask === "a" ? a : b;
+  const known = ask === "a" ? b : a;
+  const solution = ask === "perimeter"
+    ? `${name}은 마주 보는 두 변의 길이가 같으므로 둘레는 (${a} + ${b}) × 2 = ${perimeter}cm입니다.`
+    : `두 변의 합은 ${perimeter} ÷ 2 = ${a + b}cm이므로 모르는 변은 ${a + b} − ${known} = ${answer}cm입니다.`;
+  return { html: `${svg}${caption(`둘레 : ${ask === "perimeter" ? "?" : `${perimeter}cm`}`)}`, answer, solution, kind, a, b, ask, perimeter };
+}
+
+function quadSides(difficulty, kind) {
+  const top = difficulty === 1 ? 10 : difficulty === 2 ? 15 : 24;
+  let a;
+  let b;
+  do { a = randomInt(3, top); b = randomInt(2, top); } while (a === b || (kind === "para" && b > a + 3));
+  return [a, b];
+}
+
+function rectParallelogramPerimeterFourB6({ difficulty = 2 }) {
+  const plan = [["rect", "perimeter"], ["rect", pick(["a", "b"])], ["para", "perimeter"], ["para", pick(["a", "b"])]];
+  const parts = plan.map(([kind, ask]) => quadPart(kind, ...quadSides(difficulty, kind), ask));
+  return {
+    prompt: "직사각형과 평행사변형은 마주 보는 두 변의 길이가 같습니다. 각 도형의 둘레나 ?에 알맞은 길이를 구하세요.",
+    visual: { kind: "fig", html: partWrap(parts.map((p) => p.html)) },
+    answer: parts.map((p, i) => `${PARTS[i]} ${p.answer}cm`).join(" "),
+    solution: parts.map((p, i) => `${PARTS[i]} ${p.solution}`).join(" "),
+    meta: { family: "quad-perimeter-parts-b6", parts: parts.map(({ kind, a, b, ask, perimeter, answer }) => ({ kind, a, b, ask, perimeter, answer })), answer: parts.map((p) => p.answer) }
+  };
+}
+
+function parallelogramPerimeterPairB6({ difficulty = 2 }) {
+  const parts = [quadPart("para", ...quadSides(difficulty, "para"), "perimeter"), quadPart("para", ...quadSides(difficulty, "para"), pick(["a", "b"]))];
+  return {
+    prompt: "평행사변형은 마주 보는 두 변의 길이가 같습니다. 평행사변형의 둘레나 ?에 알맞은 길이를 구하세요.",
+    visual: { kind: "fig", html: partWrap(parts.map((p) => p.html)) },
+    answer: parts.map((p, i) => `${PARTS[i]} ${p.answer}cm`).join(" "),
+    solution: parts.map((p, i) => `${PARTS[i]} ${p.solution}`).join(" "),
+    meta: { family: "quad-perimeter-parts-b6", parts: parts.map(({ kind, a, b, ask, perimeter, answer }) => ({ kind, a, b, ask, perimeter, answer })), answer: parts.map((p) => p.answer) }
+  };
+}
+
+// ── 2단원: 대각선 두 개를 그은 직사각형 — 색칠한 두 삼각형의 둘레 ─────
+
+const DIAGONAL_TRIPLES = [[6, 8, 10], [12, 16, 20], [18, 24, 30], [10, 24, 26], [16, 30, 34], [24, 32, 40], [9, 12, 15].map((v) => v * 2)];
+
+function rectangleDiagonalTrianglesB6({ difficulty = 2 }) {
+  const pool = difficulty === 1 ? DIAGONAL_TRIPLES.slice(0, 3) : DIAGONAL_TRIPLES;
+  const [p, q, D] = pick(pool);
+  const [W, H] = Math.random() < 0.6 ? [q, p] : [p, q];
+  const usePerimeter = difficulty === 3 && Math.random() < 0.6;
+  const horizontal = pick(["top", "bottom"]);
+  const vertical = pick(["left", "right"]);
+  const s = Math.min(230 / W, 150 / H);
+  const x0 = 46;
+  const y0 = 34;
+  const A = [x0, y0];
+  const B = [x0 + W * s, y0];
+  const C = [x0 + W * s, y0 + H * s];
+  const Dp = [x0, y0 + H * s];
+  const O = [x0 + (W * s) / 2, y0 + (H * s) / 2];
+  const tri = { top: [A, B, O], right: [B, C, O], bottom: [C, Dp, O], left: [Dp, A, O] };
+  const cen = (t) => [sum(t.map((v) => v[0])) / 3, sum(t.map((v) => v[1])) / 3];
+  let body = rect(A[0], A[1], W * s, H * s, "#fff", LINE);
+  body += poly(tri[horizontal], "#9fcfba", LINE);
+  body += poly(tri[vertical], "#d4ebe0", LINE);
+  body += `<line x1="${f1(A[0])}" y1="${f1(A[1])}" x2="${f1(C[0])}" y2="${f1(C[1])}" style="stroke:${LINE};stroke-width:1.5"/>`;
+  body += `<line x1="${f1(B[0])}" y1="${f1(B[1])}" x2="${f1(Dp[0])}" y2="${f1(Dp[1])}" style="stroke:${LINE};stroke-width:1.5"/>`;
+  const [hx, hy] = cen(tri[horizontal]);
+  const [vx, vy] = cen(tri[vertical]);
+  body += text(hx, hy + (horizontal === "top" ? -4 : 4), NAMES[0], 15) + text(vx + (vertical === "left" ? -4 : 4), vy, NAMES[1], 15);
+  // 가로는 색칠하지 않은 쪽 변, 세로는 왼쪽(또는 오른쪽) 변에 — 바깥 곡선 점선
+  const wEdge = horizontal === "top" ? [Dp, C] : [A, B];
+  const hEdge = vertical === "left" ? [B, C] : [A, Dp];
+  body += len(wEdge[0], wEdge[1], O, `${W}cm`, { off: 12, size: 14 });
+  if (!usePerimeter) body += len(hEdge[0], hEdge[1], O, `${H}cm`, { off: 12, size: 14 });
+  const html = `${svgOpen(x0 + W * s + 48, y0 + H * s + 34, "대각선 두 개를 그은 직사각형")}${body}</svg>`;
+  const first = W + D;
+  const second = H + D;
+  const rectPerimeter = 2 * (W + H);
+  return {
+    prompt: `직사각형에 두 대각선을 그었습니다. 두 대각선의 길이는 ${D}cm로 같습니다.${usePerimeter ? ` 직사각형의 둘레가 ${rectPerimeter}cm일 때,` : ""} 색칠한 삼각형 ${NAMES[0]}와 ${NAMES[1]}의 둘레를 각각 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: `${NAMES[0]} ${first}cm, ${NAMES[1]} ${second}cm`,
+    solution: `${usePerimeter ? `세로는 ${rectPerimeter} ÷ 2 − ${W} = ${H}cm입니다. ` : ""}직사각형의 두 대각선은 길이가 같고 서로를 반으로 나누므로, 삼각형의 비스듬한 두 변은 모두 ${D} ÷ 2 = ${D / 2}cm입니다. ${NAMES[0]}의 둘레는 ${W} + ${D / 2} + ${D / 2} = ${first}cm, ${NAMES[1]}의 둘레는 ${H} + ${D / 2} + ${D / 2} = ${second}cm입니다.`,
+    meta: { family: "rectangle-diagonal-triangles-b6", W, H, D, usePerimeter, rectPerimeter, answer: [first, second] }
+  };
+}
+
+// ── 2단원: 직각으로 꺾인 두 도형 둘레를 도는 꿀벌 — 누가 먼저 ─────
+
+function boxedShapeSvg(cells, W, H, { name, px, labelW = `${W}cm`, labelH = `${H}cm`, pad = 50 }) {
+  const T = scaler(pad, px);
+  const pts = cellsOutline(cells);
+  let body = dashedRect(pad, pad, W * px, H * px);
+  body += outlinePoly(pts, T);
+  const c = [pad + (W * px) / 2, pad + (H * px) / 2];
+  body += len([pad, pad + H * px], [pad + W * px, pad + H * px], c, labelW, { off: 12, size: 13 });
+  body += len([pad + W * px, pad], [pad + W * px, pad + H * px], c, labelH, { off: 12, size: 13 });
+  if (name) { const [x, y] = innerPoint(cells, T, px); body += shapeName(x, y, name); }
+  return `${svgOpen(W * px + pad * 2 + 10, H * px + pad * 2 + 4, `직각으로 꺾인 도형 ${name || ""}`)}${body}</svg>`;
+}
+
+function beeRoutePerimeterCompareB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const top = difficulty === 1 ? 9 : difficulty === 2 ? 13 : 17;
+    const W1 = randomInt(5, top);
+    const H1 = randomInt(4, top - 1);
+    const W2 = randomInt(5, top);
+    const H2 = randomInt(4, top - 1);
+    const p1 = 2 * (W1 + H1);
+    const p2 = 2 * (W2 + H2);
+    if (p1 === p2 || Math.abs(p1 - p2) > (difficulty === 3 ? 6 : 10)) continue;
+    // 넓이로 고르면 틀리게(둘레가 긴 쪽이 넓이는 좁게) 만들 때가 많도록
+    const a = orthoConvexCells(W1, H1, { corners: randomInt(1, 2), maxSteps: 1, minPart: 2, share: 0.55 });
+    const b = orthoConvexCells(W2, H2, { corners: randomInt(1, difficulty === 1 ? 1 : 2), maxSteps: 3, minPart: 1, share: 0.75 });
+    if (!a || !b) continue;
+    const px = Math.min(150 / Math.max(W1, W2), 130 / Math.max(H1, H2), 18);
+    const html = `<div style="display:flex;flex-wrap:wrap;gap:10px 26px;align-items:flex-end">${boxedShapeSvg(a, W1, H1, { name: "가", px })}${boxedShapeSvg(b, W2, H2, { name: "나", px })}</div>`;
+    const first = p1 < p2 ? "꿀벌 ①" : "꿀벌 ②";
+    const firstJ = p1 < p2 ? "꿀벌 ①이" : "꿀벌 ②가";
+    return {
+      prompt: "꿀벌 ①은 도형 가의 둘레를, 꿀벌 ②는 도형 나의 둘레를 따라 한 바퀴 돕니다. 두 꿀벌이 같은 빠르기로 동시에 출발하면, 출발한 자리로 먼저 돌아오는 꿀벌은 어느 것인가요? (점선은 도형을 둘러싼 직사각형입니다.)",
+      visual: { kind: "fig", html },
+      answer: `${first} (가 ${p1}cm, 나 ${p2}cm)`,
+      solution: `직각으로 꺾인 부분을 바깥으로 밀어 펼치면 둘러싼 직사각형이 됩니다. 가의 둘레는 (${W1} + ${H1}) × 2 = ${p1}cm, 나의 둘레는 (${W2} + ${H2}) × 2 = ${p2}cm이므로 둘레가 짧은 ${firstJ} 먼저 돌아옵니다.`,
+      meta: { family: "bee-route-compare-b6", shapes: [{ cells: a, W: W1, H: H1 }, { cells: b, W: W2, H: H2 }], perimeters: [p1, p2], first, answer: [p1, p2] }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 직각으로 꺾인 도형 두 개 — 조각 길이 · 둘러싼 직사각형 ─────
+
+function piecesShapeSvg(cells, W, H, mode, px) {
+  const pad = 50;
+  const T = scaler(pad, px);
+  const pts = cellsOutline(cells);
+  const edges = outlineEdges(pts);
+  let body = "";
+  let given;
+  if (mode === "box") {
+    body += dashedRect(pad, pad, W * px, H * px) + outlinePoly(pts, T);
+    const c = [pad + (W * px) / 2, pad + (H * px) / 2];
+    body += len([pad, pad + H * px], [pad + W * px, pad + H * px], c, `${W}cm`, { off: 12, size: 13 });
+    body += len([pad, pad], [pad, pad + H * px], c, `${H}cm`, { off: 12, size: 13 });
+    given = { width: [W], height: [H] };
+  } else {
+    body += outlinePoly(pts, T);
+    const side = (nx, ny) => edges.filter((e) => e.n[0] === nx && e.n[1] === ny);
+    // 세로 조각(왼쪽 또는 오른쪽)과 가로 조각(위 또는 아래) — 두 표시가 한 꼭짓점에서 만나 글자가 겹치지 않는 짝 중 조각이 많은 것
+    const keyOf = (pt) => pt.join(":");
+    const combos = [];
+    for (const v of [side(-1, 0), side(1, 0)]) for (const h of [side(0, 1), side(0, -1)]) {
+      if (v.length > 3 || h.length > 3) continue;
+      // 안으로 꺾인 꼭짓점(둘레 칸 넷 중 셋이 찬 곳)에서 만나면 두 호가 같은 빈 곳으로 휘어 글자가 겹친다
+      const filled = new Set(cells.map(([x, y]) => keyOf([x, y])));
+      const reflex = (pt) => [[-1, -1], [0, -1], [-1, 0], [0, 0]].filter(([dx, dy]) => filled.has(keyOf([pt[0] + dx, pt[1] + dy]))).length === 3;
+      const ends = new Set(v.flatMap((e) => [e.a, e.b]).filter(reflex).map(keyOf));
+      if (h.some((e) => ends.has(keyOf(e.a)) || ends.has(keyOf(e.b)))) continue;
+      combos.push([v, h]);
+    }
+    combos.sort((p, q) => q[0].length + q[1].length - p[0].length - p[1].length);
+    if (!combos.length) return { svg: "", given: null };
+    const [vSide, hSide] = combos[0];
+    [...vSide, ...hSide].forEach((e) => { body += edgeLabel(e, T, `${e.len}cm`); });
+    given = { width: hSide.map((e) => e.len), height: vSide.map((e) => e.len) };
+  }
+  return { svg: `${svgOpen(W * px + pad * 2 + 8, H * px + pad * 2 + 4, "직각으로 꺾인 도형")}${body}</svg>`, given };
+}
+
+function orthoConvexPiecesPerimeterB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const shapes = [];
+    for (let k = 0; k < 2; k += 1) {
+      const W = randomInt(8, difficulty === 3 ? 15 : 12);
+      const H = randomInt(7, difficulty === 3 ? 12 : 10);
+      const cells = orthoConvexCells(W, H, { corners: randomInt(difficulty === 1 ? 1 : 2, difficulty === 3 ? 4 : 3), maxSteps: 2, minPart: 3, share: 0.55 });
+      if (!cells) break;
+      shapes.push({ cells, W, H, mode: k === 1 && Math.random() < 0.5 ? "box" : "pieces" });
+    }
+    if (shapes.length < 2) continue;
+    const px = Math.min(200 / Math.max(...shapes.map((s) => s.W)), 150 / Math.max(...shapes.map((s) => s.H)), 24);
+    const drawn = shapes.map((s) => ({ ...s, ...piecesShapeSvg(s.cells, s.W, s.H, s.mode, px) }));
+    // 조각으로 주는 도형은 적어도 한쪽 길이를 두 조각 이상으로(글자가 겹치지 않게 놓을 수 없으면 다시)
+    if (drawn.some((s) => !s.svg)) continue;
+    if (drawn.some((s) => s.mode === "pieces" && s.given.width.length + s.given.height.length < 3)) continue;
+    const answers = drawn.map((s) => 2 * (s.W + s.H));
+    return {
+      prompt: "직각으로 꺾인 도형의 둘레를 각각 구하세요.",
+      visual: { kind: "fig", html: partWrap(drawn.map((s) => s.svg)) },
+      answer: answers.map((v, i) => `${PARTS[i]} ${v}cm`).join(" "),
+      solution: drawn.map((s, i) => `${PARTS[i]} 꺾인 부분을 바깥으로 밀어 펼치면 가로 ${s.given.width.length > 1 ? `${s.given.width.join(" + ")} = ` : ""}${s.W}cm, 세로 ${s.given.height.length > 1 ? `${s.given.height.join(" + ")} = ` : ""}${s.H}cm인 직사각형이 되므로 둘레는 (${s.W} + ${s.H}) × 2 = ${answers[i]}cm입니다.`).join(" "),
+      meta: { family: "ortho-convex-pieces-b6", shapes: drawn.map(({ cells, W, H, mode, given }) => ({ cells, W, H, mode, given })), answer: answers }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 모눈 위 두 도형(볼록한 것 · 움푹 파인 것)의 둘레 ─────────
+
+function concaveGridCells(W, H) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const base = Math.random() < 0.5 ? rectCells(W, H) : orthoConvexCells(W, H, { corners: 1, maxSteps: 1, minPart: 1, share: 0.4 });
+    if (!base) continue;
+    const fromTop = Math.random() < 0.6;
+    const nw = randomInt(1, Math.max(1, W - 3));
+    const a = randomInt(1, W - nw - 1);
+    const d = randomInt(1, H - 2);
+    const cut = new Set();
+    for (let x = a; x < a + nw; x += 1) for (let k = 0; k < d; k += 1) cut.add(cellKey(x, fromTop ? k : H - 1 - k));
+    const cells = base.filter(([x, y]) => !cut.has(cellKey(x, y)));
+    const box = bboxOf(cells);
+    if (box.maxX - box.minX !== W || box.maxY - box.minY !== H) continue;
+    if (!cellsConnected(cells) || !cellsSimple(cells) || cellEdgeCount(cells) === 2 * (W + H)) continue;
+    return cells;
+  }
+  return null;
+}
+
+function gridTwoShapesPerimeterB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const W1 = randomInt(3, difficulty === 1 ? 4 : 6);
+    const H1 = randomInt(3, difficulty === 1 ? 4 : 6);
+    const W2 = randomInt(4, difficulty === 1 ? 5 : 7);
+    const H2 = randomInt(3, difficulty === 1 ? 4 : 6);
+    const a = orthoConvexCells(W1, H1, { corners: randomInt(2, 4), maxSteps: 2, minPart: 1, share: 0.5 });
+    const b = difficulty === 1 && Math.random() < 0.4 ? orthoConvexCells(W2, H2, { corners: randomInt(1, 3), maxSteps: 2, minPart: 1, share: 0.5 }) : concaveGridCells(W2, H2);
+    if (!a || !b) continue;
+    const GW = W1 + W2 + 3;
+    const GH = Math.max(H1, H2) + 2;
+    const px = Math.min(380 / GW, 24);
+    const pad = 6;
+    const T1 = scaler(pad, px, px, px * (GH - H1 - 1));
+    const T2 = scaler(pad, px, px * (W1 + 2), px * (GH - H2 - 1));
+    let body = "";
+    for (let x = 0; x <= GW; x += 1) body += `<line x1="${f1(pad + x * px)}" y1="${pad}" x2="${f1(pad + x * px)}" y2="${f1(pad + GH * px)}" style="stroke:#9fb8ad;stroke-width:0.8;stroke-dasharray:2 3"/>`;
+    for (let y = 0; y <= GH; y += 1) body += `<line x1="${pad}" y1="${f1(pad + y * px)}" x2="${f1(pad + GW * px)}" y2="${f1(pad + y * px)}" style="stroke:#9fb8ad;stroke-width:0.8;stroke-dasharray:2 3"/>`;
+    body += outlinePoly(cellsOutline(a), T1) + outlinePoly(cellsOutline(b), T2);
+    body += text(pad + px * (1 + W1 / 2), pad + px * (GH - 0.45), "(1)", 13) + text(pad + px * (W1 + 2 + W2 / 2), pad + px * (GH - 0.45), "(2)", 13);
+    const html = `${svgOpen(GW * px + pad * 2, GH * px + pad * 2, "모눈 위의 두 도형")}${body}</svg>`;
+    const answers = [cellEdgeCount(a), cellEdgeCount(b)];
+    const sol = (cells, i) => {
+      const box = bboxOf(cells);
+      const w = box.maxX - box.minX;
+      const h = box.maxY - box.minY;
+      const extra = answers[i] - 2 * (w + h);
+      return extra
+        ? `${PARTS[i]} 바깥으로 펼치면 가로 ${w}칸, 세로 ${h}칸인 직사각형 둘레 ${2 * (w + h)}cm이고, 안으로 움푹 파인 곳의 양쪽 벽 ${extra}cm를 더하면 ${answers[i]}cm입니다.`
+        : `${PARTS[i]} 바깥으로 펼치면 가로 ${w}칸, 세로 ${h}칸인 직사각형이므로 둘레는 (${w} + ${h}) × 2 = ${answers[i]}cm입니다.`;
+    };
+    return {
+      prompt: "모눈 한 칸의 길이는 1cm입니다. 두 도형의 둘레를 각각 구하세요.",
+      visual: { kind: "fig", html },
+      answer: answers.map((v, i) => `${PARTS[i]} ${v}cm`).join(" "),
+      solution: [sol(a, 0), sol(b, 1)].join(" "),
+      meta: { family: "grid-two-shapes-b6", shapes: [a, b], answer: answers }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 정사각형 땅 안의 직각으로 꺾인 잔디밭 — 둘레 끈의 길이 ─────
+
+function fieldRegionFenceB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const square = difficulty < 3 || Math.random() < 0.5;
+    const n = randomInt(5, 7);
+    const m = square ? n : randomInt(4, 7);
+    const cells = orthoConvexCells(n, m, { corners: randomInt(3, 4), maxSteps: 2, minPart: 1, share: 0.45 });
+    if (!cells) continue;
+    const S = randomInt(difficulty === 1 ? 6 : 8, difficulty === 1 ? 15 : 30);
+    let Hm = S;
+    if (!square) { Hm = randomInt(6, 25); if (Hm === S) continue; }
+    const px = Math.min(220 / n, 190 / m, 34);
+    const pad = 50;
+    const T = scaler(pad, px);
+    let body = dashedRect(pad, pad, n * px, m * px) + outlinePoly(cellsOutline(cells), T, "#bcdcb3", "#4f8a5b");
+    const c = [pad + (n * px) / 2, pad + (m * px) / 2];
+    body += len([pad, pad], [pad, pad + m * px], c, `${Hm}m`, { off: 13, size: 14 });
+    if (!square) body += len([pad, pad + m * px], [pad + n * px, pad + m * px], c, `${S}m`, { off: 13, size: 14 });
+    const html = `${svgOpen(n * px + pad * 2, m * px + pad * 2, "땅과 잔디밭")}${body}</svg>`;
+    const answer = 2 * (S + Hm);
+    return {
+      prompt: square
+        ? `한 변이 ${S}m인 정사각형 모양의 땅(점선)에서 색칠한 부분에 잔디를 심었습니다. 잔디밭의 둘레를 따라 끈을 두르려면 끈은 몇 m가 필요한가요?`
+        : `가로 ${S}m, 세로 ${Hm}m인 직사각형 모양의 땅(점선)에서 색칠한 부분에 잔디를 심었습니다. 잔디밭의 둘레를 따라 끈을 두르려면 끈은 몇 m가 필요한가요?`,
+      visual: { kind: "fig", html },
+      answer: `${answer}m`,
+      solution: `잔디밭은 땅의 네 변에 모두 닿아 있고 직각으로만 꺾여 있으므로, 꺾인 부분을 바깥으로 밀어 펼치면 땅의 둘레와 같아집니다. 따라서 ${square ? `${S} × 4` : `(${S} + ${Hm}) × 2`} = ${answer}m입니다.`,
+      meta: { family: "field-region-fence-b6", n, m, cells, S, H: Hm, answer }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 홈이 두 개(위 · 옆) 파인 도형의 둘레 ─────────────────
+
+function concaveTwoNotchPerimeterB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const W = randomInt(difficulty === 1 ? 10 : 12, difficulty === 3 ? 22 : 18);
+    const H = randomInt(difficulty === 1 ? 8 : 10, difficulty === 3 ? 18 : 14);
+    const d2 = randomInt(3, Math.floor(W / 2));
+    const nh = randomInt(3, 4);
+    const c = randomInt(2, H - nh - 2);
+    const nw = randomInt(3, 4);
+    const a = randomInt(2, W - d2 - nw - 2);
+    if (a < 2) continue;
+    const d1 = randomInt(2, H - 3);
+    const firstSide = Math.random() < 0.5 ? "top" : "bottom";
+    const cut = new Set();
+    for (let x = a; x < a + nw; x += 1) for (let k = 0; k < d1; k += 1) cut.add(cellKey(x, firstSide === "top" ? k : H - 1 - k));
+    for (let x = W - d2; x < W; x += 1) for (let y = c; y < c + nh; y += 1) cut.add(cellKey(x, y));
+    // 어려운 단계는 홈이 있는 쪽의 오른쪽 모서리도 한 번 잘라 냄(둘레는 그대로)
+    if (difficulty === 3 && Math.random() < 0.6) {
+      const cw = randomInt(1, Math.max(1, Math.min(3, W - a - nw - 2)));
+      const room = firstSide === "top" ? c - 1 : H - c - nh - 1;
+      if (room >= 1) {
+        const ch = randomInt(1, Math.min(3, room));
+        for (let x = W - cw; x < W; x += 1) for (let k = 0; k < ch; k += 1) cut.add(cellKey(x, firstSide === "top" ? k : H - 1 - k));
+      }
+    }
+    const cells = rectCells(W, H).filter(([x, y]) => !cut.has(cellKey(x, y)));
+    if (!cellsConnected(cells) || !cellsSimple(cells)) continue;
+    const box = bboxOf(cells);
+    if (box.maxX !== W || box.maxY !== H) continue;
+    const pts = cellsOutline(cells);
+    const edges = outlineEdges(pts);
+    // 왼쪽 변 전체(세로 H)와, 홈이 없는 쪽 가로 변 전체(가로 W)가 있어야 함
+    const leftFull = edges.find((e) => e.n[0] === -1 && e.len === H);
+    const wFull = edges.find((e) => e.n[1] === (firstSide === "top" ? 1 : -1) && e.len === W);
+    const notchWall = edges.find((e) => e.n[0] === 1 && e.a[0] === a && e.len === d1);
+    const sideWall = edges.find((e) => e.n[1] === (1) && e.a[1] === c && e.len === d2) || edges.find((e) => e.n[1] === 1 && e.b[1] === c && e.len === d2);
+    if (!leftFull || !wFull || !notchWall || !sideWall) continue;
+    const px = Math.min(270 / W, 190 / H, 18);
+    const pad = 50;
+    const T = scaler(pad, px);
+    let body = outlinePoly(pts, T);
+    body += edgeLabel(leftFull, T, `${H}cm`, { off: 12, size: 14 });
+    body += edgeLabel(wFull, T, `${W}cm`, { off: 12, size: 14 });
+    body += edgeLabel(notchWall, T, `${d1}cm`, { off: 9, size: 13 });
+    body += edgeLabel(sideWall, T, `${d2}cm`, { off: 9, size: 13 });
+    const html = `${svgOpen(W * px + pad * 2, H * px + pad * 2, "직각으로 꺾여 움푹 파인 도형")}${body}</svg>`;
+    const answer = 2 * (W + H) + 2 * (d1 + d2);
+    return {
+      prompt: "직각으로 꺾여 움푹 파인 도형의 둘레를 구하세요.",
+      visual: { kind: "fig", html },
+      answer: `${answer}cm`,
+      solution: `바깥쪽 꺾인 부분을 펼치면 가로 ${W}cm, 세로 ${H}cm인 직사각형이 되어 둘레는 (${W} + ${H}) × 2 = ${2 * (W + H)}cm입니다. 안으로 파인 두 홈은 양쪽 벽이 더 늘어나므로 ${d1} × 2 + ${d2} × 2 = ${2 * (d1 + d2)}cm를 더하면 ${answer}cm입니다.`,
+      meta: { family: "concave-two-notch-b6", W, H, d1, d2, cells, answer }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 정사각형 종이에서 작은 정사각형 몇 개를 잘라 낸 둘레 ─────
+
+function placeCutSquares(S, sizes) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const corners = shuffle(["tl", "tr", "bl", "br"]);
+    const placed = [];
+    let ok = true;
+    for (const s of sizes) {
+      const where = Math.random() < 0.5 && corners.length ? "corner" : "edge";
+      let x;
+      let y;
+      if (where === "corner") {
+        const c = corners.pop();
+        x = c[1] === "l" ? 0 : S - s;
+        y = c[0] === "t" ? 0 : S - s;
+      } else {
+        const side = pick(["top", "bottom", "left", "right"]);
+        const along = randomInt(2, S - s - 2);
+        if (along < 2) { ok = false; break; }
+        if (side === "top") { x = along; y = 0; } else if (side === "bottom") { x = along; y = S - s; } else if (side === "left") { x = 0; y = along; } else { x = S - s; y = along; }
+      }
+      // 다른 자른 칸과 한 칸 이상 떨어지게
+      if (placed.some((p) => x < p.x + p.s + 1 && p.x < x + s + 1 && y < p.y + p.s + 1 && p.y < y + s + 1)) { ok = false; break; }
+      placed.push({ x, y, s, where });
+    }
+    if (!ok) continue;
+    if (!placed.some((p) => p.where === "edge")) continue;
+    const cut = new Set();
+    placed.forEach((p) => { for (let i = p.x; i < p.x + p.s; i += 1) for (let j = p.y; j < p.y + p.s; j += 1) cut.add(cellKey(i, j)); });
+    const cells = rectCells(S, S).filter(([i, j]) => !cut.has(cellKey(i, j)));
+    if (!cellsSimple(cells) || !cellsConnected(cells)) continue;
+    return { placed, cells };
+  }
+  return null;
+}
+
+function cutSquaresSvg(S, placed, cells, px) {
+  const pad = 50;
+  const T = scaler(pad, px);
+  let body = outlinePoly(cellsOutline(cells), T);
+  const ctr = [pad + (S * px) / 2, pad + (S * px) / 2];
+  placed.forEach((p) => {
+    body += dashedRect(pad + p.x * px, pad + p.y * px, p.s * px, p.s * px);
+    // 자른 정사각형의 바깥쪽 변(처음 종이의 변 위)에 한 변의 길이
+    let a;
+    let b;
+    if (p.y === 0) { a = [p.x, 0]; b = [p.x + p.s, 0]; } else if (p.y + p.s === S) { a = [p.x, S]; b = [p.x + p.s, S]; } else if (p.x === 0) { a = [0, p.y]; b = [0, p.y + p.s]; } else { a = [S, p.y]; b = [S, p.y + p.s]; }
+    body += len(T(a), T(b), ctr, `${p.s}cm`, { off: 9, size: 13 });
+  });
+  return `${svgOpen(S * px + pad * 2, S * px + pad * 2, "작은 정사각형을 잘라 낸 종이")}${body}</svg>`;
+}
+
+function squareCutSquaresPerimeterB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 60; attempt += 1) {
+    const S = randomInt(difficulty === 1 ? 8 : 9, difficulty === 3 ? 14 : 12);
+    const sizes = shuffle([1, 2, 3, 4]).slice(0, difficulty === 1 ? 2 : 3).sort((x, y) => x - y);
+    const one = placeCutSquares(S, sizes);
+    const two = placeCutSquares(S, sizes);
+    if (!one || !two) continue;
+    const answers = [one, two].map((r) => cellEdgeCount(r.cells));
+    if (answers[0] === answers[1]) continue;
+    const px = Math.min(170 / S, 16);
+    const sol = (r, i) => {
+      const edge = r.placed.filter((p) => p.where === "edge");
+      return `${PARTS[i]} 모서리에서 자른 곳은 둘레가 그대로이고, 변 가운데에서 자른 정사각형은 양쪽 벽만큼 둘레가 늘어납니다. ${S} × 4 + ${edge.map((p) => `${p.s} × 2`).join(" + ")} = ${answers[i]}cm입니다.`;
+    };
+    return {
+      prompt: `한 변이 ${S}cm인 정사각형 모양의 종이에서 한 변이 각각 ${sizes.map((s) => `${s}cm`).join(", ")}인 정사각형을 하나씩 잘라 냈습니다(점선). 남은 종이의 둘레를 각각 구하세요.`,
+      visual: { kind: "fig", html: partWrap([cutSquaresSvg(S, one.placed, one.cells, px), cutSquaresSvg(S, two.placed, two.cells, px)]) },
+      answer: answers.map((v, i) => `${PARTS[i]} ${v}cm`).join(" "),
+      solution: [sol(one, 0), sol(two, 1)].join(" "),
+      meta: { family: "square-cut-squares-b6", S, sizes, parts: [one, two].map((r) => ({ placed: r.placed, cells: r.cells })), answer: answers }
+    };
+  }
+  return null;
+}
+
+// ── 2단원: 정사각형 종이의 한쪽에서 정사각형 두 개를 이어 잘라 낸 둘레 ──
+
+function squareTwoStackedCutsB6({ difficulty = 2 }) {
+  const S = randomInt(difficulty === 1 ? 6 : 8, difficulty === 3 ? 18 : 12);
+  const b = randomInt(2, Math.ceil(S / 2) - 1);
+  const big = S - b;
+  // 기본 배치: 오른쪽 변에 위로 큰 정사각형, 아래로 작은 정사각형 — 돌리거나 뒤집어 놓는다
+  const bigTop = Math.random() < 0.5;
+  const base = [];
+  for (let x = 0; x < S; x += 1) for (let y = 0; y < S; y += 1) {
+    const inBig = x >= S - big && (bigTop ? y < big : y >= b);
+    const inSmall = x >= S - b && (bigTop ? y >= big : y < b);
+    if (!inBig && !inSmall) base.push([x, y]);
+  }
+  const turn = randomInt(0, 3);
+  const rot = ([x, y]) => { let p = [x, y]; for (let k = 0; k < turn; k += 1) p = [S - 1 - p[1], p[0]]; return p; };
+  const rotPt = ([x, y]) => { let p = [x, y]; for (let k = 0; k < turn; k += 1) p = [S - p[1], p[0]]; return p; };
+  const cells = base.map(rot);
+  const bigSq = bigTop ? [[S - big, 0], [S, big]] : [[S - big, b], [S, S]];
+  const smallSq = bigTop ? [[S - b, big], [S, S]] : [[S - b, 0], [S, b]];
+  const px = Math.min(190 / S, 18);
+  const pad = 50;
+  const T = scaler(pad, px);
+  const sq = ([[x0, y0], [x1, y1]]) => { const p = rotPt([x0, y0]); const q = rotPt([x1, y1]); return [Math.min(p[0], q[0]), Math.min(p[1], q[1]), Math.abs(q[0] - p[0])]; };
+  let body = outlinePoly(cellsOutline(cells), T);
+  const [bx, by, bs] = sq(bigSq);
+  const [sx, sy, ss] = sq(smallSq);
+  body += dashedRect(pad + bx * px, pad + by * px, bs * px, bs * px) + dashedRect(pad + sx * px, pad + sy * px, ss * px, ss * px);
+  const ctr = [pad + (S * px) / 2, pad + (S * px) / 2];
+  // 처음 종이의 한 변(잘라 낸 쪽의 맞은편 변 전체) · 작은 정사각형의 바깥쪽 변
+  const far = [rotPt([0, 0]), rotPt([0, S])];
+  body += len(T(far[0]), T(far[1]), ctr, `${S}cm`, { off: 12, size: 14 });
+  const smallOuter = bigTop ? [rotPt([S - b, S]), rotPt([S, S])] : [rotPt([S - b, 0]), rotPt([S, 0])];
+  body += len(T(smallOuter[0]), T(smallOuter[1]), ctr, `${b}cm`, { off: 10, size: 13 });
+  const html = `${svgOpen(S * px + pad * 2, S * px + pad * 2, "정사각형 두 개를 잘라 낸 종이")}${body}</svg>`;
+  const answer = cellEdgeCount(cells);
+  return {
+    prompt: "정사각형 모양의 색종이에서 점선으로 표시한 정사각형 2개를 잘라 냈습니다. 색칠한 남은 색종이의 둘레는 몇 cm인가요?",
+    visual: { kind: "fig", html },
+    answer: `${answer}cm`,
+    solution: `색종이의 한 변은 ${S}cm이므로 큰 정사각형의 한 변은 ${S} − ${b} = ${big}cm입니다. 남은 색종이는 직각으로만 꺾여 있으므로 펼치면 한쪽 길이가 ${S}cm, 다른 쪽 길이가 ${S} − ${b} = ${S - b}cm인 직사각형이 됩니다. 둘레는 (${S} + ${S - b}) × 2 = ${answer}cm입니다.`,
+    meta: { family: "square-two-stacked-cuts-b6", S, b, big, cells, answer }
+  };
+}
+
+// ── 2단원: 모눈 정사각형에서 잘라 낸 뒤 남은 조각의 둘레 ─────────
+
+function randomPiece(n, k, { concave }) {
+  for (let attempt = 0; attempt < 400; attempt += 1) {
+    const start = [randomInt(0, n - 1), randomInt(0, n - 1)];
+    const cells = [start];
+    const set = new Set([cellKey(...start)]);
+    let guard = 0;
+    while (cells.length < k && guard < 400) {
+      guard += 1;
+      const [x, y] = pick(cells);
+      const [dx, dy] = pick([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+      const nx = x + dx;
+      const ny = y + dy;
+      if (nx < 0 || ny < 0 || nx >= n || ny >= n || set.has(cellKey(nx, ny))) continue;
+      cells.push([nx, ny]);
+      set.add(cellKey(nx, ny));
+    }
+    if (cells.length < k || !cellsSimple(cells)) continue;
+    const box = bboxOf(cells);
+    if (box.maxX - box.minX < n - 1 || box.maxY - box.minY < n - 1) continue;
+    const per = cellEdgeCount(cells);
+    if (concave && per === 2 * (box.maxX - box.minX + box.maxY - box.minY)) continue;
+    return cells;
+  }
+  return null;
+}
+
+function gridPieceCutPerimeterB6({ difficulty = 2 }) {
+  const n = difficulty === 1 ? 4 : randomInt(4, 5);
+  const k = randomInt(Math.ceil(n * n * 0.35), Math.floor(n * n * 0.6));
+  const cells = randomPiece(n, k, { concave: difficulty > 1 });
+  if (!cells) return gridPieceCutPerimeterB6({ difficulty });
+  const c = randomInt(2, difficulty === 3 ? 5 : 3);
+  const px = Math.min(200 / n, 40);
+  const pad = 28;
+  const T = scaler(pad, px);
+  const set = cellSetOf(cells);
+  let body = "";
+  for (let x = 0; x < n; x += 1) for (let y = 0; y < n; y += 1) if (!set.has(cellKey(x, y))) body += rect(pad + x * px, pad + y * px, px, px, SHADE, "#7d9a8c");
+  for (const [x, y] of cells) body += rect(pad + x * px, pad + y * px, px, px, "#fff", "#b9cfc4");
+  body += outlinePoly(cellsOutline(cells), T, "none", INK, 'stroke-width="2.4"').replace("stroke-width:1.6", "stroke-width:2.6");
+  body += `<rect x="${pad}" y="${pad}" width="${n * px}" height="${n * px}" style="fill:none;stroke:#6f8d80;stroke-width:1.4"/>`;
+  body += dimArc(pad, pad, pad + px, pad, -10, `${c}cm`, { size: 13 });
+  const html = `${svgOpen(n * px + pad * 2, n * px + pad * 2, "모눈종이에서 잘라 낸 조각")}${body}</svg>`;
+  const edges = cellEdgeCount(cells);
+  const answer = edges * c;
+  return {
+    prompt: `모눈 한 칸의 한 변이 ${c}cm인 정사각형 모눈종이에서 색칠한 부분을 잘라 냈습니다. 남은 흰 조각의 둘레는 몇 cm인가요?`,
+    visual: { kind: "fig", html },
+    answer: `${answer}cm`,
+    solution: `흰 조각의 둘레를 따라 모눈 한 칸의 변을 세면 ${edges}개입니다. 한 변이 ${c}cm이므로 둘레는 ${edges} × ${c} = ${answer}cm입니다.`,
+    meta: { family: "grid-piece-cut-b6", n, cells, c, edges, answer }
+  };
+}
+
+// ── 2단원: 정사각형과 정삼각형을 붙인 도형 — 둘레와 한 변 ───────────
+
+function squareTriangleFigure(squares, triangles) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const cells = [[0, 0]];
+    const set = new Set(["0:0"]);
+    while (cells.length < squares) {
+      const [x, y] = pick(cells);
+      const [dx, dy] = pick([[1, 0], [-1, 0], [0, 1], [0, -1]]);
+      if (set.has(cellKey(x + dx, y + dy))) continue;
+      cells.push([x + dx, y + dy]);
+      set.add(cellKey(x + dx, y + dy));
+    }
+    const free = [];
+    for (const [x, y] of cells) for (const [dx, dy] of [[0, -1], [1, 0], [0, 1], [-1, 0]]) if (!set.has(cellKey(x + dx, y + dy))) free.push({ x, y, dx, dy });
+    const used = new Set();
+    const tris = [];
+    for (const f of shuffle(free)) {
+      if (tris.length >= triangles) break;
+      const k = cellKey(f.x + f.dx, f.y + f.dy);
+      if (used.has(k)) continue;
+      used.add(k);
+      tris.push(f);
+    }
+    if (tris.length < triangles) continue;
+    return { cells, tris, edges: free.length + tris.length };
+  }
+  return null;
+}
+
+function squareTriangleSvg(fig, px, name) {
+  const xs = fig.cells.map(([x]) => x);
+  const ys = fig.cells.map(([, y]) => y);
+  const minX = Math.min(...xs) - 1;
+  const minY = Math.min(...ys) - 1;
+  const W = Math.max(...xs) - minX + 2;
+  const H = Math.max(...ys) - minY + 2;
+  const pad = 8;
+  const T = ([x, y]) => [pad + (x - minX) * px, pad + (y - minY) * px];
+  let body = "";
+  fig.cells.forEach(([x, y]) => { const [X, Y] = T([x, y]); body += rect(X, Y, px, px, FILL, LINE); });
+  fig.tris.forEach(({ x, y, dx, dy }) => {
+    const cx = x + 0.5 + dx * 0.5;
+    const cy = y + 0.5 + dy * 0.5;
+    const p = [cx - dy * 0.5, cy + dx * 0.5];
+    const q = [cx + dy * 0.5, cy - dx * 0.5];
+    const apex = [cx + dx * 0.866, cy + dy * 0.866];
+    body += poly([T(p), T(apex), T(q)], "#d4ebe0", LINE);
+  });
+  if (name) body += text(pad + px * 0.5, pad + H * px - px * 0.4, name, 15, 'font-weight="700"');
+  return `${svgOpen(W * px + pad * 2, H * px + pad * 2, "정사각형과 정삼각형을 붙인 도형")}${body}</svg>`;
+}
+
+function squareTriangleSideFromPerimeterB6({ difficulty = 2 }) {
+  const fig = squareTriangleFigure(randomInt(difficulty === 1 ? 1 : 2, difficulty === 3 ? 4 : 3), randomInt(1, difficulty === 1 ? 2 : difficulty === 2 ? 3 : 4));
+  const side = randomInt(2, difficulty === 3 ? 12 : 9);
+  const perimeter = fig.edges * side;
+  return {
+    prompt: `한 변의 길이가 모두 같은 정사각형과 정삼각형을 붙여 만든 도형입니다. 이 도형의 둘레가 ${perimeter}cm일 때, 정사각형의 한 변은 몇 cm인가요?`,
+    visual: { kind: "fig", html: squareTriangleSvg(fig, Math.min(46, 260 / 6)) },
+    answer: `${side}cm`,
+    solution: `둘레를 이루는 변은 정사각형 쪽 ${fig.edges - 2 * fig.tris.length}개, 정삼각형 쪽 ${2 * fig.tris.length}개로 모두 ${fig.edges}개이고 길이가 모두 같습니다. 한 변은 ${perimeter} ÷ ${fig.edges} = ${side}cm입니다.`,
+    meta: { family: "square-triangle-side-b6", cells: fig.cells, tris: fig.tris, edges: fig.edges, side, perimeter, answer: side }
+  };
+}
+
+function squareTrianglePerimeterTransferB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const one = squareTriangleFigure(randomInt(1, 2), randomInt(1, 2));
+    const two = squareTriangleFigure(randomInt(2, difficulty === 3 ? 4 : 3), randomInt(2, difficulty === 1 ? 2 : 4));
+    if (!one || !two || one.edges === two.edges) continue;
+    const side = randomInt(2, difficulty === 3 ? 9 : 6);
+    const p1 = one.edges * side;
+    const answer = two.edges * side;
+    const px = Math.min(40, 200 / 6);
+    return {
+      prompt: `두 도형은 한 변의 길이가 모두 같은 정사각형과 정삼각형을 붙여 만든 것입니다. 도형 가의 둘레가 ${p1}cm일 때, 도형 나의 둘레는 몇 cm인가요?`,
+      visual: { kind: "fig", html: `<div style="display:flex;flex-wrap:wrap;gap:10px 30px;align-items:flex-end">${squareTriangleSvg(one, px, "가")}${squareTriangleSvg(two, px, "나")}</div>` },
+      answer: `${answer}cm`,
+      solution: `가의 둘레는 같은 길이의 변 ${one.edges}개이므로 한 변은 ${p1} ÷ ${one.edges} = ${side}cm입니다. 나의 둘레를 이루는 변은 ${two.edges}개이므로 ${side} × ${two.edges} = ${answer}cm입니다.`,
+      meta: { family: "square-triangle-transfer-b6", figures: [one, two].map((f) => ({ cells: f.cells, tris: f.tris, edges: f.edges })), side, p1, answer }
+    };
+  }
+  return null;
+}
+
+// ── 3단원: 같은 수를 묶은 식의 숨은 「× 1」 세 가지 ─────────────────
+
+function commonFactorHiddenOneB6({ difficulty = 2 }) {
+  const forms = shuffle(["pq", "one", "missing"]);
+  const parts = forms.map((form) => {
+    const base = difficulty === 1 ? pick([10, 100]) : difficulty === 2 ? pick([100, 1000]) : 1000;
+    const rep = Math.random() < 0.5;
+    const a = base === 10 ? randomInt(12, 98) : rep ? pick(base === 100 ? [11, 22, 33, 44, 55, 66, 77, 88, 99] : [111, 222, 333, 444, 555, 666, 777, 888, 999]) : base === 100 ? randomInt(12, 98) : randomInt(102, 998);
+    const T = a * base;
+    if (form === "pq") {
+      const p = randomInt(2, base - 3);
+      const q = base - 1 - p;
+      return { form, a, base, T, expression: `${fmt(T)} = ${a} × ${p} + ${a} × ${q} + □`, answer: a, solution: `${a} × ${base}에서 ${josa(a, "을", "를")} ${p}번, ${q}번 더했으므로 ${base} − ${p} − ${q} = 1번 더 더해야 합니다. □ = ${a} × 1 = ${a}` };
+    }
+    if (form === "one") return { form, a, base, T, expression: `${fmt(T)} = ${a} × ${base - 1} + □`, answer: a, solution: `${josa(a, "을", "를")} ${base - 1}번 더했으므로 한 번 더 더해야 ${base}번이 됩니다. □ = ${a}` };
+    const p = randomInt(2, base - 2);
+    return { form, a, base, T, expression: `${fmt(T)} = ${a} × ${p} + ${a} × □`, answer: base - p, solution: `${fmt(T)} = ${a} × ${base}이므로 ${p} + □ = ${base}, □ = ${base - p}` };
+  });
+  return {
+    prompt: "같은 수를 몇 번 더했는지 생각하여 □ 안에 알맞은 수를 구하세요.",
+    visual: { kind: "fig", html: box(parts.map((p, i) => exprLine(`${PARTS[i]}&nbsp; ${p.expression}`)).join("")) },
+    answer: parts.map((p, i) => `${PARTS[i]} ${fmt(p.answer)}`).join(" "),
+    solution: parts.map((p, i) => `${PARTS[i]} ${p.solution}입니다.`).join(" "),
+    meta: { family: "common-factor-hidden-one-b6", parts: parts.map(({ form, a, base, T, answer, expression }) => ({ form, a, base, T, answer, expression })), answer: parts.map((p) => p.answer) }
+  };
+}
+
+// ── 3단원: 긴 더하기·빼기 번갈아 식과 묶어 빼기 ─────────────────────
+
+function alternatingLongPairB6({ difficulty = 2 }) {
+  let N = difficulty === 1 ? randomInt(10, 20) * 2 : randomInt(20, 60) * 2 + (difficulty === 3 && Math.random() < 0.5 ? 1 : 0);
+  if (N === 100) N = 98;
+  const terms = Array.from({ length: N }, (_, i) => N - i);
+  const signOf = (i) => (i === 0 || i % 2 === 0 ? "+" : "−");
+  const tok = (i) => `${i === 0 ? "" : `${signOf(i)} `}${terms[i]}`;
+  const longExpr = `${[0, 1, 2, 3, 4, 5, 6].map(tok).join(" ")} ${signOf(7)} … ${Array.from({ length: 6 }, (_, k) => tok(N - 6 + k)).join(" ")}`;
+  const first = N % 2 === 0 ? N / 2 : (N - 1) / 2 + 1;
+  const k = randomInt(3, difficulty === 1 ? 4 : 5);
+  const gap = difficulty === 1 ? 1 : randomInt(1, 3);
+  const lowStart = randomInt(11, 70);
+  const low = Array.from({ length: k }, (_, i) => lowStart + 2 * i);
+  const high = low.map((v) => v + gap);
+  const groupExpr = `${high.join(" + ")} − ${low.join(" − ")}`;
+  const second = k * gap;
+  return {
+    prompt: "식의 규칙을 찾아 간단하게 계산하세요.",
+    visual: { kind: "fig", html: box(exprLine(`(1)&nbsp; ${longExpr}`) + exprLine(`(2)&nbsp; ${groupExpr}`)) },
+    answer: `(1) ${first} (2) ${second}`,
+    solution: `(1) 앞에서부터 두 수씩 묶으면 ${N} − ${N - 1} = 1처럼 모두 1이고, ${N % 2 === 0 ? `묶음이 ${N} ÷ 2 = ${N / 2}개이므로 ${first}입니다.` : `묶음이 ${(N - 1) / 2}개, 마지막에 1이 남으므로 ${(N - 1) / 2} + 1 = ${first}입니다.`} (2) 더하는 수와 빼는 수를 하나씩 짝지으면 ${high.map((v, i) => `${v} − ${low[i]}`).slice(0, 2).join(", ")}처럼 모두 ${gap}이고 짝이 ${k}개이므로 ${gap} × ${k} = ${second}입니다.`,
+    meta: { family: "alternating-long-pair-b6", N, high, low, answer: [first, second] }
+  };
+}
+
+// ── 3단원: 짝수 개 연속수의 합으로 연속수 찾기 ─────────────────────
+
+function consecutiveEvenCountFromSumB6({ difficulty = 2 }) {
+  const count = difficulty === 3 ? pick([4, 6]) : 4;
+  const start = randomInt(difficulty === 1 ? 2 : 5, difficulty === 1 ? 20 : 60);
+  const values = Array.from({ length: count }, (_, i) => start + i);
+  const total = sum(values);
+  const pair = total / (count / 2);
+  const circles = Array.from({ length: count }, (_, i) => `${i ? '<span style="padding:0 4px">+</span>' : ""}<span style="display:inline-block;width:30px;height:30px;border:1.5px solid ${LINE};border-radius:50%;vertical-align:middle;background:#fff"></span>`).join("");
+  const html = box(`<div style="white-space:nowrap">${circles}<span style="padding:0 6px">=</span><b>${total}</b></div>`);
+  const mid = count / 2;
+  return {
+    prompt: `연속수 ${count}개의 합이 ${total}입니다. 연속수를 작은 수부터 차례로 구하세요.`,
+    visual: { kind: "fig", html },
+    answer: values.join(", "),
+    solution: `수가 짝수 개이면 처음 수와 끝 수, 둘째 수와 끝에서 둘째 수처럼 짝을 지은 합이 모두 같고 짝은 ${mid}쌍입니다. 한 쌍의 합은 ${total} ÷ ${mid} = ${pair}이고, 가운데 두 수는 이어진 수이므로 ${(pair - 1) / 2}과 ${(pair + 1) / 2}입니다. 따라서 ${values.join(", ")}입니다.`.replace(`${(pair - 1) / 2}과`, josa((pair - 1) / 2, "과", "와")),
+    meta: { family: "consecutive-even-count-b6", count, total, values, answer: values }
+  };
+}
+
+// ── 3단원: 신문지 한 장의 쪽수로 마지막 쪽 구하기 ───────────────────
+
+function newspaperSheetLastPageB6({ difficulty = 2 }) {
+  const sheets = randomInt(difficulty === 1 ? 3 : 5, difficulty === 3 ? 20 : 12);
+  const total = sheets * 4;
+  let left;
+  let right;
+  do {
+    const j = randomInt(1, sheets);
+    if (Math.random() < 0.5) { left = total - 2 * j + 2; right = 2 * j - 1; } else { left = 2 * j; right = total - 2 * j + 1; }
+  } while (left === total);
+  const W = 230;
+  const H = 130;
+  let body = `<polygon points="14,22 ${W / 2},14 ${W / 2},${H + 6} 14,${H + 14}" style="fill:#fffdf7;stroke:#8a8270;stroke-width:1.5"/>`;
+  body += `<polygon points="${W / 2},14 ${W - 14},22 ${W - 14},${H + 14} ${W / 2},${H + 6}" style="fill:#fffdf7;stroke:#8a8270;stroke-width:1.5"/>`;
+  for (let i = 0; i < 5; i += 1) {
+    body += `<line x1="32" y1="${40 + i * 14}" x2="${W / 2 - 16}" y2="${38 + i * 14}" style="stroke:#e1dccd;stroke-width:3"/>`;
+    body += `<line x1="${W / 2 + 16}" y1="${38 + i * 14}" x2="${W - 32}" y2="${40 + i * 14}" style="stroke:#e1dccd;stroke-width:3"/>`;
+  }
+  body += text(36, H - 4, left, 15, 'font-weight="700"') + text(W - 36, H - 4, right, 15, 'font-weight="700"');
+  const html = `${svgOpen(W, H + 22, "펼친 신문지 한 장의 한 면")}${body}</svg>`;
+  return {
+    prompt: "1쪽부터 차례로 쪽수가 적힌 신문지 여러 장을 겹쳐 반으로 접은 신문이 있습니다. 이 중에서 한 장을 꺼내 펼쳤더니 한 면에 그림과 같이 쪽수가 적혀 있었습니다. 같은 종이의 한 면에 있는 두 쪽수의 합은 어느 면에서나 같고, 1쪽과 마지막 쪽도 한 면에 함께 있습니다. 이 신문의 마지막 쪽은 몇 쪽인가요?",
+    visual: { kind: "fig", html },
+    answer: `${total}쪽`,
+    solution: `한 면의 두 쪽수의 합은 ${left} + ${right} = ${left + right}입니다. 1쪽과 마지막 쪽의 합도 ${left + right}이므로 마지막 쪽은 ${left + right} − 1 = ${total}쪽입니다.`,
+    meta: { family: "newspaper-sheet-last-page-b6", sheets, left, right, answer: total }
+  };
+}
+
+// ── 4단원: 같은 수에 부호만 바꾼 식들의 값 표 ──────────────────────
+
+const signEval = (values, pattern) => values.slice(1).reduce((t, v, i) => t + (pattern[i] === "+" ? v : -v), values[0]);
+const signText = (values, pattern) => values.slice(1).reduce((t, v, i) => `${t} ${pattern[i] === "+" ? "+" : "−"} ${v}`, String(values[0]));
+
+function signPatternTableB6({ difficulty = 2 }) {
+  const n = difficulty === 1 ? 4 : difficulty === 2 ? 5 : 6;
+  const start = randomInt(n, difficulty === 3 ? 12 : n + 3);
+  const values = Array.from({ length: n }, (_, i) => start - i);
+  const rows = difficulty === 1 ? 5 : 6;
+  const all = operatorPatternsB6(n, ["+", "-"]);
+  const plus = all[0];
+  const picked = [plus, ...shuffle(all.slice(1).filter((p) => signEval(values, p) >= 0)).slice(0, rows - 1)];
+  picked.sort((p, q) => signEval(values, q) - signEval(values, p));
+  const tag = ["①", "②", "③", "④", "⑤", "⑥", "⑦", "⑧"];
+  const cell = "border:1.2px solid #9cc0ae;padding:5px 12px;text-align:center";
+  const html = `<table style="border-collapse:collapse;${FONT};font-size:16px;color:${INK};background:#fff"><tr><th style="${cell};background:#e4f1ea">순</th><th style="${cell};background:#e4f1ea">계산식</th><th style="${cell};background:#e4f1ea">값</th></tr>${picked.map((p, i) => `<tr><td style="${cell}">${tag[i]}</td><td style="${cell};white-space:nowrap">${signText(values, p)}</td><td style="${cell};min-width:60px"></td></tr>`).join("")}</table>`;
+  const vals = picked.map((p) => signEval(values, p));
+  const total = vals[0];
+  return {
+    prompt: "식을 계산하여 표의 빈칸에 값을 쓰세요.",
+    visual: { kind: "fig", html },
+    answer: vals.map((v, i) => `${tag[i]} ${v}`).join(", "),
+    solution: `모두 더하면 ${total}입니다. 더하기를 빼기로 바꾸면 그 수를 한 번 빼고 한 번 더 빼는 셈이라 그 수의 2배만큼 작아집니다. ${picked.slice(1).map((p, i) => { const minus = values.slice(1).filter((_, k) => p[k] === "-"); return `${tag[i + 1]} ${total} − ${minus.map((m) => `${m} × 2`).join(" − ")} = ${vals[i + 1]}`; }).join(", ")}입니다.`,
+    meta: { family: "sign-pattern-table-b6", values, patterns: picked, answer: vals }
+  };
+}
+
+function operatorPatternsB6(length, operators) {
+  let patterns = [[]];
+  for (let i = 0; i < length - 1; i += 1) patterns = patterns.flatMap((p) => operators.map((o) => [...p, o]));
+  return patterns;
+}
+
+const circleRow = (values, target, label = "") => `<div style="display:flex;align-items:center;gap:6px;white-space:nowrap;${FONT};font-size:17px;color:${INK}">${label ? `<b style="font-size:15px;min-width:28px">${label}</b>` : ""}${values.map((v, i) => `${i ? `<span style="display:inline-block;width:24px;height:24px;border:1.5px solid ${LINE};border-radius:50%;background:#fff"></span>` : ""}<span>${v}</span>`).join("")}<span style="padding:0 4px">=</span><b>${target}</b></div>`;
+const signWords = (pattern) => pattern.map((o) => (o === "+" ? "+" : "−")).join(", ");
+
+// ── 4단원: 같은 수만큼 작아지는 수 사이에 ± 넣기(목표 여러 개) ─────────
+
+function stepSequenceSignMultiB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 200; attempt += 1) {
+    const n = difficulty === 1 ? 5 : 6;
+    const step = difficulty === 1 ? pick([2, 3]) : pick([3, 4, 5]);
+    const last = randomInt(1, step);
+    const values = Array.from({ length: n }, (_, i) => last + step * (n - 1 - i));
+    const all = operatorPatternsB6(n, ["+", "-"]).map((p) => ({ p, v: signEval(values, p) }));
+    const count = new Map();
+    all.forEach(({ v }) => count.set(v, (count.get(v) || 0) + 1));
+    const good = all.filter(({ p, v }) => count.get(v) === 1 && v > 0 && p.includes("-"));
+    const want = difficulty === 1 ? 2 : 3;
+    if (good.length < want) continue;
+    const chosen = shuffle(good).slice(0, want).sort((a, b) => b.v - a.v);
+    const html = `<div style="display:flex;flex-direction:column;gap:10px">${chosen.map((c, i) => circleRow(values, c.v, PARTS[i])).join("")}</div>`;
+    const S = sum(values);
+    return {
+      prompt: `${step}씩 작아지는 수 사이의 ○ 안에 + 또는 −를 넣어 등식이 성립하도록 만드세요.`,
+      visual: { kind: "fig", html },
+      answer: chosen.map((c, i) => `${PARTS[i]} ${signWords(c.p)}`).join(" "),
+      solution: `모두 더하면 ${S}입니다. 어떤 수 앞을 −로 바꾸면 그 수의 2배만큼 작아지므로, 줄여야 할 만큼의 반이 되는 수들을 찾습니다. ${chosen.map((c, i) => `${PARTS[i]} (${S} − ${c.v}) ÷ 2 = ${(S - c.v) / 2}이므로 ${values.slice(1).filter((_, k) => c.p[k] === "-").join(", ")} 앞에 −: ${signText(values, c.p)} = ${c.v}`).join(", ")}입니다.`,
+      meta: { family: "step-sequence-sign-multi-b6", values, patterns: chosen.map((c) => c.p), targets: chosen.map((c) => c.v), answer: chosen.map((c) => c.p) }
+    };
+  }
+  return null;
+}
+
+// ── 4단원: 정해진 묶음 수 사이에 ±만 넣어 목표 만들기 ─────────────────
+
+function fixedGroupSignTargetB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 300; attempt += 1) {
+    const digits = Math.random() < 0.6 ? [1, 2, 3, 4, 5, 6, 7, 8, 9] : [9, 8, 7, 6, 5, 4, 3, 2, 1];
+    const g = difficulty === 1 ? randomInt(4, 5) : difficulty === 2 ? randomInt(5, 6) : 6;
+    const lens = splitInto(9, g, 1);
+    if (!lens || Math.max(...lens) > 3 || !lens.some((l) => l >= 2) || lens.join() === "3,2,2,1,1") continue;
+    const values = [];
+    let at = 0;
+    lens.forEach((l) => { values.push(Number(digits.slice(at, at + l).join(""))); at += l; });
+    const all = operatorPatternsB6(values.length, ["+", "-"]).map((p) => ({ p, v: signEval(values, p) }));
+    const count = new Map();
+    all.forEach(({ v }) => count.set(v, (count.get(v) || 0) + 1));
+    const good = all.filter(({ p, v }) => count.get(v) === 1 && v > 0 && p.includes("-") && p.includes("+"));
+    if (!good.length) continue;
+    const c = pick(good);
+    const S = sum(values.slice(1));
+    return {
+      prompt: `○ 안에 + 또는 −를 넣어 계산 결과가 ${josa(c.v, "이", "가")} 되도록 만드세요.`,
+      visual: { kind: "fig", html: box(circleRow(values, c.v)) },
+      answer: signWords(c.p),
+      solution: `${values[0]} 뒤의 수를 모두 더하면 ${values[0]} + ${S} = ${values[0] + S}입니다. −로 바꾼 수는 2배만큼 줄어들므로 (${values[0] + S} − ${c.v}) ÷ 2 = ${josa((values[0] + S - c.v) / 2, "이", "가")} 되도록 ${values.slice(1).filter((_, k) => c.p[k] === "-").join(", ")} 앞에 −를 넣습니다. ${signText(values, c.p)} = ${c.v}입니다.`,
+      meta: { family: "fixed-group-sign-target-b6", values, pattern: c.p, target: c.v, answer: c.p }
+    };
+  }
+  return null;
+}
+
+// ── 4단원: 같은 숫자를 늘어놓고 +를 넣어 목표 만들기 ─────────────────
+
+const repNum = (d, k) => Number(String(d).repeat(k));
+
+function partitionsOf(n, max = n) {
+  if (n === 0) return [[]];
+  const out = [];
+  for (let k = Math.min(n, max); k >= 1; k -= 1) for (const rest of partitionsOf(n - k, k)) out.push([k, ...rest]);
+  return out;
+}
+
+function sameDigitPlusTargetB6({ difficulty = 2 }) {
+  for (let attempt = 0; attempt < 100; attempt += 1) {
+    const d = randomInt(1, 9);
+    const n = difficulty === 1 ? randomInt(5, 6) : difficulty === 2 ? randomInt(6, 8) : randomInt(8, 9);
+    const parts = partitionsOf(n, difficulty === 1 ? 3 : 4);
+    const bySum = new Map();
+    parts.forEach((p) => { const s = sum(p.map((k) => repNum(d, k))); bySum.set(s, (bySum.get(s) || 0) + 1); });
+    const good = parts.filter((p) => bySum.get(sum(p.map((k) => repNum(d, k)))) === 1 && p.length >= 3 && p[0] >= 2 && p.some((k) => k === 1));
+    if (!good.length) continue;
+    const p = pick(good);
+    const terms = p.map((k) => repNum(d, k));
+    const target = sum(terms);
+    const row = `<div style="display:flex;gap:10px;align-items:center;white-space:nowrap;${FONT};font-size:19px;color:${INK}">${Array.from({ length: n }, () => `<span>${d}</span>`).join("")}<span>=</span><b>${fmt(target)}</b></div>`;
+    return {
+      prompt: `숫자 ${josa(d, "을", "를")} ${n}개 늘어놓고 숫자 사이사이에 +를 넣어 계산 결과가 ${josa(fmt(target), "이", "가")} 되도록 만드세요. (숫자 사이에 꼭 +를 넣지 않아도 됩니다.)`,
+      visual: { kind: "fig", html: box(row) },
+      answer: `${terms.join(" + ")} = ${fmt(target)}`,
+      solution: `자릿수가 많은 수부터 넣어 보며 합을 맞춥니다. ${terms.join(" + ")} = ${fmt(target)}이고, 쓴 숫자 ${josa(d, "은", "는")} ${p.join(" + ")} = ${n}개로 모두 썼습니다. 더하는 차례는 바꾸어도 됩니다.`,
+      meta: { family: "same-digit-plus-target-b6", d, n, lengths: p, target, answer: p }
+    };
+  }
+  return null;
+}
+
 // ── 내보내기 ─────────────────────────────────────────
 
 export const BOOK06_STRUCTURE_GENERATORS = {
@@ -1281,7 +2335,28 @@ export const BOOK06_STRUCTURE_GENERATORS = {
   roundPairLongMissingB6,
   rangeCountTableB6,
   digitContainCountB6,
-  digitExcludeCountB6
+  digitExcludeCountB6,
+  rectParallelogramPerimeterFourB6,
+  parallelogramPerimeterPairB6,
+  rectangleDiagonalTrianglesB6,
+  beeRoutePerimeterCompareB6,
+  orthoConvexPiecesPerimeterB6,
+  gridTwoShapesPerimeterB6,
+  fieldRegionFenceB6,
+  concaveTwoNotchPerimeterB6,
+  squareCutSquaresPerimeterB6,
+  squareTwoStackedCutsB6,
+  gridPieceCutPerimeterB6,
+  squareTriangleSideFromPerimeterB6,
+  squareTrianglePerimeterTransferB6,
+  commonFactorHiddenOneB6,
+  alternatingLongPairB6,
+  consecutiveEvenCountFromSumB6,
+  newspaperSheetLastPageB6,
+  signPatternTableB6,
+  stepSequenceSignMultiB6,
+  fixedGroupSignTargetB6,
+  sameDigitPlusTargetB6
 };
 
 const row = (id, domain, middle, label, generator, aliases) => ({ id, domain, middle, label, generator, searchAliases: aliases });
@@ -1310,7 +2385,31 @@ export const BOOK06_STRUCTURE_TYPE_ROWS = [
   row("round-pair-long-missing-b6", "number", "덧셈을 간편하게", "둥근 수가 되는 짝이 이어진 긴 덧셈과 빈칸", "roundPairLongMissingB6", ["둥근 수 짝", "긴 덧셈", "빠진 수 찾기"]),
   row("range-count-table-b6", "number", "수와 숫자", "범위마다 수의 개수와 숫자의 개수 표", "rangeCountTableB6", ["수의 개수", "숫자의 개수", "범위 표"]),
   row("digit-contain-count-b6", "number", "숫자 포함", "1부터 N까지 숫자의 개수와 그 숫자가 들어 있는 수", "digitContainCountB6", ["숫자 세기", "들어 있는 수", "여러 숫자"]),
-  row("digit-exclude-count-b6", "number", "숫자 포함", "1부터 N까지 여러 숫자가 들어 있는 수를 뺀 나머지", "digitExcludeCountB6", ["숫자 빼기", "남는 수", "여러 숫자 제외"])
+  row("digit-exclude-count-b6", "number", "숫자 포함", "1부터 N까지 여러 숫자가 들어 있는 수를 뺀 나머지", "digitExcludeCountB6", ["숫자 빼기", "남는 수", "여러 숫자 제외"]),
+  // (2차) 2단원
+  row("rect-parallelogram-perimeter-four-b6", "geometry", "사각형 둘레", "직사각형·평행사변형의 둘레와 모르는 변 네 가지", "rectParallelogramPerimeterFourB6", ["직사각형 둘레", "평행사변형 둘레", "둘레로 변 찾기"]),
+  row("parallelogram-perimeter-pair-b6", "geometry", "사각형 둘레", "평행사변형의 둘레와 둘레로 모르는 변 찾기", "parallelogramPerimeterPairB6", ["평행사변형 둘레", "마주 보는 변", "둘레로 변 찾기"]),
+  row("rectangle-diagonal-triangles-b6", "geometry", "사각형 둘레", "두 대각선을 그은 직사각형에서 색칠한 두 삼각형의 둘레", "rectangleDiagonalTrianglesB6", ["두 대각선", "대각선의 반", "삼각형 둘레"]),
+  row("bee-route-compare-b6", "geometry", "직각으로 꺾인 도형", "직각으로 꺾인 두 도형의 둘레를 견주어 먼저 도는 쪽 찾기", "beeRoutePerimeterCompareB6", ["둘레 비교", "꺾인 도형 펼치기", "먼저 돌아오기"]),
+  row("ortho-convex-pieces-b6", "geometry", "직각으로 꺾인 도형", "조각 길이로 주어진 직각으로 꺾인 도형 두 개의 둘레", "orthoConvexPiecesPerimeterB6", ["계단 도형 둘레", "조각 길이 더하기", "둘러싼 직사각형"]),
+  row("grid-two-shapes-b6", "geometry", "직각으로 꺾인 도형", "모눈 위 볼록한 도형과 움푹 파인 도형의 둘레", "gridTwoShapesPerimeterB6", ["모눈 도형 둘레", "움푹 파인 도형", "칸 세기"]),
+  row("field-region-fence-b6", "geometry", "직각으로 꺾인 도형", "땅의 네 변에 닿은 꺾인 잔디밭의 둘레", "fieldRegionFenceB6", ["잔디밭 둘레", "땅의 둘레와 같음", "끈의 길이"]),
+  row("concave-two-notch-b6", "geometry", "직각으로 꺾인 도형", "위와 옆에 홈이 하나씩 파인 도형의 둘레", "concaveTwoNotchPerimeterB6", ["홈 두 개", "옆 홈", "움푹 파인 도형 둘레"]),
+  row("square-cut-squares-b6", "geometry", "잘라낸 도형의 둘레", "정사각형 종이의 모서리·변에서 작은 정사각형을 잘라 낸 둘레", "squareCutSquaresPerimeterB6", ["모서리에서 자르기", "변에서 자르기", "늘어난 둘레"]),
+  row("square-two-stacked-cuts-b6", "geometry", "잘라낸 도형의 둘레", "정사각형 종이의 한쪽에서 정사각형 두 개를 잘라 낸 둘레", "squareTwoStackedCutsB6", ["정사각형 두 개 잘라 내기", "남은 색종이 둘레", "한 변 찾기"]),
+  row("grid-piece-cut-b6", "geometry", "잘라낸 도형의 둘레", "모눈종이에서 잘라 내고 남은 조각의 둘레", "gridPieceCutPerimeterB6", ["모눈 조각 둘레", "변 세기", "잘라 내고 남은 조각"]),
+  row("square-triangle-side-b6", "geometry", "붙인 도형의 둘레", "정사각형과 정삼각형을 붙인 도형의 둘레로 한 변 찾기", "squareTriangleSideFromPerimeterB6", ["정삼각형과 정사각형", "둘레로 한 변", "같은 길이 변 세기"]),
+  row("square-triangle-transfer-b6", "geometry", "붙인 도형의 둘레", "한 도형의 둘레로 같은 조각을 붙인 다른 도형의 둘레 구하기", "squareTrianglePerimeterTransferB6", ["정삼각형과 정사각형", "다른 도형 둘레", "한 변 먼저 찾기"]),
+  // (2차) 3단원
+  row("common-factor-hidden-one-b6", "number", "곱셈을 간편하게", "같은 수를 묶은 식에 숨은 한 번 더하기 찾기", "commonFactorHiddenOneB6", ["같은 수 묶기", "곱하기 1", "빈칸 찾기"]),
+  row("alternating-long-pair-b6", "number", "덧셈을 간편하게", "긴 더하기·빼기 번갈아 식과 짝지어 빼기", "alternatingLongPairB6", ["두 수씩 묶기", "번갈아 더하고 빼기", "짝지어 빼기"]),
+  row("consecutive-even-count-b6", "number", "연속수의 합", "짝수 개 연속수의 합으로 연속수 찾기", "consecutiveEvenCountFromSumB6", ["연속수 4개", "가운데 두 수", "합으로 연속수"]),
+  row("newspaper-sheet-last-page-b6", "number", "연속수의 합", "신문지 한 장의 두 쪽수로 마지막 쪽 구하기", "newspaperSheetLastPageB6", ["신문 쪽수", "마지막 쪽", "같은 면 두 쪽의 합"]),
+  // (2차) 4단원
+  row("sign-pattern-table-b6", "number", "수 만들기", "같은 수에 부호만 바꾼 식들의 값 표", "signPatternTableB6", ["부호 바꾸기", "2배만큼 작아짐", "계산 표"]),
+  row("step-sequence-sign-multi-b6", "number", "수 만들기", "같은 수만큼 작아지는 수 사이에 ± 넣기(목표 여러 개)", "stepSequenceSignMultiB6", ["등식 만들기", "줄어드는 수", "더하기 빼기 넣기"]),
+  row("fixed-group-sign-target-b6", "number", "수 만들기", "정해진 묶음 수 사이에 ±만 넣어 목표 수 만들기", "fixedGroupSignTargetB6", ["묶음 수", "더하기 빼기 넣기", "목표 수"]),
+  row("same-digit-plus-target-b6", "number", "수 만들기", "같은 숫자를 늘어놓고 +를 넣어 목표 수 만들기", "sameDigitPlusTargetB6", ["같은 숫자", "이어 붙인 수", "더하기 넣기"])
 ];
 
 export const BOOK06_STRUCTURE_GUIDES = {
@@ -1336,7 +2435,28 @@ export const BOOK06_STRUCTURE_GUIDES = {
   "round-pair-long-missing-b6": "두 수씩 묶어 둥근 수를 만들고, 마지막 짝에서 빠진 수를 찾습니다.",
   "range-count-table-b6": "수의 개수는 끝 수 − 처음 수 + 1, 숫자의 개수는 수의 개수 × 자릿수입니다.",
   "digit-contain-count-b6": "일의 자리와 십의 자리를 나누어 세고, 두 번 센 수는 한 번만 셉니다.",
-  "digit-exclude-count-b6": "숫자가 들어 있는 수를 빠짐없이 세어 전체 수의 개수에서 뺍니다."
+  "digit-exclude-count-b6": "숫자가 들어 있는 수를 빠짐없이 세어 전체 수의 개수에서 뺍니다.",
+  "rect-parallelogram-perimeter-four-b6": "마주 보는 두 변이 같으므로 둘레는 (두 변의 합) × 2, 모르는 변은 둘레의 반에서 아는 변을 뺍니다.",
+  "parallelogram-perimeter-pair-b6": "평행사변형도 마주 보는 두 변이 같으므로 둘레의 반이 두 변의 합입니다.",
+  "rectangle-diagonal-triangles-b6": "직사각형의 두 대각선은 길이가 같고 서로를 반으로 나누므로 삼각형의 두 변은 모두 대각선의 반입니다.",
+  "bee-route-compare-b6": "꺾인 부분을 바깥으로 밀어 펼쳐 둘러싼 직사각형의 둘레로 견줍니다.",
+  "ortho-convex-pieces-b6": "같은 쪽을 보는 조각 길이를 더해 가로와 세로를 찾고, 둘러싼 직사각형의 둘레를 구합니다.",
+  "grid-two-shapes-b6": "볼록한 도형은 둘러싼 직사각형의 둘레와 같고, 움푹 파인 곳은 양쪽 벽만큼 더합니다.",
+  "field-region-fence-b6": "땅의 네 변에 모두 닿은 꺾인 도형은 꺾인 부분을 펼치면 땅의 둘레와 같습니다.",
+  "concave-two-notch-b6": "둘러싼 직사각형의 둘레에 안으로 파인 홈마다 깊이의 2배를 더합니다.",
+  "square-cut-squares-b6": "모서리에서 자르면 둘레가 그대로이고, 변 가운데에서 자르면 자른 정사각형 한 변의 2배만큼 늘어납니다.",
+  "square-two-stacked-cuts-b6": "큰 정사각형의 한 변을 먼저 구하고, 남은 꺾인 도형을 펼친 직사각형의 둘레를 구합니다.",
+  "grid-piece-cut-b6": "남은 조각의 둘레를 따라 모눈 한 칸의 변을 빠짐없이 세어 한 변의 길이를 곱합니다.",
+  "square-triangle-side-b6": "둘레를 이루는 같은 길이의 변을 세어 둘레를 그 수로 나눕니다.",
+  "square-triangle-transfer-b6": "먼저 둘레를 아는 도형으로 한 변을 구하고, 다른 도형의 바깥 변 수를 곱합니다.",
+  "common-factor-hidden-one-b6": "같은 수를 모두 몇 번 더했는지 세어, 10·100·1000번이 되려면 몇 번 더 더해야 하는지 찾습니다.",
+  "alternating-long-pair-b6": "두 수씩 짝지어 차가 같은 묶음을 만들고, 묶음의 수를 셉니다.",
+  "consecutive-even-count-b6": "짝수 개 연속수는 짝지은 두 수의 합이 같으므로, 합을 짝의 수로 나누어 가운데 두 수를 찾습니다.",
+  "newspaper-sheet-last-page-b6": "한 면에 있는 두 쪽수의 합은 1쪽과 마지막 쪽의 합과 같습니다.",
+  "sign-pattern-table-b6": "더하기를 빼기로 바꾸면 그 수의 2배만큼 작아집니다.",
+  "step-sequence-sign-multi-b6": "모두 더한 값에서 목표를 빼고 반으로 나눈 만큼이 되도록 빼기를 넣을 수를 고릅니다.",
+  "fixed-group-sign-target-b6": "모두 더한 값과 목표의 차를 반으로 나누어, 그만큼이 되는 묶음 앞에 빼기를 넣습니다.",
+  "same-digit-plus-target-b6": "자릿수가 많은 수부터 넣어 보고, 쓴 숫자의 개수를 맞춥니다."
 };
 
 export const BOOK06_STRUCTURE_REMAPS = [
@@ -1384,7 +2504,35 @@ export const BOOK06_STRUCTURE_REMAPS = [
   ["book-06", 4, "check", 1, [1], "digit-contain-count-b6"],
   ["book-06", 4, "practice", 1, [5], "digit-contain-count-b6"],
   ["book-06", 4, "check", 1, [2], "digit-exclude-count-b6"],
-  ["book-06", 4, "practice", 1, [6], "digit-exclude-count-b6"]
+  ["book-06", 4, "practice", 1, [6], "digit-exclude-count-b6"],
+  // (2차) 2단원
+  ["book-06", 2, "activity", 1, [1], "rect-parallelogram-perimeter-four-b6"],
+  ["book-06", 2, "practice", 1, [3], "parallelogram-perimeter-pair-b6"],
+  ["book-06", 2, "activity", 1, [6], "rectangle-diagonal-triangles-b6"],
+  ["book-06", 2, "practice", 1, [8], "rectangle-diagonal-triangles-b6"],
+  ["book-06", 2, "activity", 2, [1], "bee-route-compare-b6"],
+  ["book-06", 2, "activity", 2, [2], "ortho-convex-pieces-b6"],
+  ["book-06", 2, "practice", 1, [13], "ortho-convex-pieces-b6"],
+  ["book-06", 2, "practice", 1, [1], "grid-two-shapes-b6"],
+  ["book-06", 2, "practice", 1, [14], "field-region-fence-b6"],
+  ["book-06", 2, "activity", 2, [5], "concave-two-notch-b6"],
+  ["book-06", 2, "practice", 1, [17], "concave-two-notch-b6"],
+  ["book-06", 2, "practice", 1, [16], "square-cut-squares-b6"],
+  ["book-06", 2, "practice", 1, [18], "square-two-stacked-cuts-b6"],
+  ["book-06", 2, "check", 2, [1], "grid-piece-cut-b6"],
+  ["book-06", 2, "check", 2, [4], "square-triangle-side-b6"],
+  ["book-06", 2, "practice", 1, [20], "square-triangle-transfer-b6"],
+  // (2차) 3단원
+  ["book-06", 3, "advanced", 1, [1], "common-factor-hidden-one-b6"],
+  ["book-06", 3, "advanced", 1, [2], "alternating-long-pair-b6"],
+  ["book-06", 3, "advanced", 1, [4], "consecutive-even-count-b6"],
+  ["book-06", 3, "advanced", 1, [5], "newspaper-sheet-last-page-b6"],
+  ["book-06", 3, "practice", 1, [18], "newspaper-sheet-last-page-b6"],
+  // (2차) 4단원
+  ["book-06", 4, "practice", 1, [7], "sign-pattern-table-b6"],
+  ["book-06", 4, "practice", 1, [9], "step-sequence-sign-multi-b6"],
+  ["book-06", 4, "practice", 1, [13], "fixed-group-sign-target-b6"],
+  ["book-06", 4, "advanced", 1, [4], "same-digit-plus-target-b6"]
 ];
 
 // ── 검산(book06-audit.mjs가 부른다) — 오류가 없으면 "" ─────
@@ -1444,5 +2592,111 @@ export const BOOK06_STRUCTURE_CHECKS = {
     let t = 0;
     for (let v = 1; v <= meta.N; v += 1) if (!hasAny(v, meta.digits)) t += 1;
     return ok(t === meta.answer && meta.removed + t === meta.N && num(answer) === meta.answer, "숫자 빼기 오류");
+  },
+  // ── (2차) 새 유형: 생성할 때와 다른 길로 다시 풀어 본다 ──
+  "quad-perimeter-parts-b6": ({ meta, answer }) => {
+    const nums = String(answer).match(/\) (\d+)cm/g).map((t) => Number(t.match(/\d+/)[0]));
+    return ok(meta.parts.every((p, i) => p.perimeter === p.a + p.b + p.a + p.b && nums[i] === (p.ask === "perimeter" ? p.perimeter : p.ask === "a" ? p.perimeter / 2 - p.b : p.perimeter / 2 - p.a)) && nums.length === meta.parts.length, "사각형 둘레 오류");
+  },
+  "rectangle-diagonal-triangles-b6": ({ meta, answer }) => {
+    const nums = String(answer).match(/\d+/g).map(Number);
+    return ok(meta.W ** 2 + meta.H ** 2 === meta.D ** 2 && meta.D % 2 === 0 && nums[0] === meta.W + meta.D / 2 * 2 && nums[1] === meta.H + meta.D / 2 * 2, "대각선 삼각형 둘레 오류");
+  },
+  "bee-route-compare-b6": ({ meta, answer }) => {
+    const per = meta.shapes.map((s) => outlineLength(cellsOutline(s.cells)));
+    const boxes = meta.shapes.every((s) => { const b = bboxOf(s.cells); return b.maxX - b.minX === s.W && b.maxY - b.minY === s.H; });
+    const first = per[0] < per[1] ? "꿀벌 ①" : "꿀벌 ②";
+    return ok(boxes && per[0] !== per[1] && per.every((v, i) => v === meta.perimeters[i]) && String(answer).startsWith(first), "꿀벌 둘레 비교 오류");
+  },
+  "ortho-convex-pieces-b6": ({ meta, answer }) => {
+    const nums = String(answer).match(/\) (\d+)cm/g).map((t) => Number(t.match(/\d+/)[0]));
+    return ok(meta.shapes.every((s, i) => outlineLength(cellsOutline(s.cells)) === nums[i] && sum(s.given.width) === s.W && sum(s.given.height) === s.H && cellsConnected(s.cells)), "꺾인 도형 둘레 오류");
+  },
+  "grid-two-shapes-b6": ({ meta, answer }) => {
+    const nums = String(answer).match(/\) (\d+)cm/g).map((t) => Number(t.match(/\d+/)[0]));
+    return ok(meta.shapes.every((c, i) => cellsConnected(c) && cellsSimple(c) && outlineLength(cellsOutline(c)) === nums[i]), "모눈 도형 둘레 오류");
+  },
+  "field-region-fence-b6": ({ meta, answer }) => {
+    const b = bboxOf(meta.cells);
+    const full = b.maxX - b.minX === meta.n && b.maxY - b.minY === meta.m && outlineLength(cellsOutline(meta.cells)) === 2 * (meta.n + meta.m);
+    return ok(full && num(answer) === meta.S + meta.S + meta.H + meta.H, "잔디밭 둘레 오류");
+  },
+  "concave-two-notch-b6": ({ meta, answer }) => ok(outlineLength(cellsOutline(meta.cells)) === num(answer) && num(answer) === 2 * (meta.W + meta.H) + 2 * (meta.d1 + meta.d2), "홈 두 개 둘레 오류"),
+  "square-cut-squares-b6": ({ meta, answer }) => {
+    const nums = String(answer).match(/\) (\d+)cm/g).map((t) => Number(t.match(/\d+/)[0]));
+    return ok(meta.parts.every((p, i) => {
+      const area = meta.S * meta.S - sum(p.placed.map((q) => q.s * q.s));
+      return p.cells.length === area && outlineLength(cellsOutline(p.cells)) === nums[i] && nums[i] === 4 * meta.S + sum(p.placed.filter((q) => q.where === "edge").map((q) => 2 * q.s));
+    }) && nums[0] !== nums[1], "잘라 낸 종이 둘레 오류");
+  },
+  "square-two-stacked-cuts-b6": ({ meta, answer }) => ok(meta.big + meta.b === meta.S && meta.b < meta.big && outlineLength(cellsOutline(meta.cells)) === num(answer) && num(answer) === 2 * (meta.S + meta.S - meta.b), "두 정사각형 잘라 낸 둘레 오류"),
+  "grid-piece-cut-b6": ({ meta, answer }) => ok(cellsConnected(meta.cells) && cellsSimple(meta.cells) && outlineLength(cellsOutline(meta.cells)) * meta.c === num(answer), "모눈 조각 둘레 오류"),
+  "square-triangle-side-b6": ({ meta, answer }) => {
+    const set = cellSetOf(meta.cells);
+    let free = 0;
+    meta.cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (!set.has(cellKey(x + dx, y + dy))) free += 1; }));
+    const targets = meta.tris.map((t) => cellKey(t.x + t.dx, t.y + t.dy));
+    const okTris = new Set(targets).size === targets.length && targets.every((k) => !set.has(k));
+    return ok(okTris && free + meta.tris.length === meta.edges && meta.perimeter === meta.edges * num(answer), "정삼각형·정사각형 한 변 오류");
+  },
+  "square-triangle-transfer-b6": ({ meta, answer }) => {
+    const edges = meta.figures.map((f) => { const set = cellSetOf(f.cells); let free = 0; f.cells.forEach(([x, y]) => [[1, 0], [-1, 0], [0, 1], [0, -1]].forEach(([dx, dy]) => { if (!set.has(cellKey(x + dx, y + dy))) free += 1; })); return free + f.tris.length; });
+    return ok(meta.p1 % edges[0] === 0 && (meta.p1 / edges[0]) * edges[1] === num(answer) && edges[0] !== edges[1], "다른 도형 둘레 오류");
+  },
+  "common-factor-hidden-one-b6": ({ meta }) => ok(meta.parts.every((p) => {
+    const [left, right] = p.expression.replaceAll("□", String(p.answer)).replaceAll(",", "").split("=");
+    const value = right.split("+").reduce((t, term) => t + term.split("×").reduce((m, f) => m * Number(f.trim()), 1), 0);
+    return Number(left.trim()) === value && p.answer > 0;
+  }), "숨은 곱 빈칸 오류"),
+  "alternating-long-pair-b6": ({ meta }) => {
+    let t = 0;
+    for (let v = meta.N, i = 0; v >= 1; v -= 1, i += 1) t += i % 2 ? -v : v;
+    return ok(t === meta.answer[0] && sum(meta.high) - sum(meta.low) === meta.answer[1] && meta.answer[1] > 0, "번갈아 식 오류");
+  },
+  "consecutive-even-count-b6": ({ meta, answer }) => {
+    const vals = String(answer).split(",").map((v) => Number(v.trim()));
+    return ok(vals.length === meta.count && meta.count % 2 === 0 && vals.every((v, i) => !i || v === vals[i - 1] + 1) && sum(vals) === meta.total, "연속수 합 오류");
+  },
+  "newspaper-sheet-last-page-b6": ({ meta, answer }) => {
+    const total = num(answer);
+    const faces = [];
+    for (let j = 1; j <= total / 4; j += 1) faces.push([total - 2 * j + 2, 2 * j - 1], [2 * j, total - 2 * j + 1]);
+    return ok(total % 4 === 0 && total === meta.sheets * 4 && faces.some(([l, r]) => l === meta.left && r === meta.right) && meta.left !== total, "신문 마지막 쪽 오류");
+  },
+  "sign-pattern-table-b6": ({ meta }) => ok(meta.patterns.every((p, i) => {
+    let t = meta.values[0];
+    p.forEach((o, k) => { t += o === "+" ? meta.values[k + 1] : -meta.values[k + 1]; });
+    return t === meta.answer[i] && t >= 0;
+  }) && new Set(meta.patterns.map((p) => p.join(""))).size === meta.patterns.length, "부호 표 값 오류"),
+  "step-sequence-sign-multi-b6": ({ meta }) => {
+    const n = meta.values.length;
+    const valueOf = (mask) => meta.values.reduce((t, v, i) => t + (i && mask & (1 << (i - 1)) ? -v : v), 0);
+    const stepOk = meta.values.every((v, i) => !i || meta.values[i - 1] - v === meta.values[0] - meta.values[1]);
+    return ok(stepOk && meta.targets.every((target, k) => {
+      const hits = [];
+      for (let mask = 0; mask < 1 << (n - 1); mask += 1) if (valueOf(mask) === target) hits.push(mask);
+      const mine = meta.patterns[k].reduce((m, o, i) => m | (o === "-" ? 1 << i : 0), 0);
+      return hits.length === 1 && hits[0] === mine;
+    }), "± 넣기(여러 목표) 답이 하나가 아님");
+  },
+  "fixed-group-sign-target-b6": ({ meta }) => {
+    const n = meta.values.length;
+    const digits = meta.values.join("");
+    const valueOf = (mask) => meta.values.reduce((t, v, i) => t + (i && mask & (1 << (i - 1)) ? -v : v), 0);
+    let hits = 0;
+    for (let mask = 0; mask < 1 << (n - 1); mask += 1) if (valueOf(mask) === meta.target) hits += 1;
+    return ok((digits === "123456789" || digits === "987654321") && hits === 1 && meta.pattern.reduce((t, o, i) => t + (o === "+" ? meta.values[i + 1] : -meta.values[i + 1]), meta.values[0]) === meta.target, "묶음 ± 답이 하나가 아님");
+  },
+  "same-digit-plus-target-b6": ({ meta }) => {
+    // 숫자 사이마다 + 또는 이어 붙이기를 모두 해 보고, 목표가 되는 경우의 조각 길이 모음이 하나뿐인지
+    const shapes = new Set();
+    for (let mask = 0; mask < 1 << (meta.n - 1); mask += 1) {
+      const lens = [];
+      let run = 1;
+      for (let i = 0; i < meta.n - 1; i += 1) { if (mask & (1 << i)) { lens.push(run); run = 1; } else run += 1; }
+      lens.push(run);
+      if (sum(lens.map((k) => Number(String(meta.d).repeat(k)))) === meta.target) shapes.add([...lens].sort((a, b) => b - a).join(","));
+    }
+    return ok(shapes.size === 1 && [...shapes][0] === meta.lengths.join(","), "같은 숫자 더하기 답이 하나가 아님");
   }
 };
