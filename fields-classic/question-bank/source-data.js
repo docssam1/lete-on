@@ -5,7 +5,7 @@ import { BOOK02_STRUCTURE_TYPE_ROWS, BOOK02_STRUCTURE_GUIDES, BOOK02_STRUCTURE_R
 import { BOOK03_STRUCTURE_TYPE_ROWS, BOOK03_STRUCTURE_GUIDES, BOOK03_STRUCTURE_REMAPS } from "./book03-structure-generators.js?v=20261125g";
 import { BOOK04_STRUCTURE_TYPE_ROWS, BOOK04_STRUCTURE_GUIDES, BOOK04_STRUCTURE_REMAPS } from "./book04-structure-generators.js?v=20261125f";
 import { BOOK05_STRUCTURE_TYPE_ROWS, BOOK05_STRUCTURE_GUIDES, BOOK05_STRUCTURE_REMAPS } from "./book05-structure-generators.js?v=20261127a";
-import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261125j";
+import { BOOK06_STRUCTURE_TYPE_ROWS, BOOK06_STRUCTURE_GUIDES, BOOK06_STRUCTURE_REMAPS } from "./book06-structure-generators.js?v=20261128a";
 import { BOOK07_STRUCTURE_TYPE_ROWS, BOOK07_STRUCTURE_GUIDES, BOOK07_STRUCTURE_REMAPS } from "./book07-structure-generators.js?v=20261125q";
 import { BOOK08_STRUCTURE_TYPE_ROWS, BOOK08_STRUCTURE_GUIDES, BOOK08_STRUCTURE_REMAPS } from "./book08-structure-generators.js?v=20261127b";
 import { BOOK09_STRUCTURE_TYPE_ROWS, BOOK09_STRUCTURE_GUIDES, BOOK09_STRUCTURE_REMAPS } from "./book09-structure-generators.js?v=20261125j";
@@ -1026,7 +1026,7 @@ export const LEGACY_TYPE_ALIASES = Object.freeze({
   "adjacent-product-pentagon": Object.freeze(["g1-summer-pentagon-adjacent-product", "g1-fall-pentagon-adjacent-products-all"]),
   "segment-count": Object.freeze(["g1-summer-circle-point-segments"]),
   "square-side-composition": Object.freeze(["g1-summer-square-side-composition", "g1-fall-stacked-square-side-chain"]),
-  "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "rectilinear-perimeter-book6"]),
+  "rectilinear-perimeter": Object.freeze(["g1-summer-rectilinear-perimeter", "ortho-convex-pieces-b6"]),
   "latin-square": Object.freeze(["sudoku-fill-three-row-column-b2", "sudoku-three-region", "sudoku-four-square-region", "sudoku-four-irregular-region"]),
   "consecutive-number-addition": Object.freeze(["consecutive-masked-triple-b10", "g1-fall-consecutive-three-sum-completion"]),
   "step-game": Object.freeze(["g1-winter-opponent-step-game"]),
