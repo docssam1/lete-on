@@ -28,12 +28,12 @@ assert(Object.keys(TYPE_CONCEPT_LESSONS).length === 79, `expected 79 concept lin
 assert(new Set(CONCEPT_DEFINITIONS.map((definition) => definition.id)).size === CONCEPT_DEFINITIONS.length, "duplicate concept definition id");
 
 const expectedPilot = Object.freeze({
-  "tetromino-family-choice": Object.freeze({
+  "polyomino-all-draw-b4": Object.freeze({
     conceptId: "concept:geometry:tetromino-connectivity-fit",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
   }),
-  "tetromino-square-composition": Object.freeze({
+  "same-piece-rect-tiling-b4": Object.freeze({
     conceptId: "concept:geometry:tetromino-connectivity-fit",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
@@ -92,7 +92,7 @@ const expectedPilot = Object.freeze({
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
   }),
-  "directional-seat-placement": Object.freeze({
+  "round-table-four-b4": Object.freeze({
     conceptId: "concept:logic:relative-direction-placement",
     sourceBookId: "book-04",
     placementBooks: Object.freeze(["book-04"])
@@ -414,10 +414,10 @@ assert(Object.keys(TYPE_CONCEPT_LESSONS).sort().join(",") === Object.keys(expect
 const expectedBook04ConceptTypes = Object.freeze([
   "circular-seat-blank-book4", "cube-count-solid", "cube-minimum-from-solid", "cube-triangular-wall-growth",
   "digital-flip-turn-set-b4", "digital-grid-upright-after-moves", "digital-transform-board-sum", "directional-landmark-placement-book4",
-  "directional-seat-placement", "fold-cut-unfold-one-draw", "fold-number-grid-one", "fold-number-grid-two-diagonal",
+  "fold-cut-two-corner-unfold-b4", "fold-number-grid-one", "fold-number-grid-two-diagonal",
   "fold-number-grid-two-orthogonal", "mixed-pan-balance-two-b4", "number-board-three-moves-2x2-b4", "pentomino-split-two-b4",
-  "person-item-logic", "polyline-turn-four-b4", "rotational-partition-four", "row-left-right-placement-b4",
-  "shape-difference-tree-b4", "tetromino-family-choice", "tetromino-square-composition"
+  "person-item-logic", "polyline-turn-four-b4", "polyomino-all-draw-b4", "rotational-partition-four", "round-table-four-b4",
+  "row-left-right-placement-b4", "same-piece-rect-tiling-b4", "shape-difference-tree-b4"
 ].sort());
 const actualBook04ConceptTypes = CURRICULUM.find((book) => book.id === "book-04").units.flatMap((unit) =>
   Object.entries(unit.typeStudyRefs || {})
